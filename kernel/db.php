@@ -7,7 +7,7 @@
 
 	 function db()
 	 {
-		   error_reporting(E_ERROR);
+		 error_reporting(E_ERROR);
          $host=$_SERVER['HTTP_HOST'];
 		
 		 if ($host=="localhost")
@@ -100,7 +100,7 @@
 	
 	  function execute($query)
 	  {  
-	     //print $query."<br><br>";
+	     print $query."<br><br>";
 		 $result=mysql_query($query, $this->con); 
 		 return $result;
 	  }

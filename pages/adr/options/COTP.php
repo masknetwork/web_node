@@ -25,6 +25,9 @@ class COTP
 				   $this->template->showErr("Invalid entry data", 550);
 			       return false;
 			  }
+			  
+			  if (strlen($alt_adr)<30)
+			     $alt_adr=$this->kern->adrFromDomain($alt_adr);
 		}
 		
 		// Address owner

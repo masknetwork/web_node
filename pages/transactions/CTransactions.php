@@ -190,13 +190,247 @@ class CTransactions
         <?
 	}
 	
+	function showReqDataPanel($net_fee_adr, 
+	                          $from_adr, 
+					          $to_adr, 
+					          $amount, 
+					          $moneda, 
+					          $mes, 
+					          $escrower,
+							  $otp_old_pass="")
+	{
+		$query="SELECT * 
+		          FROM adr_options 
+				 WHERE adr='".$to_adr."' 
+				   AND op_type='ID_REQ_DATA'";
+		?>
+           
+           <form id="form_req_data" name="form_req_data" action="index.php?act=send_coins">
+           
+           <input type="hidden" id="h_net_fee_adr" name="h_net_fee_adr" value="">
+           <input type="hidden" id="h_from_adr" name="h_from_adr" value="">
+           <input type="hidden" id="h_to_adr" name="h_to_adr" value="">
+           <input type="hidden" id="h_amount" name="h_amount" value="">
+           <input type="hidden" id="h_moneda" name="h_moneda" value="">
+           <input type="hidden" id="h_mes" name="h_mes" value="">
+           <input type="hidden" id="h_escrower" name="h_escrower" value="">
+               
+           <table width="550" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td class="simple_maro_16">&nbsp;&nbsp;&nbsp;This address is requesting additional data</td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                </tr>
+                <tr>
+                  <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td width="103" align="center"><img src="../../template/template/GIF/empty_pic.png" width="80" height="80" class="img-circle"/></td>
+                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">&quot;The owner of this address needs additional data. Please complete the following form. You need to respect the requested data length&quot;</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">&nbsp;</td>
+                        </tr>
+                      <tr>
+                        <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr>
+                              <td height="30" align="left" valign="top" class="simple_maro_14"><strong>Field 1 Name</strong></td>
+                            </tr>
+                            <tr>
+                              <td><input class="form-control" name="txt_field_1" id="txt_field_1" placeholder="0-25 characters"></td>
+                            </tr>
+                          </tbody>
+                        </table></td>
+                        </tr>
+                      <tr>
+                        <td colspan="2">&nbsp;</td>
+                        </tr>
+                      <tr>
+                        <td colspan="2" align="right">
+                        <a href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
+                </tr>
+              </tbody>
+            </table>
+            </form>
+        
+        <?
+	}
+	
+	function showOTP($net_fee_adr, 
+	                 $from_adr, 
+					 $to_adr, 
+					 $amount, 
+					 $moneda, 
+					 $mes, 
+					 $escrower)
+	{
+		?>
+           
+           <form id="form_otp" name="form_otp" action="index.php?act=send_coins" method="post">
+           
+           <input type="hidden" id="h_net_fee_adr" name="h_net_fee_adr" value="<? print $net_fee_adr; ?>">
+           <input type="hidden" id="h_from_adr" name="h_from_adr" value="<? print $from_adr; ?>">
+           <input type="hidden" id="h_to_adr" name="h_to_adr" value="<? print $to_adr; ?>">
+           <input type="hidden" id="h_amount" name="h_amount" value="<? print $amount; ?>">
+           <input type="hidden" id="h_moneda" name="h_moneda" value="<? print $moneda; ?>">
+           <input type="hidden" id="h_mes" name="h_mes" value="<? print $mes; ?>">
+           <input type="hidden" id="h_escrower" name="h_escrower" value="<? print $escrower; ?>">
+           
+           <table width="550" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td class="simple_maro_16">&nbsp;&nbsp;&nbsp;Password Required</td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                </tr>
+                <tr>
+                  <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td width="103" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" width="80" height="74" alt=""/></td>
+                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">This address is requesting an unique 25 characters password before spending funds. A new password is generated after each transaction. Please provide the password.</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr>
+                              <td height="30" align="left" valign="top" class="simple_maro_14"><strong>Password</strong></td>
+                            </tr>
+                            <tr>
+                              <td><input class="form-control" type="password" name="txt_old_pass" id="txt_old_pass" placeholder="0-25 characters"></td>
+                            </tr>
+                          </tbody>
+                        </table></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" align="right">
+                        <a href="javascript:void(0)" onClick="$('#form_otp').submit()" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
+                </tr>
+              </tbody>
+            </table> 
+            </form>
+       
+        <?
+	}
+	
+	function showOTPConfirm($pass)
+	{
+		?>
+           
+           <table width="550" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td class="simple_maro_16">&nbsp;&nbsp;Next Password</td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                </tr>
+                <tr>
+                  <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td width="103" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" width="80" height="74" alt=""/></td>
+                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">Below is displayed your new password. Please keep the passoword safe because you will need it if you want to send funds from this address.</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td height="60" colspan="2" align="center" class="simple_green_22"><strong><? print $pass; ?></strong></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
+                </tr>
+              </tbody>
+            </table> 
+           
+       
+        <?
+	}
+	
+	function getSecurePAss($length = 25, $add_dashes = false, $available_sets = 'lud')
+    {
+	    $sets = array();
+	    
+		if(strpos($available_sets, 'l') !== false)
+		    $sets[] = 'abcdefghjkmnpqrstuvwxyz';
+			
+	    if(strpos($available_sets, 'u') !== false)
+		    $sets[] = 'ABCDEFGHJKMNPQRSTUVWXYZ';
+	    
+		if(strpos($available_sets, 'd') !== false)
+		    $sets[] = '0123456789';
+	    
+		if(strpos($available_sets, 's') !== false)
+		$sets[] = '!@#$%&*?';
+	    
+		$all = '';
+	    $password = '';
+	    
+		foreach($sets as $set)
+	    {
+		    $password .= $set[array_rand(str_split($set))];
+		    $all .= $set;
+	    }
+	    
+		$all = str_split($all);
+	    
+		for($i = 0; $i < $length - count($sets); $i++)
+		    $password .= $all[array_rand($all)];
+	    
+		$password = str_shuffle($password);
+	    
+		
+		if(!$add_dashes)
+		   return $password;
+	    
+		$dash_len = floor(sqrt($length));
+	    $dash_str = '';
+	    
+		while(strlen($password) > $dash_len)
+	    {
+		    $dash_str .= substr($password, 0, $dash_len) . '-';
+		    $password = substr($password, $dash_len);
+	    }
+	    
+		$dash_str .= $password;
+	    return $dash_str;
+    }
+	
 	function sendCoins($net_fee_adr, 
 	                   $from_adr, 
 					   $to_adr, 
 					   $amount, 
 					   $moneda, 
 					   $mes, 
-					   $escrower)
+					   $escrower,
+					   $otp_old_pass="")
 	{
 		// Recipient a name ?
 		if (strlen($to_adr)<31) 
@@ -304,6 +538,125 @@ class CTransactions
 			}
 		}
 		
+		// Otp
+		if ($this->kern->hasAttr($from_adr, "ID_OTP")==true)
+		{
+			if ($otp_old_pass=="")
+			{
+				$this->showOTP($net_fee_adr, 
+				               $from_adr, 
+							   $to_adr, 
+							   $amount, 
+							   $amount, 
+							   $mes, 
+							   $escrower);
+				return false;
+			}
+			else
+			{
+			   	// Load datas
+				$query="SELECT * 
+				          FROM adr_options 
+						 WHERE adr='".$from_adr."' 
+						   AND op_type='ID_OTP'";
+				$result=$this->kern->execute($query);	
+	            $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	            
+				// Check pas
+				if (hash("sha256", $otp_old_pass)!=$row['par_1'])
+				{
+				   $this->template->showErr("Invalid password", 550);
+				   return false;	
+				}
+				
+				// New pass
+				$otp_new_pass=$this->getSecurePass();
+				$otp_new_hash=hash("sha256", $otp_new_pass);
+			}
+		}
+		
+		// Additional data
+		if ($this->kern->hasAttr($to_adr, "ID_REQ_DATA")==true)
+		{
+			// Load data
+			$query="SELECT * 
+			          FROM req_data 
+					 WHERE adr='".$to_adr."'";
+			$result=$this->kern->execute($query);	
+	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	  
+			if ($_REQUEST['txt_field_1']!="")
+			{
+				// Check field 1
+				if ($row['field_1_name']!="")
+				{
+					if (strlen($_REQUEST['txt_field_1'])<$row['field_1_min'] || 
+					    strlen($_REQUEST['txt_field_1'])>$row['field_1_max'])
+				    {
+					   $this->template->showErr("Invalid field 1 length", 550);
+					   return false;	
+					}
+				}
+				
+				// Check field 2
+				if ($row['field_2_name']!="")
+				{
+					if (strlen($_REQUEST['txt_field_2'])<$row['field_2_min'] || 
+					    strlen($_REQUEST['txt_field_2'])>$row['field_2_max'])
+				    {
+					   $this->template->showErr("Invalid field 2 length", 550);
+					   return false;	
+					}
+				}
+				
+				// Check field 3
+				if ($row['field_3_name']!="")
+				{
+					if (strlen($_REQUEST['txt_field_3'])<$row['field_3_min'] || 
+					    strlen($_REQUEST['txt_field_3'])>$row['field_3_max'])
+				    {
+					   $this->template->showErr("Invalid field 3 length", 550);
+					   return false;	
+					}
+				}
+				
+				// Check field 4
+				if ($row['field_4_name']!="")
+				{
+					if (strlen($_REQUEST['txt_field_4'])<$row['field_4_min'] || 
+					    strlen($_REQUEST['txt_field_4'])>$row['field_4_max'])
+				    {
+					   $this->template->showErr("Invalid field 4 length", 550);
+					   return false;	
+					}
+				}
+				
+				// Check field 5
+				if ($row['field_5_name']!="")
+				{
+					if (strlen($_REQUEST['txt_field_5'])<$row['field_5_min'] || 
+					    strlen($_REQUEST['txt_field_5'])>$row['field_5_max'])
+				    {
+					   $this->template->showErr("Invalid field 5 length", 550);
+					   return false;	
+					}
+				}
+			}
+			else
+	        {
+				// Show panel
+				$this->showReqDataPanel($net_fee_adr, 
+				                        $from_adr, 
+										$to_adr, 
+										$amount, 
+										$moneda, 
+										$mes, 
+										$escrower, 
+										$otp_old_pass);
+				return false;
+			}
+		}
+		
 		try
 	    {
 		   // Begin
@@ -324,16 +677,24 @@ class CTransactions
 								par_5='".$mes."', 
 								par_6='".$escrower."',
 								par_7='".$otp_old_pass."',
-								par_8='".$otp_new_pass."', 
+								par_8='".$otp_new_hash."',
+								par_9='".$_REQUEST['txt_field_1']."',
+								par_10='".$_REQUEST['txt_field_2']."',
+								par_11='".$_REQUEST['txt_field_3']."',
+								par_12='".$_REQUEST['txt_field_4']."',
+								par_13='".$_REQUEST['txt_field_5']."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
 		
 		   // Commit
-		   $this->kern->commit();
+		   $this->kern->rollback();
 		   
 		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded");
+		   if ($otp_new_hash=="") 
+		      $this->template->showOk("Your request has been succesfully recorded");
+		   else
+		      $this->showOTPConfirm($otp_new_pass);
 	   }
 	   catch (Exception $ex)
 	   {

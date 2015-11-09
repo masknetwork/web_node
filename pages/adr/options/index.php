@@ -283,6 +283,7 @@
 			   if ($_REQUEST['act']!="reveal") $adr_options->showOptions($_REQUEST['ID']);
 			?>
             
+            
             </td>
             <td width="203" align="center" valign="top">
             <?

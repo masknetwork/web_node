@@ -13,23 +13,6 @@
    $ud=new CSysData($db);
    $trans=new CTransactions($db, $template);
    
-		   if ($_REQUEST['act']=="send_coins") 
-		      $trans->sendCoins($_REQUEST['dd_net_fee'], 
-			                    $_REQUEST['dd_from'], 
-								$_REQUEST['txt_to'], 
-								$_REQUEST['txt_msk'], 
-								"MSK", 
-								$_REQUEST['txt_mes'], 
-								$_REQUEST['txt_escrower']);
-								
-		    if ($_REQUEST['act']=="send_block")
-			{
-			   $db->sendBlock();
-			   $template->showOK("Your request has been successfully recorded"); 
-			}
-			
-           
-  
 ?>
 
 <!doctype html>
@@ -94,7 +77,39 @@
            
             <?
 			   $template->showHelp();
-			   $trans->showTrans("ID_ALL");
+			   
+			   if ($_REQUEST['act']!="send_coins")
+			      $trans->showTrans("ID_ALL");
+			   else
+			   {
+				  if ($_REQUEST['h_net_fee_adr']=="")
+		          
+				  // Simple send  
+				  $trans->sendCoins($_REQUEST['dd_net_fee'], 
+			                        $_REQUEST['dd_from'], 
+								    $_REQUEST['txt_to'], 
+								    $_REQUEST['txt_msk'], 
+								    "MSK", 
+								    $_REQUEST['txt_mes'], 
+								    $_REQUEST['txt_escrower']);
+				 
+				 // OTP ?
+				 if ($_REQUEST['txt_old_pass']!="")
+				 $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
+			                        $_REQUEST['h_from_adr'], 
+								    $_REQUEST['h_to_adr'], 
+								    $_REQUEST['h_amount'], 
+								    "MSK", 
+								    $_REQUEST['h_mes'], 
+								    $_REQUEST['h_escrower'],
+									$_REQUEST['txt_old_pass']);
+			   }
+			   
+			    if ($_REQUEST['act']=="send_block")
+			     {
+			       $db->sendBlock();
+			       $template->showOK("Your request has been successfully recorded"); 
+			      }
 			?>
             
             </td>
