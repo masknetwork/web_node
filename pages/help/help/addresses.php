@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $help=new CHelp($db, $template);
 ?>
 
@@ -86,19 +86,19 @@
                   <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
-                        <td align="left" class="simple_red_16"><strong>Adrese</strong></td>
+                        <td align="left" class="simple_red_16"><strong>Addresses</strong></td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">O adresa este ca un numar de cont bancar anonim in lumea reala. Este un sir de caractere pe care o poti trimite oricui pentru a primii monezi, asset-uri sau mesaje. La fel ca un cont bancar, poti trimite monezi sau mesaje catre o adresa. O adresa arata asa :</td>
+                        <td align="left" class="simple_gri_inchis_12">An address is like a bank account number anonymous in the real world. It is a string of characters that you can send to anyone to receive coins, assets or messages. Like a bank account, you can send messages or coins to an address. An address looks like this:</td>
                       </tr>
                       <tr>
                         <td height="80" align="center" class="simple_gri_12">ME4wEAYHKoZIzj0CAQYFK4EEACEDOgAESw6vT5Oz43xw/6Wa7tt0RrUQ<br>9Bj4c7Qhr/gj5XZmMLp1ALqUG46+VOiLLII7ua5mzfuylwHaoLU=</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">Poti detine un numar nelimitat de adrese. Unei adrese ii poti asocia un nume sau diverse optiuni de securitate (vezi capitolul Optiunile Adreselor).</td>
+                        <td align="left" class="simple_gri_inchis_12">You can own an unlimited number of addresses. To an address you can assign a name or different security options (see chapter Addresses Options).</td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
@@ -108,7 +108,7 @@
                           <tbody>
                             <tr>
                               <td width="16%" align="center"><p><img src="GIF/idea.png" width="75" height="75" alt=""/></p></td>
-                              <td width="84%" valign="middle" class="simple_maro_12">Deoarece o adresa este de fapt o cheie publica ( forma base64 a cheii publice ), poti trimite mesaje sau date criptate pe care doar detinatorul adresei le poate citi chiar daca mesajele traverseaza intreaga retea MaskNetwork.</td>
+                              <td width="84%" valign="middle" class="simple_maro_12">Because an address is actually a public key (public key basic form), you can send messages or encrypted data that only the address owner can read even if the messages cross the entire MaskNetwork network.</td>
                             </tr>
                           </tbody>
                         </table></td>
@@ -117,19 +117,19 @@
                         <td height="50" align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0" align="left" valign="top" class="simple_red_14"><strong>Adresele Mele</strong></td>
+                        <td height="0" align="left" valign="top" class="simple_red_14"><strong>My Addresses</strong></td>
                       </tr>
                       <tr>
                         <td height="25" align="left" background="../../template/template/GIF/lp.png" class="simple_gri_inchis_12">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">Imediat dupa ce creezi un cont folosind portofelul web, vei avea o adresa creeata automat. Pentru a vizualiza lista adreselor pe care le detii, mergi in pagina Adrese ( apasa Adrese in meniul principal din partea de sus a paginii ). </td>
+                        <td align="left" class="simple_gri_inchis_12">Immediately after creating an account using the web wallet, the system will automatically create an address for you. To view the list of addresses that you own, go to page Addresses (click Addresses in the main menu at the top of the page). </td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">In aceasta pagina sunt prezentate adresele si balanta in MSK. In cazul in care o adresa are un nume asociat, vei vedea soar numele adresei. Pentru restul dreselor, doar o parte din sirul de caractere este vizibil. Pentru a vizualiza adresa completa apasa butonul Optiuni din dreptul adresei si selcteaza Codul QR. Va fi afisat un dialog ca cel de mai jos. Poti copia forma completa a adresei sau iti poti folosi telefonul mobil pentru a scana codul QR afisat.</td>
+                        <td align="left" class="simple_gri_inchis_12">In this page the addresses and the balance in MSK are listed. If an address has a name associated with it, you'll see only the name of the address. For the rest of addresses, only part of the string of characters is visible. To view the complete address click the Options button next to the address and select the QR Code. A dialogue like the one below will be displayed. You can copy the complete form of the address or you can use your mobile phone to scan the QR code displayed.</td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
@@ -145,7 +145,7 @@
                           <tbody>
                             <tr>
                               <td width="16%" align="center"><p><img src="GIF/idea.png" width="75" height="75" alt=""/></p></td>
-                              <td width="84%" valign="middle" class="simple_maro_12">Deoarece adresele au minim 64 caractere aleatoare sunt aproape imposibil de retinut sau scris pe o hartie. Din fericire poti inchiria un nume pentru adresa ta, cum ar fi Maria or John. Vei putea sa spui tuturor &quot;trimite-mi 10 MSK la Maria&quot; ceea ce este mult mai comod si eficient.</td>
+                              <td width="84%" valign="middle" class="simple_maro_12">Because the addresses have at least 64 random characters they are almost impossible to remember or write on paper. Fortunately you can rent a name for your address, such as Maria or John. You can tell everyone "send me 10 MSK at Maria" which is more convenient and efficient.</td>
                             </tr>
                           </tbody>
                         </table></td>
@@ -160,13 +160,13 @@
                         <td align="left" background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">Poti obtine o adresa noua in 3 moduri. Poti folosi portofelul pentru a genera o adresa, poti importa o adresa cineva iti poate trimite cheia privata si cheia publica. Cea mai simpla metoda este generarea unei adrese noi. </td>
+                        <td align="left" class="simple_gri_inchis_12">You can get a new address in three ways. You can use the wallet to generate an address, you can import an address, or someone sends you the private key and public key of and address. The easyest way is to generate a new address using the wallet. </td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">Pentru a genera o adresa noua, mergi in pagina adrese (apasa Adrese in bara de meniu principal ). Apasa butonul verde &quot;Adresa Noua&quot; aflat in partea de jos a paginii. Vei vedea urmatorul dialog :</td>
+                        <td align="left" class="simple_gri_inchis_12">To generate a new address, go to page addresses (click Addresses in the main menu bar). Click the green button "New Address" at the bottom of the page. You will see the following dialogue:</td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
@@ -178,19 +178,19 @@
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left"><span class="simple_red_12"><strong>Encryption Type</strong></span> <span class="simple_gri_inchis_12">- Recomandam sa lasi aceasta optiune nechimbata. Cu cat tipul criptarii este mai avansat, cu atat mai lunga este adresa generata. 224 biti sunt mai mult decat suficienti pentru a-ti proteja fondurile.</span></td>
+                        <td align="left"><span class="simple_red_12"><strong>Encryption Type</strong></span> <span class="simple_gri_inchis_12">- Encryption Type - We recommend you to leave this option unchangeable. The more advanced the encryption type is, the longer the generated address. 224 bits are more than sufficient to protect your funds.</span></td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left"><span class="simple_red_12"><strong>Address Tag</strong></span> <span class="simple_gri_inchis_12">- Poti atasa o scurta descriere adresei. A nu se confunda cu inchirierea unui nume. Descrierea atasata aici nu este visibila decat in cadrul contului tau.</span> </td>
+                        <td align="left"><span class="simple_red_12"><strong>Address Tag</strong></span> <span class="simple_gri_inchis_12">- You can attach a brief description of the address. Not to be confused with the rental of a name. The accompanying description is visible only within your account.</span> </td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">Apasa butonul Trimite si vei avea o adresa nou-nouta pe care o poti trimite prietenilor / clientilor. Poti detine un numar nelimitat adrese.</td>
+                        <td align="left" class="simple_gri_inchis_12">Click the Send button and you will have a brand new address that you can send to your friends / customers. You can hold an unlimited number of addresses.</td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
@@ -200,7 +200,7 @@
                           <tbody>
                             <tr>
                               <td width="16%" align="center" valign="top"><p><img src="GIF/idea.png" width="75" height="75" alt=""/></p></td>
-                              <td width="84%" valign="middle" class="simple_maro_12">MaskNetwork foloseste Elliptic Curve Cryptography pentru a cripta date si tranzactii. Encryption Type reprezinta o submetoda de criptare si cu cat este mai mare ca numar de biti, cu atat este mai greu <strong>teoretic</strong>, pentru un atacator sa aprga un text criptat. Spunem <strong>teoretic</strong>, pentru ca daca aduni toate calculatoarele din lume si le pui sa sparga prin forta bruta, un text criptat cu cea mai slaba metoda (224 biti), vor avea nevoie de putin peste <strong>1000 de ani</strong>.</td>
+                              <td width="84%" valign="middle" class="simple_maro_12">MaskNetwork uses Elliptic Curve Cryptography to encrypt data and transactions. Encryption Type is a the method of encryption and the higher the number of bits is, the harder is theoretically for an  attacker to break an encrypted text. We say theoretically because if you add up all the computers in the world and put them to break through brute force an encrypted text with the weakest method (224-bit), they will need a little over 1000 years.</td>
                             </tr>
                           </tbody>
                         </table></td>
@@ -209,13 +209,13 @@
                         <td height="50" align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_red_14"><strong>Importul unei adrese</strong></td>
+                        <td align="left" class="simple_red_14"><strong>Importing and address</strong></td>
                       </tr>
                       <tr>
                         <td align="left" background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">O alta metoda de a obtine o adresa noua este sa o &quot;importi&quot;. Pentru asta vei avea nevoie de cheia publica si cheia privata a unei adrese. Daca detii perechea, mergi in pagina Adrese (apasa Adrese in bara principala de meniu) si apasa butonul galben Importa adresa din partea de jos a paginii. Vei vedea urmatorul dialog </td>
+                        <td align="left" class="simple_gri_inchis_12">Another way to get a new address is to 'import' it. For this you will need the public key and private key of an address. If you own the pair, go to Addresses page (click Addresses in the main menu bar) and click the yellow button Import address from the bottom of the page. You will see the following dialogue </td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
@@ -227,25 +227,25 @@
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left"><span class="simple_red_12"><strong>Public Key </strong></span> <span class="simple_gri_inchis_12">- Cheia publica a adresei</span></td>
+                        <td align="left"><span class="simple_red_12"><strong>Public Key </strong></span> <span class="simple_gri_inchis_12">- The public key of address</span></td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left"><span class="simple_red_12"><strong>Private Key</strong></span> <span class="simple_gri_inchis_12">- Cheia privata a adresei</span></td>
+                        <td align="left"><span class="simple_red_12"><strong>Private Key</strong></span> <span class="simple_gri_inchis_12">- The private key of address</span></td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left"><span class="simple_red_12"><strong>Address Tag</strong></span> <span class="simple_gri_inchis_12">- Poti atasa o scurta descriere adresei. A nu se confunda cu inchirierea unui nume. Descrierea atasata aici nu este visibila decat in cadrul contului tau.</span></td>
+                        <td align="left"><span class="simple_red_12"><strong>Address Tag</strong></span> <span class="simple_gri_inchis_12">- You can attach a brief description of the address. Not to be confused with the rental of a name. The accompanying description is visible only within your account.</span></td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td align="left" class="simple_gri_inchis_12">Apasa butonul Send. Daca perechea cheie publica / cheie privata este valida, adresa va fi importata si o vei putea folosi imediat.</td>
+                        <td align="left" class="simple_gri_inchis_12">Click the Send button. If the public key / private key pair is valid, the address will be imported and you can use it immediately.</td>
                       </tr>
                       <tr>
                         <td align="left">&nbsp;</td>

@@ -10,7 +10,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $ads=new CAds($db, $template);
 ?>
 
@@ -73,7 +73,7 @@
            
            
             <?
-			   $template->showHelp("Mai jos sunt listate reclamele tale. Reclamele sunt afisate in functie de pretul licitat. Doar primele 10 mesaje de publicitate sunt afisate. Pretul licitat este pentru o ora de afisare. Poti mari oricand pretul licitat pentru o reclama dar nu il poti micsora. Deasemenea nu poti opri o reclama din moment ce a fost platita si se afiseaza. Reclamele sunt afisate in toata reteaua MAskNetwork inclusiv in clientul descktop.");
+			   $template->showHelp("Listed below are your advertisements. The ads are displayed based on the bid price. Only the top 10 advertising messages are displayed. The bid price is for one hour of display. You can increase the bid price for an advertisement but you cannot lower it. Also you cannot stop an advertisement since it has been paid and displayed. Ads are displayed in the entire MAskNetwork network including desktop nodes.");
 			   
 			  if ($_REQUEST['act']=="renew")
 			     $ads->increaseBid($_REQUEST['dd_fee_adr'], 

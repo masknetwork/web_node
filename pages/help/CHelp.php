@@ -149,6 +149,11 @@ class CHelp
                   <tr>
                     <td height="40" align="left">
                     
+                    <?
+					   if (1!=1)
+					   {
+					?>
+                    
                      <a href="assets.php">
                     <table width="200" border="0" cellspacing="0" cellpadding="0">
                       <tbody>
@@ -216,6 +221,10 @@ class CHelp
                       </tbody>
                     </table>
                     </a>
+                    
+                    <?
+					   }
+					?>
                     
                     </td>
                   </tr>

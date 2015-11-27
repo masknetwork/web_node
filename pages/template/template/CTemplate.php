@@ -79,11 +79,11 @@ class CTemplate
         
             <table width="75%" border="0" cellspacing="2" cellpadding="5" tab="tab_net_fee">
                   <tr>
-                    <td height="30" align="center" bgcolor="#fff6d7" class="simple_maro_12">MSK Live Price</td>
+                    <td height="30" align="center" bgcolor="#d6f9e0" class="simple_green_12">MSK Live Price</td>
                   </tr>
                   <tr>
-                    <td height="50" align="center" bgcolor="#fffbee">
-                    <span class="simple_red_22" id="txt_code" name="txt_code"><? print "$".$_REQUEST['sd']['msk_price']; ?></span></td>
+                    <td height="50" align="center" bgcolor="#e6ffed">
+                    <span class="simple_green_22" id="txt_code" name="txt_code"><? print "$".$_REQUEST['sd']['msk_price']; ?></span></td>
                   </tr>
             </table>
         
@@ -154,7 +154,7 @@ class CTemplate
                <td align="center"><img src="../../template/template/GIF/wallet.jpg" /></td>
              </tr>
              <tr>
-               <td align="center"><? $this->showNetFeePanel(); ?></td>
+               <td align="center"><? $this->showNetFeePanel("0.0001", "trans"); ?></td>
              </tr>
              <tr>
                <td align="center">&nbsp;</td>
@@ -213,13 +213,13 @@ class CTemplate
                  <tr>
                    <td ><div class="input-group">
                      <div class="input-group-addon">MSK</div>
-                     <input type="text" class="form-control" id="txt_msk" name="txt_msk"  style="width:80px" placeholder="0" onfocus="this.placeholder=''" />
+                     <input type="number" class="form-control" id="txt_msk" name="txt_msk"  style="width:80px" placeholder="0" onKeyUp="var  usd=$(this).val()*<? print $_REQUEST['sd']['msk_price']; ?>; var fee=$(this).val()/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; usd=Math.round(usd*100)/100; $('#trans_net_fee_panel_val').text(fee); $('#txt_usd').val(usd)"/>
                      </div>
                    </td>
                    <td width="10px">&nbsp;</td>
                    <td><div class="input-group">
                      <div class="input-group-addon">USD</div>
-                     <input type="text" class="form-control" id="txt_usd" name="txt_usd"  style="width:80px" placeholder="0" onfocus="this.placeholder=''" />
+                     <input type="number" class="form-control" id="txt_usd" name="txt_usd"  style="width:80px" placeholder="0" onKeyUp="var  msk=$('#txt_usd').val()/<? print $_REQUEST['sd']['msk_price']; ?>; var fee=msk/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; $('#trans_net_fee_panel_val').text(fee); $('#txt_msk').val(msk);"/>
                    </div></td>
                   
                  </tr>
@@ -251,13 +251,18 @@ class CTemplate
            </table></td>
          </tr>
      </table>
+     
+    
        
         <?
 		$this->showModalFooter();
+		
 	}
 	
 	function showBalancePanel()
 	{
+		if (!isset($_SESSION['userID'])) return false;
+		
 		// Send modal
 		$this->showSendModal();
 		
@@ -278,7 +283,11 @@ class CTemplate
                               <span class="inset_red_24"><? print $v[0]; ?></span><span class="inset_red_18"><? print ".".$v[1]; ?></span></td>
                             </tr>
                             <tr>
-                              <td colspan="2" align="center" valign="top" class="inset_maro_11">$64.32</td>
+                              <td colspan="2" align="center" valign="top" class="inset_maro_11">
+							  <?
+							     print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['msk_price'], 2);  
+							  ?>
+                              </td>
                               </tr>
                           </tbody>
                         </table>
@@ -327,22 +336,62 @@ class CTemplate
 	
 	function showTopMenu($sel=1)
 	{
+		if ($_REQUEST['ud']['ID']>0)
+		  $this->showLoggedTopMenu($sel);
+		else
+		  $this->showGuestTopMenu($sel);
+	}
+	
+	function showLoggedTopMenu($sel=1)
+	{
 		?>
         
             <table width="1000" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td width="201" height="40" align="left" valign="bottom" class="inset_red_22" style="cursor:pointer" onClick="window.location='../../../index.php'">MaskWallet.com</td>
-                  <td width="142" align="center" valign="bottom" class="<? if ($sel==1) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../transactions/all/index.php'">Transactions</td>
-                  <td width="109" align="center" valign="bottom" class="<? if ($sel==2) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../adr/adr/index.php'">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) print "(".$_REQUEST['ud']['pending_adr'].")"; ?></td>
-                  <td width="109" align="center" valign="bottom" class="<? if ($sel==3) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../mes/inbox/index.php'">Messages <span class="<? if ($sel==2) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer">
+                  <td width="112" height="40" align="center" valign="middle" class="<? if ($sel==1) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../transactions/all/index.php'">Transactions</td>
+                  <td width="11" align="center" valign="bottom">
+                  <img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/>
+                  </td>
+                  <td width="122" align="center" valign="middle" class="<? if ($sel==2) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../adr/adr/index.php'">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) print "(".$_REQUEST['ud']['pending_adr'].")"; ?></td>
+                  <td width="13" align="center" valign="middle" class="<? if ($sel==3) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../mes/inbox/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="123" align="center" valign="middle" class="<? if ($sel==3) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../mes/inbox/index.php'">Messages <span class="<? if ($sel==2) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer">
                     <? if ($_REQUEST['ud']['unread_mes']>0) print "(".$_REQUEST['ud']['unread_mes'].")"; ?>
                   </span></td>
-                  <td width="100" align="center" valign="bottom" class="<? if ($sel==4) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../assets/assets/index.php'">Assets</td>
-                  <td width="100" align="center" valign="bottom" class="<? if ($sel==5) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../feeds/feeds/index.php'">Feeds</td>
-                  <td width="100" align="center" valign="bottom" class="<? if ($sel==6) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../markets/goods/index.php'">Markets</td>
-                  <td width="100" align="center" valign="bottom" class="<? if ($sel==7) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../explorer/packets/index.php'">Explorer</td>
-                  <td width="100" align="center" valign="bottom" class="<? if ($sel==8) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../help/help/index.php'">Help</td>
+                  <td width="13" align="center" valign="middle" class="<? if ($sel==4) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../assets/assets/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="102" align="center" valign="middle" class="<? if ($sel==4) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../assets/assets/index.php'">Assets</td>
+                  <td width="22" align="center" valign="middle" class="<? if ($sel==5) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../feeds/feeds/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="95" align="center" valign="middle" class="<? if ($sel==5) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../feeds/feeds/index.php'">Feeds</td>
+                  <td width="14" align="center" valign="middle" class="<? if ($sel==6) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../markets/goods/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="114" align="center" valign="middle" class="<? if ($sel==6) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../markets/goods/index.php'">Markets</td>
+                  <td width="16" align="center" valign="middle" class="<? if ($sel==7) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../explorer/packets/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="114" align="center" valign="middle" class="<? if ($sel==7) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../explorer/packets/index.php'">Explorer</td>
+                  <td width="10" align="center" valign="middle" class="<? if ($sel==8) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../help/help/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="119" align="center" valign="middle" class="<? if ($sel==8) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../help/help/index.php'">Help</td>
+                  </tr>
+                </tbody>
+            </table>
+        
+        <?
+	}
+	
+	function showGuestTopMenu($sel=1)
+	{
+		?>
+        
+            <table width="1000" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td width="112" height="40" align="center" valign="middle">
+                  <a href="../../account/login/index.php" class="btn btn-success" style="width:100px">Login</a>
+                  </td>
+                  
+                  <td width="110" align="center" valign="middle">
+                  <a href="../../account/signup/index.php" class="btn btn-warning" style="width:100px">Signup</a></span></td>
+                  <td width="574" align="center" valign="middle" class="<? if ($sel==7) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../explorer/packets/index.php'">&nbsp;</td>
+                  <td width="98" align="center" valign="middle" class="<? if ($sel==7) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../explorer/packets/index.php'">Explorer</td>
+                  <td width="10" align="center" valign="middle" class="<? if ($sel==8) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../help/help/index.php'"><img src="../../template/template/GIF/top_menu_sep.png" width="10" height="60"/></td>
+                  <td width="96" align="center" valign="middle" class="<? if ($sel==8) print "bold_shadow_white_14"; else print "shadow_red_14"; ?>" style="cursor:pointer" onClick="window.location='../../help/help/index.php'">Help</td>
                   </tr>
                 </tbody>
             </table>
@@ -394,23 +443,48 @@ class CTemplate
                     <td align="left" class="inset_maro_16"><strong>Advertising</strong></td>
                   </tr>
                   <tr>
-                    <td align="left" background="../../template/template/GIF/lc.png">&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td align="left"><a href="#" class="maro_14"><strong>Advertising</strong></a><br><span class="inset_maro_12">Advertising message... Advertising message... Advertising message...</span> </td>
-                  </tr>
-                  <tr>
                     <td align="left" background="../../template/template/GIF/lp.png">&nbsp;</td>
                   </tr>
+                    
+                    <?
+					  $query="SELECT * FROM ads ORDER BY mkt_bid DESC LIMIT 0,10";
+					  $result=$this->kern->execute($query);	
+	                  
+					  while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					  {
+                    ?>
+                    
+                         <tr>
+                         <td align="left">
+                         <a href="#" class="maro_14"><strong><? print base64_decode($row['title']); ?></strong></a>
+                         <br><span class="inset_maro_12"><? print base64_decode($row['message']); ?></span> 
+                         </td></tr><tr>
+                         <td align="left" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                         </tr>
+                    
+                    <?
+					  }
+					?>
+                    
               </table>
               
               <table width="170" border="0" cellspacing="0" cellpadding="0">
                 <tbody>
                   
-                  <tr>
+                  <?
+				     if (isset($_SESSION['userID']))
+					 {
+				  ?>
+                  
+                    <tr>
                     <td><a href="javascript:void(0)" class="btn btn-warning" onClick="$('#modal_ads').modal()">Advertise Here</a></td>
                     <td><a href="../../ads/ads/index.php" class="btn btn-danger"><span class="glyphicon glyphicon-cog"></span></a></td>
-                  </tr>
+                    </tr>
+                  
+                  <?
+	                  }
+				  ?>
+                  
                   <tr>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -777,15 +851,7 @@ class CTemplate
 		return false;
 	}
 	
-	function privKeyValid($key)
-	{
-		return true;
-	}
-	
-	function isLink($link)
-	{
-		return true;
-	}
+
 	
 	function showIncreaseBidModal($init_panel_val="0.0365", $init_val=365)
 	{
@@ -847,7 +913,7 @@ class CTemplate
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->showNetFeePanel(0.0365); ?></td>
+                <td align="center"><? $this->showNetFeePanel(0.0365, "renew"); ?></td>
               </tr>
             </table></td>
             <td width="438" align="center" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
@@ -864,7 +930,8 @@ class CTemplate
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Days</strong></td>
               </tr>
               <tr>
-                <td align="left"><input class="form-control" id="txt_name4" name="txt_name4" placeholder="Days" style="width:100px" value="365"/></td>
+                <td align="left">
+                <input class="form-control" id="txt_ren_days" name="txt_ren_days" placeholder="Days" style="width:100px" value="365"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -892,7 +959,7 @@ class CTemplate
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->showNetFeePanel(); ?></td>
+                <td align="center"><? $this->showNetFeePanel(0.0365, "ads"); ?></td>
               </tr>
               <tr>
                 <td align="center">&nbsp;</td>
@@ -906,7 +973,7 @@ class CTemplate
                 <td align="left" height="30px" class="simple_blue_14" valign="top"><strong>Network Fee Address</strong></td>
               </tr>
               <tr>
-                <td align="left"><? $this->showMyAdrDD("dd_fee_adr", 340); ?></td>
+                <td align="left"><? $this->showMyAdrDD("dd_ads_fee_adr", 340); ?></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -915,7 +982,7 @@ class CTemplate
                 <td align="left" valign="top" height="30px"><strong class="simple_blue_14">Title</strong>&nbsp;&nbsp;<span class="simple_gri_10">(5-35 characters)</span></td>
               </tr>
               <tr>
-                <td align="left"><input id="txt_title" name="txt_title" class="form-control" placeholder="Title (5-30 characters)"/></td>
+                <td align="left"><input id="txt_ads_title" name="txt_ads_title" class="form-control" placeholder="Title (5-30 characters)"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -940,7 +1007,7 @@ class CTemplate
                 <td align="left" class="simple_blue_14" valign="top" height="30px"><strong>Link</strong></td>
               </tr>
               <tr>
-                <td align="left"><input id="txt_link" name="txt_link" class="form-control" placeholder="Link"/></td>
+                <td align="left"><input id="txt_ads_link" name="txt_ads_link" class="form-control" placeholder="Link"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -962,8 +1029,10 @@ class CTemplate
                     <td width="33%" align="left">&nbsp;</td>
                   </tr>
                   <tr>
-                    <td><input id="txt_hours" name="txt_hours" class="form-control" placeholder="Hours" style="width:80px" val="24"/></td>
-                    <td><input id="txt_bid" name="txt_bid" class="form-control" placeholder="Bid" style="width:80px" val="0.0001"/></td>
+                    <td>
+                    <input id="txt_ads_hours" name="txt_ads_hours" class="form-control" style="width:100px" value="24" type="number" min="1" step="1" /></td>
+                    <td>
+                    <input id="txt_ads_bid" name="txt_ads_bid" class="form-control" style="width:100px" value="0.0001" type="number" min="1" step="1" /></td>
                     <td>&nbsp;</td>
                   </tr>
                 </table></td>
@@ -996,7 +1065,7 @@ class CTemplate
 			   $('#td_chars').text(length+" characters");
 			});
 		
-		
+		  linkToNetFeeBid("txt_ads_hours", "ads_net_fee_panel_val", "txt_ads_bid", 0.0024);
 		  </script>
 		
         

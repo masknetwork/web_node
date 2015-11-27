@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $trans=new CTransactions($db, $template);
    $esc=new CEscrowed($db, $template);
 ?>
@@ -77,7 +77,14 @@
            
            
             <?
-			   $template->showHelp();
+			   $template->showHelp("Below the last escrow transactions are displayed. Blocked funds in escrow transactions can be released by escrower or can be returned to the sender by escrower or recipient. Escrow transactions that are not signed in maximum 50,000 blocks from initiation are deleted and the funds are returned to the sender.");
+			   
+			   // Sign
+			   if ($_REQUEST['esc_act']!="") 
+			    $esc->signTransaction($_REQUEST['esc_fee_adr'], 
+				                      $_REQUEST['transID'], 
+									  $_REQUEST['esc_act']);
+									  
 			   $esc->showEscrowed();
 			   $esc->showSignModal();
 			?>

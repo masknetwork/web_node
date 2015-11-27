@@ -10,7 +10,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $mes=new CMes($db, $template);
 ?>
 
@@ -75,7 +75,7 @@
            
            
             <?
-			   $template->showHelp("Mai jos sunt listate mesajele tale. Poti trimite un mesaj catre orice adresa. Chiar daca traverseaza toata reteaua nimeni nu poate vedea continutul mesajului. Toate mesajele sunt criptate si doar destinatarul poate decripta continutul. Mesajele sunt limitate la o lungime de 512 caractere. Nu sunt permise atasamente.");
+			   $template->showHelp("Below we listed the names of addresses on sale. To put on sale a name, go to page Addresses Name. When you buy a name you must specify what address will be associated to. You can attach an unlimited number of names to a unique address.");
 			   
 			   if ($_REQUEST['act']=="send")
 			      $mes->sendMes($_REQUEST['fee_adr'], 

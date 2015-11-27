@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $mkts=new CMarkets($db, $template);
   
 ?>
@@ -71,25 +71,17 @@
               </tbody>
             </table>
             <?
-			   $mkts->showLeftMenu(1);
+			   //$mkts->showLeftMenu(1);
 			?>
             </td>
-            <td width="610" height="1000" align="center" valign="top"><?
-			   $template->showHelp();
-			   //$template->showErr("This section will be launched on December, 20, 2015", 550);
+            <td width="610" height="1000" align="center" valign="top">
+			
+			<?
+			   //$template->showHelp();
+			   $template->showErr("This section will be launched on Mars, 20, 2015", 550);
 			?>
             
-              <table width="95%" border="0" cellspacing="0" cellpadding="0">
-                <tbody>
-                  <tr>
-                    <td width="59%">&nbsp;</td>
-                    <td width="20%" align="right">
-                    <a href="new_item.php" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
-                    <td width="21%" align="right">
-                    <a href="my_offerts.php" class="btn btn-warning"><span class="glyphicon glyphicon-th-list"></span>&nbsp;My Offerts </a></td>
-                  </tr>
-                </tbody>
-              </table></td>
+              </td>
             <td width="203" align="center" valign="top">
             <?
 			   $template->showRightPanel();

@@ -104,6 +104,13 @@ class CRestrict
 			 return false;
 		}
 		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			return false;
+		}
+		
 		// Days
 		if ($days<1)
 		{
@@ -116,6 +123,13 @@ class CRestrict
 		{
 			 $this->template->showErr("Insufficient funds", 550);
 			 return false;
+		}
+		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
 		}
 		
 		try
@@ -177,7 +191,7 @@ class CRestrict
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "froze"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "restrict"); ?></td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -240,11 +254,17 @@ class CRestrict
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Days</strong></td>
               </tr>
               <tr>
-                <td align="left"><input class="form-control" name="txt_restrict_days" id="txt_restrict_days" style="width:80px"/></td>
+                <td align="left">
+                <input class="form-control" name="txt_restrict_days" id="txt_restrict_days" style="width:100px" type="number" min="1" step="1" value="365"/>
+                </td>
               </tr>
             </table></td>
           </tr>
         </table>
+        
+        <script>
+		linkToNetFee("txt_restrict_days", "restrict_net_fee_panel_val", 0.0365);
+		</script>
         
         <?
 		$this->template->showModalFooter("Cance", "Activate");

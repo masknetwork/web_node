@@ -6,15 +6,16 @@
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
    include "../CExplorer.php";
-  
+   include "CBlocks.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $explorer=new CExplorer($db, $template);
-   
+   $blocks=new CBlocks($db, $template);
 ?>
+
 <!doctype html>
 <html>
 <head>
@@ -78,9 +79,12 @@
            
            
             <?
-			   $template->showHelp();
+			   $template->showHelp("The packages contain instructions that are executed by each node separately. For any operation you perform in the network, a new data package is created. The blocks represent a collection of the latest packages distributed through the network. Below the last blocks received are displayed. A block can contain up to 250 packages and has the maximum size of 250kb.");
 			   
+			   $blocks->showBlocks();
 			?>
+            
+           
             
             </td>
             <td width="203" align="center" valign="top">

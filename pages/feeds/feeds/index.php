@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $feeds=new CFeeds($db, $template);
    $browser=new CBrowseFeeds($db, $template);
 ?>
@@ -68,16 +68,16 @@
               </tbody>
             </table>
             <?
-			   $feeds->showLeftMenu(1);
+			  // $feeds->showLeftMenu(1);
 			?>
             </td>
             <td width="610" height="1000" align="center" valign="top">
            
            
             <?
-			   $template->showHelp();
-			   $browser->showFeeds();
-			   //$template->showErr("This section will be launched on December, 10, 2015", 550);
+			   //$template->showHelp();
+			   //$browser->showFeeds();
+			   $template->showErr("This section will be launched on February, 10, 2015", 550);
 			?>
             
             

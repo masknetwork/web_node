@@ -18,7 +18,7 @@
    $ud=new CUserData($db);
    
    // Sys data
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    
    // Address
    $adr=new CAdr($db, $template);

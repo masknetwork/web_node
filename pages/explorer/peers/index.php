@@ -6,12 +6,14 @@
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
    include "../CExplorer.php";
+   include "CPeers.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $explorer=new CExplorer($db, $template);
+   $peers=new CPeers($db, $template);
 ?>
 
 <!doctype html>
@@ -77,10 +79,13 @@
            
            
             <?
-			   //$template->showHelp();
-			   
+			    if ($_REQUEST['act']=="add_peer") $peers->addPeer($_REQUEST['txt_ip'], $_REQUEST['txt_port']);
+				
+			    $peers->showAddBut();
+			    $peers->showPeers();
+				$peers->addPeerModal();
 			?>
-            
+           
             </td>
             <td width="203" align="center" valign="top">
             <?

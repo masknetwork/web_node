@@ -31,7 +31,7 @@
  		 mysql_select_db($db, $this->con);	
 		 
 		 error_reporting(E_ERROR);
-         //ini_set("display_errors", "1");
+         ini_set("display_errors", "1");
 	}
 	
 	 function new_con($host, $db, $user, $pass)
@@ -100,7 +100,7 @@
 	
 	  function execute($query)
 	  {  
-	     print $query."<br><br>";
+	     //print $query."<br><br>";
 		 $result=mysql_query($query, $this->con); 
 		 return $result;
 	  }
@@ -767,6 +767,15 @@ $('#back').css("cursor", "pointer");
 		else
 		  return false;
 	}
-    	
+	
+	function privKeyValid($key)
+	{
+		return true;
+	}
+	
+	function isLink($link)
+	{
+		return true;
+	}	
 }
 ?>

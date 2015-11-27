@@ -17,7 +17,7 @@
 	    
 		if (mysql_num_rows($result)==0)
 		{
-			$this->template->showErr("Invalid entry data");
+			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
@@ -35,14 +35,14 @@
 		// Signer
 		if ($signer=="")
 		{
-			$this->template->showErr("Invalid entry data");
+			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Type
 		if ($type!="ID_RELEASE" && $type!="ID_RETURN")
 		{
-			$this->template->showErr("Invalid entry data");
+			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
@@ -52,7 +52,7 @@
 		   $this->kern->begin();
 
            // Action
-           $this->kern->newAct("Authorize / rejects an escrowed transaction");
+           $this->kern->newAct("Authorize / rejects an escrowed transaction", 550);
 		
 		    // Insert to stack
 		   $query="INSERT INTO web_ops 
@@ -65,12 +65,12 @@
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
-		
+		   
 		   // Commit
-		   $this->kern->rollback();
+		   $this->kern->commit();
 		   
 		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded");
+		   $this->template->showOk("Your request has been succesfully recorded", 550);
 	   }
 	   catch (Exception $ex)
 	   {
@@ -78,7 +78,7 @@
 		  $this->kern->rollback();
 
 		  // Mesaj
-		  $this->template->showErr("Unexpected error.");
+		  $this->template->showErr("Unexpected error.", 550);
 
 		  return false;
 	   }
@@ -151,9 +151,9 @@
                           <tbody>
                             <tr>
                               
-                              <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#act').val('ID_RELEASE'); $('#signer').val('<? print $row['escrower']; ?>')" class="btn btn-success btn-sm" title="Release Funds to Seller" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-ok"></span></a></td>
+                              <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-success btn-sm" title="Release Funds to Seller" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-ok"></span></a></td>
                               
-                              <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#act').val('ID_RETURN'); $('#signer').val('<? print $row['escrower']; ?>')" class="btn btn-danger btn-sm" title="Return Funds to Buyer" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove"></span></a></td>
+                              <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RETURN'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-danger btn-sm" title="Return Funds to Buyer" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove"></span></a></td>
                               
                             </tr>
                           </tbody>
@@ -162,10 +162,10 @@
                         <?
 							  }
 							  else  if ($this->kern->isMine($row['sender_adr'])==true)
-							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#act').val('ID_RELEASE'); $('#signer').val('".$row['sender_adr']."')\" class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
+							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('".$row['ID']."')\" class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
 							  
 							  else  if ($this->kern->isMine($row['rec_adr'])==true)
-							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#act').val('ID_RETURN'); $('#signer').val('".$row['rec_adr']."')\" class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
+							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#esc_act').val('ID_RETURN'); $('#transID').val('".$row['ID']."')\" class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
 						?>
                         
                         </td></tr><tr>
@@ -195,7 +195,7 @@
 	
 	function showSignModal()
 	{
-		$this->template->showModalHeader("sign_modal", "Sign Escrowed Transaction", "act", "", "signer", "");
+		$this->template->showModalHeader("sign_modal", "Sign Escrowed Transaction", "esc_act", "", "transID", "");
 		?>
         
           <table width="550" border="0" cellspacing="0" cellpadding="0">
@@ -217,7 +217,7 @@
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
               </tr>
               <tr>
-                <td align="left" valign="top" class="simple_blue_14"><? $this->template->showMyAdrDD("fee_adr"); ?></td>
+                <td align="left" valign="top" class="simple_blue_14"><? $this->template->showMyAdrDD("esc_fee_adr"); ?></td>
               </tr>
               <tr>
                 <td align="left" valign="top" class="simple_blue_14">&nbsp;</td>

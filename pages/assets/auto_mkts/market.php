@@ -12,7 +12,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $assets=new CAssets($db, $template);
    $auto_mkts=new CAutoMkts($db, $template);
    $auto_mkt=new CAutoMkt($db, $template);

@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $adr=new CAdr($db, $template);
    $domains=new CDomains($db, $template); 
 ?>
@@ -79,14 +79,13 @@
            
            
             <?
-			   $template->showHelp("Mai jos sunt listate numele de adrese detinute de tine. Un nume de adresa este ca un nume de domeniu si usureaza trimiterea de fonduri sau mesaje. Numele de adrese pot fi inchiriate pentru 0.0001 MSK / zi. Pot fi deasemenea transferate, sau vandute pe piata interna a retelei.");
+			   $template->showHelp("Below the names of addresses owned by you are listed. A name of an address is like a domain name and facilitates the sending of funds or messages. The name of addresses can be rented for 0.0001 MSK / day. They can also be transferred, or sold on the domestic network market.");
 			   
 			   // Modals
 			   $domains->showBuyDomainModal();
 			   $domains->showNewDomainModal();
 			   $domains->showRenewModal();
 			   $domains->showSetPriceModal();
-			   $domains->showUpdatePriceModal();
 			   $domains->showTransferModal();
 			   
 			    switch ($_REQUEST['act'])

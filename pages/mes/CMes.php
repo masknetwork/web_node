@@ -483,7 +483,7 @@ class CMes
 				                    FROM my_adr 
 								   WHERE userID='".$_REQUEST['ud']['ID']."')
 				AND tgt='".$target."'
-			  ORDER BY ID DESC LIMIT 0,25"; 
+			  ORDER BY ID DESC LIMIT 0,25";
 		 $result=$this->kern->execute($query);	
 	  
 		?>

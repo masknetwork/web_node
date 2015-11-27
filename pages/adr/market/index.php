@@ -6,14 +6,16 @@
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
    include "../CAdr.php";
+   include "CMarket.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $adr=new CAdr($db, $template);
- 
+   $market=new CMarket($db, $template);
 ?>
+
 <!doctype html>
 <html>
 <head>
@@ -77,8 +79,19 @@
            
            
             <?
-			   $template->showHelp();
-			  
+			   $template->showHelp("Below we listed the names of addresses on sale. To put on sale a name, go to page Addresses Name. When you buy a name you must specify what address will be associated to. You can attach an unlimited number of names to a unique address.");
+			   
+			   switch ($_REQUEST['act'])
+			   {
+				 case "buy_domain" :  $market->buyDomain($_REQUEST['dd_net_fee_adr'], 
+			                                             $_REQUEST['dd_pay_adr'], 
+													     $_REQUEST['dd_adr'], 
+													     $_REQUEST['buy_adr']);
+			                          break;
+			   }
+			   
+			   $market->showMarket();
+			   $market->showBuyDomainModal();
 			?>
             
             </td>

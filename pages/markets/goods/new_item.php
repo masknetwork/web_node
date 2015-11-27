@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $mkts=new CMarkets($db, $template);
    $market=new CMarket($db, $acc, $template);
 ?>

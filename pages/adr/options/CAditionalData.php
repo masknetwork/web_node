@@ -175,6 +175,20 @@ class CAditionalData
 			 return false;
 		}
 		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			return false;
+		}
+		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
+		}
+		
 		try
 	    {
 		   // Begin
@@ -245,7 +259,7 @@ class CAditionalData
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "froze"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "aditional"); ?></td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -343,7 +357,7 @@ class CAditionalData
               </tr>
               <tr>
                 <td height="30" align="left" valign="top" class="simple_blue_14">
-                <input class="form-control" name="txt_req_days" id="txt_req_days" style="width:60px" placeholder="5"/></td>
+                <input class="form-control" name="txt_req_days" id="txt_req_days" style="width:100px" value="365" type="number" min="1" step="1"/></td>
               </tr>
               <tr>
                 <td height="30" align="left" valign="top" class="simple_blue_14">&nbsp;</td>
@@ -382,6 +396,9 @@ class CAditionalData
 			  if ($('#txt_field_6_name').val()!="") 
 			      $('#txt_field_6_name').val(btoa($('#txt_field_6_name').val())); 
 		   });
+		   
+		linkToNetFee("txt_req_days", "aditional_net_fee_panel_val", 0.0365);
+		
 		</script>
         
         <?

@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $help=new CHelp($db, $template);
 ?>
 
@@ -92,79 +92,79 @@
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Efectuarea de tranzactii cu MaskCoin este cea mai frecventa operatie facuta de utilizatori. Poti trimite monezi catre orice alta adresa. Tranzactiile pot fi insotite de un mesaj si poti deasemnea trimite escrowed transactions. Bineinteles ca mesajele care insotesc tranzactiile sunt sunt criptate si doar destinatarul fondurilor le va putea citi.</td>
+                        <td class="simple_gri_inchis_12">Making transactions with MaskCoin is the most common operation performed by users. You can send  coins to any other address. Transactions can be accompanied by a message and you can also often send escrowed transactions. Of course the messages that accompany transactions are encrypted and only the recipient of the funds will be able to read them.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12">Taxa platita pentru o tranzactie este de 0.1% din suma tranzactionata, minim 0.0001 MSK.</span></td>
+                        <td><span class="simple_gri_inchis_12">The fee paid for a transaction is 0.1% of the amount traded, minimum 0.0001 MSK.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12">Absolut toate tranzactiile cu MaskCoin sunt ireversibile si finale. Asta inseamna ca odata ce ai trimis o suma catre o adresa, este imposibil sa-ti ceri banii inapoi. Deoarece nu exista un administrator central, nu te poti adresa nimanui pentru a face o &quot;reclamatie&quot;. Banii trimisi inseamna bani trimisi. Daca iti vrei banii inapoi, singura solutie este sa-i ceri inapoi politicos de la cel care i-a primit doar ca in 9 din 10 cazuri  vei fi probabil refuzat la fel de politicos. Este important sa fii atent cui trimiti bani iar daca nu ai incredere in destinatar, foloseste sistemul escrow integrat.</span></td>
+                        <td><span class="simple_gri_inchis_12">Absolutely all MaskCoin transactions are irreversible and final. This means that once you've sent the amount to an address, it is impossible to ask for money back. Since there is no central administrator, you cannot address anyone to make a "complaint". The money sent is money sent. If you want your money back, the only solution is to ask it politely back from the one who received it, but in 9 of 10 cases you will probably be just politely refused. It is important to be careful to whom you send money and if you do not trust the recipient use the integrated escrow system.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><strong class="simple_red_14">Sistemul escrow integrat</strong></td>
+                        <td id="td_escrow"><strong class="simple_red_14">Integrated escrowed system</strong></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12">Escrowed transactions sunt esentiale intr-o piata anonima asa cum este MaskNetwork, deoarece este foarte usor sa fraudezi alti utilizatori. Un vanzator poate oricand sa ia banii si sa plece cu ei fara a livra nici un produs, ba chiar mai mult poate imediat sa posteze o oferta noua, la fel de frauduloasa ca prima, sub o alta adresa la fel fel de anonima ca prima. </span></td>
+                        <td><span class="simple_gri_inchis_12">Escrowed transactions are essential in an anonymous market as MaskNetwork because it is very easy to defraud other users. A seller can always take the money and leave with it without delivering any product, even more so he/she can immediately post a new offer, as fraudulent as the first under a different address just as anonymous as the first.</span></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">Deasemena un sistem de rating nu ar functiona eficient, pentru ca ar fi foarte usor sa falsifici comentariile pozitive lasate de &quot;clientii multumiti&quot;. Aceste comentarii pot fi postate chiar de vanzator folosind o serie de adrese anonime, fara legatura una cu alta.</span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">Also, a rating system would not function effectively because it would be too easy to fake positive comments left by "satisfied customers". These comments can be posted by the seller using a series of anonymous addresses not related to one another.</span></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">Singura modalitate de a evita fraudele in masa facute de vanzatori anonimi este un sistem de escrow. Cand trimiti o escrowed transaction, banii nu ajung la vanzator. Sunt luati din contul tau si atat.  Intr-un sistem escrow, o alta persoana, considerata de incredere va decide in final daca banii ajung sau nu la vanzator. </span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">The only way to avoid mass fraud made by anonymous sellers is an escrow system. When you send an escrowed transaction, money does not reach the seller. It is taken from your account and that’s it. In an escrow system, another person believed to be reliable will ultimately decide whether or not the money goes to the seller. </span></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0"><p><span class="simple_gri_inchis_12">Cel mai bine ar fi sa analizam un exemplu real. Sa spunem ca Maria doreste sa cumpere carti de la un vanzator, numit BookStore, doar ca nu are incredere ca dupa ce va plati isi va primii cartile, mai ales ca tranzactiile MaskCoin sunt ireversibile si nu ai la cine sa apelezi pentru a-ti primii banii inapoi. Asa ca va folosi o a treia persoana, numita Phil care ofera servicii de escrow. </span></p></td>
+                        <td height="0"><p><span class="simple_gri_inchis_12">The best thing would be to analyze a real example. Let's say Mary wants to buy books from a seller named BookStore, but she does not trust that after she pays she will receive the cards, especially as MaskCoin transactions are irreversible and have no one else to turn to get your money back. So, she uses a third person called Phil who will offer escrow services.</span></p></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="50"><span class="simple_gri_inchis_12">Atunci cand Maria va trimite bani catre BookStore va specifica faptul ca doreste ca tranzactia sa fie asistata de Phil, as ca va furniza adresa lui Phil ca adresa escrow. Banii vor pleca de la Maria din cont dar nu vor ajunge nici la BookStore nici la Phil. In momentul asta toata lumea asteapta ca BookStore sa livreze cartile.</span></td>
+                        <td height="50"><span class="simple_gri_inchis_12">When Maria sends money to BookStore she will specify that they want the transaction to be assisted by Phil, so she will deliver Phil’s address as escrow address. The money will leave from Maria’s account but it shall not reach Bookstore or Phil. Right now everyone expects BookStore to deliver the books.</span></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">Se pot intampla 3 lucruri :</span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">Three things can happen:</span></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">- Maria isi primeste peste 5 zile cartile si aproba singura eliberarea fondurilor catre BookStore</span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">- Maria gets her books after 5 days and approves alone the release of the funds to BookStore</span></td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">- Maria isi primeste peste 5 zile cartile si ii spune lui Phil sa elibereze fondurile.</span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">- Maria gets her books after 5 days and tells Phil to release the funds.</span></td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">- Maria nu isi primeste cartile, dar BookStore spune ca le-a trimis si eventual prezinta dovezi. In acest caz, Phil este cel in masura sa decida cine va primii banii. Phil pate elibera fondurile catre BookStore sau le poate trimite inapoi catre Maria.</span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">- Maria does not get her books, but BookStore says they sent it and possibly present evidence. In this case, Phil is able to decide who will get the money. Phil can release the funds to BookStore or can send it back to Maria.</span></td>
                       </tr>
                       <tr>
                         <td height="0">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="0"><span class="simple_gri_inchis_12">Acest sistem de escrow a fost implementat la nivelul retelei si tot ce are de facut cel care trimite fonduri este sa specifice pe cine doreste in calitate de escrow. Dupa trimiterea fonduriloe, atat destinatarul cat si adresa escrow, vor fi notificate asupra tranzactiei. Absolut orice adresa poate fi desemnata ca adresa escrow, atat timp cat cumparatorul si vanzatorul cad de acord si ambii au incredere in adresa escrow.</span></td>
+                        <td height="0"><span class="simple_gri_inchis_12">This escrow system was implemented at the network level and everything that the one sending the funds has to do is to specify who they want as escrow. After sending the funds, both the recipient and the escrow address will be notified of the transaction. Any address can be designated as Escrow address, as long as the buyer and seller both agree and trust the escrow address.</span></td>
                       </tr>
                       <tr>
                         <td height="30">&nbsp;</td>
@@ -175,7 +175,7 @@
                           <tbody>
                             <tr>
                               <td width="16%" align="center" valign="top"><p><img src="GIF/idea.png" width="75" height="75" alt=""/></p></td>
-                              <td width="84%" valign="middle" class="simple_maro_12">Bineinteles ca &quot;Phil&quot; va dori un comision pentru acest serviciu, asa ca MaskNetwork vine si cu o piata dedicata pentru escrowers. Daca doresti sa intermediezi tranzactii pentru un comision poti posta o oferta pe piata dedicata intermediarilor si pentru orice tranzactie in care esti specificat ca escrower, vei primii automat un comision din suma tranzactionata, indiferent de rezultatul tranzactiei.</td>
+                              <td width="84%" valign="middle" class="simple_maro_12">Of course "Phil" will want a fee for this service, so MaskNetwork comes with a dedicated market for escrowers. If you want to broker transactions for a fee you can post a market offer dedicated to intermediaries and for any transaction in which you are specified as escrower, you will automatically receive a commission from the amount traded, regardless of the outcome of the transaction.</td>
                             </tr>
                           </tbody>
                         </table></td>
@@ -184,13 +184,13 @@
                         <td height="50">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_14"><strong>Initierea unei tranzactii</strong></span></td>
+                        <td><span class="simple_red_14"><strong>Initiating a transaction</strong></span></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Pentru a initia o tranzactie noua, apasa butonul Trimite Monezi, aflat in toate paginile portofelului. Butonul se gaseste in partea stanga, sub balanta contului. Va fi afisat urmatorul dialog :</td>
+                        <td class="simple_gri_inchis_12">To initiate a new transaction, click Submit Coins found in all wallet pages. The button is located on the left , under your account balance. The following dialog will be displayed:</td>
                       </tr>
                       <tr>
                         <td height="30">&nbsp;</td>
@@ -202,43 +202,43 @@
                         <td height="30">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Orice serviciu cum este inchirierea unui nume de adresa sau setarea unor optiuni suplimentare trebuie platit.   In acest camp specifici de unde se vor lua monezile pentru plata acestui serviciu. Inghetarea adresei costa 0.0001 MSK / zi.</span></td>
+                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>From Address</strong></span> <span class="simple_gri_inchis_12">- Adresa din care se vor lua fondurile care urmeaza sa fie transferate. Poate fi acceasi cu adresa din care se va lua comisionul platit catre retea.</span></td>
+                        <td><span class="simple_red_12"><strong>From Address</strong></span> <span class="simple_gri_inchis_12">- the address from which the funds to be transferred will be taken. It can be the same with the address from which the commission paid to the network will be taken.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>To Address</strong></span> <span class="simple_gri_inchis_12">- Adresa care va primii fondurile.</span></td>
+                        <td><span class="simple_red_12"><strong>To Address</strong></span> <span class="simple_gri_inchis_12">- The address which will receive the funds.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Message</strong></span> <span class="simple_gri_inchis_12">- Otpional. Un scurt mesaj pentru destinatar.</span></td>
+                        <td><span class="simple_red_12"><strong>Message</strong></span> <span class="simple_gri_inchis_12">- Optional. A short message for the recipient.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Escrower</strong></span> <span class="simple_gri_inchis_12">- Optional. Adresa escrower care va intermedia tranzactia.</span></td>
+                        <td><span class="simple_red_12"><strong>Escrower</strong></span> <span class="simple_gri_inchis_12">- Optional. The address of the escrower which will mediate the transaction.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12"> Apasa butonul send. Tranzactia va fi trimisa in retea si dupa confirmare (1 minut) fondurile vor ajunge la destinatar.</span></td>
+                        <td><span class="simple_gri_inchis_12"> Click the Send button. The transaction will be sent to the network and after confirmation (1 minute) funds will reach the recipient.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12"> In cazul in care ai spcificat un escrower, fondurile vor fi retrase din adresa ta, iar destinatarul si adresa desemnata ca intermediar vor fi notificate. In acest caz, tranzactia ta va fi deasemenea afisata in sectiunea Escrowed din pagina tranzactiilor. Poti oricand elibera fondurile catre destinatar, apasand butonul Elibereaza din dreptul tranzactiei.</span></td>
+                        <td><span class="simple_gri_inchis_12"> If you specified an escrower, funds will be deducted from your address and the recipient and the address designated as an intermediate will be notified. In this case, your transaction will also be displayed in the Escrowed section from the transactions page. You can always release the funds to the recipient by clicking the button Release next to the transaction.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>

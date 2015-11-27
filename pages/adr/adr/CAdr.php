@@ -7,6 +7,168 @@ class CMyAdr
 		$this->template=$template;
 	}
 	
+	function rejectPending($ID)
+	{
+		// Pending address exist
+		$query="SELECT * 
+		          FROM pending_adr 
+				 WHERE ID='".$ID."'";
+				 
+		$result=$this->kern->execute($query);	
+	    if (mysql_num_rows($result)==0)
+		{
+			$this->template->showErr("Invalid entry data");
+			return false;
+		}
+		
+		// Load data
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
+		// Address
+		$query="SELECT * 
+		          FROM my_adr 
+				 WHERE adr='".$row['share_adr']."' 
+				   AND userID='".$_REQUEST['ud']['ID']."'";
+		$result=$this->kern->execute($query);	
+		if (mysql_num_rows($result)==0)
+		{
+			$this->template->showErr("Invalid entry data");
+			return false;
+		}
+		
+		try
+	    {
+		   // Begin
+		   $this->kern->begin();
+
+           // Action
+           $this->kern->newAct("Rejects a pending address");
+		
+		   // Insert to stack
+		   $query="DELETE FROM pending_adr 
+		                 WHERE ID='".$ID."'"; 
+	       $this->kern->execute($query);
+		   
+		   // Decrease
+		   $query="UPDATE web_users 
+			           SET pending_adr=pending_adr-1 
+					 WHERE ID='".$_REQUEST['ud']['ID']."'";
+			$this->kern->execute($query);	
+			
+		   // Commit
+		   $this->kern->commit();
+
+		   return true;
+	   }
+	   catch (Exception $ex)
+	   {
+	      // Rollback
+		  $this->kern->rollback();
+
+		  // Mesaj
+		  $this->template->showErr("Unexpected error.");
+
+		  return false;
+	   }
+	}
+	
+	function aprovesPending($ID)
+	{
+		// Pending address exist
+		$query="SELECT * 
+		          FROM pending_adr 
+				 WHERE ID='".$ID."'";
+				 
+		$result=$this->kern->execute($query);	
+	    if (mysql_num_rows($result)==0)
+		{
+			$this->template->showErr("Invalid entry data");
+			return false;
+		}
+		
+		// Load data
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
+		// Address already owned by user
+		$query="SELECT * 
+		          FROM my_adr 
+				 WHERE adr='".$row['pub_key']."' 
+				   AND userID='".$_REQUEST['ud']['ID']."'";
+		$result=$this->kern->execute($query);	
+		if (mysql_num_rows($result)>0)
+		{
+			// Remove pending address
+			$query="DELETE FROM pending_adr 
+			              WHERE ID='".$ID."'";
+			$this->kern->execute($query);	
+			
+			// Decrease pending adr
+			$query="UPDATE web_users 
+			           SET pending_adr=pending_adr-1 
+					 WHERE ID='".$_REQUEST['ud']['ID']."'";
+			$this->kern->execute($query);	
+			
+			$this->template->showErr("You already own this address");
+			return false;
+		}
+		
+		
+		try
+	    {
+		   // Begin
+		   $this->kern->begin();
+
+           // Action
+           $this->kern->newAct("Aproves a pending address");
+		
+		   // Not in local wallet ?
+		   $query="SELECT * 
+		            FROM my_adr 
+				   WHERE adr='".$row['pub_key']."'";
+	 	   $result=$this->kern->execute($query);	
+		   
+		   if (mysql_num_rows($result)==0)
+		   {
+			    // Insert to stack
+		        $query="INSERT INTO web_ops 
+			                    SET user='".$_REQUEST['ud']['user']."', 
+							        op='ID_IMPORT_ADR', 
+								    par_1='".$row['pub_key']."', 
+								    par_2='".$row['priv_key']."', 
+								    par_3='', 
+								    status='ID_PENDING', 
+								    tstamp='".time()."'"; 
+	            $this->kern->execute($query);
+		   }
+		   
+		   // Remove pending address
+		   $query="DELETE FROM pending_adr 
+			                WHERE ID='".$ID."'";
+		   $this->kern->execute($query);	
+		   
+		   // Decrease pending adr
+		   $query="UPDATE web_users 
+			           SET pending_adr=pending_adr-1 
+					 WHERE ID='".$_REQUEST['ud']['ID']."'";
+		   $this->kern->execute($query);	
+			
+		   // Commit
+		   $this->kern->commit();
+
+		   return true;
+	   }
+	   catch (Exception $ex)
+	   {
+	      // Rollback
+		  $this->kern->rollback();
+
+		  // Mesaj
+		  $this->template->showErr("Unexpected error.");
+
+		  return false;
+	   }
+	}
+	
 	function newAdr($curve, $tag)
 	{		
 		// Check strength
@@ -67,21 +229,21 @@ class CMyAdr
 	function importAdr($pub_key, $private_key, $tag)
 	{
 		// Check public key
-		if ($this->template->adrValid($pub_key)==false)
+		if ($this->kern->adrValid($pub_key)==false)
 		{
 			$this->template->showErr("Invalid public key");
 			return false;
 		}
 		
 		// Address Exist
-		if ($this->template->isMine($pub_key)==true)
+		if ($this->kern->isMine($pub_key)==true)
 		{
 			$this->template->showErr("You already own this address");
 			return false;
 		}
 		
 		// Check private key
-		if ($this->template->privKeyValid($priv_key)==false)
+		if ($this->kern->privKeyValid($priv_key)==false)
 		{
 			$this->template->showErr("Invalid private key");
 			return false;
@@ -90,7 +252,7 @@ class CMyAdr
 		// Check tag
 		if (strlen($tag)>50)
 		{
-			$this->template->showErr("Invalid tag length (0-50 characters)");
+			$this->kern->showErr("Invalid tag length (0-50 characters)");
 			return false;
 		}
 		
@@ -117,7 +279,7 @@ class CMyAdr
 		   $this->kern->commit();
 		   
 		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded");
+		   $this->template->showOk("Your request has been succesfully recorded", 550);
 
 		   return true;
 	   }
@@ -135,10 +297,11 @@ class CMyAdr
     
 	function showMyAdr()
 	{
-		$query="SELECT my_adr.*, adr.balance, dom.domain
+		$query="SELECT my_adr.*, adr.balance, dom.domain, prof.avatar
 		          FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
 				  LEFT JOIN domains AS dom ON dom.adr=my_adr.adr
+				  LEFT JOIN profiles AS prof ON prof.adr=my_adr.adr
 				 WHERE userID='".$_REQUEST['ud']['ID']."' 
 			  ORDER BY balance DESC"; 
 	    $result=$this->kern->execute($query);
@@ -182,8 +345,10 @@ class CMyAdr
 				  ?>
                   
                         <tr>
-                          <td width="8%" align="left"><img src="../../template/template/GIF/empty_pic.png" width="40" height="40" alt="" class="img-circle"  /></td>
-                          <td width="36%" align="left"><a href="#" class="maro_12"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a><br><span class="simple_maro_10"><? print base64_decode($row['description']); ?></span></td>
+                          <td width="10%" align="left">
+                          <img src="<? if ($row['avatar']!="") print "../../../get_img.php?hash=".substr(hash("sha256", base64_decode($row['avatar'])), 0, 10); else print "../../template/template/GIF/empty_pic.png"; ?>" width="40" height="40" alt="" class="img-circle"  />
+                          </td>
+                          <td width="34%" align="left"><a href="#" class="maro_12"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a><br><span class="simple_maro_10"><? print base64_decode($row['description']); ?></span></td>
                           <td width="10%" align="center" class="<? if ($row['balance']==0 || $row['balance']=="") print "simple_maro_12"; else print "simple_green_12"; ?>">
                           <?
 						     $attr="";
@@ -234,19 +399,18 @@ class CMyAdr
                         </strong></td>
                         <td width="25%" align="center" class="simple_maro_12">
                         
-                        <div class="dropdown">
-                        <button class="btn btn-warning dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Options
-                        <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                       
                         
-                        <li><a href="#" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()">Get QR Code</a></li>
+                        <table width="110" border="0" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr>
+                              <td><a class="btn btn-sm btn-warning" href="../options/index.php?ID=<? print $row['ID']; ?>">Options</a></td>
+                              <td><a href="#" class="btn btn-sm btn-default" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()"><span class="glyphicon glyphicon-qrcode"></span></a></td>
+                            </tr>
+                          </tbody>
+                        </table>
                         
-                        <li><a href="../options/index.php?ID=<? print $row['ID']; ?>">Adress Options</a></li>
-                        
-                        </ul>
-                        </div>
+                       
                         
                         </td>
                         </tr>
@@ -362,7 +526,7 @@ class CMyAdr
                 <td align="left" height="30px" valign="top"><strong>Tag</strong></td>
               </tr>
               <tr>
-                <td align="left"><input name="txt_tag" id="txt_tag" placeholder="Tag (0-50 characters)" class="form-control"/></td>
+                <td align="left"><input name="txt_imp_tag" id="txt_imp_tag" placeholder="Tag (0-50 characters)" class="form-control"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -376,9 +540,6 @@ class CMyAdr
 	}
 	
 
-	
-	
-	
 	function showQRModal()
 	{
 		$this->template->showModalHeader("modal_qr", "Address QR Code");
@@ -400,6 +561,108 @@ class CMyAdr
         
         <?
 		$this->template->showModalFooter(false);
+	}
+	
+	function showPending()
+	{
+		if ($_REQUEST['ud']['pending_adr']>0)
+		{
+		?>
+        
+            <table width="560" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td align="right">
+                  <a href="index.php?act=show_pending" class="btn btn-danger btn-sm">
+                  <span class="glyphicon glyphicon-time"></span>&nbsp;&nbsp;<? print $_REQUEST['ud']['pending_adr']." pending"; ?>
+                  </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+        
+        <?
+		}
+	}
+	
+	function showPendingAdr()
+	{
+		$query="SELECT pa.*, adr.balance 
+		          FROM pending_adr AS pa
+				  LEFT JOIN adr ON adr.adr=pa.pub_key 
+				 WHERE share_adr IN (SELECT adr FROM my_adr)";
+	    $result=$this->kern->execute($query);	
+	  
+		?>
+        
+          <table width="565" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td width="44%" align="left" class="inset_maro_14">Address</td>
+                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
+                        <td width="21%" align="center"><span class="inset_maro_14">Balance</span></td>
+                        <td width="1%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
+                        <td width="32%" align="center"><span class="inset_maro_14">Operations</span></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
+                  
+                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
+                      
+                      <?
+					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+						 {
+					  ?>
+                      
+                          <tr>
+                          <td width="45%" align="left" class="simple_maro_12"><? print $this->template->formatAdr($row['pub_key']); ?></td>
+                          <td width="22%" align="center" class="simple_green_12"><strong>
+						  <? if ($row['balance']>0) print $row['balance']." MSK"; else print "0 MSK"; ?></strong></td>
+                          <td width="33%" align="right" class="simple_maro_12">
+                          <table width="160" border="0" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr>
+                              <td align="center">
+                              <a href="index.php?act=add_adr&ID=<? print $row['ID']; ?>" class="btn btn-success btn-sm" style="width:75px"> 
+                              <span class="glyphicon glyphicon-ok-circle"></span>&nbsp;&nbsp;Add 
+                              </a>
+                              </td>
+                              
+                              <td align="center">
+                              <a href="index.php?act=reject_adr&ID=<? print $row['ID']; ?>" class="btn btn-danger btn-sm" style="width:75px"> 
+                              <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;&nbsp;Reject 
+                              </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                          </table></td>
+                          </tr>
+                          <tr>
+                          <td colspan="3" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                          </tr>
+                      
+                      <?
+						 }
+					  ?>
+                      
+                  </table>
+                  
+                  </td>
+                </tr>
+                <tr>
+                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
+                </tr>
+              </tbody>
+            </table>
+        
+        <?
 	}
 }
 ?>

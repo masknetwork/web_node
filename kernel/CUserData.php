@@ -29,6 +29,21 @@ class CUserData
 		
 		// Balance
 		$_REQUEST['ud']['balance']=round($row['total'], 4);
+		
+		// Update unsigned transactions
+		   $query="SELECT COUNT(*) AS total 
+		             FROM escrowed 
+					WHERE sender_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
+					   OR rec_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
+					   OR escrower IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')";
+		   $result=$this->kern->execute($query);
+		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   
+		   // Update
+		   $query="UPDATE web_users 
+		              SET unread_esc='".$row['total']."' 
+				    WHERE ID='".$_REQUEST['ud']['ID']."'"; 
+		   $this->kern->execute($query);
 	}
 }
 ?>

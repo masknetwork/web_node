@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $trans=new CTransactions($db, $template);
    $multisig=new CMultisig($db, $template);
 ?>
@@ -79,7 +79,7 @@
            
            
             <?
-			   $template->showHelp();
+			   $template->showHelp("To spend funds from multisig protected addresses, multiple signatures are required. When the minimum number of signatures is reached, the funds are released. If the required number of signatures is not reached in a maximum of 3,000 blocks, the funds are returned to the sender. Below we show you the transactions that require your signature.");
 			   
 			   if ($_REQUEST['act']=="sign") 
 			      $multisig->sign($_REQUEST['fee_adr'], $_REQUEST['trans_hash'], $_REQUEST['signer']);

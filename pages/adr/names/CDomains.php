@@ -7,113 +7,6 @@
 		  $this->template=$template;
 	  }
 	  
-	  function buyDomain($net_fee_adr, $pay_adr, $attach_adr, $domain)
-	  {
-		// Fee Address
-		if ($this->kern->adrExist($net_fee_adr)==false)
-		{
-			$this->template->showErr("Invalid network fee address", 550);
-			return false;
-		}
-		
-		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
-		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
-			return false;
-		}
-		
-		// Address
-	    if ($this->kern->adrExist($pay_adr)==false)
-		{
-			$this->template->showErr("Invalid address", 550);
-			return false;
-		}
-		
-		// Target address sealed
-		if ($this->kern->isSealed($pay_adr)==true)
-		{
-			$this->template->showErr("Address is sealed.", 550);
-			return false;
-		}
-		
-		// Attach to address
-	    if ($this->kern->adrValid($attach_adr)==false)
-		{
-			$this->template->showErr("Invalid attachment address", 550);
-			return false;
-		}
-	   
-	   // Load domain data
-	   $query="SELECT * 
-	             FROM domains 
-				WHERE domain='".$domain."' 
-				  AND sale_price>0 
-				  AND market_bid>0 
-				  AND market_bid>0";
-	   $result=$this->kern->execute($query);	
-	   
-	   if (mysql_num_rows($result)==0)
-	   {
-		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
-		   return false;
-	   }
-	   
-	   // Load data
-	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
-	   
-	   // Funds
-	   if ($this->kern->getBalance($pay_adr)<$row['sale_price'])
-	   {
-		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
-		   return false;
-	   }
-	   
-	   // Funds
-	   if ($this->kern->getBalance($net_fee_adr)<($row['sale_price']*0.001))
-	   {
-		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
-		   return false;
-	   }
-	   	
-		try
-	    {
-		   // Begin
-		   $this->kern->begin();
-
-           // Action
-           $this->kern->newAct("Register a new domain ($domain)");
-		   
-		   // Insert to stack
-		   $query="INSERT INTO web_ops 
-			                SET user='".$_REQUEST['ud']['user']."', 
-							    op='ID_BUY_DOMAIN', 
-								fee_adr='".$net_fee_adr."', 
-								target_adr='".$pay_adr."',
-								par_1='".$attach_adr."',
-								par_2='".$domain."',
-								status='ID_PENDING', 
-								tstamp='".time()."'"; 
-	       $this->kern->execute($query);
-		
-		   // Commit
-		   $this->kern->commit();
-		   
-		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded", 550);
-	   }
-	   catch (Exception $ex)
-	   {
-	      // Rollback
-		  $this->kern->rollback();
-
-		  // Mesaj
-		  $this->template->showErr("Unexpected error.", 550);
-
-		  return false;
-	   }
-	}
-	
 	function newDomain($net_fee_adr, $adr, $domain, $days)
 	{
 		// Fee Address
@@ -521,7 +414,7 @@
                           <tbody>
                             <tr>
                               <td width="19%"><img src="../../template/template/GIF/empty_pic.png" width="40" height="40" class="img-circle"/></td>
-                              <td width="81%"><? print $row['domain']; ?><br />
+                              <td width="81%" class="simple_maro_12"><strong><? print $row['domain']; ?></strong><br />
                     <span class="simple_gri_10"><? print $this->template->formatAdr($row['adr']); ?></span>
                     </td>
                             </tr>
@@ -674,7 +567,7 @@
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel(0.0365, "re"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel(0.0365, "renew"); ?></td>
               </tr>
             </table></td>
             <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -691,14 +584,14 @@
                 <td height="30" valign="top" class="simple_blue_14"><strong>Days</strong></td>
               </tr>
               <tr>
-                <td><input name="txt_days_re" id="txt_days_re" class="form-control" value="365" style="width:80px"/></td>
+                <td><input name="txt_days_re" id="txt_days_re" class="form-control" value="365" style="width:100px" type="number" min="10" step="1"/></td>
               </tr>
             </table></td>
           </tr>
         </table>
         
         <script>
-		linkToNetFee("txt_days_re", "", "re_net_fee_panel_val");
+		linkToNetFee("txt_days_re", "renew_net_fee_panel_val", 0.0365);
 		</script>
         
         <?
@@ -780,73 +673,29 @@
                 <td valign="top" class="simple_blue_14"><strong> Bid</strong></td>
               </tr>
               <tr>
-                <td><input name="txt_price" id="txt_price" class="form-control" value="" style="width:80px"/></td>
-                <td><input name="txt_days_sp" id="txt_days_sp" class="form-control" value="365" style="width:80px"/></td>
-                <td><input name="txt_bid_sp" id="txt_bid_sp" class="form-control" value="0.0001" style="width:80px"/></td>
+                <td>
+                <input name="txt_price" id="txt_price" class="form-control" value="1" style="width:80px" type="number" min="0.0001" step="0.0001"/>
+                </td>
+                <td>
+                <input name="txt_days_sp" id="txt_days_sp" class="form-control" value="365" style="width:80px" type="number" min="0.0001" step="0.0001"/>
+                </td>
+                <td>
+                <input name="txt_bid_sp" id="txt_bid_sp" class="form-control" value="0.0001" style="width:80px" type="number" min="0.0001" step="0.0001"/>
+                </td>
               </tr>
             </table></td>
           </tr>
         </table>
         
         <script>
-		linkToNetFee("txt_days_sp", "txt_bid_sp", "sp_net_fee_panel_val");
+		linkToNetFeeBid("txt_days_sp", "sp_net_fee_panel_val", "txt_bid_sp", 0.0365);
 		</script>
         
         <?
 		$this->template->showModalFooter();
 	}
 	
-	function showUpdatePriceModal()
-	{
-		$this->template->showModalHeader("modal_update_price", "Update Name Price", "act", "set_price", "set_price_domain", "");
-		?>
-        
-         <table width="550" border="0" cellspacing="0" cellpadding="5">
-          <tr>
-            <td width="240" align="left" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td align="center"><img src="./GIF/domain_price.png" /></td>
-              </tr>
-              <tr>
-                <td align="center">&nbsp;</td>
-              </tr>
-              <tr>
-                <td align="center"><? $this->template->shownetFeePanel(0.0365, "sp"); ?></td>
-              </tr>
-            </table></td>
-            <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td height="30" colspan="3" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td colspan="3"><? $this->template->showMyAdrDD("dd_my_adr_set_sale_price"); ?></td>
-              </tr>
-              <tr>
-                <td width="34%">&nbsp;</td>
-                <td width="36%">&nbsp;</td>
-                <td width="30%">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" valign="top" class="simple_blue_14"><strong>Price</strong></td>
-                <td valign="top" class="simple_blue_14">&nbsp;</td>
-                <td valign="top" class="simple_blue_14">&nbsp;</td>
-              </tr>
-              <tr>
-                <td><input name="txt_upd_price" id="txt_upd_price" class="form-control" value="" style="width:80px"/></td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-              </tr>
-            </table></td>
-          </tr>
-        </table>
-        
-        <script>
-		linkToNetFee("txt_days_sp", "txt_bid_sp", "sp_net_fee_panel_val");
-		</script>
-        
-        <?
-		$this->template->showModalFooter();
-	}
+	
 	
 	function showNewDomainModal($attach_to="")
 	{
@@ -921,7 +770,7 @@
         </table>
         
         <script>
-		linkToNetFee("txt_days_nd", "", "nd_net_fee_panel_val");
+		linkToNetFee("txt_days_nd", "nd_net_fee_panel_val", 365);
 		</script>
         
         <?

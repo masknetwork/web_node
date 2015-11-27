@@ -17,6 +17,13 @@ class CFroze
 			 return false;
 		}
 		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			return false;
+		}
+		
 		// Address owner
 		if ($this->kern->isMine($net_fee_adr)==false || 
 		    $this->kern->isMine($adr)==false)
@@ -44,6 +51,13 @@ class CFroze
 		{
 			 $this->template->showErr("Insufficient funds", 550);
 			 return false;
+		}
+		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
 		}
 		
 		try
@@ -100,7 +114,7 @@ class CFroze
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "froze"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "froze"); ?></td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -117,11 +131,16 @@ class CFroze
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Days</strong></td>
               </tr>
               <tr>
-                <td align="left"><input class="form-control" name="txt_froze_days" id="txt_froze_days" style="width:80px"/></td>
+                <td align="left">
+                <input class="form-control" type="number" min="10" step="1" name="txt_froze_days" id="txt_froze_days" style="width:100px" value="365"/></td>
               </tr>
             </table></td>
           </tr>
         </table>
+        
+        <script>
+		linkToNetFee("txt_froze_days", "froze_net_fee_panel_val", 0.0365);
+		</script>
         
         <?
 		$this->template->showModalFooter("Cance", "Activate");

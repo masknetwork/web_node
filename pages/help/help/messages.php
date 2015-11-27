@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $help=new CHelp($db, $template);
 ?>
 
@@ -86,37 +86,38 @@
                   <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
-                        <td><span class="simple_red_18"><strong>Mesageria</strong></span></td>
+                        <td><span class="simple_red_18"><strong>Messaging</strong></span></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Comunicarea cu clientii este esentiala, mai ales intr-o piata anonima, in care increderea participantilor in partenerii de afaceri ar putea fi redusa initial. Pentru asta am conceput un sistem de mesagerie cu care poti trimite mesaje scurte si criptate catre orice adresa. </td>
+                        <td class="simple_gri_inchis_12">Communication with customers is essential, especially in the anonymous market, in which participants'confidence in our business partners may initially be reduced. For this we designed a messaging system with which you can send short and encrypted messages to any address.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Mesajele sunt criptate utilizand cheia publica a destinatarului si doar destinatarul le poate decripta. Deasmenea, anonimitatea expeditorului este garantata. Nu exista adrese IP sau alte informatii disponibile, cu exceptia adresei care a expediat mesajul.</td>
+                        <td class="simple_gri_inchis_12">Messages are encrypted using the recipient's public key and only the recipient can decrypt them. Also, sender’s anonymity is guaranteed. There is no IP address or other available information except the address that sent the message.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12">Costul trimiterii unui mesaj este de 0.0001 MSK / mesaj. Poti trimite un numar nelimitat de mesaje / zi. </span></td>
+                        <td><span class="simple_gri_inchis_12">The cost of sending a message is 0.0001 MSK / message. You can send unlimited messages / day. </span></td>
                       </tr>
                       <tr>
                         <td height="50">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_14"><strong>Trimiterea unui mesaj</strong></span></td>
+                        <td><span class="simple_red_14"><strong>Sending a message</strong></span></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Pentru a trimite un mesaj, mergi in pagina Mesaje (apasa Mesaje in bara de meniu principala). In aceasta pagina sunt prezentate ultimele mesaje primite. Apasa butonul Compose. Va fi afisat urmatorul meniu :</td>
+                        <td class="simple_gri_inchis_12">To send a message, go to the Messages page (click Messages in the main menu bar). This page shows 
+the last messages received. Click Compose button. The following menu will be displayed:</td>
                       </tr>
                       <tr>
                         <td height="30">&nbsp;</td>
@@ -128,19 +129,19 @@
                         <td height="30">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Orice serviciu cum este inchirierea unui nume de adresa sau setarea unor optiuni suplimentare trebuie platit.   In acest camp specifici de unde se vor lua monezile pentru plata acestui serviciu. Inghetarea adresei costa 0.0001 MSK / zi.</span></td>
+                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Sender Address</strong></span> <span class="simple_gri_inchis_12">- Ce adresa vrei sa figureze la expeditor</span></td>
+                        <td><span class="simple_red_12"><strong>Sender Address</strong></span> <span class="simple_gri_inchis_12">- The address you want to appear at sender</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Recipient Address</strong></span> <span class="simple_gri_inchis_12">- Adresa care va primii mesajul.</span></td>
+                        <td><span class="simple_red_12"><strong>Recipient Address</strong></span> <span class="simple_gri_inchis_12">- The address who will receive the message.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>

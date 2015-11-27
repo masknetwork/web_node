@@ -13,7 +13,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $feeds=new CFeeds($db, $template);
    $browser=new CBrowseFeeds($db, $template);
    $branch=new CBranch($db, $template);

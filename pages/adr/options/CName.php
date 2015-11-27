@@ -16,6 +16,14 @@ class CName
 			return false;
 		}
 		
+		// My address
+	    if ($this->kern->isMine($net_fee_adr)==false || 
+		    $this->kern->isMine($adr)==false)
+		{
+			$this->template->showErr("Invalid entry data", 550);
+			return false;
+		}
+		
 		// Fee address is security options free
 	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
 		{
@@ -119,7 +127,7 @@ class CName
               </tr>
               <tr>
                 <td align="center">
-                <? $this->template->shownetFeePanel(0.0365, "nd"); ?>
+                <? $this->template->shownetFeePanel(0.036, "nd"); ?>
                 </td>
               </tr>
             </table></td>
@@ -146,14 +154,15 @@ class CName
                 <td height="30" valign="top"><span class="simple_blue_14"><strong>Days</strong></span></td>
               </tr>
               <tr>
-                <td><input name="txt_days_domain" class="form-control" id="txt_days_domain" style="width:80px" value="365" maxlength="6"/></td>
+                <td>
+                <input type="number" min="10" step="1" name="txt_days_domain" class="form-control" id="txt_days_domain" style="width:100px" value="365" maxlength="6"/></td>
               </tr>
             </table></td>
           </tr>
         </table>
         
         <script>
-		linkToNetFee("txt_days_nd", "", "nd_net_fee_panel_val");
+		   linkToNetFee("txt_days_domain", "nd_net_fee_panel_val", 0.0365);
 		</script>
         
         <?

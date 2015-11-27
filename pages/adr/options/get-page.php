@@ -17,7 +17,7 @@
    $ud=new CUserData($db);
    
    // Sys data
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    
    // Private key
    $pkey=new CReveal($db, $template);

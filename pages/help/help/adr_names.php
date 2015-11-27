@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $help=new CHelp($db, $template);
 ?>
 
@@ -86,43 +86,46 @@
                   <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
-                        <td><span class="simple_red_18"><strong>Numele de  Adrese</strong></span></td>
+                        <td><span class="simple_red_18"><strong>Address Names</strong></span></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Deoarece adresele MaskNetwork reprezinta siruri lungi de caractere greu de transmis si imposibil de retinut, inchirierea unui nume de adresa pentru adresele pe care le folosesti cel mai mult este o optiune indicata. In aceasta sectiune vom discuta despre cum te ajuta portofelul sa gestionezi numele de adrese pe care le detii. Numele de adresa pot fi deasemenea transferate sau tranzactionate pe piata interna, specializata a retelei.</td>
+                        <td class="simple_gri_inchis_12">As Mask Network addresses represent long strings of characters hard to send and impossible to  remember, renting an address name for the addresses that you use most is an indicated option. In this section we will discuss how the wallet helps you manage the address names that you own. The address names can also be transferred or traded on the domestic, specialized market of the network.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Deasemenea, poti sa atasezi mai multe nume  aceleiasi adrese. Spre exemplu &quot;Maria&quot; sau &quot;Mary&quot; ar putea reprezenta aceeasi adresa.</td>
+                        <td class="simple_gri_inchis_12">Also, you can attach multiple names to the same address. For example "Maria" or "Mary" could 
+represent the same address.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_14"><strong>Gestionarea Numelor</strong></span></td>
+                        <td><span class="simple_red_14"><strong>Address Names Management</strong></span></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Pentru a vizualiza numele pe care le detii, mergi in sectiunea Adrese ( apasa Adrese in bara de meniu ) si selecteaza Nume de Adrese din meniul din stanga. Aici sunt prezentate toate numele pe care le detii, impreuna cu data expirarii. Numele nu pot fi cumparate ci doar inchiriate pe o anumita perioada. Inchirirera costa 0.0001 MSK / zi.</td>
+                        <td class="simple_gri_inchis_12">To view the name that you own, go to the Addresses section (click Addresses in the menu bar) and 
+select Addresses Name from the left menu. Here are all the names that you own, and expiry date. Names cannot be purchased but only rented for a certain period. Rental cost is 0.0001 MSK / day.</td>
                       </tr>
                       <tr>
                         <td height="30">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_14"><strong>Prelungirea unui nume</strong></span></td>
+                        <td><span class="simple_red_14"><strong>Renewing an address name</strong></span></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">La fel ca numele de domenii din internet, numele de adrese trebuiesc reinnoite cand expira. Altfel, oricine poate inchiria respectivul nume pentru adresele proprii. Pentru a prelungi valabilitatea unui nume pe care deja il detii, apasa pe butonul galben din dreptul numelui si alege &quot;Prelungeste&quot;. Va apare dialogul de mai jos :</td>
+                        <td class="simple_gri_inchis_12">Like Internet domain names, addresses names must be renewed when they expire. Otherwise, anyone 
+can rent that name for their own addresses. To extend the validity of a name that you own already, click on the yellow button next to the name and choose "Extend". The dialogue below will appear: </td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
@@ -134,13 +137,13 @@
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Orice serviciu cum este inchirierea unui nume de adresa sau setarea unor optiuni suplimentare trebuie platit.   In acest camp specifici de unde se vor lua monezile pentru plata acestui serviciu. Inghetarea adresei costa 0.0001 MSK / zi.</span></td>
+                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Days</strong></span> <span class="simple_gri_inchis_12">- Deoarece acesta este un serviciu inchirat trebuie sa specifici pentru cat timp doresti inchirierea adresei. Minimul este de 10 zile. Nu exista un maxim. Taxa este fixa de 0.0001 MSK / zi.</span></td>
+                        <td><span class="simple_red_12"><strong>Days</strong></span> <span class="simple_gri_inchis_12">- Addresses names can also be transferred to another address for a fee of 0.0001 MSK. It is a useful option if you want to change the address of a name.</span></td>
                       </tr>
                       <tr>
                         <td height="50">&nbsp;</td>
@@ -152,13 +155,15 @@
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Numele de adrese pot fi deasemenea transferate catre alta adresa pentru o taxa de 0.0001 MSK. Este o optiune utila daca vrei sa schimbi adresa unui nume. </td>
+                        <td class="simple_gri_inchis_12">Addresses names can also be transferred to another address for a fee of 0.0001 MSK. It is a useful
+option if you want to change the address of a name.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Pentru a transfera un nume pe care il detii, mergi in pagina Adrese (apasa Adrese in bara de meniu principal) si selecteaza Nume Mele din meniul din stanga. Apasa butonul galben din dreptul numelui si selecteaza Transfera Numele. Va aparea meniul de mai jos : </td>
+                        <td class="simple_gri_inchis_12">To transfer a name that you own, go to page Addresses (click Addresses in the main menu bar) and
+select My Names from the left menu. Click the yellow button next to the name and select Transfer Name. The following menu will appear: </td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
@@ -170,37 +175,37 @@
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Orice serviciu cum este inchirierea unui nume de adresa sau setarea unor optiuni suplimentare trebuie platit.   In acest camp specifici de unde se vor lua monezile pentru plata acestui serviciu. Inghetarea adresei costa 0.0001 MSK / zi.</span></td>
+                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Recipient Address</strong></span> <span class="simple_gri_inchis_12">- Noua adresa cu care vrei sa asociezi numele.</span></td>
+                        <td><span class="simple_red_12"><strong>Recipient Address</strong></span> <span class="simple_gri_inchis_12">- The new address with which you want to associate the name.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Apasa butonul Trimite. Dupa ce tranzactia este confirmata de retea ( 1 minut ), numele va fi asociat cu noua adresa specificata.</td>
+                        <td class="simple_gri_inchis_12">Click the Send button. After the transaction is confirmed by the network (1 minute), the name will be associated with the new specified address.</td>
                       </tr>
                       <tr>
                         <td height="50">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><strong class="simple_red_14">Punerea in vanzare a unui nume</strong></td>
+                        <td><strong class="simple_red_14">Selling an address name</strong></td>
                       </tr>
                       <tr>
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Dupa cum spuneam, numele de adresa pot fi vandute / cumparate pe o piata interna, specializata, unde toate platile / transferurile de nume sunt facute automat, fara nici un intermediar. Toate tranzactiile cu nume se fac utilizand MaskCoin.</td>
+                        <td class="simple_gri_inchis_12">As we said, the name of address can be sold / bought on the domestic specialized market, where all name payments / transfers are made automatically, without any intermediary. All name transactions are made using MaskCoin.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_gri_inchis_12">Pentru a pune in vanzare un nume pe care il detii, mergi in pagina Adrese (apasa Adrese in bara de meniu principal) si selecteaza Nume Mele din meniul din stanga. Apasa butonul galben din dreptul numelui si selecteaza Seteaza pret vanzare. Va aparea meniul de mai jos : </span></td>
+                        <td><span class="simple_gri_inchis_12">To put on sale a name that you own, go to page Addresses (click Addresses in the main menu bar) and select My Names from the left menu. Click the yellow button next to the name and select Set sale price. The following menu will appear: </span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
@@ -212,43 +217,43 @@
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Orice serviciu cum este inchirierea unui nume de adresa sau setarea unor optiuni suplimentare trebuie platit.   In acest camp specifici de unde se vor lua monezile pentru plata acestui serviciu. Inghetarea adresei costa 0.0001 MSK / zi.</span></td>
+                        <td><span class="simple_red_12"><strong>Network Fee Address</strong></span> <span class="simple_gri_inchis_12">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Price</strong></span> <span class="simple_gri_inchis_12">- Pretul pe care il doresti in MSK. Odata ssetat, acest parametru nu mai poate fi modificat.</span></td>
+                        <td><span class="simple_red_12"><strong>Price</strong></span> <span class="simple_gri_inchis_12">- the price you want in MSK. Once set, this parameter cannot be changed.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Days</strong></span> <span class="simple_gri_inchis_12">- Cate zile va sta oferta ta pe piata.  Odata ssetat, acest parametru nu mai poate fi modificat.</span></td>
+                        <td><span class="simple_red_12"><strong>Days</strong></span> <span class="simple_gri_inchis_12">- For many days your offer will be on the market. Once set, this parameter cannot be changed.</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Market Bid</strong></span> <span class="simple_gri_inchis_12">- O suma de minim 0.0001 MSK / zi. Ofertele de vanzare sunt afisate in functie de suma oferita de vanzator pentru afisare. Ofertele cu Market Bid mare sunt afisate primele.</span></td>
+                        <td><span class="simple_red_12"><strong>Market Bid</strong></span> <span class="simple_gri_inchis_12">- A minimum amount of 0.0001 MSK / day. The offers for sale are displayed depending on the amount offered by the seller for display. Market Bid large bids are displayed first.</span></td>
                       </tr>
                       <tr>
                         <td height="50">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><strong class="simple_red_14">Modificarea pretului unui nume</strong></td>
+                        <td><strong class="simple_red_14">Updating the price of an address</strong></td>
                       </tr>
                       <tr>
                         <td  background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Dupa ce ai scos un nume la vanzare, ii poti schimba oricand pretul. Pentru a schimba pretul de vanzare al unui nume, mergi in pagina Adrese (apasa Adrese in bara de meniu principala) si selecteaza Numele Mele (meniul din stanga). </td>
+                        <td class="simple_gri_inchis_12">After you put a name on sale, you can change the price any time. To change the selling price of a name, go to page Addresses (click Addresses in the main menu bar) and select My Name (left menu). </td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Apasa butonul galben din dreptul numelui care a fost scos la vanzare si selecteaza Modifica Pret Vanzare. Va fi afisat urmatorul dialog </td>
+                        <td class="simple_gri_inchis_12">Click the yellow button next to the name that is on sale and select Modify Sale Price. The following dialogue will be displayed </td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
@@ -266,13 +271,13 @@
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td><span class="simple_red_12"><strong>Price</strong></span> <span class="simple_gri_inchis_12">- Noul pret pe care il doresti (MSK).</span></td>
+                        <td><span class="simple_red_12"><strong>Price</strong></span> <span class="simple_gri_inchis_12">- The new price you want (MSK).</span></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Apasa butonul Send. Dupa ce tranzactia va fi confirmata de retea (1 minut), pretul numelui va fi automat schimbat.</td>
+                        <td class="simple_gri_inchis_12">Click the Send button. After the transaction is confirmed by the network (1 minute), the name price will be automatically changed.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>

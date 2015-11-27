@@ -95,9 +95,9 @@ class CTransactions
 				 WHERE ID='".$_REQUEST['ud']['ID']."'";
 		$this->kern->execute($query);
 		
-		$query="SELECT * 
+		$query="SELECT mt.*, rd.field_1_name  
 		          FROM my_trans AS mt 
-			 LEFT JOIN trans_data AS td ON td.trans_hash=mt.hash  
+				  LEFT JOIN req_data AS rd ON rd.adr=mt.adr
 			     WHERE mt.userID='".$_REQUEST['ud']['ID']."'
 			  ORDER BY mt.ID DESC 
 			     LIMIT 0,20";
@@ -113,7 +113,7 @@ class CTransactions
                       <tr>
                         <td width="47%" align="left" class="inset_maro_14">Explanation</td>
                         <td width="3%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="10%" align="center"><img src="../GIF/esc_off.png" width="30" height="24" alt=""/></td>
+                        <td width="10%" align="center" class="inset_maro_14">Data</td>
                         <td width="4%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
                         <td width="10%" align="center"><span class="inset_maro_14">Status</span></td>
                         <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
@@ -136,7 +136,33 @@ class CTransactions
                           <tr>
                           <td width="48%" align="left">
                           <a href="#" class="maro_12"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a><br><span class="simple_maro_10"><? print "Received ".$this->kern->getAbsTime($row['tstamp'])." ago"; ?></span></td>
-                          <td width="15%" align="center" class="simple_green_12">&nbsp;</td>
+                          <td width="15%" align="center" class="simple_maro_14">
+                          <?
+						 
+						      if ($row['mes']!="") 
+							  print "<span id='gly_msg_".rand(100, 10000)."' data-placement='top' class='glyphicon glyphicon-envelope' data-toggle='popover' data-trigger='hover' title='Message' data-content='".base64_decode($row['mes'])."'></span>&nbsp;&nbsp;";
+							
+							 if ($row['field_1']!="") print "<a href='javascript:void(0)' onclick=\"
+							 $('#modal_req_data').modal(); 
+							 
+							 $('#field_1_name').text('".base64_decode($row['field_1_name'])."'); 
+							 $('#field_1_val').text('".base64_decode($row['field_1'])."');
+							 
+							 $('#field_2_name').text('".base64_decode($row['field_2_name'])."'); 
+							 $('#field_2_val').text('".base64_decode($row['field_2'])."');
+							 
+							 $('#field_3_name').text('".base64_decode($row['field_3_name'])."'); 
+							 $('#field_3_val').text('".base64_decode($row['field_3'])."');
+							 
+							 $('#field_4_name').text('".base64_decode($row['field_4_name'])."'); 
+							 $('#field_4_val').text('".base64_decode($row['field_4'])."');
+							 
+							 $('#field_5_name').text('".base64_decode($row['field_5_name'])."'); 
+							 $('#field_5_val').text('".base64_decode($row['field_5'])."');
+							 
+							 \" class='maro_14'><span class='glyphicon glyphicon-list'></span></a>";
+						  ?>
+                          </td>
                           <td width="12%" align="center" class="simple_green_12">
                           <?
 					        if ($row['status']=="ID_CLEARED")
@@ -186,6 +212,10 @@ class CTransactions
                 </tr>
               </tbody>
             </table>
+            
+            <script>
+			$("span[id^='gly_']").popover();
+			</script>
         
         <?
 	}
@@ -200,20 +230,23 @@ class CTransactions
 							  $otp_old_pass="")
 	{
 		$query="SELECT * 
-		          FROM adr_options 
-				 WHERE adr='".$to_adr."' 
-				   AND op_type='ID_REQ_DATA'";
+		          FROM req_data 
+				 WHERE adr='".$to_adr."'";
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	  
 		?>
            
-           <form id="form_req_data" name="form_req_data" action="index.php?act=send_coins">
+           <form id="form_req_data" name="form_req_data" action="index.php?act=send_req_coins" method="post">
            
-           <input type="hidden" id="h_net_fee_adr" name="h_net_fee_adr" value="">
-           <input type="hidden" id="h_from_adr" name="h_from_adr" value="">
-           <input type="hidden" id="h_to_adr" name="h_to_adr" value="">
-           <input type="hidden" id="h_amount" name="h_amount" value="">
-           <input type="hidden" id="h_moneda" name="h_moneda" value="">
-           <input type="hidden" id="h_mes" name="h_mes" value="">
-           <input type="hidden" id="h_escrower" name="h_escrower" value="">
+           <input type="hidden" id="h_net_fee_adr" name="h_net_fee_adr" value="<? print $net_fee_adr; ?>">
+           <input type="hidden" id="h_from_adr" name="h_from_adr" value="<? print $from_adr; ?>">
+           <input type="hidden" id="h_to_adr" name="h_to_adr" value="<? print $to_adr; ?>">
+           <input type="hidden" id="h_amount" name="h_amount" value="<? print $amount; ?>">
+           <input type="hidden" id="h_moneda" name="h_moneda" value="<? print $moneda; ?>">
+           <input type="hidden" id="h_mes" name="h_mes" value="<? print $mes; ?>">
+           <input type="hidden" id="h_escrower" name="h_escrower" value="<? print $escrower; ?>">
+           <input type="hidden" id="h_otp_old_pass" name="h_otp_old_pass" value="<? print $otp_old_pass; ?>">
                
            <table width="550" border="0" cellspacing="0" cellpadding="0">
               <tbody>
@@ -228,29 +261,57 @@ class CTransactions
                     <tbody>
                       <tr>
                         <td width="103" align="center"><img src="../../template/template/GIF/empty_pic.png" width="80" height="80" class="img-circle"/></td>
-                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">&quot;The owner of this address needs additional data. Please complete the following form. You need to respect the requested data length&quot;</td>
+                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">
+                        <?
+                           if ($row['mes']=="")
+						     print "The owner of this address needs additional data. Please complete the following form. You need to respect the requested data length";
+						   else 
+							 print "&quot;".base64_decode($row['mes'])."&quot;";
+                        ?>
+						</td>
                       </tr>
                       <tr>
                         <td colspan="2">&nbsp;</td>
                         </tr>
                       <tr>
-                        <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                          <tbody>
-                            <tr>
-                              <td height="30" align="left" valign="top" class="simple_maro_14"><strong>Field 1 Name</strong></td>
-                            </tr>
-                            <tr>
-                              <td><input class="form-control" name="txt_field_1" id="txt_field_1" placeholder="0-25 characters"></td>
-                            </tr>
-                          </tbody>
-                        </table></td>
+                        <td colspan="2">
+                        
+                        
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr><td colspan="2">&nbsp;</td></tr>
+                          
+						  <?
+						     for ($a=1; $a<=5; $a++)
+							 {
+								 if ($row['field_'.$a.'_name']!="")
+								 {
+						  ?>
+                          
+                                  <tr><td>&nbsp;</td></tr>
+                                  <tr>
+                                  <td height="30" align="left" valign="top" class="simple_maro_14">
+                                  <strong><? print base64_decode($row['field_'.$a.'_name']); ?></strong></td>
+                                  </tr>
+                                  <tr>
+                                  <td><input class="form-control" name="txt_field_<? print $a; ?>" id="txt_field_<? print $a; ?>" placeholder="<? print $row['field_'.$a.'_min']."-".$row['field_'.$a.'_max']." characters"; ?>"></td>
+                                  </tr>
+                          
+                          
+                          <?
+								 }
+	                         }
+						  ?>
+                        </table>
+                        
+                        
+                        </td>
                         </tr>
                       <tr>
                         <td colspan="2">&nbsp;</td>
                         </tr>
                       <tr>
                         <td colspan="2" align="right">
-                        <a href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a></td>
+                        <a href="javascript:void(0)" onClick="$('#form_req_data').submit()" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a></td>
                       </tr>
                     </tbody>
                   </table></td>
@@ -275,7 +336,7 @@ class CTransactions
 	{
 		?>
            
-           <form id="form_otp" name="form_otp" action="index.php?act=send_coins" method="post">
+           <form id="form_otp" name="form_otp" action="index.php?act=send_otp_coins" method="post">
            
            <input type="hidden" id="h_net_fee_adr" name="h_net_fee_adr" value="<? print $net_fee_adr; ?>">
            <input type="hidden" id="h_from_adr" name="h_from_adr" value="<? print $from_adr; ?>">
@@ -578,72 +639,72 @@ class CTransactions
 		// Additional data
 		if ($this->kern->hasAttr($to_adr, "ID_REQ_DATA")==true)
 		{
-			// Load data
-			$query="SELECT * 
+			if ($_REQUEST['act']=="send_req_coins")
+			{
+			   // Load data
+			   $query="SELECT * 
 			          FROM req_data 
 					 WHERE adr='".$to_adr."'";
-			$result=$this->kern->execute($query);	
-	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			   $result=$this->kern->execute($query);	
+	           $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	  
-			if ($_REQUEST['txt_field_1']!="")
-			{
-				// Check field 1
-				if ($row['field_1_name']!="")
-				{
-					if (strlen($_REQUEST['txt_field_1'])<$row['field_1_min'] || 
-					    strlen($_REQUEST['txt_field_1'])>$row['field_1_max'])
-				    {
+			   // Check field 1
+		       if ($row['field_1_name']!="")
+			   {
+				  if (strlen($_REQUEST['txt_field_1'])<$row['field_1_min'] || 
+					   strlen($_REQUEST['txt_field_1'])>$row['field_1_max'])
+				   {
 					   $this->template->showErr("Invalid field 1 length", 550);
 					   return false;	
-					}
-				}
+				   }
+			   }
 				
-				// Check field 2
-				if ($row['field_2_name']!="")
-				{
-					if (strlen($_REQUEST['txt_field_2'])<$row['field_2_min'] || 
-					    strlen($_REQUEST['txt_field_2'])>$row['field_2_max'])
-				    {
+			   // Check field 2
+			   if ($row['field_2_name']!="")
+		 	   {
+			      if (strlen($_REQUEST['txt_field_2'])<$row['field_2_min'] || 
+				      strlen($_REQUEST['txt_field_2'])>$row['field_2_max'])
+				   {
 					   $this->template->showErr("Invalid field 2 length", 550);
 					   return false;	
-					}
-				}
+				   }
+			   }
 				
-				// Check field 3
-				if ($row['field_3_name']!="")
-				{
-					if (strlen($_REQUEST['txt_field_3'])<$row['field_3_min'] || 
-					    strlen($_REQUEST['txt_field_3'])>$row['field_3_max'])
-				    {
-					   $this->template->showErr("Invalid field 3 length", 550);
-					   return false;	
-					}
-				}
+			   // Check field 3
+			   if ($row['field_3_name']!="")
+			   {
+			      if (strlen($_REQUEST['txt_field_3'])<$row['field_3_min'] || 
+				      strlen($_REQUEST['txt_field_3'])>$row['field_3_max'])
+			      {
+				      $this->template->showErr("Invalid field 3 length", 550);
+				      return false;	
+			      }
+			   }
 				
-				// Check field 4
-				if ($row['field_4_name']!="")
-				{
-					if (strlen($_REQUEST['txt_field_4'])<$row['field_4_min'] || 
-					    strlen($_REQUEST['txt_field_4'])>$row['field_4_max'])
-				    {
+			   // Check field 4
+			   if ($row['field_4_name']!="")
+			   {
+				   if (strlen($_REQUEST['txt_field_4'])<$row['field_4_min'] || 
+				       strlen($_REQUEST['txt_field_4'])>$row['field_4_max'])
+				   {
 					   $this->template->showErr("Invalid field 4 length", 550);
 					   return false;	
-					}
-				}
+				   }
+			    }
 				
-				// Check field 5
-				if ($row['field_5_name']!="")
-				{
-					if (strlen($_REQUEST['txt_field_5'])<$row['field_5_min'] || 
-					    strlen($_REQUEST['txt_field_5'])>$row['field_5_max'])
-				    {
+			   // Check field 5
+			   if ($row['field_5_name']!="")
+			   {
+				   if (strlen($_REQUEST['txt_field_5'])<$row['field_5_min'] || 
+					   strlen($_REQUEST['txt_field_5'])>$row['field_5_max'])
+				   {
 					   $this->template->showErr("Invalid field 5 length", 550);
 					   return false;	
-					}
-				}
-			}
-			else
-	        {
+				   }
+			   }
+		}
+		else
+	    {
 				// Show panel
 				$this->showReqDataPanel($net_fee_adr, 
 				                        $from_adr, 
@@ -654,8 +715,8 @@ class CTransactions
 										$escrower, 
 										$otp_old_pass);
 				return false;
-			}
 		}
+	  }
 		
 		try
 	    {
@@ -678,21 +739,21 @@ class CTransactions
 								par_6='".$escrower."',
 								par_7='".$otp_old_pass."',
 								par_8='".$otp_new_hash."',
-								par_9='".$_REQUEST['txt_field_1']."',
-								par_10='".$_REQUEST['txt_field_2']."',
-								par_11='".$_REQUEST['txt_field_3']."',
-								par_12='".$_REQUEST['txt_field_4']."',
-								par_13='".$_REQUEST['txt_field_5']."', 
+								par_9='".base64_encode($_REQUEST['txt_field_1'])."',
+								par_10='".base64_encode($_REQUEST['txt_field_2'])."',
+								par_11='".base64_encode($_REQUEST['txt_field_3'])."',
+								par_12='".base64_encode($_REQUEST['txt_field_4'])."',
+								par_13='".base64_encode($_REQUEST['txt_field_5'])."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
 		
 		   // Commit
-		   $this->kern->rollback();
+		   $this->kern->commit();
 		   
 		   // Confirm
 		   if ($otp_new_hash=="") 
-		      $this->template->showOk("Your request has been succesfully recorded");
+		      $this->template->showOk("Your request has been succesfully recorded", 550);
 		   else
 		      $this->showOTPConfirm($otp_new_pass);
 	   }
@@ -792,6 +853,98 @@ class CTransactions
         </table>
         
         <?
+	}
+	
+	function showReqDataModal()
+	{
+		$this->template->showModalHeader("modal_req_data", "Data", "act", "");
+		
+		?>
+        
+<table width="550" border="0" cellspacing="0" cellpadding="5">
+          <tr>
+            <td width="240" align="left" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
+              <tr>
+                <td align="center"><img src="./GIF/add_data.png" width="200" height="200" /></td>
+              </tr>
+              <tr>
+                <td align="center">&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center">&nbsp;</td>
+              </tr>
+            </table></td>
+            <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+             
+              <tr>
+                <td valign="top" class="simple_gri_14" id="field_1_name" height="30">Field 1</td>
+              </tr>
+              <tr>
+                <td class="simple_blue_12"><textarea id="field_1_val" class="form-control" rows="3">Field 1 Value</textarea></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+             
+              <tr>
+                <td height="30" valign="top"><span class="simple_gri_14" height="30">Field 2</span></td>
+              </tr>
+              <tr>
+                <td><span class="simple_blue_12">
+                  <textarea name="field_2_val" rows="3" class="form-control" id="field_2_val">Field 2 Value</textarea>
+                </span></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+             
+              <tr>
+                <td height="30" valign="top"><span class="simple_gri_14" height="30">Field 3</span></td>
+              </tr>
+              <tr>
+                <td><span class="simple_blue_12">
+                  <textarea name="field_3_val" rows="3" class="form-control" id="field_3_val">Field 3 Value</textarea>
+                </span></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              
+               <tr>
+                <td height="30" valign="top"><span class="simple_gri_14" height="30">Field 4</span></td>
+              </tr>
+              <tr>
+                <td><span class="simple_blue_12">
+                  <textarea name="field_4_val" rows="3" class="form-control" id="field_4_val">Field 4 Value</textarea>
+                </span></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              
+              <tr>
+                <td height="30" valign="top"><span class="simple_gri_14" height="30">Field 5</span></td>
+              </tr>
+              <tr>
+                <td><span class="simple_blue_12">
+                  <textarea name="field_5_val" rows="3" class="form-control" id="field_5_val">Field 5 Value</textarea>
+                </span></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              
+              
+            </table></td>
+          </tr>
+        </table>
+        
+        <script>
+		linkToNetFee("txt_days_re", "", "re_net_fee_panel_val");
+		</script>
+        
+        <?
+		$this->template->showModalFooter();
 	}
 }
 ?>

@@ -45,6 +45,13 @@ class CShare
 			 return false;
 		}
 		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
+		}
+		
 		// Domain ?
 		if (strlen($share_adr)<31) 
 		   $share_adr=$this->kern->adrFromDomain($share_adr); 

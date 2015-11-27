@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $adr=new CAdr($db, $template);
    $my_adr=new CMyAdr($db, $template);
 ?>
@@ -77,18 +77,42 @@
            
            
             <?
-			   $template->showHelp("Mai jos sunt prezentate adresele pe care le detii. O adresa este un sir de caractere si functioneaza ca un cont bancar anonim. Intr-o adresa poti pastra monezi sau alte asset-uri. O adresa nu expira niciodata. Ii poti asocia un nume sau setari de securitate. Apasa butonul Options pentru mai multe detalii legate de adrese.");
+			   $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
 			   
 			   // Operations
 			   switch ($_REQUEST['act'])
 			   {
 				   case "new_adr" : $my_adr->newAdr($_REQUEST['dd_curve'], $_REQUEST['txt_tag']); 
 				                    break;
+									
+				   case "import_adr" : $my_adr->importAdr($_REQUEST['txt_pub_key'], 
+				                                         $_REQUEST['txt_priv_key'], 
+													     $_REQUEST['txt_imp_tag']); 
+				                       break;
+									   
+				   case "show_pending" : $my_adr->showPendingAdr(); 
+				                         break;
+										 
+				   case "add_adr" : $my_adr->aprovesPending($_REQUEST['ID']); 
+				                    break;
+										 
+				   case "reject_adr" : $my_adr->rejectPending($_REQUEST['ID']); 
+				                      break;
 			   }
 			   
-			   $my_adr->showMyAdr();
+			   // My addresses
+			   if ($_REQUEST['act']!="show_pending") 
+			   {
+				   // Pending addresses
+			       $my_adr->showPending();
+			       
+				   // My addresses
+				   $my_adr->showMyAdr();
+			   }
 			?>
             
+            
+            <br><br>
             </td>
             <td width="203" align="center" valign="top">
             <?

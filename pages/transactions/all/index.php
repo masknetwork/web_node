@@ -10,7 +10,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $trans=new CTransactions($db, $template);
    
 ?>
@@ -76,13 +76,15 @@
             <td width="610" height="1000" align="center" valign="top">
            
             <?
-			   $template->showHelp();
+			   $template->showHelp("Below the last transactions executed are displayed. A transaction is confirmed in the network in about 2 minutes. Then, the transaction is final and it cannot be reversed. The transactions can have attached data such as a message or other information.");
 			   
-			   if ($_REQUEST['act']!="send_coins")
+			   if ($_REQUEST['act']!="send_coins" && 
+			       $_REQUEST['act']!="send_otp_coins" && 
+				   $_REQUEST['act']!="send_req_coins")
 			      $trans->showTrans("ID_ALL");
 			   else
 			   {
-				  if ($_REQUEST['h_net_fee_adr']=="")
+				  if ($_REQUEST['act']=="send_coins")
 		          
 				  // Simple send  
 				  $trans->sendCoins($_REQUEST['dd_net_fee'], 
@@ -94,7 +96,7 @@
 								    $_REQUEST['txt_escrower']);
 				 
 				 // OTP ?
-				 if ($_REQUEST['txt_old_pass']!="")
+				 if ($_REQUEST['act']=="send_otp_coins")
 				 $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
 			                        $_REQUEST['h_from_adr'], 
 								    $_REQUEST['h_to_adr'], 
@@ -103,6 +105,17 @@
 								    $_REQUEST['h_mes'], 
 								    $_REQUEST['h_escrower'],
 									$_REQUEST['txt_old_pass']);
+									
+				 // Request data ?
+				 if ($_REQUEST['act']=="send_req_coins")
+				 $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
+			                        $_REQUEST['h_from_adr'], 
+								    $_REQUEST['h_to_adr'], 
+								    $_REQUEST['h_amount'], 
+								    "MSK", 
+								    $_REQUEST['h_mes'], 
+								    $_REQUEST['h_escrower'],
+									$_REQUEST['h_old_pass']);
 			   }
 			   
 			    if ($_REQUEST['act']=="send_block")
@@ -110,6 +123,9 @@
 			       $db->sendBlock();
 			       $template->showOK("Your request has been successfully recorded"); 
 			      }
+				  
+				  // Data modal
+				  $trans->showReqDataModal();
 			?>
             
             </td>

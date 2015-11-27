@@ -15,7 +15,13 @@ class CAdrOptions
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    $adr=$row['adr'];
+	    
 		
+		// Sealed ?
+		if ($this->kern->hasAttr($adr, "ID_SEALED")==true)
+		   $sealed=true;
+		else
+		   $sealed=false;	
 		?>
              
              <table width="560" border="0" cellspacing="0" cellpadding="0">
@@ -62,7 +68,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td height="0" align="left" class="simple_gri_12">MaskCoin este distribuit in mare parte prin dobanda. Dobanda este stabilita in functie de cate monezi sunt in circulatie si scade in timp. Dobanda actuala este de 55%. pe an. Orice adresa care detine minim 5 MSK poate primii zilnic aceasta dobanda. Aici poti seta aceasta adresa sa primeasca dobanda.</td>
+                      <td height="0" align="left" class="simple_gri_12">MaskCoin is distributed largely through interest. The interest rate is determined depending on how many coins are in circulation and decreases in time. The current interest rate is 55%. per year. Any address that holds at least 5 MSK can receive this interest daily. You can set this address to receive interest.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -76,7 +82,8 @@ class CAdrOptions
                           <td><img src="./GIF/adr_opt_names.png" width="100" /></td>
                         </tr>
                         <tr>
-                          <td height="40" align="center"><a href="#" onclick="javascript:$('#modal_new_domain').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Rent</a></td>
+                          <td height="40" align="center">
+                          <a href="#" onclick="javascript:$('#modal_new_domain').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Rent</a></td>
                       </tr>
                     </tbody>
                   </table></td>
@@ -92,7 +99,7 @@ class CAdrOptions
                       </table></td>
                       </tr>
                     <tr>
-                      <td height="0" align="left" class="simple_gri_12">Inchirierea unui nume pentru adresa ta este un mod excelent de a simplifica primirea de bani. In loc sa fii platit la o adresa greu de inteles formata din zeci de cifre / litere, poti primii bani intr-o adresa de genul &quot;maria&quot;. Poti inchiria un numar nelimitat de nume. Poti deasemenea dispune de multiple nume pentru o singura adresa.</td>
+                      <td height="0" align="left" class="simple_gri_12">Renting a name for your address is a great way to simplify the receipt of money. Instead of paying at an address difficult to understand consisting of dozens of numbers / letters, you can receive money in an address like "Maria". You can rent an unlimited number of names. You can also have multiple names for a single address.</td>
                       </tr>
                   </table></td>
                   </tr>
@@ -106,7 +113,8 @@ class CAdrOptions
                           <td><img src="./GIF/adr_opt_share.png" width="100"  /></td>
                         </tr>
                         <tr>
-                          <td height="40" align="center"><a href="#" onclick="javascript:$('#modal_share').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Share</a></td>
+                          <td height="40" align="center">
+                          <a href="#" onclick="javascript:$('#modal_share').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Share</a></td>
                         </tr>
                     </tbody>
                   </table></td>
@@ -120,7 +128,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">O adresa este formata dintr-o cheie publica si una privata. Daca detii cheia privata a unei adrese, poti cheltui fondurile asociate cu adresa. Folosind aceasta optiune poti trimite cheia privata a acestei adrese unei alte persoane (adresa). Dupa ce primeste cheia privata, destinatarul va putea folosit aceasta adresa exact ca tine.</td>
+                      <td align="left" class="simple_gri_12">An address consists a public and a private key. If you own the private key of an address, you can spend the funds associated with the address. By using this option you can send the private key of this address to another person (address). After receiving the private key, the recipient will be able to use this address exactly like you.</td>
                     </tr>
                   </table></td>
                   </tr>
@@ -134,7 +142,45 @@ class CAdrOptions
                           <td><img src="./GIF/adr_opt_profile.png" width="90"  /></td>
                         </tr>
                         <tr>
-                          <td height="50" align="center"><a href="#" onclick="javascript:$('#modal_profile').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a></td>
+                          <td height="50" align="center">
+                          
+						  <?
+						     $query="SELECT * FROM profiles WHERE adr='".$adr."'";
+							 $result=$this->kern->execute($query);	
+	                         
+							 if (mysql_num_rows($result)==0)
+							 {
+						  ?>
+                          
+                                 <a href="#" onclick="javascript:$('#modal_profile').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px">
+                                 <span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup
+                                 </a>
+                          
+                          <?
+							 }
+							 else
+							 {
+								 $row = mysql_fetch_array($result, MYSQL_ASSOC);
+								 
+								 ?>
+                                 
+                                  <a href="#" onclick="javascript:$('#modal_profile').modal(); 
+                                                                  $('#txt_prof_name').val('<? print base64_decode($row['name']); ?>');
+                                                                  $('#txt_desc').val('<? print base64_decode($row['description']); ?>');
+                                                                  $('#txt_tel').val('<? print base64_decode($row['tel']); ?>');
+                                                                  $('#txt_email').val('<? print base64_decode($row['email']); ?>');
+                                                                  $('#txt_web').val('<? print base64_decode($row['website']); ?>');
+                                                                  $('#txt_fb').val('<? print base64_decode($row['facebook']); ?>');
+                                                                  $('#txt_pic').val('<? print base64_decode($row['avatar']); ?>');" 
+                                  class="btn btn-warning <? if ($sealed==true) print "disabled"; ?>" style="width:100px">
+                                  <span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Update
+                                  </a>
+                                 
+                                 <?
+							 }
+						  ?>
+                          
+                          </td>
                       </tr>
                     </tbody>
                   </table></td>
@@ -148,7 +194,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Poti asocia acestei adrese un profilunde sa furnizezi mai multe informatii cum ar fi o adresa de email, un website, un avatar, etc. Toate profilele sunt publice. Costul uni profil este de 0.0001 MSK / zi.</td>
+                      <td align="left" class="simple_gri_12">You can associate to this address a profile where to provide more information such as an email address, a website, an avatar, etc. All profiles are public. The cost of a profile is 0.0001 MSK / day.</td>
                     </tr>
                   </table></td>
                   </tr>
@@ -169,7 +215,32 @@ class CAdrOptions
                           <td><img src="./GIF/adr_opt_froze.png" width="91" /></td>
                         </tr>
                         <tr>
-                          <td height="50" align="center"><a href="#" onclick="javascript:$('#modal_froze').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a></td>
+                          <td height="50" align="center">
+                          
+                          <?
+						     if ($this->kern->hasAttr($adr, "ID_FROZEN")==true)
+							 {
+						  ?>
+                          
+                                   <a href="#" onclick="javascript:$('#modal_froze').modal()" class="btn btn-warning <? if ($sealed==true) print "disabled"; ?>" style="width:100px">
+                                   <span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Renew
+                                   </a>
+                          
+                          <?
+							 }
+							 else
+							 {
+								 ?>
+                                 
+                                   <a href="#" onclick="javascript:$('#modal_froze').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px">
+                                   <span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup
+                                   </a>
+                                 
+                                 <?
+							 }
+						  ?>
+                          
+                          </td>
                         </tr>
                     </tbody>
                   </table></td>
@@ -183,7 +254,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Poti ingheta aceasta adresa pentru o perioada. Dintr-o adresa inghetata nu se pot cheltui fonduri. Aceasta optiune nu poate fi suspendata in perioada cat este activa. Recomandam ca aceasta optiune sa fie utilizata prident. Daca un atacator preia controlul adresei, nu va putea cheltui fonduri pe perioada cat optiunea este activa.</td>
+                      <td align="left" class="simple_gri_12">You can freeze this address for a period of time. One cannot spend money from a frozen address. This option cannot be suspended while it is active. We recommend that this option be used with prudence. If an attacker takes control of the address, he/she will not be able to spend funds for as long as the option is active.</td>
                     </tr>
                   </table></td>
                   </tr>
@@ -197,7 +268,28 @@ class CAdrOptions
                           <td align="center"><img src="./GIF/adr_opt_seal.png" width="80" /></td>
                         </tr>
                         <tr>
-                          <td height="50" align="center"><a href="#" onclick="javascript:$('#modal_seal').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a></td>
+                          <td height="50" align="center">
+                          
+                          <?
+						     if ($sealed==true)
+							 {
+						  ?>
+                          
+                          <a href="#" onclick="javascript:$('#modal_seal').modal()" class="btn btn-warning" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Renew</a>
+                          
+                          <?
+							 }
+							 else
+							 {
+								 ?>
+                                 
+                                  <a href="#" onclick="javascript:$('#modal_seal').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a>
+                                 
+                                 <?
+							 }
+						  ?>
+                          
+                          </td>
                         </tr>
                     </tbody>
                   </table></td>
@@ -211,7 +303,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Dintr-o adresa sigilata se pot cheltui fonduri dar nu poti sa-i atasezi nici un fel de optiune. Deasemenea nu i se pot atasa nume si nici nu poate fi impartita cu o alta adresa. Daca un atacator preia controlul adresei, va putea cheltui fonduri dar nu va putea executa alte operatii. </td>
+                      <td align="left" class="simple_gri_12">From a sealed address you can spend money but you cannot attach any option. Also there can be no names attached to it and cannot be shared with another address. If an attacker takes control of the address, he/she will be able to spend funds but cannot perform other operations.</td>
                     </tr>
                   </table></td>
                   </tr>
@@ -225,7 +317,28 @@ class CAdrOptions
                           <td align="center"><img src="./GIF/adr_opt_restrict.png" height="90" /></td>
                         </tr>
                         <tr>
-                          <td height="50" align="center"><a href="#" onclick="javascript:$('#modal_restrict').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a></td>
+                          <td height="50" align="center">
+                          
+                          <?
+						     if ($this->kern->hasAttr($adr, "ID_RESTRICT_REC")==true)
+							 {
+                          ?>
+                          
+                          <a href="#" onclick="javascript:$('#modal_restrict').modal()" class="btn btn-warning <? if ($sealed==true) print "disabled"; ?>" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Renew</a>
+                          
+                          <?
+							 }
+							 else
+							 {
+								 ?>
+                                 
+                                 <a href="#" onclick="javascript:$('#modal_restrict').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a>
+                                 
+                                 <?
+							 }
+						  ?>
+                          
+                          </td>
                         </tr>
                     </tbody>
                   </table></td>
@@ -239,7 +352,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Prin activarea acestei optiuni vei putea trimite fonduri din adresa doar catre un grup de maxim patru alte adrese. Daca un atacator preia controlul adresei, nu va putea trimite fonduri decat catre un grup sepcificat de adrese. Nu poti atasa destinatari noi sau sterge actuali destinatari pe perioada cat optiunea este activa.</td>
+                      <td align="left" class="simple_gri_12">By activating this option you will be able to send funds from the address only to a group of up to 5 other addresses. If an attacker takes control of the address, he/she can only send funds to a specified group of addresses. You cannot attach new recipients or remove current recipients as long as the option is active.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -260,7 +373,7 @@ class CAdrOptions
 							{
 						  ?>
                           
-                          <a href="javascript:void(0)" onclick="javascript:$('#modal_multisig').modal()" class="btn btn-success" style="width:100px">                          <span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup
+                          <a href="javascript:void(0)" onclick="javascript:$('#modal_multisig').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px">                          <span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup
                           </a>
                           
                           <?
@@ -294,7 +407,7 @@ class CAdrOptions
                                                                 $('#txt_sig_min').val('<? print $row['par_6']; ?>');
                                                                 $('#txt_sig_min').attr('disabled', 'disabled');
                                                                 
-                                                                " class="btn btn-warning" style="width:100px">                           
+                                                                " class="btn btn-warning <? if ($sealed==true) print "disabled"; ?>" style="width:100px">                           
                            <span class="glyphicon glyphicon-refresh" ></span>&nbsp;&nbsp;Renew
                            </a>   
                           
@@ -316,7 +429,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">O adresa care are atasata aceasta optiune va avea nevoie de multiple semnaturi pentru a putea cheltui fonduri. Orice transfer din aceasta adresa, va trebui sa fie semnata de adresele autorizate. Daca un atacator preia controlul acestei adrese, va avea nevoie de semnatura celor autorizati pentru a putea  cheltui fonduri.</td>
+                      <td align="left" class="simple_gri_12">An address that has this option attached will require multiple signatures to be able to spend funds. Any transfer of this address will be signed by the authorized addresses. If an attacker takes control of this address, he/she will require the signature of the authorized persons to be able to spend funds.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -330,7 +443,28 @@ class CAdrOptions
                           <td align="center"><img src="./GIF/adr_opt_otp.png" height="90" /></td>
                       </tr>
                         <tr>
-                          <td height="50" align="center"><a href="#" onclick="javascript:$('#modal_otp').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a></td>
+                          <td height="50" align="center">
+                          
+                          <?
+						     if ($this->kern->hasAttr($adr, "ID_OTP")==true)
+							 {
+						  ?>
+                          
+                                <a href="#" onclick="javascript:$('#modal_otp').modal()" class="btn btn-warning <? if ($sealed==true) print "disabled"; ?>" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Renew</a>
+                          
+                          <?
+							 }
+							 else
+							 {
+								 ?>
+                                 
+                                  <a href="#" onclick="javascript:$('#modal_otp').modal()" class="btn btn-success <? if ($sealed==true) print "disabled"; ?>" style="width:100px"><span class="glyphicon glyphicon-cog" ></span>&nbsp;&nbsp;Setup</a>
+                                 
+                                 <?
+							 }
+						  ?>
+                          
+                          </td>
                         </tr>
                     </tbody>
                   </table></td>
@@ -344,7 +478,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Daca activezi aceasta optiune, inainte de a trimite fonduri va trebui sa introduci o parola noua. Dupa ce trimiti bani dintr-o adresa protejata cu aceasta optiune, o noua parola va fi generata. In cazul in care un atacator preia controlul acestei adrese, va trebui sa furnizeze si o parola pentru a utea cheltui fonduri.</td>
+                      <td align="left" class="simple_gri_12">If you activate this option, before sending the funds you will need to enter a new password. After sending the money from a protected address with this option, a new password will be generated. If an attacker takes control of this address, he/she will need to provide a password to be able to spend the funds.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -396,7 +530,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Prin aceasta optiune poti fi notificat prin internet de fiecare data cand sunt primite sau trimise fonduri din aceasta adresa. De fiecare data cand se primesc / trimit bani, o adresa web specificata de tine va primii toate datele tranzactiei.</td>
+                      <td align="left" class="simple_gri_12">Through this option you can be notified via internet whenever funds are received or sent from this address. Every time money is received / sent, a web address specified by you will receive all transaction data.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -419,8 +553,13 @@ class CAdrOptions
 							 $result=$this->kern->execute($query);	
 	                         $row = mysql_fetch_array($result, MYSQL_ASSOC);
 							 
+							 if ($sealed==true) 
+							    $disabled="disabled";
+						     else
+							    $disabled="";
+							 
 							 if (mysql_num_rows($result)==0) 
-							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_aditional').modal(); \" class=\"btn btn-success\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Setup</a>";
+							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_aditional').modal(); \" class=\"btn btn-success ".$disabled."\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Setup</a>";
 						     else
 							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_aditional').modal(); 
 								                                               $('#txt_req_mes').val('".base64_decode($row['mes'])."');                                                                               
@@ -444,7 +583,7 @@ class CAdrOptions
 																			   $('#txt_field_5_min').val('".$row['field_5_min']."');
 																			   $('#txt_field_5_max').val('".$row['field_5_max']."');\" 
 																			   
-																			   class=\"btn btn-warning\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Manage</a>";
+																			   class=\"btn btn-warning ".$disabled."\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Manage</a>";
 								
                           ?>
                           
@@ -462,7 +601,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Prin aceasta optiune poti cere date suplimentare de la cei care doresc sa-ti trimita fonduri. De exemplu daca setezi aceasta adresa sa ceara adresa de email, atunci toti cei care doresc sa trimita fonduri vor trebui sa-si introduca si adresa de email.</td>
+                      <td align="left" class="simple_gri_12">By using this option you can request additional information from those who want to send you funds. For example if you set this address to request your email address, then all those wishing to send you funds will need to insert and email address.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -509,7 +648,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">Prin activarea acestei optiuni, poti trimite automat mesaje celor care au trimis fonduri catre adresa ta. Daca de exemplu doresti ca toti cei care au trimis fonduri catre aceasta adresa, sa primeasca imediat un mesaj inapoi, atunci poti folosi aceasta optiune pentru a seta mesajul.</td>
+                      <td align="left" class="simple_gri_12">By enabling this option, you can automatically send messages to those who have sent funds to your address. If for example you want those who sent funds to this address to immediately receive a message back, then you can use this option to set the message.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -545,7 +684,7 @@ class CAdrOptions
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="simple_gri_12">O adresa este formata dintr-o cheie publica vizibila de toata lumea si o cheie privata (parola) care este stiuta doar de proprietar. Pentru a putea controla o adresa ai nevoie de chaia privata. Apasa butonul verde daca doresti sa vizualizezi cheia privata a acestei adrese. Niciodata sa nu predai cheia privata unei persoane straine.</td>
+                      <td align="left" class="simple_gri_12">An address consists of a visible public key and a private key (password) that is known only by the owner. To control the address you need the private key (the password). Press the green button if you want to visualize the private key of address. Never divulge the private key.</td>
                     </tr>
                   </table></td>
                 </tr>

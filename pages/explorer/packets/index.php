@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $explorer=new CExplorer($db, $template);
    $packets=new CPackets($db, $template);
 ?>
@@ -56,10 +56,18 @@
 <table width="1018" border="0" cellspacing="0" cellpadding="0">
   <tbody>
     <tr>
-      <td height="800" align="center" valign="top" background="../../template/template/GIF/back_middle.png"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <td height="800" align="center" valign="top" background="../../template/template/GIF/back_middle.png">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tbody>
           <tr>
-            <td width="205" height="18" align="right" valign="top"><table width="201" border="0" cellspacing="0" cellpadding="0">
+            <td width="205" height="0" align="right" valign="top">
+            
+			<?
+			   if (isset($_SESSION['userID']))
+			   {
+			?>
+            
+            <table width="201" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
                   <td height="170" align="center" valign="middle" style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;">
@@ -71,7 +79,10 @@
                 </tr>
               </tbody>
             </table>
-            <?
+            
+			<?
+			   }
+			   
 			   $explorer->showLeftMenu(1);
 			?>
             
@@ -82,7 +93,7 @@
            
            
             <?
-			   $template->showHelp();
+			   $template->showHelp("Below are the last packages received. A package can contain any instruction such as renting a name or a transaction. There are dozens of types of packages. Click on the name of the package for more details.");
 			   $packets->hsowLastPackets();   
 			?>
            
@@ -90,7 +101,7 @@
             </td>
             <td width="203" align="center" valign="top">
             <?
-			   $template->showRightPanel();
+			   if (isset($_SESSION['userID'])) $template->showRightPanel();
 			   $template->showAds();
 			?>
             </td>

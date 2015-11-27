@@ -45,6 +45,13 @@ class COTP
 			 return false;
 		}
 		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			return false;
+		}
+		
 		// Days
 		if ($days<1)
 		{
@@ -57,6 +64,13 @@ class COTP
 		{
 			 $this->template->showErr("Insufficient funds", 550);
 			 return false;
+		}
+		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
 		}
 		
 		try
@@ -117,7 +131,7 @@ class COTP
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "froze"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "otp"); ?></td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -145,7 +159,7 @@ class COTP
               </tr>
               <tr>
                 <td align="left" valign="top" class="simple_blue_14">
-                <input class="form-control" name="txt_otp_days" id="txt_otp_days" style="width:80px"/></td>
+                <input class="form-control" name="txt_otp_days" id="txt_otp_days" style="width:100px" value="365" type="number" min="1" step="1"/></td>
               </tr>
               <tr>
                 <td align="left" valign="top" class="simple_blue_14">&nbsp;</td>
@@ -176,6 +190,10 @@ class COTP
             </table></td>
           </tr>
         </table>
+        
+        <script>
+		linkToNetFee("txt_otp_days", "otp_net_fee_panel_val", 0.0365);
+		</script>
         
         <?
 		$this->template->showModalFooter("Cancel", "Activate");

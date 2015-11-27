@@ -148,6 +148,20 @@ class CMultisig
 			 return false;
 		}
 		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			return false;
+		}
+		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
+		}
+		
 		try
 	    {
 		   // Begin
@@ -209,7 +223,7 @@ class CMultisig
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "froze"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "sig"); ?></td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -281,7 +295,7 @@ class CMultisig
                     </tr>
                     <tr>
                       <td><input class="form-control" name="txt_sig_min" id="txt_sig_min" style="width:80px"/></td>
-                      <td><input class="form-control" name="txt_sig_days" id="txt_sig_days" style="width:80px"/></td>
+                      <td><input class="form-control" name="txt_sig_days" id="txt_sig_days" style="width:100px" value="365" type="number" min="1" step="1"/></td>
                     </tr>
                   </tbody>
                 </table></td>
@@ -295,6 +309,10 @@ class CMultisig
             </table></td>
           </tr>
         </table>
+        
+        <script>
+		linkToNetFee("txt_sig_days", "sig_net_fee_panel_val", 0.0365);
+		</script>
         
         <?
 		$this->template->showModalFooter("Cance", "Activate");

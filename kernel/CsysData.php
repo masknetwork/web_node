@@ -9,9 +9,8 @@ class CSysData
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		
-		$_REQUEST['sd']['wallet_name']=$row['wallet_name'];
-		$_REQUEST['sd']['wallet_ad']=$row['wallet_ad'];
-		$_REQUEST['sd']['website_url']=$row['website_url'];
+		$_REQUEST['sd']['status']=$row['status'];
+		$_REQUEST['sd']['msk_price']=$row['msk_price'];
 		
 		$query="SELECT * FROM status";
 		$result=$this->kern->execute($query);

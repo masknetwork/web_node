@@ -31,7 +31,7 @@
    $ud=new CUserData($db);
    
    // Sys data
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    
    // Address
    $adr=new CAdr($db, $template);
@@ -255,7 +255,7 @@
 																  $_REQUEST['txt_web'], 
 																  $_REQUEST['txt_fb'],
 																  $_REQUEST['txt_pic'],
-																  $_REQUEST['txt_days']); 
+																  $_REQUEST['txt_prof_days']); 
 											break;
 											
 					case "web_ipn" : $ipn->update($adr,

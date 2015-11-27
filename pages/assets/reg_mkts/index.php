@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $assets=new CAssets($db, $template);
    $reg_mkts=new CRegMkts($db, $template);
 ?>

@@ -32,6 +32,13 @@ class CSeal
 			 return false;
 		}
 		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			return false;
+		}
+		
 		// Days
 		if ($days<1)
 		{
@@ -45,6 +52,8 @@ class CSeal
 			 $this->template->showErr("Insufficient funds", 550);
 			 return false;
 		}
+		
+		
 		
 		try
 	    {
@@ -100,7 +109,7 @@ class CSeal
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "seal"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "seal"); ?></td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -117,11 +126,16 @@ class CSeal
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Days</strong></td>
               </tr>
               <tr>
-                <td align="left"><input class="form-control" name="txt_seal_days" id="txt_seal_days" style="width:80px"/></td>
+                <td align="left">
+                <input class="form-control" type="number" min="1" step="1" name="txt_seal_days" id="txt_seal_days" style="width:100px" value="365"/></td>
               </tr>
             </table></td>
           </tr>
         </table>
+        
+        <script>
+		linkToNetFee("txt_seal_days", "seal_net_fee_panel_val", 0.0365);
+		</script>
         
         <?
 		$this->template->showModalFooter("Cance", "Activate");

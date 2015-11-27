@@ -11,7 +11,7 @@
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
-   $ud=new CSysData($db);
+   $sd=new CSysData($db);
    $assets=new CAssets($db, $template);
    $assets_list=new CAssetsList($db, $template);
 ?>
@@ -71,16 +71,16 @@
               </tbody>
             </table>
             <?
-			   $assets->showLeftMenu(1);
+			  // $assets->showLeftMenu(1);
 			?>
             </td>
             <td width="610" height="1000" align="center" valign="top">
            
            
             <?
-			   $template->showHelp();
-			   $assets_list->showAssets();
-			   //$template->showErr("This section will be launched on November 25, 2015", 550);
+			   //$template->showHelp();
+			   //$assets_list->showAssets();
+			   $template->showErr("This section will be launched on January 25, 2015", 550);
 			?>
             
            

@@ -26,7 +26,6 @@ class CProfile
 		$website=base64_decode($website);
 		$fb=base64_decode($fb);
 		$pic=base64_decode($pic);
-		$days=base64_decode($days);
 		
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
@@ -35,11 +34,18 @@ class CProfile
 			return false;
 		}
 		
-		// Fee address is security options free
+		// My address
 	    if ($this->kern->isMine($net_fee_adr)==false || 
 		    $this->kern->isMine($adr)==false)
 		{
 			$this->template->showErr("Invalid entry data", 550);
+			return false;
+		}
+		
+		// Fee address is security options free
+	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+		{
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
 			return false;
 		}
 		
@@ -124,6 +130,13 @@ class CProfile
 		  }
 		}
 		
+		// Target address sealed
+		if ($this->kern->isSealed($adr)==true)
+		{
+			$this->template->showErr("Address is sealed.", 550);
+			return false;
+		}
+		
 		try
 	    {
 		   // Begin
@@ -138,13 +151,13 @@ class CProfile
 							   op='ID_UPDATE_PROFILE', 
 							   fee_adr='".$net_fee_adr."', 
 							   target_adr='".$adr."',
-							   par_1='".$name."',
-							   par_2='".$desc."',
-							   par_3='".$email."',
-							   par_4='".$tel."',
-							   par_5='".$website."',
-							   par_6='".$fb."',
-							   par_7='".$pic."',
+							   par_1='".base64_encode($name)."',
+							   par_2='".base64_encode($desc)."',
+							   par_3='".base64_encode($email)."',
+							   par_4='".base64_encode($tel)."',
+							   par_5='".base64_encode($website)."',
+							   par_6='".base64_encode($fb)."',
+							   par_7='".base64_encode($pic)."',
 							   days='".$days."',
 							   status='ID_PENDING', 
 							   tstamp='".time()."'"; 
@@ -183,7 +196,7 @@ class CProfile
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "profile"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0365", "profile"); ?></td>
               </tr>
               </table></td>
             <td width="398" align="right" valign="top"><table width="95%" border="0" cellspacing="0" cellpadding="5">
@@ -269,7 +282,8 @@ class CProfile
                     <td width="77%" align="left">&nbsp;</td>
                   </tr>
                   <tr>
-                    <td><input class="form-control" name="txt_days" id="txt_days" style="width:70px" placeholder="365" value="365"/></td>
+                    <td>
+                    <input class="form-control" type="number" min="10" step="1" name="txt_prof_days" id="txt_prof_days" style="width:100px" placeholder="365" value="365"/></td>
                     <td>&nbsp;</td>
                   </tr>
                 </table></td>
@@ -292,8 +306,9 @@ class CProfile
 		   $('#txt_web').val(btoa($('#txt_web').val())); 
 		   $('#txt_fb').val(btoa($('#txt_fb').val())); 
 		   $('#txt_pic').val(btoa($('#txt_pic').val())); 
-		   $('#txt_days').val(btoa($('#txt_days').val())); 
 		});
+		
+		linkToNetFee("txt_prof_days", "profile_net_fee_panel_val", 0.0365);
 		</script>
         
         <?
