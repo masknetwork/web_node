@@ -20,6 +20,20 @@
 	       $this->kern->execute($query);
 	 }
 	 
+	 function removePeer($IP)
+	 {
+		   // Insert to stack
+		   $query="INSERT INTO web_ops 
+			                SET user='".$_REQUEST['ud']['user']."', 
+							    op='ID_REMOVE_PEER', 
+								par_1='".$IP."',
+								status='ID_PENDING', 
+								tstamp='".time()."'"; 
+	       $this->kern->execute($query);
+	 }
+	 
+	 
+	 
 	 function addPeerModal()
 	 {
 		 $this->template->showModalHeader("peer_modal", "Add Peer Message", "act", "add_peer");
@@ -74,40 +88,18 @@
 	  
 		 ?>
              
-             <br>
-             <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="42%" align="left" class="inset_maro_14">Explanation</td>
-                        <td width="1%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="11%" align="center"><span class="inset_maro_14">In</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="10%" align="center"><span class="inset_maro_14">Out</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Seen</span></td>
-                        <td width="1%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="17%" align="center"><span class="inset_maro_14">Remove</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
-                   
+             <br><br>
+             <table width="90%" border="0" cellspacing="0" cellpadding="0">
+             
                    <?
 				      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 					  {
 				   ?>
                    
                         <tr>
-                        <td width="42%" align="left" class="simple_maro_12"><strong><? print $row['peer'].":".$row['port']; ?></strong></td>
-                        <td width="12%" align="center" class="simple_green_12"><strong>
+                        <td width="20%" align="left" class="font_14"><strong><? print $row['peer']; ?></strong></td>
+                        <td width="20%" align="left" class="font_14"><strong><? print $row['port']; ?></strong></td>
+                        <td width="10%" align="center" class="font_14" style="color:#009900"><strong>
 						<? 
 						   if ($row['in_traffic']<1024000) 
 						     print round($row['in_traffic']/1024)." Kb";
@@ -115,7 +107,7 @@
 						     print round($row['in_traffic']/1024000, 2)." MB";
 						?>
                         </strong></td>
-                        <td width="13%" align="center" class="simple_red_12"><strong>
+                        <td width="10%" align="center" class="font_14" style="color:#990000"><strong>
 						<? 
 						   if ($row['out_traffic']<1024000) 
 						     print round($row['out_traffic']/1024)." Kb";
@@ -123,12 +115,16 @@
 						     print round($row['out_traffic']/1024000, 2)." MB";
 						?>
                         </strong></td>
-                        <td width="17%" align="center" class="simple_maro_12"><strong><? print $this->kern->getAbsTime($row['last_seen']); ?></strong></td>
-                        <td width="16%" align="center" class="simple_maro_12">
-                        <a href="index.php?act=remove&peer=<? print $row['ID']; ?>" class="btn btn-danger btn-sm">Remove</a></td>
-                        </tr>
+                        <td width="20%" align="center" class="font_14"><strong><? print $this->kern->getAbsTime($row['last_seen']); ?></strong></td>
+                        <td width="20%" align="center" class="font_14">
+                        <?
+						    if ($_REQUEST['ud']['user']=="root")
+						      print "<a href='index.php?act=remove&peer=".$row['peer']."' class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-remove'></span>&nbsp;&nbsp;Remove</a>";
+                        ?>
+                        </td>
+						</tr>
                         <tr>
-                        <td colspan="5" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="6"><hr></td>
                         </tr>
                   
                   <?
@@ -136,29 +132,22 @@
 				  ?>
                   
                   </table>
-                  
-                  
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
+               
          
          <?
 	 }
 	 
 	 function showAddBut()
 	 {
+		 if ($_REQUEST['ud']['user']!="root") return false;
 		 ?>
          
-             <br><br>
-             <table width="560" border="0" cellspacing="0" cellpadding="0">
+             
+             <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
                   <td align="right">
-                  <a href="javascript:void(0)" onClick="$('#peer_modal').modal()" class="btn btn-success">
+                  <a href="javascript:void(0)" onClick="$('#peer_modal').modal()" class="btn btn-primary">
                   <span class="glyphicon glyphicon-plus"></span>&nbsp;Add Peer
                   </a>
                   </td>

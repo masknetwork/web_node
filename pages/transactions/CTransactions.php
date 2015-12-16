@@ -7,93 +7,19 @@ class CTransactions
 		$this->template=$template;
 	}
 	
-	function showLeftMenu($sel=1)
-	{
-		?>
-        
-            <table width="201" border="0" cellspacing="0" cellpadding="0">
-                <tbody>
-                  
-                  <tr>
-                    <td height="40" align="left">
-                    
-                    <a href="../all/index.php">
-                    <table width="200" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td width="4" <? if ($sel==1) print "bgcolor='#B20002'"; ?> style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;">&nbsp;</td>
-                          <td width="40" <? if ($sel==1) print "bgcolor='#f7f5e8'"; ?> style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;" height="40" align="center">
-                          <span class="glyphicon glyphicon-th-list" style="color:<? if ($sel==1) print "#990000"; else print "#bcac8e"; ?>"></span></td>
-                          
-                           <td <? if ($sel==1) print "bgcolor='#f7f5e8'"; ?> width="110" class="<? if ($sel==1) print "inset_red_14"; else print "inset_maro_14"; ?>" style="border-bottom-width:1px; border-bottom-style:solid; border-bottom-color:#ffffff;">All Transactions</td>
-                           
-                           <td <? if ($sel==1) print "bgcolor='#f7f5e8'"; ?> width="36" align="center" style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;"><? if ($_REQUEST['ud']['unread_trans']>0) $this->template->showBubble($_REQUEST['ud']['unread_trans'], "ID_ROSU"); ?></td>
-                          </tr>
-                       
-                      </table>
-                      </a>
-                      
-                      </td>
-                  </tr>
-                  
-                   <tr>
-                    <td height="40" align="left">
-                    
-                     <a href="../escrowed/index.php">
-                    <table width="200" border="0" cellspacing="0" cellpadding="0">
-                      <tbody>
-                        <tr>
-                          <td width="4" <? if ($sel==2) print "bgcolor='#B20002'"; ?> style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;">&nbsp;</td>
-                          <td width="40" <? if ($sel==2) print "bgcolor='#f7f5e8'"; ?> style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;" height="40" align="center">
-                          <span class="glyphicon glyphicon-lock" style="color:<? if ($sel==2) print "#990000"; else print "#bcac8e"; ?>"></span></td>
-                          <td <? if ($sel==2) print "bgcolor='#f7f5e8'"; ?> width="110" class="<? if ($sel==2) print "inset_red_14"; else print "inset_maro_14"; ?>" style="border-bottom-width:1px; border-bottom-style:solid; border-bottom-color:#ffffff;">Escrowed</td>
-                          <td <? if ($sel==2) print "bgcolor='#f7f5e8'"; ?> width="36" align="center" style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;"><? if ($_REQUEST['ud']['unread_esc']>0) $this->template->showBubble($_REQUEST['ud']['unread_esc'], "ID_PORTO"); ?></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      </a>
-                      
-                      </td>
-                  </tr>
-                  
-                  
-                 <tr>
-                    <td height="40" align="left">
-                    
-                    <a href="../multisig/index.php">
-                    <table width="200" border="0" cellspacing="0" cellpadding="0">
-                      <tbody>
-                        <tr>
-                          <td width="4" <? if ($sel==3) print "bgcolor='#B20002'"; ?> style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;">&nbsp;</td>
-                          <td width="40" <? if ($sel==3) print "bgcolor='#f7f5e8'"; ?> style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;" height="40" align="center">
-                          <span class="glyphicon glyphicon-link" style="color:<? if ($sel==3) print "#990000"; else print "#bcac8e"; ?>"></span></td>
-                          <td <? if ($sel==3) print "bgcolor='#f7f5e8'"; ?> width="110" class="<? if ($sel==3) print "inset_red_14"; else print "inset_maro_14"; ?>" style="border-bottom-width:1px; border-bottom-style:solid; border-bottom-color:#ffffff;">Multisig</td>
-                          <td <? if ($sel==3) print "bgcolor='#f7f5e8'"; ?> width="36" align="center" style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;"><? if ($_REQUEST['ud']['unread_multisig']>0) $this->template->showBubble($_REQUEST['ud']['unread_multisig'], "ID_VERDE"); ?></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      </a>
-                      
-                      </td>
-                  </tr>
-                  
-                  <tr>
-                    <td height="40" align="left">&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td height="40" align="left">&nbsp;</td>
-                  </tr>
-                </tbody>
-              </table>
-        
-        <?
-	}
 	
 	function showTrans()
 	{
-		$query="UPDATE web_users 
+		// Request data modal
+		$this->showReqDataModal();
+		
+		if ($_REQUEST['act']=="clear")
+		{
+		  $query="UPDATE web_users 
 		           SET unread_trans=0 
 				 WHERE ID='".$_REQUEST['ud']['ID']."'";
-		$this->kern->execute($query);
+		  $this->kern->execute($query);
+		}
 		
 		$query="SELECT mt.*, rd.field_1_name  
 		          FROM my_trans AS mt 
@@ -104,39 +30,20 @@ class CTransactions
 		$result=$this->kern->execute($query);
 		
 		?>
-        
-            <table width="565" border="0" cellspacing="0" cellpadding="0">
+            
+            <div id="div_trans" name="div_trans">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0" class="table-responsive">
               <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="47%" align="left" class="inset_maro_14">Explanation</td>
-                        <td width="3%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="10%" align="center" class="inset_maro_14">Data</td>
-                        <td width="4%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="10%" align="center"><span class="inset_maro_14">Status</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="24%" align="center"><span class="inset_maro_14">Amount</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                    
-                    <?
+                <?
 					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                      
                           <tr>
-                          <td width="48%" align="left">
-                          <a href="#" class="maro_12"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a><br><span class="simple_maro_10"><? print "Received ".$this->kern->getAbsTime($row['tstamp'])." ago"; ?></span></td>
-                          <td width="15%" align="center" class="simple_maro_14">
+                          <td width="55%" align="left">
+                          <a href="#" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong>
+                          </a><p class="font_10"><? print "Received ".$this->kern->getAbsTime($row['tstamp'])." ago"; ?></p></td>
+                          <td width="5%" align="center" class="font_14" style="color:#999999">
                           <?
 						 
 						      if ($row['mes']!="") 
@@ -160,42 +67,37 @@ class CTransactions
 							 $('#field_5_name').text('".base64_decode($row['field_5_name'])."'); 
 							 $('#field_5_val').text('".base64_decode($row['field_5'])."');
 							 
-							 \" class='maro_14'><span class='glyphicon glyphicon-list'></span></a>";
+							 \" class='font_14'><span class='glyphicon glyphicon-list'></span></a>";
 						  ?>
                           </td>
-                          <td width="12%" align="center" class="simple_green_12">
+                          <td width="15%" align="center" class="font_14">
                           <?
 					        if ($row['status']=="ID_CLEARED")
 						    {  
-						      print "<span class='simple_green_12'><strong>cleared</strong></span>";
+						      print "<span class='label label-success'>Cleared</span>";
 						    }
 						    else
 						    {
 							   $dif=time()-$row['tstamp'];
 							 
-							   if ($dif<40) $img="p1.png";
-							   if ($dif>=40 && $dif<80) $img="p2.png";
-							   if ($dif>=80 && $dif<120) $img="p3.png";
-							   if ($dif>=120 && $dif<160) $img="p4.png";
-							   if ($dif>=160 && $dif<200) $img="p5.png";
-							   if ($dif>200 && $dif<300) $img="p6.png";
-							   if ($dif>300) $img="small_warning.png";
-							   
-							   print "<img src='../../template/template/GIF/".$img."'>";
+							   if ($dif<600) 
+							      print "<span class='label label-warning'>Pending</span>";
+							   else
+							      print "<span class='label label-danger'>Pending</span>";
 							}
 							?>
                           
                           </td>
-                          <td width="25%" align="center" class="
+                          <td width="25%" align="center" class="font_14" style=" 
 						  <? 
 						      if ($row['amount']<0) 
-							     print "simple_red_12"; 
+							     print "color:#990000"; 
 							  else 
-							     print "simple_green_12"; 
+							     print "color:#009900"; 
 						  ?>"><strong><? print $row['amount']." ".strtolower($row['cur']); ?></strong></td>
                           </tr>
                           <tr>
-                          <td colspan="4" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                          <td colspan="4"><hr></td>
                           </tr>
                     
                     <?
@@ -204,14 +106,9 @@ class CTransactions
                     
                     </tbody>
                   </table>
+                  <br><br><br>
+                  </div>
                   
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
             
             <script>
 			$("span[id^='gly_']").popover();
@@ -248,20 +145,20 @@ class CTransactions
            <input type="hidden" id="h_escrower" name="h_escrower" value="<? print $escrower; ?>">
            <input type="hidden" id="h_otp_old_pass" name="h_otp_old_pass" value="<? print $otp_old_pass; ?>">
                
-           <table width="550" border="0" cellspacing="0" cellpadding="0">
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td class="simple_maro_16">&nbsp;&nbsp;&nbsp;This address is requesting additional data</td>
+                  <td class="font_16">&nbsp;&nbsp;&nbsp;This address is requesting additional data</td>
                 </tr>
                 <tr>
-                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                  <td>&nbsp;</td>
                 </tr>
                 <tr>
-                  <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
+                  <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
                         <td width="103" align="center"><img src="../../template/template/GIF/empty_pic.png" width="80" height="80" class="img-circle"/></td>
-                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">
+                        <td width="397" align="center" bgcolor="#f0f0f0" class="font_14">
                         <?
                            if ($row['mes']=="")
 						     print "The owner of this address needs additional data. Please complete the following form. You need to respect the requested data length";
@@ -270,9 +167,7 @@ class CTransactions
                         ?>
 						</td>
                       </tr>
-                      <tr>
-                        <td colspan="2">&nbsp;</td>
-                        </tr>
+                      
                       <tr>
                         <td colspan="2">
                         
@@ -289,7 +184,7 @@ class CTransactions
                           
                                   <tr><td>&nbsp;</td></tr>
                                   <tr>
-                                  <td height="30" align="left" valign="top" class="simple_maro_14">
+                                  <td height="30" align="left" valign="top" class="font_14">
                                   <strong><? print base64_decode($row['field_'.$a.'_name']); ?></strong></td>
                                   </tr>
                                   <tr>
@@ -311,17 +206,17 @@ class CTransactions
                         </tr>
                       <tr>
                         <td colspan="2" align="right">
-                        <a href="javascript:void(0)" onClick="$('#form_req_data').submit()" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a></td>
+                        <a href="javascript:void(0)" onClick="$('#form_req_data').submit()" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a></td>
                       </tr>
                     </tbody>
                   </table></td>
                 </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
+                
               </tbody>
             </table>
             </form>
+            
+           
         
         <?
 	}
@@ -346,20 +241,20 @@ class CTransactions
            <input type="hidden" id="h_mes" name="h_mes" value="<? print $mes; ?>">
            <input type="hidden" id="h_escrower" name="h_escrower" value="<? print $escrower; ?>">
            
-           <table width="550" border="0" cellspacing="0" cellpadding="0">
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td class="simple_maro_16">&nbsp;&nbsp;&nbsp;Password Required</td>
+                  <td class="font_16">&nbsp;&nbsp;&nbsp;Password Required</td>
                 </tr>
                 <tr>
-                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                  <td>&nbsp;</td>
                 </tr>
                 <tr>
-                  <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
+                  <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
-                        <td width="103" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" width="80" height="74" alt=""/></td>
-                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">This address is requesting an unique 25 characters password before spending funds. A new password is generated after each transaction. Please provide the password.</td>
+                        <td width="15%" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" class="img-responsive"/></td>
+                        <td width="85%" align="center" bgcolor="#f0f0f0" class="font_14">This address is requesting an unique 25 characters password before spending funds. A new password is generated after each transaction. Please provide the password.</td>
                       </tr>
                       <tr>
                         <td colspan="2">&nbsp;</td>
@@ -368,7 +263,7 @@ class CTransactions
                         <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td height="30" align="left" valign="top" class="simple_maro_14"><strong>Password</strong></td>
+                              <td height="30" align="left" valign="top" class="font_14"><strong>Password</strong></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" type="password" name="txt_old_pass" id="txt_old_pass" placeholder="0-25 characters"></td>
@@ -381,19 +276,19 @@ class CTransactions
                       </tr>
                       <tr>
                         <td colspan="2" align="right">
-                        <a href="javascript:void(0)" onClick="$('#form_otp').submit()" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a>
+                        <a href="javascript:void(0)" onClick="$('#form_otp').submit()" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a>
                         </td>
                       </tr>
                     </tbody>
                   </table></td>
                 </tr>
                 <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
+                  <td>&nbsp;</td>
                 </tr>
               </tbody>
             </table> 
             </form>
-       
+            
         <?
 	}
 	
@@ -401,20 +296,20 @@ class CTransactions
 	{
 		?>
            
-           <table width="550" border="0" cellspacing="0" cellpadding="0">
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td class="simple_maro_16">&nbsp;&nbsp;Next Password</td>
+                  <td class="font_16">&nbsp;&nbsp;Next Password</td>
                 </tr>
                 <tr>
-                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                  <td>&nbsp;</td>
                 </tr>
                 <tr>
-                  <td align="center" background="../../template/template/GIF/tab_middle.png"><table width="500" border="0" cellspacing="0" cellpadding="0">
+                  <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
-                        <td width="103" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" width="80" height="74" alt=""/></td>
-                        <td width="397" align="center" bgcolor="#fff4eb" class="simple_red_12">Below is displayed your new password. Please keep the passoword safe because you will need it if you want to send funds from this address.</td>
+                        <td width="15%" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" class="img-responsive" /></td>
+                        <td width="85%" align="center" bgcolor="#fff4eb" class="simple_red_12">Below is displayed your new password. Please keep the passoword safe because you will need it if you want to send funds from this address.</td>
                       </tr>
                       <tr>
                         <td colspan="2">&nbsp;</td>
@@ -425,11 +320,11 @@ class CTransactions
                     </tbody>
                   </table></td>
                 </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
+                
               </tbody>
             </table> 
+            
+             
            
        
         <?
@@ -522,6 +417,13 @@ class CTransactions
 			return false;
 		}
 		
+		// Sender frozen ?
+		if ($this->kern->hasAttr($from_adr, "ID_FROZEN")==true)
+		{
+			$this->template->showErr("Source address is frozen");
+			return false;
+		}
+		
 		// Net Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
@@ -536,10 +438,17 @@ class CTransactions
 			return false;
 		}
 		
+		// Sender and recipient the same ?
+		if ($from_adr==$to_adr)
+		{
+			$this->template->showErr("Source and destination address is the same");
+			return false;
+		}
+		
 		// Amount
 		if ($amount<0.0001)
 		{
-			$this->template->showErr("Invalid network fee address");
+			$this->template->showErr("Invalid amount");
 			return false;
 		}
 		
@@ -602,37 +511,63 @@ class CTransactions
 		// Otp
 		if ($this->kern->hasAttr($from_adr, "ID_OTP")==true)
 		{
-			if ($otp_old_pass=="")
+			// Load datas
+		    $query="SELECT * 
+				          FROM adr_options 
+						 WHERE adr='".$from_adr."' 
+						   AND op_type='ID_OTP'"; 
+			$result=$this->kern->execute($query);	
+	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			
+			if ($row['par_2']!=$to_adr)
 			{
-				$this->showOTP($net_fee_adr, 
+			   if ($otp_old_pass=="")
+			   {
+				   $this->showOTP($net_fee_adr, 
 				               $from_adr, 
 							   $to_adr, 
 							   $amount, 
 							   $amount, 
 							   $mes, 
 							   $escrower);
-				return false;
-			}
-			else
-			{
-			   	// Load datas
-				$query="SELECT * 
-				          FROM adr_options 
-						 WHERE adr='".$from_adr."' 
-						   AND op_type='ID_OTP'";
-				$result=$this->kern->execute($query);	
-	            $row = mysql_fetch_array($result, MYSQL_ASSOC);
-	            
-				// Check pas
-				if (hash("sha256", $otp_old_pass)!=$row['par_1'])
-				{
-				   $this->template->showErr("Invalid password", 550);
-				   return false;	
-				}
+				   return false;
+			   }
+			   else
+		 	   {
+				    // Check pas
+				   if (hash("sha256", $otp_old_pass)!=$row['par_1'])
+				   {
+				      $this->template->showErr("Invalid password", 550);
+				      return false;	
+				   }
 				
-				// New pass
-				$otp_new_pass=$this->getSecurePass();
-				$otp_new_hash=hash("sha256", $otp_new_pass);
+				   // New pass
+				   $otp_new_pass=$this->getSecurePass();
+				   $otp_new_hash=hash("sha256", $otp_new_pass);
+			   }
+			}
+		}
+		
+		// Restricted recipients
+		if ($this->kern->hasAttr($from_adr, "ID_RESTRICT_REC")==true)
+		{
+			// Load data
+			$query="SELECT * 
+			          FROM adr_options 
+					 WHERE adr='".$from_adr."'
+					   AND op_type='ID_RESTRICT_REC'"; 
+			$result=$this->kern->execute($query);	
+	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			
+			// Recipient match ?
+			if ($row['par_1']!=$to_adr && 
+			    $row['par_2']!=$to_adr && 
+				$row['par_3']!=$to_adr && 
+				$row['par_4']!=$to_adr && 
+				$row['par_5']!=$to_adr)
+			{
+				 $this->template->showErr("Invalid recipient", 550);
+			     return false;	
 			}
 		}
 		
@@ -769,91 +704,6 @@ class CTransactions
 	   }
 	}
 	
-	function showMyTrans($type="ID_REGULAR")
-	{
-		$query="SELECT * 
-		          FROM my_trans AS mt 
-				  LEFT JOIN trans_data AS td ON td.trans_hash=mt.hash  
-				  WHERE mt.userID='".$_REQUEST['ud']['ID']."'
-			  ORDER BY mt.ID DESC 
-			     LIMIT 0,20";
-		$result=$this->kern->execute($query);	
-	   
-	  
-		?>
-        
-            <table width="93%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td>
-            <table width="550" border="0" cellspacing="0" cellpadding="0" class="table table-striped table-hover">
-              <thead>
-                <th width="55%">From / To</th>
-                <th width="14%" align="center">&nbsp;&nbsp;&nbsp;Data</th>
-                <th width="14%" align="center">&nbsp;&nbsp;&nbsp;Time</th>
-                <th width="13%" align="center">&nbsp;&nbsp;&nbsp;Status</th>
-                <th width="15%" align="center">&nbsp;&nbsp;&nbsp;Amount</th>
-                <td width="3%"></thead>
-                <tbody>
-               
-               <?
-			       while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
-				   {
-					   $time=$this->kern->getAbsTime($row['tstamp']);
-			   ?>
-               
-                     <tr>
-                     <td class="simple_blue_14"><? print $this->template->formatAdr($row['adr']); ?><br />
-                     <span class="<? if ($row['mes']=="") print "simple_gri_10"; else print "simple_porto_10"; ?>"><? if ($row['mes']=="") print "No Message"; else print "Mesaage : ".base64_decode($row['mes']); ?></span></td>
-                     <td class="simple_blue_14">&nbsp;</td>
-                     <td align="center">
-                     <span class="simple_blue_14"><strong><? $e=explode(" ", $time); print $e[0]; ?></strong></span><br /><span class="simple_gri_10"><? $e=explode(" ", $time); print $e[1]; ?></span></td>
-                     <td align="center">
-                    
-                      <?
-					     if ($row['status']=="ID_CLEARED")
-						 {  
-						   print "<span class='simple_green_14'>cleared</span>";
-						 }
-						 else
-						 {
-							 $dif=time()-$row['tstamp'];
-							 
-							 if ($dif<40) $img="p1.png";
-							 if ($dif>=40 && $dif<80) $img="p2.png";
-							 if ($dif>=80 && $dif<120) $img="p3.png";
-							 if ($dif>=120 && $dif<160) $img="p4.png";
-							 if ($dif>=160 && $dif<200) $img="p5.png";
-							 if ($dif>200) $img="p6.png";
-					  ?>
-                      
-                     <table width="60" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                      <td align="center"><img src="../../GIF/<? print $img; ?>"  /></td>
-                      </tr>
-                     <tr>
-                      <td align="center" class="simple_porto_12">pending</td>
-                      </tr>
-                    </table>
-                    
-                    <?
-						 }
-					?>
-                    
-                    </td>
-                    <td align="center"><span class="<? if ($row['amount']>0) print "inset_green_14"; else print "inset_red_14"; ?>"><strong><? print $row['amount']; ?></strong></span><br /><strong class="<? if ($row['amount']>0) print "inset_green_10"; else print "inset_red_10"; ?>"><? print $row['cur']; ?></strong></td>
-                    </tr>
-                
-                <?
-				   }
-				?>
-                
-                 </tbody>
-            </table></td>
-          </tr>
-        </table>
-        
-        <?
-	}
 	
 	function showReqDataModal()
 	{
@@ -944,7 +794,7 @@ class CTransactions
 		</script>
         
         <?
-		$this->template->showModalFooter();
+		$this->template->showModalFooter("");
 	}
 }
 ?>

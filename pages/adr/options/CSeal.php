@@ -94,7 +94,7 @@ class CSeal
 	   }
 	}
 	
-	function showModal()
+	function showModal($adr)
 	{
 		$this->template->showModalHeader("modal_seal", "Seal Address", "act", "seal_adr", "adr", "");
 		?>
@@ -138,7 +138,10 @@ class CSeal
 		</script>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		if ($this->kern->hasAttr($adr, "ID_SEALED")==true)
+		   $this->template->showModalFooter("Renew");
+		else
+		   $this->template->showModalFooter("Activate");
 	}
 }
 ?>

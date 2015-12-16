@@ -12,44 +12,44 @@ class CSignup
 		// User
 		if (strlen($user)<5 || strlen($user)>15)
 		{
-			$this->template->showErr("Invalid username length (5-15 characters)");
+			$this->template->showErr("Invalid username length (5-15 characters)", 510);
 			return false;
 		}
 		
 		// User exist ?
 		$query="SELECT * 
-		          FROM users 
+		          FROM web_users 
 				 WHERE user='".$user."'";
 		$result=$this->kern->execute($query);
 		if (mysql_num_rows($result)>0)
 		{
-			$this->template->showErr("User already exist");
+			$this->template->showErr("User already exist", 510);
 			return false;
 		}
 		
 		// Password
 		if (strlen($pass)<5 || strlen($pass)>25)
 		{
-			$this->template->showErr("Invalid password length");
+			$this->template->showErr("Invalid password length", 510);
 			return false;
 		}
 		
 		// Passwwords match
 		if ($pass!=$re_pass)
 		{
-			$this->template->showErr("Passwords don't match");
+			$this->template->showErr("Passwords don't match", 510);
 			return false;
 		}
 		
 		// Email used ?
 		$query="SELECT * 
-		          FROM users 
+		          FROM web_users 
 				 WHERE email='".$email."'";
 		$result=$this->kern->execute($query);
 		
 		if (mysql_num_rows($result)>0)
 		{
-			$this->template->showErr("Email is already used");
+			$this->template->showErr("Email is already used", 510);
 			return false;
 		}
 		
@@ -76,9 +76,10 @@ class CSignup
 		   // Creates adress
 		   $query="INSERT INTO web_ops 
 			                SET user='".$user."', 
-							    op='ID_NEW_ADR', 
+							    op='ID_NEW_ACCOUNT', 
 								par_1='secp224r1', 
 								par_2='".base64_encode("Initial address")."', 
+								par_3='".$userID."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	        $this->kern->execute($query);
@@ -100,7 +101,7 @@ class CSignup
 		  $this->kern->rollback();
 
 		  // Mesaj
-		  $this->template->showErr("Unexpected error.");
+		  $this->template->showErr("Unexpected error.", 510);
 
 		  return false;
 	   }
@@ -110,70 +111,49 @@ class CSignup
 	{
 		?>
            
-            <form id="form_login" name="form_login" method="post" action="index.php?act=signup">
-           <table width="465" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td width="350" height="45" align="center" background="../GIF/panel_top.png" class="bold_shadow_white_14">Signup</td>
-    </tr>
-    <tr>
-      <td height="250" align="center" valign="top" background="../GIF/panel_middle.png"><table width="430" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td height="30" align="left" valign="top" class="simple_red_16"><strong>Username</strong></td>
-          </tr>
-          <tr>
-            <td align="left"><input class="form-control" id="txt_user" name="txt_user"></td>
-          </tr>
-          <tr>
-            <td align="left">&nbsp;</td>
-          </tr>
-          <tr>
-            <td height="30" align="left" valign="top" class="simple_red_16"><strong>Password</strong></td>
-          </tr>
-          <tr>
-            <td align="left"><input class="form-control" type="password" id="txt_pass" name="txt_pass"></td>
-          </tr>
-          <tr>
-            <td align="left">&nbsp;</td>
-          </tr>
-          <tr>
-            <td height="30" align="left" valign="top"><span class="simple_red_16"><strong>Confirm Password</strong></span></td>
-          </tr>
-          <tr>
-            <td align="left"><input class="form-control" type="password" id="txt_pass_retype" name="txt_pass_retype"></td>
-          </tr>
-          <tr>
-            <td align="left">&nbsp;</td>
-          </tr>
-          <tr>
-            <td height="30" align="left" valign="top"  class="simple_red_16"><strong>Email</strong></td>
-          </tr>
-          <tr>
-            <td align="left"><input class="form-control" id="txt_email" name="txt_email"></td>
-          </tr>
-          <tr>
-            <td align="left">&nbsp;</td>
-          </tr>
-        </tbody>
-      </table></td>
-    </tr>
-    <tr>
-      <td height="67" align="center" background="../GIF/panel_bottom.png"><table width="430" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td align="right"><a class="btn btn-success" href="#" onClick="$('#form_login').submit()"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Signup</a></td>
-          </tr>
-        </tbody>
-      </table></td>
-    </tr>
-  </tbody>
-</table>
-</form>
-        
+           <form method="post" action="index.php?act=signup">
+           <table width="90%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f5f5f5">
+            <tbody>
+              <tr>
+                <td align="left" class="txt_login_title">New Account</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><input class="form-control input-lg" id="txt_user" name="txt_user" placeholder="Username" required></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><input class="form-control input-lg" id="txt_email" name="txt_email" placeholder="Email" type="email"  required></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+              <td><input class="form-control input-lg" id="txt_pass_1" name="txt_pass_1" placeholder="Password" type="password" required></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><input class="form-control input-lg" id="txt_pass_2" name="txt_pass_2" type="password" placeholder="Retype Password" required></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><button class="btn btn-primary btn-hg" style="width:100%;" id="but_login">Signup</button></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+            </tbody>
+            </table>
+            </form>
+      
         <?
 	}
 }

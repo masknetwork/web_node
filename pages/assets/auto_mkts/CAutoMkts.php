@@ -21,7 +21,7 @@
               <tbody>
                 <tr>
                   <td width="324">&nbsp;</td>
-                  <td width="99" align="right"><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-cog" ></span>&nbsp;My Markets</a></td>
+                  <td width="99" align="right"><a href="#" class="btn btn-primary"><span class="glyphicon glyphicon-cog" ></span>&nbsp;My Markets</a></td>
                 </tr>
               </tbody>
             </table>

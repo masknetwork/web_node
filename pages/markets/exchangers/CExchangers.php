@@ -164,7 +164,7 @@ class CExchangers
                       </tr>
                       <tr>
                         <td align="center" valign="top">&nbsp;</td>
-                        <td align="right" valign="top"><a href="" onclick="" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Submit</a></td>
+                        <td align="right" valign="top"><a href="" onclick="" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Submit</a></td>
                       </tr>
                     </tbody>
                   </table></td>

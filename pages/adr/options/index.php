@@ -1,5 +1,5 @@
 <?
-   session_start();
+    session_start();
    
    include "../../../kernel/db.php";
    include "../../../kernel/CUserData.php";
@@ -83,111 +83,106 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MaskNetwwork - My Addresses</title>
-<link rel="stylesheet" href="../../../style.css" type="text/css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-<script src="../../../utils.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script type="text/javascript">$(document).ready(function() { $("body").tooltip({ selector: '[data-toggle=tooltip]' }); });</script>
+<title><? print $_REQUEST['sd']['website_name']; ?></title>
+<script src="../../../flat/js/vendor/jquery.min.js"></script>
+<script src="../../../flat/js/flat-ui.js"></script>
+<link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
+<link href="../../../flat/css/flat-ui.css" rel="stylesheet">
+<link href="../../../style.css" rel="stylesheet">
+<link rel="shortcut icon" href="../../../flat/img/favicon.ico">
+<script src="../../../utils.js"></script>
 
+<style>
+@media only screen and (max-width: 1000px)
+{
+   .balance_usd { font-size: 40px; }
+   .balance_msk { font-size: 40px; }
+   #but_send { font-size:30px; }
+   #td_balance { height:100px; }
+   #div_ads { display:none; }
+   .txt_help { font-size:20px;  }
+   .font_12 { font-size:20px;  }
+   .font_10 { font-size:18px;  }
+   .font_14 { font-size:22px;  }
+   .font_16 { font-size:24px;  }
+}
+
+</style>
 
 </head>
-<center>
-<body background="../../template/template/GIF/back.png" style="margin-top:0px; margin-left:0px; margin-right:0px; ">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td height="66" align="center" valign="top" background="../../template/template/GIF/top_bar.png" style="background-position:center"><table width="1020" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td align="left">
-            <?
-			    $template->showTopMenu(2);
-			?>
-            </td>
-            </tr>
-        </tbody>
-      </table></td>
-    </tr>
-  </tbody>
-</table>
-<table width="1018" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td height="800" align="center" valign="top" background="../../template/template/GIF/back_middle.png"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td width="205" height="18" align="right" valign="top"><table width="201" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="170" align="center" valign="middle" style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;">
-                  <?
-				    $template->showBalancePanel();
-				  ?>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <?
-			   $adr->showLeftMenu(1);
-			?>
-            </td>
-            <td width="610" height="1000" align="center" valign="top">
-           
-           
-            <?
-			   $template->showHelp("Din aceasta pagina pot fi facute setari pentru adresa selectata. Poti seta plata dobanzii, inchiriera unui nume sau poti atasa adresei optiuni de securitate cum ar fi semnaturile multiple. Tot de aici poti seta optiuni specifice comerciantilor.");
+
+<body>
+
+<?
+   $template->showTopBar(2);
+?>
+ 
+
+ <div class="container-fluid">
+ 
+ <?
+    $template->showBalanceBar();
+ ?>
+
+
+ <div class="row">
+ <div class="col-md-1">&nbsp;</div>
+ <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
+ 
+ <?
+     // Location
+     $template->showLocation("../adr/index.php", "My Addresses", 
+	                         "", "Address Options");
+	 
+	 
+	 $template->showHelp("From this page you can manage an address. You can apply security options like multisignatures, rent a name, share an address and many other features. Almost all network level features are rented. The rent price is 0.0001 MSK / day.");
 			   
-			   // Interest modal
-			   $interest->showModal();
-			   
-			    // Rent name modal
-			   $name->showModal();
-			   
-			   // Share address modal
-			   $share->showModal();
-			   
-			   // Profile
-			   $profile->showModal();
-			   
-			   // Froze address
-			   $froze->showModal();
-			   
-			   // Seal address
-			   $seal->showModal();
-			   
-			   // Restrict recipients
-			   $restrict->showModal();
-			   
-			   // Multisignatures
-			   $multisig->showModal();
-			   
-			   // OTP
-			   $otp->showModal();
-			   
-			   // IPN
-			   $ipn->showModal();
-			   
-			   // Aditional
-			   $aditional->showModal();
-			   
-			   // Autoresponders
-			   $autoresp->showModal();
-			   
-			   // Private key
-			   $pkey->showModal();
-			   
-			   // Load address
+			    // Load address
 			   $query="SELECT * 
 			             FROM my_adr 
 						WHERE ID='".$_REQUEST['ID']."'";
 			   $result=$db->execute($query);	
 	           $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	           $adr=$row['adr']; 
+			   
+			   // Interest modal
+			   $interest->showModal($adr);
+			   
+			    // Rent name modal
+			   $name->showModal($adr);
+			   
+			   // Share address modal
+			   $share->showModal($adr);
+			   
+			   // Profile
+			   $profile->showModal($adr);
+			   
+			   // Froze address
+			   $froze->showModal($adr);
+			   
+			   // Seal address
+			   $seal->showModal($adr);
+			   
+			   // Restrict recipients
+			   $restrict->showModal($adr);
+			   
+			   // Multisignatures
+			   $multisig->showModal($adr);
+			   
+			   // OTP
+			   $otp->showModal($adr);
+			   
+			   // IPN
+			   $ipn->showModal($adr);
+			   
+			   // Aditional
+			   $aditional->showModal($adr);
+			   
+			   // Autoresponders
+			   $autoresp->showModal($adr);
+			   
+			   // Private key
+			   $pkey->showModal($adr);
 			   
 			   // Action
 			   switch ($_REQUEST['act'])
@@ -281,35 +276,17 @@
 			   }
 			   
 			   if ($_REQUEST['act']!="reveal") $adr_options->showOptions($_REQUEST['ID']);
-			?>
-            
-            
-            </td>
-            <td width="203" align="center" valign="top">
-            <?
-			   $template->showRightPanel();
-			   $template->showAds();
-			?>
-            </td>
-          </tr>
-        </tbody>
-      </table></td>
-    </tr>
-    <tr>
-      <td height="0"><img src="../../template/template/GIF/bottom_sep.png" width="1018" height="20" alt=""/></td>
-    </tr>
-    <tr>
-      <td height="50" align="center" background="../../template/template/GIF/bottom_middle.png">
-      <?
-	     $template->showBottomMenu();
-	  ?>
-      </td>
-    </tr>
-    <tr>
-      <td height="0"><img src="../../template/template/GIF/bottom.png" width="1018" height="20" alt=""/></td>
-    </tr>
-  </tbody>
-</table>
+ ?>
+ 
+ </div>
+ <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
+ <div class="col-md-1">&nbsp;</div>
+ </div>
+ </div>
+ 
+ <?
+    $template->showBottomMenu();
+ ?>
+ 
 </body>
-</center>
 </html>

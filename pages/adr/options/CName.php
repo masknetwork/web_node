@@ -12,7 +12,7 @@ class CName
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
-			$this->template->showErr("Invalid network fee address", 550);
+			$this->template->showErr("Invalid network fee address", "90%");
 			return false;
 		}
 		
@@ -20,56 +20,56 @@ class CName
 	    if ($this->kern->isMine($net_fee_adr)==false || 
 		    $this->kern->isMine($adr)==false)
 		{
-			$this->template->showErr("Invalid entry data", 550);
+			$this->template->showErr("Invalid entry data", "90%");
 			return false;
 		}
 		
 		// Fee address is security options free
 	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
 		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", "90%");
 			return false;
 		}
 		
 		// Address
 	    if ($this->kern->adrValid($adr)==false)
 		{
-			$this->template->showErr("Invalid address", 550);
+			$this->template->showErr("Invalid address", "90%");
 			return false;
 		}
 		
 		// Target address sealed
 		if ($this->kern->isSealed($adr)==true)
 		{
-			$this->template->showErr("Address is sealed.", 550);
+			$this->template->showErr("Address is sealed.", "90%");
 			return false;
 		}
 		
 		// Days
 		if ($days<1)
 		{
-			$this->template->showErr("Invalid days (minimum 1 day)", 550);
+			$this->template->showErr("Invalid days (minimum 1 day)", "90%");
 			return false;
 		}
 	   
 	   // Funds
 	   if ($this->kern->getBalance($net_fee_adr)<$days*0.0001)
 	   {
-		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
+		   $this->template->showErr("Insufficient funds to execute the transaction", "90%");
 		   return false;
 	   }
 	   
 	   // Domain valid
 	   if ($this->kern->domainValid($domain)==false)
 	   {
-		    $this->template->showErr("Invalid domain name", 550);
+		    $this->template->showErr("Invalid domain name", "90%");
 		    return false;
 	   }
 	   
 	   // Domain exist
 	   if ($this->kern->domainExist($domain)==true)
 	   {
-		    $this->template->showErr("Domain already exist", 550);
+		    $this->template->showErr("Domain already exist", "90%");
 		    return false;
 	   }
 		
@@ -97,7 +97,7 @@ class CName
 		   $this->kern->commit();
 		   
 		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded", 550);
+		   $this->template->showOk("Your request has been succesfully recorded", "90%");
 	   }
 	   catch (Exception $ex)
 	   {
@@ -116,7 +116,7 @@ class CName
 		$this->template->showModalHeader("modal_new_domain", "New Address Name", "act", "rent_domain", "adr", "");
 		?>
         
-         <table width="550" border="0" cellspacing="0" cellpadding="5">
+         <table width=""90%"" border="0" cellspacing="0" cellpadding="5">
           <tr>
             <td width="240" align="left" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
               <tr>

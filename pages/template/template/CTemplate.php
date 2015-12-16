@@ -6,32 +6,6 @@ class CTemplate
 	   $this->kern=$db;	
 	}
 	
-	function showBubble($no, $col="ID_ROSU")
-	{
-		switch ($col)
-		{
-			case "ID_ROSU" : $img="bula_rosie.png"; break;
-			case "ID_ALBASTRU" : $img="bula_albastru.png"; break;
-			case "ID_MOV_DESCHIS" : $img="bula_mov.png"; break;
-			case "ID_MOV_INCHIS" : $img="bula_mov_inchis.png"; break;
-			case "ID_PORTO" : $img="bula_porto.png"; break;
-			case "ID_VERDE" : $img="bula_verde.png"; break;
-		}
-		
-		?>
-        
-            <table width="42" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="32" align="center" background="../../template/template/GIF/<? print $img; ?>" class="bold_shadow_white_12">
-                  <? print $no; ?>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-        
-        <?
-	}
 	
 	function showMyAdrDD($name="txt_adr", $width=300, $selected="")
 	{
@@ -127,14 +101,14 @@ class CTemplate
 		  if ($name_2!="") print "<input type='hidden' name='".$name_2."' id='".$name_2."' value='".$val_2."'/>";
 	}
 	
-	function showModalFooter($send_but=true, $send_but_txt="Send")
+	function showModalFooter($send_but_txt="Send")
 	{
 		?>
         
              </div>
              <div class="modal-footer">
-             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-             <? if ($send_but==true) print "<button id=\"but_activate\" name=\"but_activate\" type=\"submit\" class=\"btn btn-primary btn-success\">".$send_but_txt."</button>"; ?>
+             <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>
+             <? if ($send_but_txt!="") print "<button id=\"but_activate\" name=\"but_activate\" type=\"submit\" class=\"btn btn-primary btn-primary\"><span class=\"glyphicon glyphicon-ok\"></span>&nbsp;&nbsp;".$send_but_txt."</button>"; ?>
              </div>
              </form>
              </div></div></div>
@@ -165,20 +139,20 @@ class CTemplate
            </table></td>
            <td width="400" align="center"><table width="90%" border="0" cellspacing="0" cellpadding="5">
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14"><strong>Network Fee Address</strong></td>
+               <td height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14">
+               <td height="25" align="left" valign="top" style="font-size:16px">
                <?
 			      $this->showMyAdrDD("dd_net_fee");
 			   ?>
                </td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14">&nbsp;</td>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14"><strong>From Address</strong></td>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>From Address</strong></td>
              </tr>
              <tr>
                <td width="391" align="left">
@@ -193,18 +167,18 @@ class CTemplate
                <td align="left">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14"><strong>To Address</strong></td>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>To Address</strong></td>
              </tr>
              <tr>
                <td align="left">
-               <input type="text" class="form-control" style="width:300px" id="txt_to" name="txt_to" placeholder="Address" onfocus="this.placeholder=''" />
+               <input type="text" class="form-control" style="width:300px" id="txt_to" name="txt_to" placeholder="Address" onfocus="this.placeholder=''"  />
                </td>
              </tr>
              <tr>
                <td height="0" align="left">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14"><strong>Amount</strong></td>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Amount</strong></td>
              </tr>
              <tr>
                <td height="50" align="left">
@@ -213,13 +187,13 @@ class CTemplate
                  <tr>
                    <td ><div class="input-group">
                      <div class="input-group-addon">MSK</div>
-                     <input type="number" class="form-control" id="txt_msk" name="txt_msk"  style="width:80px" placeholder="0" onKeyUp="var  usd=$(this).val()*<? print $_REQUEST['sd']['msk_price']; ?>; var fee=$(this).val()/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; usd=Math.round(usd*100)/100; $('#trans_net_fee_panel_val').text(fee); $('#txt_usd').val(usd)"/>
+                     <input type="number" step="0.00001" class="form-control" id="txt_msk" name="txt_msk"  style="width:80px" placeholder="0" onKeyUp="var  usd=$(this).val()*<? print $_REQUEST['sd']['msk_price']; ?>; var fee=$(this).val()/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; usd=Math.round(usd*100)/100; $('#trans_net_fee_panel_val').text(fee); $('#txt_usd').val(usd)"/>
                      </div>
                    </td>
                    <td width="10px">&nbsp;</td>
                    <td><div class="input-group">
                      <div class="input-group-addon">USD</div>
-                     <input type="number" class="form-control" id="txt_usd" name="txt_usd"  style="width:80px" placeholder="0" onKeyUp="var  msk=$('#txt_usd').val()/<? print $_REQUEST['sd']['msk_price']; ?>; var fee=msk/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; $('#trans_net_fee_panel_val').text(fee); $('#txt_msk').val(msk);"/>
+                     <input type="number" step="0.01" class="form-control" id="txt_usd" name="txt_usd"  style="width:80px" placeholder="0" onKeyUp="var  msk=$('#txt_usd').val()/<? print $_REQUEST['sd']['msk_price']; ?>; var fee=msk/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; $('#trans_net_fee_panel_val').text(fee); $('#txt_msk').val(msk);"/>
                    </div></td>
                   
                  </tr>
@@ -231,7 +205,7 @@ class CTemplate
                <td>&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" valign="top" class="simple_red_14"><strong>Message</strong></td>
+               <td height="25" valign="top" style="font-size:16px"><strong>Message</strong></td>
              </tr>
              <tr>
                <td>
@@ -242,7 +216,7 @@ class CTemplate
                <td height="0" align="left">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" class="simple_red_14"><strong>Escrower</strong> (optional) </td>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Escrower</strong> (optional) </td>
              </tr>
              <tr>
                <td height="0" align="left">
@@ -255,7 +229,7 @@ class CTemplate
     
        
         <?
-		$this->showModalFooter();
+		$this->showModalFooter("Send");
 		
 	}
 	
@@ -314,22 +288,22 @@ class CTemplate
 	{
 		?>
         
-            <table width="570" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
                   <td width="113">&nbsp;</td>
                   <td width="457">&nbsp;</td>
                 </tr>
                 <tr>
-                  <td><img src="../../template/template/GIF/help.png" width="100" height="71" alt=""/></td>
-                  <td valign="top" class="simple_maro_12"><? print $txt; ?></td>
+                  <td width="20%" style="padding-right:20px" valign="top"><img src="../../template/template/GIF/help.png" class="img-responsive" /></td>
+                  <td valign="top" class="txt_help"><? print $txt; ?></td>
                 </tr>
                 <tr>
-                  <td colspan="2" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                  <td colspan="2"><hr></td>
                   </tr>
               </tbody>
             </table>
-            <br><br>
+            <br>
         
         <?
 	}
@@ -383,7 +357,7 @@ class CTemplate
               <tbody>
                 <tr>
                   <td width="112" height="40" align="center" valign="middle">
-                  <a href="../../account/login/index.php" class="btn btn-success" style="width:100px">Login</a>
+                  <a href="../../account/login/index.php" class="btn btn-primary" style="width:100px">Login</a>
                   </td>
                   
                   <td width="110" align="center" valign="middle">
@@ -401,6 +375,7 @@ class CTemplate
 	
 	function showRightPanel()
 	{
+		if (!isset($_SESSION['userID'])) return false;
 		?>
         
            <table width="80%" border="0" cellspacing="0" cellpadding="0">
@@ -434,20 +409,24 @@ class CTemplate
 	function showAds()
 	{
 		$this->showAdsModal();
+	
 		?>
         
-<br><br>
+              <br>
               <table width="180" border="0" cellspacing="0" cellpadding="0">
                
                   <tr>
-                    <td align="left" class="inset_maro_16"><strong>Advertising</strong></td>
+                    <td align="left"><strong>Advertising</strong></td>
                   </tr>
                   <tr>
-                    <td align="left" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                    <td align="left"><hr></td>
                   </tr>
                     
                     <?
-					  $query="SELECT * FROM ads ORDER BY mkt_bid DESC LIMIT 0,10";
+					  $query="SELECT * 
+					            FROM ads 
+						    ORDER BY mkt_bid DESC 
+							   LIMIT 0,10";
 					  $result=$this->kern->execute($query);	
 	                  
 					  while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
@@ -456,10 +435,10 @@ class CTemplate
                     
                          <tr>
                          <td align="left">
-                         <a href="#" class="maro_14"><strong><? print base64_decode($row['title']); ?></strong></a>
-                         <br><span class="inset_maro_12"><? print base64_decode($row['message']); ?></span> 
+                         <a href="<? print base64_decode($row['link']); ?>" style="font-size:14px"><strong><? print base64_decode($row['title']); ?></strong></a>
+                         <br><span style="font-size:12px"><? print base64_decode($row['message']); ?></span> 
                          </td></tr><tr>
-                         <td align="left" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                         <td align="left"><hr></td>
                          </tr>
                     
                     <?
@@ -477,7 +456,8 @@ class CTemplate
 				  ?>
                   
                     <tr>
-                    <td><a href="javascript:void(0)" class="btn btn-warning" onClick="$('#modal_ads').modal()">Advertise Here</a></td>
+                    <td><a href="javascript:void(0)" class="btn btn-primary" onClick="$('#modal_ads').modal()">Advertise Here</a></td>
+                    <td>&nbsp;</td>
                     <td><a href="../../ads/ads/index.php" class="btn btn-danger"><span class="glyphicon glyphicon-cog"></span></a></td>
                     </tr>
                   
@@ -491,6 +471,8 @@ class CTemplate
                   </tr>
                 </tbody>
               </table>
+              
+              <table><tr><td height="800">&nbsp;</td></tr></table>
         
         <?
 	}
@@ -499,23 +481,25 @@ class CTemplate
 	{
 		?>
         
-           <table width="90%" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td><a href="../../transactions/all/index.php?act=send_block" class="maro_12">Send Block</a></td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-        </tbody>
-      </table>
-        
+           <div class="row" style="background-color:#4d5d6d; padding-top:10px; padding-bottom:10px;" align="center">
+           <div class="col-md-2"></div>
+           <div class="col-md-1"><a href="../../../index.php" class="font_14" style="color:#e1e6eb">Home</a></div>
+           <div class="col-md-1"><a href="../../transactions/all/index.php" class="font_14" style="color:#e1e6eb">Transactions&nbsp;&nbsp;</a></div>
+           <div class="col-md-1"><a href="../../addresses/adr/index.php" class="font_14" style="color:#e1e6eb">Addresses</a></div>
+           <div class="col-md-1"><a href="../../mes/inbox/index.php" class="font_14" style="color:#e1e6eb">Messages</a></div>
+           <div class="col-md-1"><a href="../../assets/regular/index.php" class="font_14" style="color:#e1e6eb">Assets</a></div>
+           <div class="col-md-1"><a href="../../markets/goods/index.php" class="font_14" style="color:#e1e6eb">Markets</a></div>
+           <div class="col-md-1"><a href="../../explorer/packets/index.php" class="font_14" style="color:#e1e6eb">Explorer</a></div>
+           <div class="col-md-1"><a href="../../help/help/index.php" class="font_14" style="color:#e1e6eb">Help</a></div>
+           <div class="col-md-2"></div>
+           </div>     
+           
+ 
+           <div class="row" style="background-color:#334456" align="center">
+           <div class="col-md-2"></div>
+           <div class="col-md-8"><a href="https://github.com/masknetwork" class="font_10" style="color:#e1e6eb">Code distributed under MIT licence. Contributions welcome. Click for source code.</a>&nbsp;<? if ($_REQUEST['ud']['user']=="vchris") print "<a href=\"../../transactions/all/index.php?act=send_block\" class=\"font_10\">send block</a></div>"; ?></div>
+           <div class="col-md-2"></div>
+           </div>
         <?
 	}
 	
@@ -523,8 +507,8 @@ class CTemplate
 	{
 		?>
             
-            <br />
-           <table width="<? print $width."px"; ?>"  id="tab_alert">
+          
+           <table width="90%" id="tab_alert">
            <tr><td>
            <div class="alert alert-success alert-dismissible" role="alert">
            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -532,6 +516,7 @@ class CTemplate
            </div>
            </td></tr>
            </table>
+           <br>
            
            <script>
 		   window.setTimeout(function() {
@@ -548,8 +533,7 @@ class CTemplate
 	{
 		?>
             
-            <br />
-           <table width="<? print $width."px"; ?>"  id="tab_alert">
+           <table width="90%" id="tab_alert">
            <tr><td>
            <div class="alert alert-danger alert-dismissible" role="alert">
            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -557,6 +541,7 @@ class CTemplate
            </div>
            </td></tr>
            </table>
+           <br>
            
            <script>
 		   window.setTimeout(function() {
@@ -607,7 +592,7 @@ class CTemplate
              </div>
              <div class="modal-footer">
              <button type="button" class="btn btn-danger" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;No</button>
-             <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Yes</button>
+             <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Yes</button>
              </div>
              </form>
              </div></div></div>
@@ -653,7 +638,7 @@ class CTemplate
              </div>
              <div class="modal-footer">
              <button type="button" class="btn btn-danger" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;No</button>
-             <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Yes</button>
+             <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Yes</button>
              </div>
              </form>
              </div></div></div>
@@ -699,7 +684,7 @@ class CTemplate
              </div>
              <div class="modal-footer">
              <button type="button" class="btn btn-danger" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;No</button>
-             <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Yes</button>
+             <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Yes</button>
              </div>
              </form>
              </div></div></div>
@@ -867,9 +852,7 @@ class CTemplate
               <tr>
                 <td align="center">&nbsp;</td>
               </tr>
-              <tr>
-                <td align="center"><? $this->showNetFeePanel($init_panel_val); ?></td>
-              </tr>
+             
             </table></td>
             <td width="438" align="center" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
               <tr>
@@ -885,7 +868,7 @@ class CTemplate
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>New Bid</strong></td>
               </tr>
               <tr>
-                <td align="left"><input class="form-control" id="txt_new_bid" name="txt_new_bid" placeholder="Bid" style="width:100px" value="<? print $init_val; ?>"/></td>
+                <td align="left"><input class="form-control" id="txt_new_bid" name="txt_new_bid" placeholder="Bid" style="width:100px" value="0.0001"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -895,7 +878,7 @@ class CTemplate
         </table>
         
         <?
-		$this->showModalFooter();
+		$this->showModalFooter("Update");
 	}
 	
 	function showRenewModal($link="")
@@ -1032,7 +1015,7 @@ class CTemplate
                     <td>
                     <input id="txt_ads_hours" name="txt_ads_hours" class="form-control" style="width:100px" value="24" type="number" min="1" step="1" /></td>
                     <td>
-                    <input id="txt_ads_bid" name="txt_ads_bid" class="form-control" style="width:100px" value="0.0001" type="number" min="1" step="1" /></td>
+                    <input id="txt_ads_bid" name="txt_ads_bid" class="form-control" style="width:100px" value="0.0001" type="number" min="0.0001" step="0.0001" /></td>
                     <td>&nbsp;</td>
                   </tr>
                 </table></td>
@@ -1051,9 +1034,9 @@ class CTemplate
 		$('#form_modal_ads').submit(
 		function() 
 		{ 
-		   $('#txt_title').val(btoa($('#txt_title').val())); 
+		   $('#txt_ads_title').val(btoa($('#txt_ads_title').val())); 
 		   $('#txt_ads_mes').val(btoa($('#txt_ads_mes').val())); 
-		   $('#txt_link').val(btoa($('#txt_link').val())); 
+		   $('#txt_ads_link').val(btoa($('#txt_ads_link').val())); 
 		});
 		
 		
@@ -1070,7 +1053,7 @@ class CTemplate
 		
         
         <?
-		$this->showModalFooter();
+		$this->showModalFooter("Send");
 	}
 	
 	function showCountriesDD()
@@ -1107,9 +1090,14 @@ class CTemplate
 	
 	function formatAdr($adr)
 	{
+		// No content
+		if ($adr=="") return "";
+		
+		// Load name data
 		$query="SELECT * FROM domains WHERE adr='".$adr."'";
 		$result=$this->kern->execute($query);	
 		
+		// Has a name ?
 		if (mysql_num_rows($result)>0)
 		{
 	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -1174,78 +1162,200 @@ class CTemplate
 		$this->showModalFooter(false);
 	}
 	
-	function showMenu($panel_1, $panel_2="", $panel_3="", $panel_4="", $panel_5="")
+	
+	
+	function showTopBar($sel=1)
+	{
+		if ($_SESSION['userID']>0)
+		{
+		    ?>
+        
+            <nav class="navbar navbar-inverse navbar-static-top" style="margin-bottom:0px">
+            <div class="container-fluid">
+            <div class="navbar-header">
+            <div class="navbar-brand"><a href="../../../index.php">Wallet</a></div>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span> 
+            </button>
+            </div>
+           
+            <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+            <li <? if ($sel==1) print "class='active'"; ?>><a href="../../transactions/all/index.php?act=clear">Transactions
+			<? 
+			    $unread=$_REQUEST['ud']['unread_trans']+$_REQUEST['ud']['unread_esc']+$_REQUEST['ud']['unread_multisig'];
+			    if ($unread>0) $this->showBadge($unread); 
+		    ?>
+            </a></li>
+            <li <? if ($sel==2) print "class='active'"; ?>><a href="../../adr/adr/index.php">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) $this->showBadge($_REQUEST['ud']['pending_adr']); ?></a></li>       
+            <li <? if ($sel==3) print "class='active'"; ?>><a href="../../mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
+            <li <? if ($sel==4) print "class='active'"; ?>><a href="../../assets/assets/index.php">Assets</a></li>     
+            <li <? if ($sel==5) print "class='active'"; ?>><a href="../../markets/goods/index.php">Markets</a></li>
+            <li <? if ($sel==6) print "class='active'"; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
+            <li <? if ($sel==7) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
+            </ul>
+            
+            <ul class="nav navbar-nav navbar-right">
+            <li><a href="../../../index.php?act=logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Logout</a></li>
+            </ul>
+            
+            </div>   
+            </div>
+            </nav> 
+        
+           <?
+		}
+		else
+		{
+			?>
+            
+             <nav class="navbar navbar-inverse navbar-static-top" style="margin-bottom:0px">
+             <div class="container-fluid">
+             <div class="navbar-header">
+             <div class="navbar-brand"><a href="../../../index.php">Wallet</a></div>
+             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span> 
+             </button>
+             </div>
+             <div class="collapse navbar-collapse" id="myNavbar">
+             <ul class="nav navbar-nav">
+             <li class="active"><a href="#">Explorer</a></li>
+             <li><a href="./pages/explorer/packets/index.php">Help</a></li>       
+             </ul>
+             </div>   
+             </div>
+             </nav>
+            
+            
+            <?
+		}
+	}
+	
+	function showBalanceBar()
+	{
+		if ($_SESSION['userID']>0)
+		{
+				$this->showSendModal();
+		?>
+        
+            <div class="row">
+            <table class="table-responsive" width="100%">
+            <tr bgcolor="#cad1d7">
+            <td height="65px" width="8%">&nbsp;</td>
+            <td height="50px" width="84%" align="right" id="td_balance">
+            <table>
+            <tr>
+            <td>
+            <span class="balance_msk" id="balance_msk"><? print $_REQUEST['ud']['balance']; ?> MSK&nbsp;&nbsp;~&nbsp;&nbsp;</span>
+            <span class="balance_usd" id="balance_usd"><? print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['msk_price'], 2); ?></span>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
+            <span class="glyphicon glyphicon-send">&nbsp;</span>Send Coins</a>
+            </td>
+            </tr>
+            </table>
+            </td>
+            <td height="60px" width="8%">&nbsp;</td>
+            </tr>
+            </table>
+            </div>
+        
+        <?
+		}
+	}
+	
+	function showLocation($link_1="", $txt_1="", $link_2="", $txt_2="")
 	{
 		?>
-           
+        
+          <br>
+          <ol class="breadcrumb" style="width:90%; font-size:14px;">
+          <li><a href="../../../index.php">Home</a></li>
+          <li><a href="<? print $link_1; ?>"><? print $txt_1; ?></a></li>
+          <li class="active"><? print $txt_2; ?></li>
+          </ol>
           
-           <table width="550" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td width="10" align="center" >&nbsp;</td>
-                 
-                  <td width="103" height="40" align="center" style="cursor:pointer" background="../../template/template/GIF/menu_tab_on.png" class="bold_shadow_white_14" id="tab_1" name="tab_1" onclick="menu_clear(1); $(this).attr('background', '../../template/template/GIF/menu_tab_on.png'); $(this).attr('class', 'bold_shadow_white_14');"><? print $panel_1; ?></td>
-                 
-                  
-                  <td width="103" align="center" style="cursor:pointer" id="tab_2" name="tab_2" background="../../template/template/GIF/menu_tab_off.png" class="inset_maro_12" onclick="menu_clear(2); $(this).attr('background', '../../template/template/GIF/menu_tab_on.png'); $(this).attr('class', 'bold_shadow_white_14');"><? print $panel_2; ?></td>
-                  
-                
-                  
-                  <td width="103" align="center" style="cursor:pointer" id="tab_3" name="tab_3" onclick="menu_clear(3); $(this).attr('background', '../../template/template/GIF/menu_tab_on.png'); $(this).attr('class', 'bold_shadow_white_14'); " background="<? if ($panel_3!="") print "../../template/template/GIF/menu_tab_off.png"; ?>" class="inset_maro_12"><? if ($panel_3!="") print $panel_3; ?></td>
-                  
-             
-                  
-                 <td width="103" align="center" style="cursor:pointer" id="tab_4" name="tab_4" onclick="menu_clear(4); $(this).attr('background', '../../template/template/GIF/menu_tab_on.png'); $(this).attr('class', 'bold_shadow_white_14'); " background="<? if ($panel_4!="") print "../../template/template/GIF/menu_tab_off.png"; ?>" class="inset_maro_12"><? if ($panel_4!="") print $panel_4; ?></td>
-                  
-                
-                  
-                <td width="103" align="center" style="cursor:pointer" id="tab_5" name="tab_5" onclick="menu_clear(5); $(this).attr('background', '../../template/template/GIF/menu_tab_on.png'); $(this).attr('class', 'bold_shadow_white_14'); " background="<? if ($panel_5!="") print "../../template/template/GIF/menu_tab_off.png"; ?>" class="inset_maro_12"><? if ($panel_5!="") print $panel_5; ?></td>
-                  
-                  <td width="10" align="center">&nbsp;</td>
-                
-                </tr>
-                <tr>
-                  <td colspan="10" background="../../template/template/GIF/menu_tab_bar.png" >&nbsp;</td>
-                  </tr>
-              </tbody>
-            </table>
-            
-            <script>
-			  function menu_clear(tab)
-			  {
-				  $('#tab_1').attr('class', 'inset_maro_12');
-				  $('#tab_2').attr('class', 'inset_maro_12');
-				  $('#tab_3').attr('class', 'inset_maro_12');
-				  $('#tab_4').attr('class', 'inset_maro_12');
-				  $('#tab_5').attr('class', 'inset_maro_12');
-				  
-				  $('#tab_1').attr('background', '../../template/template/GIF/menu_tab_off.png');
-				  $('#tab_2').attr('background', '../../template/template/GIF/menu_tab_off.png');
-				  <? if ($panel_3!="") print "$('#tab_3').attr('background', '../../template/template/GIF/menu_tab_off.png');"; ?>
-				  <? if ($panel_4!="") print "$('#tab_4').attr('background', '../../template/template/GIF/menu_tab_off.png');"; ?>
-				  <? if ($panel_5!="") print "$('#tab_5').attr('background', '../../template/template/GIF/menu_tab_off.png');"; ?>
-				  
-				  menuClicked(tab);
-			  }
-			</script>
         
         <?
 	}
 	
-	function showArrow()
+	function showBadge($no)
 	{
-		?>
-           <br>
-           <table width="550" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td align="center"><img src="../../template/template/GIF/arrow.png" width="17" height="9" alt=""/></td>
-                </tr>
-              </tbody>
-</table>
-            <br>
-        
-        <?
+		print "&nbsp;&nbsp;&nbsp;<span class='badge'>".$no."</span>";
+	}
+	
+	function showNav($active=1,
+	                 $link_1="", $txt_1="", $no_1="",
+	                 $link_2="", $txt_2="", $no_2="", 
+					 $link_3="", $txt_3="", $no_3="", 
+					 $link_4="", $txt_4="", $no_4="", 
+					 $link_5="", $txt_5="", $no_5="")
+	{
+		   // Zero ?
+		   if ($no_1==0) $no_1="";
+		   if ($no_2==0) $no_2="";
+		   if ($no_3==0) $no_3="";
+		   if ($no_4==0) $no_4="";
+		   if ($no_5==0) $no_5="";
+		   
+		   print "<br><ul class=\"nav nav-tabs\" style=\"width:90%\">";
+           
+		   // Tab 1
+		   if ($link_1!="") 
+		   {  
+		       if ($active==1) 
+			      print "<li role='presentation' class='active'><a href='".$link_1."'>".$txt_1."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_1."</span></a></li>";
+			   else
+			      print "<li role='presentation'><a href='".$link_1."'>".$txt_1."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_1."</span></a></li>";
+				
+		   }
+		   
+		   // Tab 2
+		   if ($link_2!="") 
+		   {  
+		       if ($active==2) 
+			      print "<li role='presentation' class='active'><a href='".$link_2."'>".$txt_2."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_2."</span></a></li>";
+			   else
+			      print "<li role='presentation'><a href='".$link_2."'>".$txt_2."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_2."</span></a></li>";
+				
+		   }
+		   
+		   // Tab 3
+		   if ($link_3!="") 
+		   {  
+		       if ($active==3) 
+			      print "<li role='presentation' class='active'><a href='".$link_3."'>".$txt_3."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_3."</span></a></li>";
+			   else
+			      print "<li role='presentation'><a href='".$link_3."'>".$txt_3."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_3."</span></a></li>";
+				
+		   }
+		   
+		   // Tab 4
+		   if ($link_4!="") 
+		   {  
+		       if ($active==4) 
+			      print "<li role='presentation' class='active'><a href='".$link_4."'>".$txt_4."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_4."</span></a></li>";
+			   else
+			      print "<li role='presentation'><a href='".$link_4."'>".$txt_4."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_4."</span></a></li>";
+				
+		   }
+		   
+		   // Tab 5
+		   if ($link_5!="") 
+		   {  
+		       if ($active==5) 
+			      print "<li role='presentation' class='active'><a href='".$link_5."'>".$txt_5."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_5."</span></a></li>";
+			   else
+			      print "<li role='presentation'><a href='".$link_5."'>".$txt_5."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_5."</span></a></li>";
+				
+		   }
+		  
+           print "</ul>";
 	}
 	
 }

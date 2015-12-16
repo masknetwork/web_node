@@ -885,7 +885,7 @@ class CMarket
                         </tr>
                       <tr>
                         <td align="center">&nbsp;</td>
-                        <td align="right"><a class="btn btn-success" href="#" onclick="$('#form_new_item').submit()" style="width:120px"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Add Item</a></td>
+                        <td align="right"><a class="btn btn-primary" href="#" onclick="$('#form_new_item').submit()" style="width:120px"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Add Item</a></td>
                       </tr>
                     </tbody>
                   </table>
@@ -934,7 +934,7 @@ class CMarket
                                   <tbody>
                                     <tr>
                                       <td>
-                                         <a class="btn btn-sm btn-success" href="#" onclick="javascript:$('#tab_32').css('display', 'block'); $('#tab_buts').css('display', 'none');" title="Buy Now" data-toggle="tooltip" data-placement="top">
+                                         <a class="btn btn-sm btn-primary" href="#" onclick="javascript:$('#tab_32').css('display', 'block'); $('#tab_buts').css('display', 'none');" title="Buy Now" data-toggle="tooltip" data-placement="top">
                                           <span class="glyphicon glyphicon-ok" ></span>
                                           </a>
                                         </td>
@@ -956,7 +956,7 @@ class CMarket
                                   <tr>
                                     <td align="center"><input class="form-control" style="width:40px" placeholder="0"></td>
                                     <td align="center">&nbsp;
-                                     <a class="btn btn-sm btn-success" href="#" title="Set Qty" data-toggle="tooltip" data-placement="top" style="height:32px">
+                                     <a class="btn btn-sm btn-primary" href="#" title="Set Qty" data-toggle="tooltip" data-placement="top" style="height:32px">
                                           <span class="glyphicon glyphicon-ok" ></span>
                                           </a>
                                      </td>
@@ -1077,7 +1077,7 @@ class CMarket
                 <tr>
                   <td width="59%">&nbsp;</td>
                   <td width="20%" align="right"> 
-                  <a href="new_item.php" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
+                  <a href="new_item.php" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
                   <td width="21%" align="right">
                   <a href="my_offerts.php" class="btn btn-warning"><span class="glyphicon glyphicon-th-list"></span>&nbsp;My Offerts </a>
                   </td>

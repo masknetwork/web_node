@@ -15,7 +15,7 @@
 			 $ho="127.0.0.1:3306:/tmp/mysql.sock";
 			 $user="root";
 			 $pass="";
-			 $db="wallet_lite";
+			 $db="wallet";
 			 $_REQUEST['sd']['server']="localhost";
 		 }
 		 else
@@ -777,5 +777,19 @@ $('#back').css("cursor", "pointer");
 	{
 		return true;
 	}	
+	
+	function daysFromBlock($block)
+	{
+		$dif=$block-$_REQUEST['sd']['last_block'];
+		
+		if ($dif<=0) 
+		{
+			return 0;
+		}
+		else
+		{
+			return round($dif/1440);
+		}
+	}
 }
 ?>

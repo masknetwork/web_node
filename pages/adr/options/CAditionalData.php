@@ -244,7 +244,7 @@ class CAditionalData
 	   }
 	}
 	
-	function showModal()
+	function showModal($adr)
 	{
 		$this->template->showModalHeader("modal_aditional", "Request Aditional Data", "act", "aditional", "adr", "");
 		?>
@@ -293,7 +293,7 @@ class CAditionalData
                     </tr>
                    
                     <tr>
-                      <td height="40">
+                      <td height="50">
                       <input class="form-control" name="txt_field_1_name" id="txt_field_1_name" style="width:150px" placeholder="Name"/></td>
                       <td height="30">
                       <input class="form-control" name="txt_field_1_min" id="txt_field_1_min" style="width:60px" placeholder="Min"/></td>
@@ -302,7 +302,7 @@ class CAditionalData
                     </tr>
                    
                     <tr>
-                      <td height="40">
+                      <td height="50">
                       <input class="form-control" name="txt_field_2_name" id="txt_field_2_name" style="width:150px" placeholder="Name"/></td>
                       <td height="30">
                       <input class="form-control" name="txt_field_2_min" id="txt_field_2_min" style="width:60px" placeholder="Min"/></td>
@@ -311,7 +311,7 @@ class CAditionalData
                     </tr>
                    
                     <tr>
-                      <td height="40">
+                      <td height="50">
                       <input class="form-control" name="txt_field_3_name" id="txt_field_3_name" style="width:150px" placeholder="Name"/></td>
                       <td height="30">
                       <input class="form-control" name="txt_field_3_min" id="txt_field_3_min" style="width:60px" placeholder="Min"/></td>
@@ -320,7 +320,7 @@ class CAditionalData
                     </tr>
                     
                     <tr>
-                      <td height="40">
+                      <td height="50">
                       <input class="form-control" name="txt_field_4_name" id="txt_field_4_name" style="width:150px" placeholder="Name"/></td>
                       <td height="30">
                       <input class="form-control" name="txt_field_4_min" id="txt_field_4_min" style="width:60px" placeholder="Min"/></td>
@@ -329,7 +329,7 @@ class CAditionalData
                     </tr>
                     
                     <tr>
-                      <td height="40">
+                      <td height="50">
                       <input class="form-control" name="txt_field_5_name" id="txt_field_5_name" style="width:150px" placeholder="Name"/></td>
                       <td height="30">
                       <input class="form-control" name="txt_field_5_min" id="txt_field_5_min" style="width:60px" placeholder="Min"/></td>
@@ -338,7 +338,7 @@ class CAditionalData
                     </tr>
                     
                     <tr>
-                      <td height="40">
+                      <td height="50">
                       <input class="form-control" name="txt_field_6_name" id="txt_field_6_name" style="width:150px" placeholder="Name"/></td>
                       <td height="30">
                       <input class="form-control" name="txt_field_6_min" id="txt_field_6_min" style="width:60px" placeholder="Min"/></td>
@@ -402,7 +402,10 @@ class CAditionalData
 		</script>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		if ($this->kern->hasAttr($adr, "ID_REQ_DATA")==true)
+		   $this->template->showModalFooter("Renew");
+		else
+		   $this->template->showModalFooter("Activate");
 	}
 }
 ?>

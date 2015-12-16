@@ -198,7 +198,7 @@ class CSpecMkt
                             </tr>
                             <tr>
                               <td height="45" align="center">
-                              <a href="javascript:null" onClick="javascript:$('#tab_new_buy').css('display', 'block'); $('#tab_new_sell').css('display', 'none'); $('#modal_new_order').modal(); $('#txt_tip').val('ID_BUY');" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Buy</a>
+                              <a href="javascript:null" onClick="javascript:$('#tab_new_buy').css('display', 'block'); $('#tab_new_sell').css('display', 'none'); $('#modal_new_order').modal(); $('#txt_tip').val('ID_BUY');" class="btn btn-primary" style="width:100px"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Buy</a>
                               </td>
                             </tr>
                             <tr>

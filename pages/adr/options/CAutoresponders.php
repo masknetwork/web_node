@@ -156,7 +156,7 @@ class CAutoresponders
                     <td width="437">&nbsp;</td>
                     <td width="113"><a href="javascript:void(0)" onclick="javascript:$('#modal_autoresp').modal(); 
                                                                                     $('#tab_when').css('display', 'block');
-                                                                                    $('#txt_subj').val('');                                                                                    $('#txt_mes').val('')" class="btn btn-success"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Add Autoresponder</a></td>
+                                                                                    $('#txt_subj').val('');                                                                                    $('#txt_mes').val('')" class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Add Autoresponder</a></td>
                   </tr>
                 </tbody>
               </table>
@@ -333,7 +333,7 @@ class CAutoresponders
 		</script>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		$this->template->showModalFooter("Activate");
 	}
 }
 ?>

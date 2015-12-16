@@ -99,7 +99,7 @@ class CFroze
 	   }
 	}
 	
-	function showModal()
+	function showModal($adr)
 	{
 		$this->template->showModalHeader("modal_froze", "Froze Address", "act", "froze_adr", "adr", "");
 		?>
@@ -143,7 +143,10 @@ class CFroze
 		</script>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		if ($this->kern->hasAttr($adr, "ID_FROZEN")==true)
+		   $this->template->showModalFooter("Renew");
+		else
+		   $this->template->showModalFooter("Activate");
 	}
 }
 ?>

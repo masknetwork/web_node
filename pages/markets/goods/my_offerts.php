@@ -87,7 +87,7 @@
                 <tr>
                   <td width="80%">&nbsp;</td>
                   <td width="20%" align="right"> 
-                  <a href="#" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
+                  <a href="#" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
                   
                 </tr>
               </tbody>

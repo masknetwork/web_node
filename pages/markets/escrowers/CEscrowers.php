@@ -16,7 +16,7 @@ class CEscrowers
                 <tr>
                   <td width="59%">&nbsp;</td>
                   <td width="20%" align="right">
-                  <a href="#" onclick="$('#modal_new_offer').modal();" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
+                  <a href="#" onclick="$('#modal_new_offer').modal();" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add Offert </a></td>
                   <td width="21%" align="right">
                   <a href="my_offerts.php" class="btn btn-warning"><span class="glyphicon glyphicon-th-list"></span>&nbsp;My Offerts </a></td>
                 </tr>

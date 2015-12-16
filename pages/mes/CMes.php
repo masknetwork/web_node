@@ -12,12 +12,12 @@ class CMes
 		
 		?>
         
-            <table width="550" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td width="432">&nbsp;</td>
-                  <td width="118">
-                  <a href="#" onClick="$('#compose_modal').modal()" class="btn btn-success" style="width:120px">
+                  <td width="75%">&nbsp;</td>
+                  <td width="25%" align="right">
+                  <a href="#" onClick="$('#compose_modal').modal()" class="btn btn-primary" style="width:120px">
                   <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp; Compose
                   </a>
                   </td>
@@ -308,7 +308,7 @@ class CMes
 		  </script>
         
         <?
-		$this->template->showModalFooter();
+		$this->template->showModalFooter("Send");
 	}
 	
 	function showMessage($mesID)
@@ -350,44 +350,44 @@ class CMes
 		?>
             
             <br>
-            <table width="550" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td><img src="../../template/template/GIF/tab_top_simple.png" width="566" height="22" alt=""/></td>
+                  <td>&nbsp;</td>
                 </tr>
                 <tr>
-                  <td align="center" background="../../template/template/GIF/tab_middle.png">
-                  <table width="500" border="0" cellspacing="0" cellpadding="0">
+                  <td align="center">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                       <tr>
-                        <td width="96" height="30" align="right" bgcolor="#FFF7EE" class="simple_maro_12">From Address</td>
-                        <td width="404" align="left" bgcolor="#FFF7EE">&nbsp;&nbsp;<a href="#" class="red_12"><strong>
+                        <td width="135" height="30" align="right" bgcolor="#f0f0f0" class="font_14">From Address</td>
+                        <td width="1002" align="left" bgcolor="#f0f0f0">&nbsp;&nbsp;<a href="#" class="font_14"><strong>
 						<? 
 						    print $this->template->formatAdr($row['from_adr']); 
 					    ?>
                         </strong></a></td>
                       </tr>
                       <tr>
-                        <td height="30" align="right" bgcolor="#FFF7EE" class="simple_maro_12">To address</td>
-                        <td align="left" bgcolor="#FFF7EE">&nbsp;&nbsp;<a href="#" class="red_12"><strong>
+                        <td height="30" align="right" bgcolor="#f0f0f0" class="font_14">To address</td>
+                        <td align="left" bgcolor="#f0f0f0">&nbsp;&nbsp;<a href="#" class="font_14"><strong>
                         <? 
 						    print $this->template->formatAdr($row['to_adr']); 
 					    ?>
                         </strong></a></td>
                       </tr>
                       <tr>
-                        <td height="30" align="right" bgcolor="#FFF7EE" class="simple_maro_12">Subject</td>
-                        <td align="left" bgcolor="#FFF7EE" class="simple_red_12">&nbsp;&nbsp;<strong>
+                        <td height="30" align="right" bgcolor="#f0f0f0" class="font_14">Subject</td>
+                        <td align="left" bgcolor="#f0f0f0" class="font_14">&nbsp;&nbsp;<strong>
                         <? 
 						    print base64_decode($row['subject']); 
 					    ?>
                         </strong></td>
                       </tr>
                       <tr>
-                        <td height="10" colspan="2" align="left" valign="top" class="simple_maro_14">&nbsp;</td>
+                        <td height="10" colspan="2" align="left" valign="top" class="font_14">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="100" colspan="2" align="left" valign="top" class="simple_maro_14"><? print base64_decode($row['mes']); ?></td>
+                        <td height="100" colspan="2" align="left" valign="top" class="font_16"><? print base64_decode($row['mes']); ?></td>
                       </tr>
                       <tr>
                         <td colspan="2" background="../../template/template/GIF/lp.png">&nbsp;</td>
@@ -400,7 +400,7 @@ class CMes
                   </table></td>
                 </tr>
                 <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
+                  <td>&nbsp;</td>
                 </tr>
               </tbody>
             </table>
@@ -488,39 +488,19 @@ class CMes
 	  
 		?>
            
-           <br>
-           <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="21%" align="left" class="inset_maro_14">Sender</td>
-                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="47%" align="left"><span class="inset_maro_14">Subject</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Received</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="12%" align="center">&nbsp;</td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0"> 
-                        
+           <br><br>
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
+             
                         <?
 						   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 						   {
 						?>
                         
                              <tr>
-                               <td width="4%" align="left"><span class="glyphicon glyphicon-envelope" style="color:#<? if ($row['status']==0) print "990000"; else print "b5ae80"; ?>"></span></td>
-                             <td width="18%" align="left">
+                               <td width="4%" align="left" class="font_18"><span class="glyphicon glyphicon-envelope"></span></td>
+                             <td width="18%" align="left" valign="top">
                             
-                             <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="<? if ($row['status']>0) print "maro_12"; else print "red_12"; ?>">
+                             <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="font_14">
 							 <? 
 							    if ($row['status']==0) 
 								   print "<strong>".$this->template->formatAdr($row['from_adr'])."</strong>"; 
@@ -532,8 +512,8 @@ class CMes
                              </td>
                              
                              
-                             <td width="51%" align="left" >
-                             <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="<? if ($row['status']>0) print "maro_12"; else print "red_12"; ?>">
+                             <td width="51%" align="left" valign="top">
+                             <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="font_14">
 							 <? 
 							    if ($row['status']==0) 
 								   print "<strong>".base64_decode($row['subject'])."</strong>"; 
@@ -545,7 +525,7 @@ class CMes
                              </td>
                              <td width="13%" align="center">
 							 
-                             <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="<? if ($row['status']>0) print "maro_12"; else print "red_12"; ?>">
+                             <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="font_14">
                              <? 
 							    if ($row['status']==0) 
 								   print "<strong>".$this->kern->getAbsTime($row['tstamp'])."</strong>"; 
@@ -556,13 +536,11 @@ class CMes
                              </td>
                             
                              
-                             <td width="14%" align="center" class="simple_maro_12">
+                             <td width="14%" align="center" class="font_14">
                   
                              <div class="dropdown" align="right">
-                             <button class="btn btn-danger dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;</button>
-                             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                             <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#confirm_modal').modal(); $('#par_1').val('<? print $row['ID']; ?>');">Delete</a></li>
-                             </ul>
+                             <a class="btn btn-sm btn-danger" href="javascript:$('#confirm_modal').modal(); $('#par_1').val('<? print $row['ID']; ?>');">Delete</a></li>
+                           
                              </div>
                   
                             </td></tr>
@@ -575,13 +553,7 @@ class CMes
 					  ?>
                           
                   </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
+                 
         
         <?
 	}

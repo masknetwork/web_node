@@ -113,16 +113,10 @@ class CInterest
                 <td align="left"><img src="./GIF/adr_opt_interest.png"  /></td>
               </tr>
               </table></td>
-            <td width="406" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td height="60" align="center" valign="middle" bgcolor="#FFF3E0" class="simple_red_12"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                  <tbody>
-                    <tr>
-                      <td>Atentie ! Dupa ce primesti dobanda pentru o adresa, nu mai poti transfera fonduri din acea adresa pentru 24 de ore. Aici poti specifica in ce adresa vrei sa fie platita dobanda.</td>
-                    </tr>
-                  </tbody>
-                </table></td>
-              </tr>
+            <td width="406" align="right" valign="top">
+            
+            <table width="90%" border="0" cellspacing="0" cellpadding="5">
+              
               <tr>
                 <td height="30" align="left" valign="top" class="simple_blue_14">&nbsp;</td>
               </tr>
@@ -149,7 +143,7 @@ class CInterest
         </table>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		$this->template->showModalFooter("Activate");
 	}
 }
 ?>

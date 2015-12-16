@@ -176,7 +176,7 @@ class CRestrict
 	   }
 	}
 	
-	function showModal()
+	function showModal($adr)
 	{
 		$this->template->showModalHeader("modal_restrict", "Restrict Recipients", "act", "restrict", "adr", "");
 		?>
@@ -267,7 +267,10 @@ class CRestrict
 		</script>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		if ($this->kern->hasAttr($adr, "ID_RESTRICT_REC")==true)
+		   $this->template->showModalFooter("Renew");
+		else
+		   $this->template->showModalFooter("Activate");
 	}
 }
 ?>

@@ -208,7 +208,7 @@ class CMultisig
 	}
 	
 	
-	function showModal()
+	function showModal($adr)
 	{
 		$this->template->showModalHeader("modal_multisig", "Multisignatures", "act", "multisig", "adr", "");
 		?>
@@ -315,7 +315,10 @@ class CMultisig
 		</script>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		if ($this->kern->hasAttr($adr, "ID_MULTISIG")==true)
+		   $this->template->showModalFooter("Renew");
+		else
+		   $this->template->showModalFooter("Activate");
 	}
 }
 ?>

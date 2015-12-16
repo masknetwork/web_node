@@ -188,7 +188,7 @@ class CMyFeeds
             <table width="550" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td align="right"><a href="javascript:void(0)" onclick="$('#modal_new_feed').modal()" class="btn btn-success">
+                  <td align="right"><a href="javascript:void(0)" onclick="$('#modal_new_feed').modal()" class="btn btn-primary">
                   <span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;New Data Feed</a></td>
                 </tr>
               </tbody>
@@ -230,7 +230,7 @@ class CMyFeeds
                        
                      
                                   <div class="dropdown" align="right">
-                                  <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"> <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp; Settings&nbsp; &nbsp; <span class="caret"></span></button>
+                                  <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"> <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp; Settings&nbsp; &nbsp; <span class="caret"></span></button>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="../feeds/feed.php?symbol=<? print $row['symbol']; ?>">Details</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#modal_new_feed_branch').modal(); $('#feed_symbol').val('<? print $row['symbol']; ?>');">New Branch</a></li>

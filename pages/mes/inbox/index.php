@@ -12,121 +12,100 @@
    $ud=new CUserData($db);
    $sd=new CSysData($db);
    $mes=new CMes($db, $template);
+   
+   if (!isset($_SESSION['userID'])) $this->kern->redirect("../../../index.php");
 ?>
 
 <!doctype html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MaskNetwwork - My Addresses</title>
-<link rel="stylesheet" href="../../../style.css" type="text/css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-<script src="../../../dd.js" type="text/javascript"></script>
-<script src="../../../utils.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script type="text/javascript">$(document).ready(function() { $("body").tooltip({ selector: '[data-toggle=tooltip]' }); });</script>
+<title><? print $_REQUEST['sd']['website_name']; ?></title>
+<script src="../../../flat/js/vendor/jquery.min.js"></script>
+<script src="../../../flat/js/flat-ui.js"></script>
+<link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
+<link href="../../../flat/css/flat-ui.css" rel="stylesheet">
+<link href="../../../style.css" rel="stylesheet">
+<link rel="shortcut icon" href="../../../flat/img/favicon.ico">
 
+<style>
+@media only screen and (max-width: 1000px)
+{
+   .balance_usd { font-size: 40px; }
+   .balance_msk { font-size: 40px; }
+   #but_send { font-size:30px; }
+   #td_balance { height:100px; }
+   #div_ads { display:none; }
+   .txt_help { font-size:20px;  }
+   .font_12 { font-size:20px;  }
+   .font_10 { font-size:18px;  }
+   .font_14 { font-size:22px;  }
+}
+
+</style>
 
 </head>
-<center>
-<body background="../../template/template/GIF/back.png" style="margin-top:0px; margin-left:0px; margin-right:0px; ">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td height="66" align="center" valign="top" background="../../template/template/GIF/top_bar.png" style="background-position:center"><table width="1020" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td align="left">
-            <?
-			    $template->showTopMenu(3);
-			?>
-            </td>
-            </tr>
-        </tbody>
-      </table></td>
-    </tr>
-  </tbody>
-</table>
-<table width="1018" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td height="800" align="center" valign="top" background="../../template/template/GIF/back_middle.png"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td width="205" height="18" align="right" valign="top"><table width="201" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="170" align="center" valign="middle" style="border-bottom-width:1px; border-bottom-style:inset; border-bottom-color:#ffffff;">               <?
-				      $template->showBalancePanel();
-                  ?>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <?
-			   $mes->showLeftMenu(1);
-			?>
-            </td>
-            <td width="610" height="1000" align="center" valign="top">
-           
-           
-            <?
-			   $template->showHelp("Below we listed the names of addresses on sale. To put on sale a name, go to page Addresses Name. When you buy a name you must specify what address will be associated to. You can attach an unlimited number of names to a unique address.");
+
+<body>
+
+<?
+   $template->showTopBar(3);
+?>
+ 
+
+ <div class="container-fluid">
+ 
+ <?
+    $template->showBalanceBar();
+ ?>
+
+
+ <div class="row">
+ <div class="col-md-1">&nbsp;</div>
+ <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
+ 
+ <?
+     // Location
+     $template->showLocation("../../mes/inbox/index.php", "Messages", "", "Inbox");
+	 
+	 // Menu
+	 $template->showNav(1,
+	                   "../inbox/index.php", "Inbox", "",
+	                   "../sent/index.php", "Sent", "");
+	 
+	 // Help
+	 $template->showHelp("Listed below are your messages. You can send a message to any address. Even if it crosses the entire network no one can see the message content. All messages are encrypted and only the recipient can decrypt the content. Messages are limited to 512 characters in length. Attachments are not allowed.");
 			   
-			   if ($_REQUEST['act']=="send")
-			      $mes->sendMes($_REQUEST['fee_adr'], 
-				                $_REQUEST['sender_adr'], 
-								$_REQUEST['txt_rec'], 
-								$_REQUEST['txt_subject'], 
-								$_REQUEST['txt_mes']);
+	 // Send
+	 if ($_REQUEST['act']=="send")
+	     $mes->sendMes($_REQUEST['fee_adr'], 
+				       $_REQUEST['sender_adr'], 
+					   $_REQUEST['txt_rec'], 
+					   $_REQUEST['txt_subject'], 
+					   $_REQUEST['txt_mes']);
 			   
-			   if ($_REQUEST['act']=="del")
-			      $mes->delMes($_REQUEST['par_1']);
+	if ($_REQUEST['act']=="del")
+	   $mes->delMes($_REQUEST['par_1']);
 			   
-			   $mes->showButs();
+	$mes->showButs();
 			   
-			   if ($_REQUEST['act']=="show_mes") 
-			     $mes->showMessage($_REQUEST['mesID']);
-			   else
-			     $mes->showMes();
+	if ($_REQUEST['act']=="show_mes") 
+	   $mes->showMessage($_REQUEST['mesID']);
+	else
+	   $mes->showMes();
 			   
-			   $mes->showComposeModal();
-			   $template->showConfirmModal("Delete email", "Are you sure you want to delete this email ? This action can't be rollbacked."); 
-			  
-			?>
-            
-           
-            
-            </td>
-            <td width="203" align="center" valign="top">
-            <?
-			   $template->showRightPanel();
-			   $template->showAds();
-			?>
-            </td>
-          </tr>
-        </tbody>
-      </table></td>
-    </tr>
-    <tr>
-      <td height="0"><img src="../../template/template/GIF/bottom_sep.png" width="1018" height="20" alt=""/></td>
-    </tr>
-    <tr>
-      <td height="50" align="center" background="../../template/template/GIF/bottom_middle.png">
-      <?
-	     $template->showBottomMenu();
-	  ?>
-      </td>
-    </tr>
-    <tr>
-      <td height="0"><img src="../../template/template/GIF/bottom.png" width="1018" height="20" alt=""/></td>
-    </tr>
-  </tbody>
-</table>
+	$mes->showComposeModal();
+	$template->showConfirmModal("Delete email", "Are you sure you want to delete this email ? This action can't be rollbacked."); 
+ ?>
+ </div>
+ <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
+ <div class="col-md-1">&nbsp;</div>
+ </div>
+ </div>
+ 
+ <?
+    $template->showBottomMenu();
+ ?>
+ 
 </body>
-</center>
 </html>

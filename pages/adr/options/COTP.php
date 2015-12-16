@@ -114,7 +114,7 @@ class COTP
 	   }
 	}
 	
-	function showModal()
+	function showModal($adr)
 	{
 		$this->template->showModalHeader("modal_otp", "Activate One Time Password", "act", "otp_adr", "adr", "");
 		
@@ -165,7 +165,9 @@ class COTP
                 <td align="left" valign="top" class="simple_blue_14">&nbsp;</td>
               </tr>
               <tr>
-                <td height="30" align="left" valign="top" class="simple_blue_14"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <td height="30" align="left" valign="top" class="simple_blue_14">
+                
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tab_otp">
                   <tr>
                     <td width="16%" rowspan="3" align="center" valign="top"><img id="qr_img" name="qr_img" src="../../../qr/qr.php?qr=<? print $pass; ?>" /></td>
                     <td width="3%">&nbsp;</td>
@@ -182,7 +184,9 @@ class COTP
                     <td>&nbsp;</td>
                     <td align="left" bgcolor="#fafafa" class="simple_gri_10">You will need to provide this password next time you want to spend coins / assets from this address. </td>
                   </tr>
-                </table></td>
+                </table>
+                
+                </td>
               </tr>
               <tr>
                 <td height="30" align="left" valign="top" class="simple_blue_14">&nbsp;</td>
@@ -196,7 +200,10 @@ class COTP
 		</script>
         
         <?
-		$this->template->showModalFooter("Cancel", "Activate");
+		if ($this->kern->hasAttr($adr, "ID_OTP")==true)
+		   $this->template->showModalFooter("Renew");
+		else
+		   $this->template->showModalFooter("Activate");
 	}
 }
 ?>

@@ -23,7 +23,7 @@ class CIssuedAssets
             <table width="550" border="0" cellspacing="0" cellpadding="0">
               <tbody>
                 <tr>
-                  <td align="right"><a href="#" onclick="$('#modal_issue').modal()" class="btn btn-success"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Issue Asset</a></td>
+                  <td align="right"><a href="#" onclick="$('#modal_issue').modal()" class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Issue Asset</a></td>
                 </tr>
               </tbody>
             </table>

@@ -125,27 +125,7 @@
 		
 			
 		?>
-            <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="46%" align="left" class="inset_maro_14">Address Name</td>
-                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Price</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Expires</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="20%" align="center"><span class="inset_maro_14">Buy</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
                     
                     <?
 					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
@@ -153,14 +133,14 @@
 					?>
                     
                         <tr>
-                        <td width="47%" align="left"><span class="simple_maro_12"><strong>
-						<? print $row['domain']; ?></strong></span><br><span class="simple_maro_10">
-						<? print "Seller : ...".substr($row['adr'], 30, 20)."..."; ?></span></td>
-                        <td width="16%" align="center"><span class="simple_green_12"><strong><? print $row['sale_price']; ?></strong></span>
-                        <br><span class="simple_green_10"><? print "MSK"; ?></span></td>
-                        <td width="18%" align="center" class="simple_maro_12"><strong>3 months</strong></td>
+                        <td width="47%" align="left"><span class="font_14"><strong>
+						<? print $row['domain']; ?></strong></span><br><p class="font_10">
+						<? print "Seller : ...".substr($row['adr'], 30, 20)."..."; ?></p></td>
+                        <td width="16%" align="center"><span class="font_14" style="color:#009900"><strong><? print $row['sale_price']; ?></strong></span>
+                        <p class="font_10"><? print "MSK"; ?></p></td>
+                        <td width="18%" align="center" class="font_14"><? print $this->kern->daysFromBlock($row['expires']); ?><p class="font_10">days</p></td>
                         <td width="19%" align="center" class="simple_maro_12">
-                         <a class="btn btn-success btn-sm" href="javascript:$('#buy_adr').val('<? print $row['domain']; ?>'); $('#modal_buy_domain').modal()" style="width:80px"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;Buy</a>
+                         <a class="btn btn-primary" href="javascript:$('#buy_adr').val('<? print $row['domain']; ?>'); $('#modal_buy_domain').modal()" style="width:80px"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;Buy</a>
                         </td>
                         </tr>
                         <tr>
@@ -173,13 +153,6 @@
                     
                   </table>
                   
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
             
         <?
 		

@@ -201,7 +201,7 @@ class CAutoMkt
                                                    $('#tab_buy').css('display', 'block'); 
                                                    $('#tip').val('ID_BUY');
                                                    $('#mkt_symbol').val('<? print $_REQUEST['symbol']; ?>'); 
-                                                   $('#tab_sell').css('display', 'none');" class="btn btn-success"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Buy Order</a>
+                                                   $('#tab_sell').css('display', 'none');" class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;&nbsp;Buy Order</a>
                               </td>
                             </tr>
                             <tr>

@@ -97,45 +97,25 @@
 	  
 		?>
         
-           <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="58%" align="left" class="inset_maro_14">Explanation</td>
-                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="21%" align="center"><span class="inset_maro_14">Amount</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="17%" align="center"><span class="inset_maro_14">Operations</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
+             
                       <?
 					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                         
                           <tr>
-                          <td width="59%" align="left" class="simple_maro_10">
+                          <td width="59%" align="left" class="font_12">
                           
                           <?
 						      // Escrower my address
 						      if ($this->kern->isMine($row['escrower'])==true)
 							     print "Address <strong>".$this->template->formatAdr($row['sender_adr'])."</strong> choosed one of your addresses <strong>(".$this->template->formatAdr($row['escrower'])."</strong>) as escrower for sending <strong>".$row['amount']." ".$row['cur']."</strong> to <strong>".$this->template->formatAdr($row['rec_adr'])."</strong>. You can <strong>relese</strong> the funds to seller or <strong>return</strong> the funds to sender address.";
 							  else  if ($this->kern->isMine($row['sender_adr'])==true)
-								 "You have sent <strong>".$row['amount']." ".$row['cur']."</strong> to <strong>".$this->template->formatAdr($row['rec_adr'])."</strong> using an escrower (<strong>(".$this->template->formatAdr($row['escrower'])."</strong>). You can release the funds anytime you want.";
+								 print "You have sent <strong>".$row['amount']." ".$row['cur']."</strong> to <strong>".$this->template->formatAdr($row['rec_adr'])."</strong> using an escrower (<strong>".$this->template->formatAdr($row['escrower'])."</strong>). You can release the funds anytime you want.";
 							  
 							   else  if ($this->kern->isMine($row['rec_adr'])==true)
-							     "<strong>".$this->template->formatAdr($row['sender_adr'])."</strong> sent you <strong>".$row['amount']." ".$row['cur']."</strong> to address <strong>".$this->template->formatAdr($row['rec_adr'])."</strong> using an escrower (<strong>(".$this->template->formatAdr($row['escrower'])."</strong>). You can refund the sender anytime you want."
+							     print "<strong>".$this->template->formatAdr($row['sender_adr'])."</strong> sent you <strong>".$row['amount']." ".$row['cur']."</strong> to address <strong>".$this->template->formatAdr($row['rec_adr'])."</strong> using an escrower (<strong>(".$this->template->formatAdr($row['escrower'])."</strong>). You can refund the sender anytime you want."
 						  ?>
                           
                           </td>
@@ -151,8 +131,8 @@
                           <tbody>
                             <tr>
                               
-                              <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-success btn-sm" title="Release Funds to Seller" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-ok"></span></a></td>
-                              
+                              <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-primary btn-sm" title="Release Funds to Seller" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-ok"></span></a></td>
+                              <td>&nbsp;&nbsp;</td>
                               <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RETURN'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-danger btn-sm" title="Return Funds to Buyer" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove"></span></a></td>
                               
                             </tr>
@@ -162,10 +142,10 @@
                         <?
 							  }
 							  else  if ($this->kern->isMine($row['sender_adr'])==true)
-							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('".$row['ID']."')\" class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
+							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('".$row['ID']."')\" class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
 							  
 							  else  if ($this->kern->isMine($row['rec_adr'])==true)
-							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#esc_act').val('ID_RETURN'); $('#transID').val('".$row['ID']."')\" class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
+							     print "<a href='javascript:void(0)' onclick=\"$('#sign_modal').modal(); $('#esc_act').val('ID_RETURN'); $('#transID').val('".$row['ID']."')\" class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-ok'></span>&nbsp;Release</a>";
 						?>
                         
                         </td></tr><tr>
@@ -180,13 +160,7 @@
                   </table>
                   
                   
-                  
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
+                 
             </table>
 
         

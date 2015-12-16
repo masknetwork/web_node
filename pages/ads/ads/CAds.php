@@ -212,7 +212,7 @@ class CAds
 		$title=base64_decode($title);
 		$mes=base64_decode($mes);
 		$link=base64_decode($link);
-		
+	    	
 		// Check network fee address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
@@ -330,40 +330,20 @@ class CAds
 			
 		?>
           
-            <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="51%" align="left" class="inset_maro_14">Explanation</td>
-                        <td width="1%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Bid</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="15%" align="center"><span class="inset_maro_14">Expire</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="15%" align="center"><span class="inset_maro_14">Actions</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
-                      
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
+            
                       <?
 				       while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 				       {
 				      ?>
                        
                         <tr>
-                        <td width="51%" align="left"><span class="simple_maro_12"><strong><? print base64_decode($row['title']); ?></strong></span><br>
-                        <span class="simple_maro_10"><? print substr(base64_decode($row['message']), 0, 50)."..."; ?></span></td>
-                        <td width="17%" align="center"><strong class="simple_green_12"><? print $row['mkt_bid']; ?></strong>
-                        <br><strong class="simple_green_10">MSK</strong></td>
-                        <td width="15%" align="center" class="simple_green_12"><span class="simple_maro_12"><strong><? print $row['expires']-$this->kern->block(); ?></strong></span><br><span class="simple_maro_10"><? print $row['expires']-$this->kern->block(); ?></span></td>
-                        <td width="17%" align="center" class="simple_maro_12">
+                        <td width="51%" align="left"><span class="font_14"><strong><? print base64_decode($row['title']); ?></strong></span>
+                        <p class="font_12"><? print substr(base64_decode($row['message']), 0, 50)."..."; ?></p></td>
+                        <td width="17%" align="center"><strong class="font_14" style="color:#009900"><? print $row['mkt_bid']; ?></strong>
+                        <p class="simple_green_10">MSK</p></td>
+                        <td width="15%" align="center"><span class="font_14"><strong><? print $row['expires']-$this->kern->block(); ?></strong></span><p class="font_12">hours</p></td>
+                        <td width="17%" align="center" class="font_14">
                         
                         <div class="dropdown">
                         <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
@@ -386,13 +366,7 @@ class CAds
                    <?
 					   }
 				   ?>
-              
-               </tbody>
-                        </table></td>
-              </tr>
-               <tr>
-                        <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                        </tr>
+       
             </table>
             
         <?

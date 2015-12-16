@@ -382,51 +382,39 @@
 			
 		?>
             
-            <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="51%" align="left" class="inset_maro_14">Address Name</td>
-                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Sale Price</span></td>
-                        <td width="2%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="14%" align="center"><span class="inset_maro_14">Expires</span></td>
-                        <td width="1%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="16%" align="center"><span class="inset_maro_14">Setup</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
-                  
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
+                  <thead>
+                  <tr bgcolor="#fafafa" height="40px" style="padding-bottom:10px">
+                  <td width="60%" class="font_14">&nbsp;&nbsp;&nbsp;Address Name</td>
+                  <td width="20%" class="font_14" align="center">Sale Price</td>
+                  <td width="20%" class="font_14" align="center">Expires</td>
+                  <td width="5%" class="font_14">Operations&nbsp;&nbsp;&nbsp;</td>
+                  </tr>
+                  </thead>
                   <?
 				       while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 				       {
 				  ?>
                   
                         <tr>
-                        <td width="52%" align="left" class="simple_maro_12"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <td width="52%" align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td width="19%"><img src="../../template/template/GIF/empty_pic.png" width="40" height="40" class="img-circle"/></td>
-                              <td width="81%" class="simple_maro_12"><strong><? print $row['domain']; ?></strong><br />
-                    <span class="simple_gri_10"><? print $this->template->formatAdr($row['adr']); ?></span>
-                    </td>
+                              <td width="15%"><img src="../../template/template/GIF/empty_pic.png" width="40" height="40" class="img-circle"/></td>
+                              <td width="85%" class="font_14"><strong><? print $row['domain']; ?></strong>
+                              <p class="font_10"><? print $this->template->formatAdr($row['adr']); ?></p>
+                              </td>
                             </tr>
                           </tbody>
                         </table></td>
-                        <td width="17%" align="center" class="simple_green_12">
-                        <span class="simple_gree_12"><strong><? print $row['sale_price']." MSK"; ?></strong></span>
+                        <td width="17%" align="center" class="font_14" style="color:#009900">
+                        <span class="font_15"><strong><? print $row['sale_price']; ?></strong></span><span class="font_12">&nbsp;MSK</span>
                         </td>
                         <td width="16%" align="center" class="simple_green_12">
-                        <span class="simple_maro_12"><? print $this->kern->getAbsTime($row['expires']*100, false); ?></span>
+                        <span class="font_14"><? print $this->kern->daysFromBlock($row['expires']); ?></span>
+                        <p class="font_10">days</p>
                         </td>
-                        <td width="15%" align="center" class="simple_maro_12">
+                        <td width="15%" align="center" class="font_14">
                         
                         
                          <div class="dropdown">
@@ -474,15 +462,7 @@
 				  ?>
                   
                   </table>
-                  
-                  
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
+               
             
         <?
 		
@@ -516,7 +496,7 @@
                 <th width="25%" align="center">Sale Price</th>
                 <th width="18%" align="center">Expires</th>
                 <th width="7%" align="center">&nbsp;</th>
-                <td width="0%"></thead>
+                <td width="0%">
               <tbody>
                 
                 <?

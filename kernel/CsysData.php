@@ -27,7 +27,14 @@ class CSysData
 		$_REQUEST['sd']['bkp_pending']=$row['bkp_pending'];	 	 	 	 			                    
 		$_REQUEST['sd']['last_block_hash']=$row['last_block_hash'];	 	 	 	 			                        
 		$_REQUEST['sd']['last_packet_hash']=$row['last_packet_hash'];	 	 	 	 			                     
-		$_REQUEST['sd']['update_required']=$row['update_required'];	 	 	 	 			                       
+		$_REQUEST['sd']['update_required']=$row['update_required'];	 
+		
+		// Net stat
+		$query="SELECT * FROM net_stat";
+		$result=$this->kern->execute($query);
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);	 
+		
+		$_REQUEST['sd']['last_block']=$row['last_block'];	 	 	 			                       
 	}
 }
 ?>

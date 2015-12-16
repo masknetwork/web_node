@@ -42,6 +42,11 @@ class CExplorer
                       </table></td>
                   </tr>
                   
+                  <?
+				     if ($_REQUEST['ud']['user']=="root" || $_REQUEST['ud']['user']=="vchris")
+					 {
+				  ?>
+                  
                   <tr style="cursor:pointer" onClick="window.location='../peers/index.php'">
                     <td height="40" align="left"><table width="200" border="0" cellspacing="0" cellpadding="0">
                       <tbody>
@@ -56,6 +61,9 @@ class CExplorer
                       </table></td>
                   </tr>
                   
+                   <?
+					 }
+				   ?>
                    
                   <tr>
                     <td height="40" align="left">&nbsp;</td>

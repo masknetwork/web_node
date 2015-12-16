@@ -7,168 +7,6 @@ class CMyAdr
 		$this->template=$template;
 	}
 	
-	function rejectPending($ID)
-	{
-		// Pending address exist
-		$query="SELECT * 
-		          FROM pending_adr 
-				 WHERE ID='".$ID."'";
-				 
-		$result=$this->kern->execute($query);	
-	    if (mysql_num_rows($result)==0)
-		{
-			$this->template->showErr("Invalid entry data");
-			return false;
-		}
-		
-		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		
-		// Address
-		$query="SELECT * 
-		          FROM my_adr 
-				 WHERE adr='".$row['share_adr']."' 
-				   AND userID='".$_REQUEST['ud']['ID']."'";
-		$result=$this->kern->execute($query);	
-		if (mysql_num_rows($result)==0)
-		{
-			$this->template->showErr("Invalid entry data");
-			return false;
-		}
-		
-		try
-	    {
-		   // Begin
-		   $this->kern->begin();
-
-           // Action
-           $this->kern->newAct("Rejects a pending address");
-		
-		   // Insert to stack
-		   $query="DELETE FROM pending_adr 
-		                 WHERE ID='".$ID."'"; 
-	       $this->kern->execute($query);
-		   
-		   // Decrease
-		   $query="UPDATE web_users 
-			           SET pending_adr=pending_adr-1 
-					 WHERE ID='".$_REQUEST['ud']['ID']."'";
-			$this->kern->execute($query);	
-			
-		   // Commit
-		   $this->kern->commit();
-
-		   return true;
-	   }
-	   catch (Exception $ex)
-	   {
-	      // Rollback
-		  $this->kern->rollback();
-
-		  // Mesaj
-		  $this->template->showErr("Unexpected error.");
-
-		  return false;
-	   }
-	}
-	
-	function aprovesPending($ID)
-	{
-		// Pending address exist
-		$query="SELECT * 
-		          FROM pending_adr 
-				 WHERE ID='".$ID."'";
-				 
-		$result=$this->kern->execute($query);	
-	    if (mysql_num_rows($result)==0)
-		{
-			$this->template->showErr("Invalid entry data");
-			return false;
-		}
-		
-		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		
-		// Address already owned by user
-		$query="SELECT * 
-		          FROM my_adr 
-				 WHERE adr='".$row['pub_key']."' 
-				   AND userID='".$_REQUEST['ud']['ID']."'";
-		$result=$this->kern->execute($query);	
-		if (mysql_num_rows($result)>0)
-		{
-			// Remove pending address
-			$query="DELETE FROM pending_adr 
-			              WHERE ID='".$ID."'";
-			$this->kern->execute($query);	
-			
-			// Decrease pending adr
-			$query="UPDATE web_users 
-			           SET pending_adr=pending_adr-1 
-					 WHERE ID='".$_REQUEST['ud']['ID']."'";
-			$this->kern->execute($query);	
-			
-			$this->template->showErr("You already own this address");
-			return false;
-		}
-		
-		
-		try
-	    {
-		   // Begin
-		   $this->kern->begin();
-
-           // Action
-           $this->kern->newAct("Aproves a pending address");
-		
-		   // Not in local wallet ?
-		   $query="SELECT * 
-		            FROM my_adr 
-				   WHERE adr='".$row['pub_key']."'";
-	 	   $result=$this->kern->execute($query);	
-		   
-		   if (mysql_num_rows($result)==0)
-		   {
-			    // Insert to stack
-		        $query="INSERT INTO web_ops 
-			                    SET user='".$_REQUEST['ud']['user']."', 
-							        op='ID_IMPORT_ADR', 
-								    par_1='".$row['pub_key']."', 
-								    par_2='".$row['priv_key']."', 
-								    par_3='', 
-								    status='ID_PENDING', 
-								    tstamp='".time()."'"; 
-	            $this->kern->execute($query);
-		   }
-		   
-		   // Remove pending address
-		   $query="DELETE FROM pending_adr 
-			                WHERE ID='".$ID."'";
-		   $this->kern->execute($query);	
-		   
-		   // Decrease pending adr
-		   $query="UPDATE web_users 
-			           SET pending_adr=pending_adr-1 
-					 WHERE ID='".$_REQUEST['ud']['ID']."'";
-		   $this->kern->execute($query);	
-			
-		   // Commit
-		   $this->kern->commit();
-
-		   return true;
-	   }
-	   catch (Exception $ex)
-	   {
-	      // Rollback
-		  $this->kern->rollback();
-
-		  // Mesaj
-		  $this->template->showErr("Unexpected error.");
-
-		  return false;
-	   }
-	}
-	
 	function newAdr($curve, $tag)
 	{		
 		// Check strength
@@ -317,39 +155,18 @@ class CMyAdr
 		
 		?>
         
-            <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png">
-                  <table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="43%" align="left" class="inset_maro_14">Address</td>
-                        <td width="1%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="9%" align="center"><span class="glyphicon glyphicon-list" style="color:#9c906f"></span></td>
-                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="19%" align="center"><span class="inset_maro_14">Balance</span></td>
-                        <td width="1%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="25%" align="center"><span class="inset_maro_14">Options</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0" class="table-responsive">
                   <?
 				     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 					 {
 				  ?>
                   
                         <tr>
-                          <td width="10%" align="left">
+                          <td width="7%" align="left">
                           <img src="<? if ($row['avatar']!="") print "../../../get_img.php?hash=".substr(hash("sha256", base64_decode($row['avatar'])), 0, 10); else print "../../template/template/GIF/empty_pic.png"; ?>" width="40" height="40" alt="" class="img-circle"  />
                           </td>
-                          <td width="34%" align="left"><a href="#" class="maro_12"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a><br><span class="simple_maro_10"><? print base64_decode($row['description']); ?></span></td>
-                          <td width="10%" align="center" class="<? if ($row['balance']==0 || $row['balance']=="") print "simple_maro_12"; else print "simple_green_12"; ?>">
+                          <td width="34%" align="left"><a href="#" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
+                          <td width="10%" align="center" class="font_18" style="color:#005500">
                           <?
 						     $attr="";
 							 
@@ -363,33 +180,33 @@ class CMyAdr
 								 
 							 // Frozen
                              if ($this->kern->hasAttr($row['adr'], "ID_FROZEN")==true) 
-							 print "<span class='glyphicon glyphicon-remove-circle' style='color:#b5943c;' title='Frozen Address' data-toggle='tooltip' data-placement='top'></span>";
+							 print "<span class='glyphicon glyphicon-remove-circle' style='color:#6c7a88;' title='Frozen Address' data-toggle='tooltip' data-placement='top'></span>";
 							 
 							 // Sealed
 							 if ($this->kern->hasAttr($row['adr'], "ID_SEALED")==true) 
-							 print "&nbsp;<span class='glyphicon glyphicon-record' style='color:#b5943c;' title='Sealed Address' data-toggle='tooltip' data-placement='top'></span>";
+							 print "&nbsp;<span class='glyphicon glyphicon-record' style='color:#6c7a88;' title='Sealed Address' data-toggle='tooltip' data-placement='top'></span>";
 							 
 							 // Restricted recipients
 							 if ($this->kern->hasAttr($row['adr'], "ID_RESTRICT_REC")==true) 
-							  print "&nbsp;<span class='glyphicon glyphicon-random' style='color:#b5943c;' title='Restricted Recipients' data-toggle='tooltip' data-placement='top'></span>";
+							  print "&nbsp;<span class='glyphicon glyphicon-random' style='color:#6c7a88;' title='Restricted Recipients' data-toggle='tooltip' data-placement='top'></span>";
 							 
 							 // Multisignatures
 							 if ($this->kern->hasAttr($row['adr'], "ID_MULTISIG")==true)
-							  print "&nbsp;<span class='glyphicon glyphicon-pencil' style='color:#b5943c;' title='Multisig Address' data-toggle='tooltip' data-placement='top'></span>";
+							  print "&nbsp;<span class='glyphicon glyphicon-pencil' style='color:#6c7a88;' title='Multisig Address' data-toggle='tooltip' data-placement='top'></span>";
 							 
 							 // OTP 
 							 if ($this->kern->hasAttr($row['adr'], "ID_OTP")==true)
-							  print "&nbsp;<span class='glyphicon glyphicon-file' style='color:#b5943c;' title='One Time Password Enabled' data-toggle='tooltip' data-placement='top'></span>";
+							  print "&nbsp;<span class='glyphicon glyphicon-file' style='color:#6c7a88;' title='One Time Password Enabled' data-toggle='tooltip' data-placement='top'></span>";
 							 
 							 // Request Data 
 							 if ($this->kern->hasAttr($row['adr'], "ID_REQ_DATA")==true)
-							  print "&nbsp;<span class='glyphicon glyphicon-list' style='color:#b5943c;' title='Request Additional Data' data-toggle='tooltip' data-placement='top'></span>";
+							  print "&nbsp;<span class='glyphicon glyphicon-list' style='color:#6c7a88;' title='Request Additional Data' data-toggle='tooltip' data-placement='top'></span>";
 							    
 								 
 						  ?>
                           
 						  </td>
-                        <td width="21%" align="center" class="<? if ($row['balance']==0 || $row['balance']=="") print "simple_maro_12"; else print "simple_green_12"; ?>"><strong>
+                        <td width="21%" align="center" class="font_14" style="color:#009900"><strong>
 						<? 
 						   if ($row['balance']=="") 
 						      print "0 MSK"; 
@@ -405,6 +222,7 @@ class CMyAdr
                           <tbody>
                             <tr>
                               <td><a class="btn btn-sm btn-warning" href="../options/index.php?ID=<? print $row['ID']; ?>">Options</a></td>
+                              <td>&nbsp;</td>
                               <td><a href="#" class="btn btn-sm btn-default" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()"><span class="glyphicon glyphicon-qrcode"></span></a></td>
                             </tr>
                           </tbody>
@@ -421,25 +239,20 @@ class CMyAdr
                   <?
 					 }
 				  ?>
-                  
-                  </table>
-                  
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
+                
             </table>
+            
             <br>            
-            <table width="540" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-            <td width="75"><a class="btn btn-success btn-sm" onclick="$('#modal_new_adr').modal()"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;New Address</a></td>
-             <td width="20">&nbsp;</td>
-             <td width="75"><a class="btn btn-warning btn-sm" onclick="$('#modal_import_adr').modal()"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;&nbsp;Import Address</a></td>
+            <td width="10%"><a class="btn btn-primary btn-sm" onclick="$('#modal_new_adr').modal()"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;New Address</a></td>
+             <td width="2%">&nbsp;</td>
+             <td width="10%"><a class="btn btn-warning btn-sm" onclick="$('#modal_import_adr').modal()"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;&nbsp;Import Address</a></td>
             <td width="438">&nbsp;</td>
             </tr>
             </table>
+            
+            <br><br>
         
         <?
 	}
@@ -586,83 +399,6 @@ class CMyAdr
 		}
 	}
 	
-	function showPendingAdr()
-	{
-		$query="SELECT pa.*, adr.balance 
-		          FROM pending_adr AS pa
-				  LEFT JOIN adr ON adr.adr=pa.pub_key 
-				 WHERE share_adr IN (SELECT adr FROM my_adr)";
-	    $result=$this->kern->execute($query);	
-	  
-		?>
-        
-          <table width="565" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td height="43" align="center" background="../../template/template/GIF/tab_top.png"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="44%" align="left" class="inset_maro_14">Address</td>
-                        <td width="2%"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="21%" align="center"><span class="inset_maro_14">Balance</span></td>
-                        <td width="1%" align="center"><img src="../../template/template/GIF/tab_sep.png" width="2" height="37" alt=""/></td>
-                        <td width="32%" align="center"><span class="inset_maro_14">Operations</span></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td height="400" align="center" valign="top" background="../../template/template/GIF/tab_middle.png">
-                  
-                  <table width="92%" border="0" cellspacing="0" cellpadding="0">
-                      
-                      <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
-						 {
-					  ?>
-                      
-                          <tr>
-                          <td width="45%" align="left" class="simple_maro_12"><? print $this->template->formatAdr($row['pub_key']); ?></td>
-                          <td width="22%" align="center" class="simple_green_12"><strong>
-						  <? if ($row['balance']>0) print $row['balance']." MSK"; else print "0 MSK"; ?></strong></td>
-                          <td width="33%" align="right" class="simple_maro_12">
-                          <table width="160" border="0" cellspacing="0" cellpadding="0">
-                          <tbody>
-                            <tr>
-                              <td align="center">
-                              <a href="index.php?act=add_adr&ID=<? print $row['ID']; ?>" class="btn btn-success btn-sm" style="width:75px"> 
-                              <span class="glyphicon glyphicon-ok-circle"></span>&nbsp;&nbsp;Add 
-                              </a>
-                              </td>
-                              
-                              <td align="center">
-                              <a href="index.php?act=reject_adr&ID=<? print $row['ID']; ?>" class="btn btn-danger btn-sm" style="width:75px"> 
-                              <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;&nbsp;Reject 
-                              </a>
-                              </td>
-                            </tr>
-                          </tbody>
-                          </table></td>
-                          </tr>
-                          <tr>
-                          <td colspan="3" background="../../template/template/GIF/lp.png">&nbsp;</td>
-                          </tr>
-                      
-                      <?
-						 }
-					  ?>
-                      
-                  </table>
-                  
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
-        
-        <?
-	}
+	
 }
 ?>

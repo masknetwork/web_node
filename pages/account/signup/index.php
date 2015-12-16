@@ -1,62 +1,79 @@
 <?
-  session_start();
-  
-  include "../../../kernel/db.php";
-  include "../../template/template/CTemplate.php";
-  include "CSignup.php";
-
-  $db=new db();
-  $template=new CTemplate($db);
-  $signup=new CSignup($db, $template);
+   session_start();
+   
+   include "../../../kernel/db.php";
+   include "../../template/template/CTemplate.php";
+   include "CSignup.php";
+   
+   $db=new db();
+   $template=new CTemplate($db);
+   $signup=new CSignup($db, $template);
 ?>
 
 <!doctype html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MaskNetwwork - Multisignature transactions</title>
-<link rel="stylesheet" href="../../../style.css" type="text/css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-<script src="../../../dd.js" type="text/javascript"></script>
-<script src="../../../utils.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script type="text/javascript">$(document).ready(function() { $("body").tooltip({ selector: '[data-toggle=tooltip]' }); });</script>
+<title>Untitled Document</title>
+<script src="../../../flat/js/vendor/jquery.min.js"></script>
+<script src="../../../flat/js/flat-ui.js"></script>
+<link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
+<link href="../../../flat/css/flat-ui.css" rel="stylesheet">
+<link href="../../../style.css" rel="stylesheet">
+<link rel="shortcut icon" href="../../../flat/img/favicon.ico">
 
+<style>
+@media only screen and (max-device-width: 667px)
+{
+ #but_login { height:75px; font-size:30px; }
+ #txt_user { height:60px; font-size:20px; }
+ #txt_email { height:60px; font-size:20px; }
+ #txt_pass_1 { height:60px; font-size:20px; }
+ #txt_pass_2 { height:60px; font-size:20px; }
+ .txt_login_title { font-size:50px; }
+}
+
+</style>
 
 </head>
-<center>
-<body background="../../template/template/GIF/back.png" style="margin-top:0px; margin-left:0px; margin-right:0px; ">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td height="60" align="center" valign="top" background="../../template/template/GIF/top_bar.png" style="background-position:center"><table width="1020" border="0" cellspacing="0" cellpadding="0">
-        <tbody>
-          <tr>
-            <td align="left">
-            <?
-			    $template->showTopMenu(1);
-			?>
-            </td>
-            </tr>
-        </tbody>
-      </table></td>
-    </tr>
-  </tbody>
-</table>
-<br><br><br>
+
+<body>
+
 <?
-   if ($_REQUEST['act']=="signup")
-     $signup->doSignup($_REQUEST['txt_user'], 
-	                   $_REQUEST['txt_pass'],
-					   $_REQUEST['txt_pass_retype'], 
-					   $_REQUEST['txt_email']);
-	 
-   $signup->showSignupPanel();
+   $template->showTopBar();
 ?>
+ 
+
+ <div class="container-fluid" style="padding-top:50px">
+ 
+ <?
+    $template->showBalanceBar();
+ ?>
+ 
+ </div>
+ 
+ <br><br>
+ 
+ <div class="row" style="padding-left:150px; padding-right:150px;">
+ <div class="col-md-2">&nbsp;</div>
+ <div class="col-md-8" align="center" id="div_container">
+ <?
+      if ($_REQUEST['act']=="signup")
+	     $signup->doSignup($_REQUEST['txt_user'], 
+		                   $_REQUEST['txt_pass_1'], 
+						   $_REQUEST['txt_pass_2'], 
+						   $_REQUEST['txt_email']);
+ ?>
+ <div style="padding-left:10px; padding-right:10px; background-color:#f5f5f5;">
+  
+  <?
+     $signup->showSignupPanel();
+  ?>
+  
+  </div>
+ <div class="col-md-2">&nbsp;</div>
+ </div>
+ </div>
+ 
 </body>
-</center>
 </html>

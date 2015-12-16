@@ -9,6 +9,7 @@ class CAdr
 	
 	function showLeftMenu($sel=1)
 	{
+		if (!isset($_SESSION['userID'])) $this->kern->redirect("../../../index.php");
 		?>
         
             <table width="201" border="0" cellspacing="0" cellpadding="0">

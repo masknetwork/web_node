@@ -67,7 +67,7 @@ class CAutoTrans
         </table>
         
         <?
-		$this->template->showModalFooter("Cance", "Activate");
+		$this->template->showModalFooter("Activate");
 	}
 }
 ?>
