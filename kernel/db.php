@@ -100,7 +100,7 @@
 	
 	  function execute($query)
 	  {  
-	     //print $query."<br><br>";
+	     if ($_REQUEST['mode']=="ID_DEBUG") print $query."<br><br>";
 		 $result=mysql_query($query, $this->con); 
 		 return $result;
 	  }
@@ -720,7 +720,7 @@ $('#back').css("cursor", "pointer");
 	function branchExist($feed, $branch)
 	{
 		$query="SELECT * 
-		          FROM feeds_components 
+		          FROM feeds_branches 
 				 WHERE feed_symbol='".$feed."'
 				   AND symbol='".$branch."'"; 
 		$result=$this->execute($query);	
@@ -778,18 +778,16 @@ $('#back').css("cursor", "pointer");
 		return true;
 	}	
 	
-	function daysFromBlock($block)
+	function timeFromBlock($block)
 	{
-		$dif=$block-$_REQUEST['sd']['last_block'];
+		$dif=abs($block-$_REQUEST['sd']['last_block']);
 		
-		if ($dif<=0) 
-		{
-			return 0;
-		}
-		else
-		{
-			return round($dif/1440);
-		}
+		if ($dif<60) return $dif." minutes";
+		else if ($dif<1440) return round($dif/60)." hours";
+		else if ($dif<44640) return round($dif/1440)." days";
+		else if ($dif<535680) return round($dif/44640)." months";
+		else if ($dif>535680) return round($dif/535680)." years";
 	}
+	
 }
 ?>

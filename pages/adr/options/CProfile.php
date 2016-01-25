@@ -12,9 +12,8 @@ class CProfile
 						   $name, 
 						   $desc, 
 						   $email, 
-						   $tel, 
 						   $website, 
-						   $fb, 
+						   $pic_back,
 						   $pic,
 						   $days)
 	{
@@ -22,9 +21,8 @@ class CProfile
 		$name=base64_decode($name);
 		$desc=base64_decode($desc);
 		$email=base64_decode($email);
-		$tel=base64_decode($tel);
 		$website=base64_decode($website);
-		$fb=base64_decode($fb);
+		$pic_back=base64_decode($pic_back);
 		$pic=base64_decode($pic);
 		
 		// Fee Address
@@ -74,7 +72,7 @@ class CProfile
 		}
 		
 		// Description
-		if (strlen($desc)>50)
+		if (strlen($desc)>500)
 		{
 			$this->template->showErr("Invalid description length", 550);
 			return false;
@@ -90,19 +88,12 @@ class CProfile
 		   }
 		}
 		
-		// Telephone
-		if ($tel!="")
-		{
-		  if (strlen($tel)>25) 
-		  {
-    		$this->template->showErr("Invalid telephone", 550);
-			return false;
-		  }
-		}
-		
 		// Website
 		if ($website!="")
 		{
+		   if (strpos($website, "http:")===false) $website="http://".$website;
+		
+		
 		  if (filter_var($website, FILTER_VALIDATE_URL) === false) 
 		  {
 			$this->template->showErr("Invalid website", 550);
@@ -110,12 +101,13 @@ class CProfile
 		  }
 		}
 			
-		// Facebook
-		if ($fb!="")
+		
+		// Pic back
+		if ($pic_back!="")
 		{
-		  if (filter_var($fb, FILTER_VALIDATE_URL) === false) 
+		  if (filter_var($pic_back, FILTER_VALIDATE_URL) === false) 
 		  {
-			$this->template->showErr("Invalid facebook profile", 550);
+			$this->template->showErr("Invalid pic link", 550);
 			return false;
 		  }
 		}
@@ -125,7 +117,7 @@ class CProfile
 		{
 		  if (filter_var($pic, FILTER_VALIDATE_URL) === false) 
 		  {
-			$this->template->showErr("Invalid avatar link", 550);
+			$this->template->showErr("Invalid pic link", 550);
 			return false;
 		  }
 		}
@@ -154,10 +146,9 @@ class CProfile
 							   par_1='".base64_encode($name)."',
 							   par_2='".base64_encode($desc)."',
 							   par_3='".base64_encode($email)."',
-							   par_4='".base64_encode($tel)."',
-							   par_5='".base64_encode($website)."',
-							   par_6='".base64_encode($fb)."',
-							   par_7='".base64_encode($pic)."',
+							   par_4='".base64_encode($website)."',
+							   par_5='".base64_encode($pic_back)."',
+							   par_6='".base64_encode($pic)."',
 							   days='".$days."',
 							   status='ID_PENDING', 
 							   tstamp='".time()."'"; 
@@ -185,6 +176,10 @@ class CProfile
 	{
 		$this->template->showModalHeader("modal_profile", "Receive Interest", "act", "update_profile", "adr", "");
 		?>
+           
+           <input id="fileupload" type="file" name="files[]" data-url="../../tweets/home/server/php/" multiple style="display:none">
+           <input type="hidden" id="h_pic_back" name="h_pic_back" value="">
+           <input type="hidden" id="h_pic" name="h_pic" value="">
            
            <table width="550" border="0" cellspacing="0" cellpadding="0">
           <tr>
@@ -234,59 +229,60 @@ class CProfile
                   <tbody>
                     <tr>
                       <td width="51%" height="30" valign="top"><strong>Email</strong></td>
-                      <td width="49%" valign="top"><strong>Telephone</strong></td>
+                      <td width="49%" valign="top"><strong>Website</strong></td>
                     </tr>
                     <tr>
                       <td><input class="form-control" name="txt_email" id="txt_email" style="width:150px" placeholder="Email"/></td>
-                      <td><input class="form-control" name="txt_tel" id="txt_tel" style="width:150px" placeholder="Telephone"/></td>
+                      <td><input class="form-control" name="txt_web" id="txt_web" style="width:150px" placeholder="Website"/></td>
                     </tr>
                   </tbody>
                 </table></td>
               </tr>
-              <tr>
-                <td height="30" align="left" valign="top">&nbsp;</td>
-              </tr>
-              <tr>
-                <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+             
+               <tr id="row_progress">
+               <td height="60" align="left" valign="bottom">
+               <div id="progress" class="progress" style="width:350px">
+               <div class="progress-bar progress-bar-success">&nbsp;</div>
+               </div>
+               </td>
+               </tr>
+             
+             <tr>
+                <td height="170" align="left" valign="top">
+                <img src="../../../crop.php?src=./pages/adr/options/GIF/drop.png&w=350"  id="pic_back" class="img-responsive img-rounded">
+                <img src="../../../crop.php?src=./pages/adr/options/GIF/drop_pic.png&w=100" id="pic" style="position:absolute; top:70%; left:40%; border:solid; border-width:4px; border-color:#ffffff" class="img-responsive img-rounded">
+                <a href="javascript:void(0)" onclick="$('#tab_links').css('display', 'block'); $('#pic_back').css('display', 'none'); $('#pic').css('display', 'none'); $('#row_progress').css('display', 'none'); $(this).css('display', 'none');" class="font_12" style="position:absolute; top:78%; left:60%;">Use Links</a>
+                
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" style="display:none;" id="tab_links">
                   <tbody>
                     <tr>
-                      <td width="51%" height="30" valign="top"><strong>Website</strong></td>
-                      <td width="49%" valign="top"><strong>Facebook Profile</strong></td>
+                      <td>&nbsp;</td>
                     </tr>
                     <tr>
-                      <td>
-                      <input class="form-control" name="txt_web" id="txt_web" style="width:150px" placeholder="Website"/></td>
-                      <td>
-                      <input class="form-control" name="txt_fb" id="txt_fb" style="width:150px" placeholder="Profile Link"/></td>
+                      <td height="60px"><input class="form-control" name="txt_pic_back" id="txt_pic_back" style="width:350px" placeholder="Back pic link"/></td>
+                    </tr>
+                    <tr>
+                      <td><input class="form-control" name="txt_pic" id="txt_pic" style="width:350px" placeholder="Main pic link"/></td>
                     </tr>
                   </tbody>
-                </table></td>
+                </table>
+                
+                
+                </td>
               </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top"><strong>Profile Pic Link</strong></td>
-              </tr>
-              <tr>
-                <td align="left">
-                <input class="form-control" name="txt_pic" id="txt_pic" style="width:350px" placeholder="Profile Pic Link (5-100 characters)"/></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
-              <tr>
-                <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td width="23%" height="30" align="left" valign="top"><strong>Days</strong></td>
-                    <td width="77%" align="left">&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td>
-                    <input class="form-control" type="number" min="10" step="1" name="txt_prof_days" id="txt_prof_days" style="width:100px" placeholder="365" value="365"/></td>
-                    <td>&nbsp;</td>
-                  </tr>
-                </table></td>
+             
+             <tr>
+               <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="23%" height="30" align="left" valign="top"><strong>Days</strong></td>
+                   <td width="77%" align="left">&nbsp;</td>
+                 </tr>
+                 <tr>
+                   <td>
+                   <input class="form-control" type="number" min="10" step="1" name="txt_prof_days" id="txt_prof_days" style="width:100px" placeholder="365" value="365"/></td>
+                   <td>&nbsp;</td>
+                 </tr>
+               </table></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -302,9 +298,8 @@ class CProfile
 		   $('#txt_prof_name').val(btoa($('#txt_prof_name').val())); 
 		   $('#txt_desc').val(btoa($('#txt_desc').val())); 
 		   $('#txt_email').val(btoa($('#txt_email').val())); 
-		   $('#txt_tel').val(btoa($('#txt_tel').val())); 
 		   $('#txt_web').val(btoa($('#txt_web').val())); 
-		   $('#txt_fb').val(btoa($('#txt_fb').val())); 
+		   $('#txt_pic_back').val(btoa($('#txt_pic_back').val())); 
 		   $('#txt_pic').val(btoa($('#txt_pic').val())); 
 		});
 		

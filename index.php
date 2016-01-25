@@ -15,7 +15,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Untitled Document</title>
+<title>MaskNetwork Web Node</title>
 <script src="./flat/js/vendor/jquery.min.js"></script>
 <script src="./flat/js/flat-ui.js"></script>
 <link rel="stylesheet"./ href=".//flat/css/vendor/bootstrap/css/bootstrap.min.css">
@@ -33,6 +33,7 @@
   .txt_title_inverse { font-size:60px; }
   .txt_expl_inverse { font-size:30px; }
   .txt_title_inverse_small { font-size:44px; }
+  .txt_title_inverse_24 { font-size:44px; }
   .txt_expl_inverse_small { font-size:26px; }
   .txt_title_medium { font-size:50px;  padding-top:40px; }
   .txt_expl_medium { font-size:26px;  }
@@ -46,6 +47,8 @@
   
   #img_escrow_left { display: block; }
   #img_escrow_right { display: none; }
+  
+  .font_18 { font-size:35px; }
 }
 
 </style>
@@ -67,6 +70,7 @@
 <div class="collapse navbar-collapse" id="myNavbar">
 <ul class="nav navbar-nav">
 <li class="active"><a href="#">Home</a></li>
+<li><a href="./pages/tweets/tweets/index.php">Tweets</a></li>
 <li><a href="./pages/explorer/packets/index.php">Explorer</a></li>
 <li><a href="./pages/help/help/index.php">Help</a></li>
 </ul>
@@ -77,8 +81,9 @@
  <div class="container-fluid">
  <div class="row" style="padding-left:30px; padding-top:100px; padding-bottom:50px; background-color:#2e4f71">
  <div class="col-md-5" align="center"><img src="./pages/index/index/GIF/main.jpg" class="img-responsive"></div>
- <div class="col-md-7"><p class="txt_title">The Descentralized Marketplace</p>
- <p class="txt_expl">MaskNetwork is a peer to peer decentralized network, where you can trade any product or digital goods, without asking anyone's consent, outside the control of an individual or group. MaskNetwork is a community of people who want to trade without restrictions, intermediaries or huge taxes imposed by traditional companies. </p><br>
+ <div class="col-md-7">
+ <p class="txt_title">The Descentralized Social Network and Marketplace</p>
+ <p class="txt_expl">MaskNetwork is a peer to peer decentralized social network / marketplace, where you can share or trade any product or digital goods, with no central server and without asking anyone's consent, outside the control of an individual or group. MaskNetwork is a community of people who want to communicate and trade without restrictions, intermediaries or huge taxes imposed by traditional companies. </p><br>
  
  
  <a href="./pages/account/signup/index.php" class="btn btn-lg btn-success"  id="but_signup">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Testers Needed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -107,17 +112,33 @@
  </div>
  
  <br>
- 
- <div class="col-md-7">
-    <p class="txt_title_inverse">What is mskwallet.org ?</p>
-    <p class="txt_expl_inverse">maskwallet.org is what we call a web node. A web node is a website that allows you to access all MaskNetwork features like sending transactions or securing addresses. A web node is the easiest method of using the network. Running a web node is a great way to spread the word about MaskNetwork and because web node operators can impose a fee on all transactions, it is also a great way to make money.</p>
-    <br>
-    <a type="button" href="./pages/help/help/index.php" class="btn btn-lg btn-info" id="but_read_more_book">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read More&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-</div>
- 
- <div class="col-md-5" align="center" style="padding-top:30px; padding-right:60px;" id="img_book_right">
+
+ <div class="col-md-4" align="center" style="padding-top:30px; padding-right:60px;" id="img_book_right">
     <img src="pages/index/index/GIF/book.jpg" class="img-responsive">
- </div>
+    <a type="button" href="./pages/help/help/index.php" class="btn btn-lg btn-info" id="but_read_more_book" style="width:100%">Read More</a>
+ </div> 
+ <div class="col-md-4">
+    <p class="txt_title_inverse">What is <? print $_SERVER['SERVER_NAME']; ?> ?</p>
+    <p class="txt_expl_inverse"><? print $_SERVER['SERVER_NAME']; ?> is what we call a web node. A web node is a website that allows you to access all MaskNetwork features like sending transactions or securing addresses. A web node is the easiest method of using the network. Running a web node is a great way to spread the word about MaskNetwork and because web node operators can impose a fee on all transactions, it is also a great way to make money.</p>
+    <br>
+    
+</div>
+<div class="col-md-1" style="height:100px">&nbsp;</div>
+<div class="col-md-3">
+    <p class="txt_title_inverse_24">Check other web nodes</p>
+    <p><hr></p>
+    <a class="font_18" href="http://www.hiddenwallet.org" target="_blank">www.hiddenwallet.org</a>
+    <p><hr></p>
+    <a class="font_18" href="http://www.maskplace.net" target="_blank">www.maskplace.net</a>
+    <p><hr></p>
+    <a class="font_18" href="http://www.maskwallet.com" target="_blank">www.maskwallet.com</a>
+    <p><hr></p>
+    <a class="font_18" href="http://www.maskcentral.info" target="_blank">www.maskcentral.info</a>
+    <p><hr></p>
+    <a class="font_18" href="http://www.hidenmarket.info" target="_blank">www.hidenmarket.info</a>
+ 
+</div>
+
  
  </div>
  <br><br>

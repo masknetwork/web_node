@@ -199,14 +199,14 @@ class CMes
 	
 	function showComposeModal()
 	{
-		$this->template->showModalHeader("compose_modal", "Compose Message", "act", "send");
+		$this->template->showModalHeader("compose_modal", "Compose Message", "act", "send", "", "", "../../mes/inbox/index.php");
 		?>
         
           <table width="550" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="192" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td align="center" valign="top"><img src="./GIF/compose.png" width="200" height="200" /></td>
+                <td align="center" valign="top"><img src="../../mes/inbox/GIF/compose.png" width="200" height="200" /></td>
               </tr>
               <tr>
                 <td align="center">&nbsp;</td>

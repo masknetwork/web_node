@@ -44,6 +44,10 @@ class CPackets
 									 case "ID_NEW_AD_PACKET" : print "Ad Packet"; break;
 									 case "ID_SEND_MES" : print "Private Message Packet"; break;
 									 case "ID_ESCROWED_TRANS_SIGN" : print "Escrowed Transaction Signature"; break;
+									 case "ID_TWEET_LIKE" : print "Like Tweet Packet"; break;
+									 case "ID_TWEET_MES_STATUS_PACKET" : print "Aprove / Reject Tweet Message"; break;
+									 case "ID_TWEET_COMMENT_PACKET" : print "Tweet Comment Packet"; break;
+									 case "ID_NEW_TWEET_PACKET" : print "New Tweet Packet"; break;
 								 }
 							  ?>
                               </strong></a><br><span class="font_10"><? print "Hash : ".substr($row['packet_hash'], 0, 25)."..."; ?></span></td>

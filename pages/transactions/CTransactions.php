@@ -383,11 +383,15 @@ class CTransactions
 	                   $from_adr, 
 					   $to_adr, 
 					   $amount, 
+					   $amount_asset, 
 					   $moneda, 
 					   $mes, 
 					   $escrower,
 					   $otp_old_pass="")
 	{
+		// Ammount
+		if ($amount_asset>0) $amount=$amount_asset;
+		
 		// Recipient a name ?
 		if (strlen($to_adr)<31) 
 		    $to_adr=$this->template->adrFromDomain($to_adr);
@@ -445,31 +449,34 @@ class CTransactions
 			return false;
 		}
 		
-		// Amount
-		if ($amount<0.0001)
+		if ($moneda=="MSK")
 		{
-			$this->template->showErr("Invalid amount");
-			return false;
-		}
+		   // Amount
+		   if ($amount<0.0001)
+		   {
+			  $this->template->showErr("Minimum amount is 0.0001");
+			  return false;
+		   }
 		
-		// Net fee balance
-		if (($amount/1000)>$this->kern->getBalance($net_fee_adr))
-		{
-			$this->template->showErr("Insuficient funds to execute this operation");
-			return false;
+		   // Net fee balance
+		   if (($amount/1000)>$this->kern->getBalance($net_fee_adr))
+		   {
+			  $this->template->showErr("Insuficient funds to execute this operation");
+			  return false;
+		   }
+		   
+		   // Sender balance
+		   if ($amount>$this->kern->getBalance($from_adr))
+		   {
+			  $this->template->showErr("Insuficient funds to execute this operation");
+			  return false;
+		   }
 		}
-		
-		// Sender balance
-		if ($amount>$this->kern->getBalance($from_adr))
+		else
 		{
-			$this->template->showErr("Insuficient funds to execute this operation");
-			return false;
-		}
-		
-		// Moneda
-		if ($moneda!="MSK")
-		{
-			$query="SELECT * FROM assets WHERE symbol='".$moneda."'";
+			$query="SELECT * 
+			          FROM assets 
+					 WHERE symbol='".$moneda."'";
 			$result=$this->kern->execute($query);	
 			if (mysql_num_rows($result)==0)
 			{
@@ -680,7 +687,7 @@ class CTransactions
 								par_12='".base64_encode($_REQUEST['txt_field_4'])."',
 								par_13='".base64_encode($_REQUEST['txt_field_5'])."', 
 								status='ID_PENDING', 
-								tstamp='".time()."'"; 
+								tstamp='".time()."'";
 	       $this->kern->execute($query);
 		
 		   // Commit

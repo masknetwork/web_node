@@ -86,11 +86,22 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script src="../../../utils.js"></script>
+
+<link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
+<link rel="stylesheet" href="../../../gallery.css">
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
+
+<script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
+<script src="../../../gallery.min.js"></script>
+
+<script src="../../../jupload/js/vendor/jquery.ui.widget.js"></script>
+<script src="../../../jupload/js/jquery.iframe-transport.js"></script>
+<script src="../../../jupload/js/jquery.fileupload.js"></script>
+
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-<script src="../../../utils.js"></script>
 
 <style>
 @media only screen and (max-width: 1000px)
@@ -104,10 +115,78 @@
    .font_12 { font-size:20px;  }
    .font_10 { font-size:18px;  }
    .font_14 { font-size:22px;  }
-   .font_16 { font-size:24px;  }
 }
 
 </style>
+
+<script>
+$(document).ready(
+
+$(function (e) 
+{
+	var i=0;
+	
+    $('#fileupload').fileupload({
+        url: './server/php/index.php',
+		dataType : 'json',
+		autoUpload:true,
+		
+		add: function(e, data) 
+		{ 
+		    data.files.forEach(function(file) 
+		   { 
+		      if (file.name.indexOf('.jpg')<0 && 
+			      file.name.indexOf('.jpeg')<0) 
+			  return false;  
+		   });
+		   
+		   data.submit();
+		},
+		
+		progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10); 
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        },
+        
+		done: function (e, data) 
+		{
+			 $('#progress .progress-bar').css(
+                'width',
+                '0%'
+            );
+			
+			 $.each(data.result.files, function (index, file) 
+			 {
+				if (i==0) 
+				{
+					$('#pic_back').attr('src', '../../../crop.php?src=./pages/tweets/home/server/php/files/'+file.name+'&w=350&h=100');
+				    $('#h_pic_back').val(file.name);
+				}
+				
+				if (i==1) 
+				{
+					$('#pic').attr('src', '../../../crop.php?src=./pages/tweets/home/server/php/files/'+file.name+'&w=100&h=100');
+				    $('#h_pic').val(file.name);
+				}
+				
+				i++;
+            });
+		
+        },
+		
+		fail: function(e, data) 
+		{
+			   console.log(data);
+              alert(data.errorThrown+", "+data.textStatus);
+        }
+		
+		
+    });
+}));
+</script>
 
 </head>
 
@@ -241,16 +320,63 @@
 															 $_REQUEST['txt_adr']); 
 									         break;
 											 
-				   case "update_profile" : $profile->updateProfile($_REQUEST['dd_net_fee'], 
-				                                                  $adr,
-				                                                  $_REQUEST['txt_prof_name'], 
-																  $_REQUEST['txt_desc'], 
-																  $_REQUEST['txt_email'], 
-																  $_REQUEST['txt_tel'], 
-																  $_REQUEST['txt_web'], 
-																  $_REQUEST['txt_fb'],
-																  $_REQUEST['txt_pic'],
-																  $_REQUEST['txt_prof_days']); 
+				   case "update_profile" :  if ($_REQUEST['txt_pic_back']=="" && $_REQUEST['txt_pic']=="")
+				                            { 
+											   // Pic back
+	                                           if ($_REQUEST['h_pic_back']!="") 
+		                                       {
+			                                       if (strpos($_SERVER['DOCUMENT_ROOT'], "localhost")===false)
+			                                           $pic_back="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_pic_back'];
+			                                       else
+		                                               $pic_back="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_pic_back'];
+		                                       }
+		                                       else
+		                                       {
+		                                           $pic_3="";
+		                                       }
+			  
+		                                       // Pic 
+	                                           if ($_REQUEST['h_pic']!="") 
+		                                       {
+			                                       if (strpos($_SERVER['DOCUMENT_ROOT'], "localhost")===false)
+			                                           $pic="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_pic'];
+			                                       else
+		                                               $pic="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_pic'];
+		                                       }
+		                                       else
+		                                       {
+		                                           $pic="";
+		                                       }
+												   
+											   // Encode
+											   $pic_back=base64_encode($pic_back);
+											   $pic=base64_encode($pic);
+											   
+											   // Profile
+											   $profile->updateProfile($_REQUEST['dd_net_fee'], 
+				                                                      $adr,
+				                                                      $_REQUEST['txt_prof_name'], 
+																      $_REQUEST['txt_desc'], 
+																      $_REQUEST['txt_email'], 
+																      $_REQUEST['txt_web'], 
+																      $pic_back,
+																      $pic,
+																	  $_REQUEST['txt_prof_days']);
+											}
+											else
+											{
+												// Profile
+											   $profile->updateProfile($_REQUEST['dd_net_fee'], 
+				                                                      $adr,
+				                                                      $_REQUEST['txt_prof_name'], 
+																      $_REQUEST['txt_desc'], 
+																      $_REQUEST['txt_email'], 
+																      $_REQUEST['txt_web'], 
+																      $_REQUEST['txt_pic_back'],
+																      $_REQUEST['txt_pic'],
+																	  $_REQUEST['txt_prof_days']);
+											}
+											
 											break;
 											
 					case "web_ipn" : $ipn->update($adr,

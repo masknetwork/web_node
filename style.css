@@ -53,6 +53,14 @@
 	color:#666666;
 }
 
+.txt_title_inverse_24
+{
+	padding-right:20px; 
+	font-size:24px; 
+	font-weight:bold;
+	color:#666666;
+}
+
 .txt_expl_inverse
 {
 	padding-right:20px; 
@@ -128,6 +136,21 @@ a.yellow_link
 .font_18
 {
 	font-size:18px;
+}
+
+.font_20
+{
+	font-size:20px;
+}
+
+.font_22
+{
+	font-size:22px;
+}
+
+.font_24
+{
+	font-size:24px;
 }
 
 a.maro_12:visited

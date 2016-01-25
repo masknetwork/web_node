@@ -135,10 +135,9 @@ class CMyAdr
     
 	function showMyAdr()
 	{
-		$query="SELECT my_adr.*, adr.balance, dom.domain, prof.avatar
+		$query="SELECT my_adr.*, adr.balance, prof.pic
 		          FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
-				  LEFT JOIN domains AS dom ON dom.adr=my_adr.adr
 				  LEFT JOIN profiles AS prof ON prof.adr=my_adr.adr
 				 WHERE userID='".$_REQUEST['ud']['ID']."' 
 			  ORDER BY balance DESC"; 
@@ -162,10 +161,10 @@ class CMyAdr
 				  ?>
                   
                         <tr>
-                          <td width="7%" align="left">
-                          <img src="<? if ($row['avatar']!="") print "../../../get_img.php?hash=".substr(hash("sha256", base64_decode($row['avatar'])), 0, 10); else print "../../template/template/GIF/empty_pic.png"; ?>" width="40" height="40" alt="" class="img-circle"  />
+                          <td width="9%" align="left">
+                          <img src="<? if ($row['pic']!="") print base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png"; ?>" width="50" height="50" alt="" class="img-circle"  />
                           </td>
-                          <td width="34%" align="left"><a href="#" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
+                          <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal();" class="font_10" style="color:#999999">full address</a><? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
                           <td width="10%" align="center" class="font_18" style="color:#005500">
                           <?
 						     $attr="";

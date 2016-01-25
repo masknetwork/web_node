@@ -78,13 +78,20 @@
            
            
             <?
+			   // Help
 			   $template->showHelp();
+			   
+			   // Show Assets
 			   $issued_assets->showIssuedAssets();
 			   
+			   // Issue modal
 			   $issued_assets->showIssueAssetModal();
-		       $template->showRenewModal();
-	      	   $template->showIncreaseBidModal();
-		       $issued_assets->showEditModal();
+		       
+			   // Renew modal
+			   $template->showRenewModal();
+	      	   
+			   // Edit modal
+			   $issued_assets->showEditModal();
 			?>
             
             </td>

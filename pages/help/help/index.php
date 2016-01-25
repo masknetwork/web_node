@@ -47,7 +47,10 @@
 <body>
 
 <?
-   $template->showTopBar(7);
+    if ($_REQUEST['ud']['ID']>0)
+      $template->showTopBar(8);
+   else
+      $template->showTopBar(3);
 ?>
  
 

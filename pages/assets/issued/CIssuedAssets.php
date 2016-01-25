@@ -14,7 +14,7 @@ class CIssuedAssets
 				 WHERE assets.adr IN (SELECT adr 
 				                        FROM my_adr 
 									   WHERE userID='".$_REQUEST['ud']['ID']."')";
-		 $result=$this->kern->execute($query);	
+		 $result=$this->kern->execute($query);	print $query;
 									   
 		
 		  ?>

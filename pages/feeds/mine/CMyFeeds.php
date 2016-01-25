@@ -132,25 +132,17 @@ class CMyFeeds
 								target_adr='".$adr."',
 								par_1='".base64_encode($name)."',
 								par_2='".base64_encode($desc)."',
-								par_3='".base64_encode($pic)."',
+								par_3='".base64_encode($source)."',
 								par_4='".base64_encode($website)."',
 								par_5='".$symbol."',
 								days='".$days."',
 								bid='".$bid."', 
 								status='ID_PENDING', 
-								tstamp='".time()."'"; 
+								tstamp='".time()."'"; print $query;
 	       $this->kern->execute($query);
-		   
-		   // Insert source
-		   $query="INSERT INTO feed_src 
-		                   SET user='".$_REQUEST['ud']['user']."', 
-						       symbol='".$symbol."', 
-							   source='".$source."', 
-							   tstamp='".time()."'";
-		   $this->kern->execute($query);
 		 
 		   // Commit
-		   $this->kern->commit();
+		   $this->kern->rollback();
 		   
 		   // Confirm
 		   $this->template->showOk("Your request has been succesfully recorded");
@@ -378,7 +370,7 @@ class CMyFeeds
 		</script>
         
         <?
-		$this->template->showModalFooter(true, "Aprove");
+		$this->template->showModalFooter("Send");
 	}
 	
 	function showNewFeedBranchModal()

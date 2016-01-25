@@ -33,7 +33,8 @@ class CUserData
 		          FROM trans_pool AS tp
 				  JOIN my_adr ON my_adr.adr=tp.src 
 				 WHERE my_adr.userID='".$_REQUEST['ud']['ID']."' 
-				   AND tp.amount<0"; 
+				   AND tp.amount<0
+				   AND cur='MSK'"; 
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		$balance_pending=round($row['total'], 4);

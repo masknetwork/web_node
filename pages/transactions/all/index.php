@@ -85,7 +85,8 @@
 			                        $_REQUEST['dd_from'], 
 								    $_REQUEST['txt_to'], 
 								    $_REQUEST['txt_msk'], 
-								    "MSK", 
+									$_REQUEST['txt_asset_amount'], 
+								    $_REQUEST['txt_cur'], 
 								    $_REQUEST['txt_mes'], 
 								    $_REQUEST['txt_escrower']);
 				 
