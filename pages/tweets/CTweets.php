@@ -403,14 +403,17 @@ class CTweets
 	
 	function makeLinks($mes)
 	{
+		
 		$m="";
 		$v=explode(" ", $mes);
 		for ($a=0; $a<=sizeof($v)-1; $a++)
 		{
 			if (substr($v[$a], 0, 4)=="http")
 			  $m=$m." <a href='".$v[$a]."' target='_blank' class='font_14'>".substr($v[$a], 0, 10)."...</a>";
-			else if (substr($v[$a], 0, 1)=="$" || substr($v[$a], 0, 1)=="#")
+			else if (substr($v[$a], 0, 1)=="#")
 			  $m=$m." <a href='../search/index.php?term=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			else if (substr($v[$a], 0, 1)=="$")
+			  $m=$m." <a href='../../assets/user/asset.php?symbol=".substr($v[$a], 1, 100)."'  class='font_14'>".$v[$a]."</a>";
 			else if (substr($v[$a], 0, 1)=="@")
 			  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
 			else 
@@ -420,7 +423,7 @@ class CTweets
 		return $m;
 	}
 	
-	function showTweets($adr="", $all=false, $term="", $start=0, $end=20)
+	function showTweets($adr="", $all=false, $term="", $start=0, $end=20, $budget=0)
 	{
 		// Like modal
 		$this->showLikeModal();
@@ -457,6 +460,7 @@ class CTweets
 		             FROM tweets AS tw 
 				LEFT JOIN profiles AS pr ON pr.adr=tw.adr 
 					 WHERE FROM_BASE64(tw.mes) LIKE '%".$term."%'
+					 AND tw.budget>=".$budget."
 			     ORDER BY tw.ID DESC 
 			        LIMIT 0,20"; 
 		}
@@ -566,7 +570,7 @@ class CTweets
                      <a class="font_16" href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>">
                      <strong><? print $this->template->formatAdr($row['adr']); ?></strong>
                      </a>&nbsp;&nbsp;&nbsp;
-                     <span class="font_12"><? print "@".$this->template->formatAdr($row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14" style="color:#555555"><? print $this->makeLinks(base64_decode($row['mes'])); ?></span><br>
+                     <span class="font_12"><? print "@".$this->template->formatAdr($row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14" style="color:#555555"><? print nl2br($this->makeLinks(base64_decode($row['mes']))); ?></span><br>
                     
                     <?
 				}
@@ -1155,7 +1159,7 @@ class CTweets
              </tr>
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px"><?
-			      $this->template->showMyAdrDD("dd_comm_net_fee");
+			      $this->template->showMyAdrDD("dd_comm_adr");
 			   ?></td>
              </tr>
              <tr>

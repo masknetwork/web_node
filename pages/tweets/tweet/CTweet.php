@@ -296,7 +296,7 @@ class CTweet
 				{
 			  ?>
               
-              <a class="font_16" href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>"><strong><? print $this->template->formatAdr($re_row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print $this->kern->getAbsTime($re_row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $re_row['adr']; ?>'); $('#txt_plain').val('<? print $re_row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print $this->makeLinks(base64_decode($re_row['mes'])); ?></span><br>
+              <a class="font_16" href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>"><strong><? print $this->template->formatAdr($re_row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print $this->kern->getAbsTime($re_row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $re_row['adr']; ?>'); $('#txt_plain').val('<? print $re_row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print nl2br($this->makeLinks(base64_decode($row['mes']))); ?></span><br>
               <br>
               
               <?
@@ -305,7 +305,7 @@ class CTweet
 				{
 					?>
                     
-                     <a class="font_16" href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print $this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print $this->makeLinks(base64_decode($row['mes'])); ?></span><br>
+                     <a class="font_16" href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print $this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print nl2br($this->makeLinks(base64_decode($row['mes']))); ?></span><br>
                     
                     <?
 				}
@@ -534,19 +534,20 @@ class CTweet
 	   ?>
       
        
-       </ul>
-       </div>
-       </td>
-       </tr>
-       </table>
-       
-       </div>
-       </div>
+        </ul></div></td>
+        </tr></table></div>
         
         
         <?
 			  }
 		  }
+		  
+		  ?>
+          
+          </div>
+          
+          <?
+		  
 	}
 	
 	function makeLinks($mes)
@@ -557,8 +558,10 @@ class CTweet
 		{
 			if (substr($v[$a], 0, 4)=="http")
 			  $m=$m." <a href='".$v[$a]."' target='_blank' class='font_14'>".substr($v[$a], 0, 10)."...</a>";
-			else if (substr($v[$a], 0, 1)=="$" || substr($v[$a], 0, 1)=="#")
+			else if (substr($v[$a], 0, 1)=="#")
 			  $m=$m." <a href='../search/index.php?term=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			else if (substr($v[$a], 0, 1)=="$")
+			  $m=$m." <a href='../../assets/user/asset.php?symbol=".substr($v[$a], 1, 100)."'  class='font_14'>".$v[$a]."</a>";
 			else if (substr($v[$a], 0, 1)=="@")
 			  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
 			else 
@@ -570,6 +573,8 @@ class CTweet
 	
 	function showCommentBut($tweetID)
 	{
+	   if ($_REQUEST['ud']['ID']>0)
+	   {
 		?>
              
              <br>
@@ -582,6 +587,7 @@ class CTweet
              </table>
         
         <?
+	   }
 	}
 	
 	function showComment($ID, 
@@ -622,16 +628,31 @@ class CTweet
                <?
 				   }
 				   else if ($tipped>0) 
-				     print "<span class='label label-success' title='Rewarded Answer' data-toggle='tooltip' data-placement='top'>+ ".$tipped." </span><p class='font_10'>".$cur."</p>";
+				     print "<span class='label label-success' title='Rewarded Answer' data-toggle='tooltip' data-placement='top'>+ ".round($tipped, 8)." </span><p class='font_10'>".$cur."</p>";
 			   ?>
                
                </td>
                <td width="5%">&nbsp;</td>
                <td width="<? print (90-$left)."%"; ?>" valign="top">
                <a href="#" class="font_14"><? print $this->template->formatAdr($adr); ?></a><br>
-               <span class="font_14"><? print nl2br(base64_decode($mes)); ?></span>
+               <span class="font_14"><? print nl2br($this->makeLinks(base64_decode($mes))); ?></span>
                <div style="height:10px">&nbsp;</div>
-               <p style="background-color:#f9f9f9; padding-top:5px; padding-left:5px; padding-right:5px; padding-bottom:5px;" class="font_10" align="right"><a href="javascript:void(0); $('#new_comment_modal').modal(); $('#com_tweetID').val('<? print $tweetID; ?>'); $('#com_comID').val('<? print $ID; ?>');" class="font_10" style="color:#555555">Reply</a></p>
+               
+               
+               <?
+			      if ($_REQUEST['ud']['ID']>0)
+				  {
+			   ?>
+               
+               <p style="background-color:#f9f9f9; padding-top:5px; padding-left:5px; padding-right:5px; padding-bottom:5px;" class="font_10" align="right">
+               <a href="javascript:void(0); $('#new_comment_modal').modal(); $('#com_tweetID').val('<? print $tweetID; ?>'); $('#com_comID').val('<? print $ID; ?>');" class="font_10" style="color:#555555">Reply</a>
+                </p>
+                
+			   <?
+	             }
+			   ?>
+               
+              
                </tr>
                <tr>
                <td colspan="4"><hr></td>

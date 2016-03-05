@@ -67,6 +67,7 @@
      $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
 	 
 	  // Menu
+	 if ($_REQUEST['ud']['ID']>0)
 	 $template->showNav(1,
 	                    "../user/index.php", "Assets", "",
 	                    "../user/my_assets.php", "My Assets", $_REQUEST['ud']['pending_adr'],
@@ -74,7 +75,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	 $template->showHelp("User issued assets are a type of custom token registered over MaskNetwork, which users can hold and trade. The creator of such an asset publically names, describes, and distributes its tokens, and can specify customized requirements, such as daily interest, or the associated trading and transfer fees. Below are listed available user issued assets.");
 	 
     // Assets
 	$assets->showAssets();

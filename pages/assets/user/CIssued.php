@@ -13,6 +13,7 @@
 		          FROM assets WHERE adr IN (SELECT adr 
 				                              FROM my_adr 
 											 WHERE userID='".$_REQUEST['ud']['ID']."')
+				  AND linked_mktID=0
 			  ORDER BY ID ASC
 			     LIMIT 0,20"; 
 		 $result=$this->kern->execute($query);	
@@ -86,6 +87,10 @@
 		 $website=base64_decode($website);
 		 $pic=base64_decode($pic);
 		 
+		 // Addresses
+		 $net_fee_adr=$this->kern->adrFromDomain($net_fee_adr);
+		 $adr=$this->kern->adrFromDomain($adr);
+		 $trans_fee_adr=$this->kern->adrFromDomain($trans_fee_adr);
 		
 		 // Net Fee Address 
 		 if ($this->kern->adrExist($net_fee_adr)==false)

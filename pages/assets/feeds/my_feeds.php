@@ -75,7 +75,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	 $template->showHelp("If you have access to a reliable datasource you can launch your own data feed and gain a fee everytime users use your data feed to launch binary options, start speculative markets and so on. Below are displayed data feeds issued by you.");
 	 
 	// New feed modal
 	$my_feeds->showNewFeedModal(); 

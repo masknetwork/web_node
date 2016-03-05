@@ -71,12 +71,12 @@
 	  // Menu
 	 $template->showNav(2,
 	                    "../options/index.php", "Options", "",
-	                    "../options/my_options.php", "My Options", "",
-						"../options/issued.php", "Issued Options", "");
+	                    "../options/my_options.php", "My Positions", "",
+						"../options/issued.php", "My Options", "");
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	 $template->showHelp("Below are listed your binary options positions. You can invest in a wide range of binary options. In case the conditions imposed by issuer are met in a specified period of time, you will win your investment plus a percent specified by the issuer. Always double check the conditions imposed by issuers.");
 	 
      // Selector
 	 $options->showMyOptionsSel($_REQUEST['status']);

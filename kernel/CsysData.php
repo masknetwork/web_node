@@ -34,7 +34,25 @@ class CSysData
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);	 
 		
-		$_REQUEST['sd']['last_block']=$row['last_block'];	 	 	 			                       
+		$_REQUEST['sd']['last_block']=$row['last_block'];	 	 	 		
+		
+		$_REQUEST['sd']['blocks_per_minute']=3;	 	
+		$_REQUEST['sd']['blocks_per_hour']=$_REQUEST['sd']['blocks_per_minute']*60;	 	 	
+		$_REQUEST['sd']['blocks_per_day']=$_REQUEST['sd']['blocks_per_hour']*24;
+		$_REQUEST['sd']['blocks_per_month']=$_REQUEST['sd']['blocks_per_day']*30;
+		$_REQUEST['sd']['blocks_per_year']=$_REQUEST['sd']['blocks_per_day']*365; 	
+		
+		// Interest rate
+	    $query="SELECT * FROM adr WHERE adr='default'";
+		$result=$this->kern->execute($query);
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
+		// In circulation
+		$in_circ=100000000-$row['balance'];
+		
+	    // Interest
+		$_REQUEST['sd']['interest_h']=round(50000000/$in_circ/365/24, 4);         
+		$_REQUEST['sd']['interest_y']=round(50000000/$in_circ, 4);                  
 	}
 }
 ?>

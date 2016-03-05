@@ -40,7 +40,7 @@ class CBranch
             <tr><td colspan="3"><hr></td></tr>
             
             <tr>
-            <td width="20%" align="center"><span class="font_12">Real Symbol</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="font_12" href="chart.php?symbol=<? print $row['rl_symbol']; ?>"><strong><? print $row['rl_symbol']; ?></strong></a></td>
+            <td width="20%" align="center"><span class="font_12">Branch </span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="font_12" href="chart.php?symbol=<? print $row['rl_symbol']; ?>"><strong><? print $row['symbol']; ?></strong></a></td>
             <td width="40%" class="font_12" align="center">Fee&nbsp;&nbsp;&nbsp;&nbsp;<strong><? print $row['fee']." MSK daily"; ?></strong></td>
             <td width="40%" class="font_12" align="center">Market Status&nbsp;&nbsp;&nbsp;&nbsp;<strong style="color:<? if ($row['mkt_status']=="ID_OPEN") print "#009900"; else print "990000"; ?>"><? if ($row['mkt_status']=="ID_OPEN") print "Open"; else print "Closed"; ?></strong></td>
             </tr>
@@ -128,14 +128,22 @@ class CBranch
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		$rl_symbol=$row['rl_symbol'];
 		
+		// Last 100 records
+		$query="SELECT MAX(ID) AS ma
+		          FROM feeds_data 
+				 WHERE feed='".$feed."' 
+				   AND feed_branch='".$branch."'";
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$min=$row['ma']-250;
+		
 		$query="SELECT * 
 		          FROM feeds_data 
 				 WHERE feed='".$feed."' 
 				   AND feed_branch='".$branch."' 
-			  ORDER BY ID DESC 
-			     LIMIT 0,100";
+			       AND ID>".$min; 
 		$result=$this->kern->execute($query);	
-	    
+	   
 		?>
            
            <script type="text/javascript">
@@ -177,8 +185,10 @@ class CBranch
            <td width="90%"><div id="curve_chart" style="width: 100%; height: 400px"></div></td>
            <td width="10%" valign="top">
            <? 
-		      if ($mine==true) 
+		      if ($_REQUEST['ud']['ID']>0)
 			  {
+		         if ($mine==true) 
+			     {
 				  ?>
                   
                        <div class="btn-group">
@@ -194,19 +204,26 @@ class CBranch
                   
                   <?
 			  }
+			  
+			 
 		   ?>
            
-            <div style="height:10px">&nbsp;</div>
-            <div class="btn-group">
+                       <div style="height:10px">&nbsp;</div>
+                       <div class="btn-group">
                        <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button">
                        <span class="glyphicon glyphicon-plus"></span>
                        <span class="caret"></span></button>
                        <ul role="menu" class="dropdown-menu">
-                       <li><a href="#">Lauch Bet</a></li>
+                       <li><a href="../../assets/options/issued.php?act=show_modal&feed=<? print $feed; ?>&branch=<? print $branch; ?>">Launch Binary Option</a></li>
                        <li><a href="#">Start a Speculative Market</a></li>
                        <li><a href="#">Issue a Market Pegged Asset</a></li>
                        </ul>
                        </div>
+                       
+           <?
+			  }
+           ?>
+                       
                        </div>
            <div style="height:10px">&nbsp;</div>
            

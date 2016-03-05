@@ -130,10 +130,12 @@ $(function (e)
      $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Last Blocks");
 	 
 	 // Menu
-	  $template->showNav(2,
+	 if ($_REQUEST['ud']['ID']>0)
+	 $template->showNav(2,
 	                   "../../tweets/home/index.php", "Home", "",
 	                   "../../tweets/tweets/index.php?adr=all", "Tweets", ""); 
-	 
+	
+					    
 	 // New Tweet
 	 $tweets->showNewTweetModal();
 	 
@@ -157,7 +159,7 @@ $(function (e)
 	      switch ($_REQUEST['act'])
 		   {
 		     case "new_comment" : $tweet->newComment($_REQUEST['dd_comm_net_fee'], 
-	                                                $_REQUEST['dd_comm_net_fee'], 
+	                                                $_REQUEST['dd_comm_adr'], 
 					                                $_REQUEST['com_tweetID'],
 								                    $_REQUEST['com_comID'],
 					         	                    $_REQUEST['txt_com_mes']);

@@ -79,12 +79,28 @@
      // Location
      $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Last Blocks");
 	 
+	 // Target
+	 if (!isset($_REQUEST['budget'])) $_REQUEST['budget']=0;
+	 
 	 // Menu
 	 if ($_REQUEST['ud']['ID']>0)
+	 {
 	    $template->showNav(2,
 	                       "../../tweets/home/index.php", "Home", "",
-	                       "../../tweets/tweets/index.php?adr=all", "Tweets", ""); 
-					   
+	                       "../../tweets/tweets/index.php?adr=all", "Tweets", "");
+	 }
+	 else
+	 { 
+	     if ($_REQUEST['budget']>0) 
+		    $sel=2;
+	     else
+		    $sel=1;
+			
+	     $template->showNav($sel,
+	                        "../../tweets/tweets/index.php?adr=all&budget=0", "Regular", "",
+	                        "../../tweets/tweets/index.php?adr=all&budget=0.0001", "Get Paid", ""); 
+	 }
+	 
 	 // Search
 	 $tweets->showSearchPanel();
 	 
@@ -107,7 +123,7 @@
        <td width="75%" valign="top" align="right">
        
        <?
-	      $tweets->showTweets("all"); 
+	      $tweets->showTweets("all", false, "", 0, 20, $_REQUEST['budget']); 
 	   ?>
        
        </td>

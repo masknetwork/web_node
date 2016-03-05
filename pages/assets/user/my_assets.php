@@ -74,7 +74,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	 $template->showHelp("Below are the displayed the assets you own. Assets can be send to other addresses just like MaskCoins and enjoy the same protection level / features. For example if you froze an address, no assets can be spend from that address. Below are listed the assets you own.");
 	 
      // My assets
 	 $assets->showMyAssets();

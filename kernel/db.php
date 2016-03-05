@@ -52,6 +52,8 @@
 	
 	function hasAttr($adr, $attr)
 	{
+		$adr=$this->adrFromDomain($adr);
+		
 		$query="SELECT * 
 		          FROM adr_options 
 				 WHERE adr='".$adr."' 
@@ -100,7 +102,8 @@
 	
 	  function execute($query)
 	  {  
-	     if ($_REQUEST['mode']=="ID_DEBUG") print $query."<br><br>";
+	     if ($_REQUEST['mode']=="ID_DEBUG") 
+		   print $query."<br><br>";
 		 $result=mysql_query($query, $this->con); 
 		 return $result;
 	  }
@@ -137,14 +140,7 @@
 	
 	function adrValid($adr)
 	{
-		if (strlen($adr)<31)
-		{
-			if ($this->domainExist($adr)==false)
-			   return false;
-		}
-		else
-		{
-		   if (strlen($adr)!=108 && 
+		if (strlen($adr)!=108 && 
 		    strlen($adr)!=124 && 
 		    strlen($adr)!=160 && 
 		    strlen($adr)!=212) 
@@ -159,7 +155,7 @@
 				$this->isFigure(ord($adr[$a]))==false) 
 			 return false;
 		   }
-		}
+		
 		
 		return true;
 	}
@@ -733,8 +729,11 @@ $('#back').css("cursor", "pointer");
 	
 	function adrFromDomain($domain)
 	{
+		if (strlen($domain)>30) return $domain;
+		
 		$query="SELECT * FROM domains WHERE domain='".$domain."'";
 		$result=$this->execute($query);
+		
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		return $row['adr'];
 	}
@@ -775,19 +774,57 @@ $('#back').css("cursor", "pointer");
 	
 	function isLink($link)
 	{
-		return true;
+		if (filter_var($link, FILTER_VALIDATE_URL) === false) 
+           return false;
+		 else
+		   return true;
+	}	
+	
+	function isImageLink($link)
+	{
+		if (strpos($link, ".jpg")===false && 
+			    strpos($link, ".jpeg")===false && 
+				strpos($link, ".png")===false)
+		        return false;
+			else
+			    return true;
+		
 	}	
 	
 	function timeFromBlock($block)
 	{
 		$dif=abs($block-$_REQUEST['sd']['last_block']);
+	    	
+		if ($dif<($_REQUEST['sd']['blocks_per_day']/24)) return round($dif/($_REQUEST['sd']['blocks_per_day']/24/60))." minutes";
 		
-		if ($dif<60) return $dif." minutes";
-		else if ($dif<1440) return round($dif/60)." hours";
-		else if ($dif<44640) return round($dif/1440)." days";
-		else if ($dif<535680) return round($dif/44640)." months";
-		else if ($dif>535680) return round($dif/535680)." years";
+		else if ($dif>($_REQUEST['sd']['blocks_per_day']/24) && 
+		         $dif<$_REQUEST['sd']['blocks_per_day']) 
+		return round($dif/($_REQUEST['sd']['blocks_per_day']/24))." hours";
+		
+		else if ($dif>$_REQUEST['sd']['blocks_per_day'] && $dif<($_REQUEST['sd']['blocks_per_day']*30)) return round($dif/4320)." days";
+		else if ($dif>($_REQUEST['sd']['blocks_per_day']*30) && $dif<($_REQUEST['sd']['blocks_per_day']*365)) return round($dif/129600)." months";
+		else if ($dif>($_REQUEST['sd']['blocks_per_day']*365)) return round($dif/($_REQUEST['sd']['blocks_per_day']*365))." years";
 	}
 	
+	function getFeedVal($feed, $branch)
+	{
+		$query="SELECT * 
+		          FROM feeds_branches 
+				 WHERE feed_symbol='".$feed."' 
+				   AND symbol='".$branch."'";
+		$result=$this->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    return $row['val'];
+	}
+	
+	function titleValid($title)
+	{
+		return true;
+	}
+	
+	function descValid($desc)
+	{
+		return true;
+	}
 }
 ?>

@@ -72,6 +72,13 @@
               <td align="left" class="font_14">Threads Running</td>
               <td align="center" class="font_14"><? print $row['threads_no']; ?></td>
               </tr>
+               <tr>
+              <td colspan="2" align="left"><hr></td>
+              </tr>
+              <tr>
+              <td align="left" class="font_14">System Up Time</td>
+              <td align="center" class="font_14"><? print $this->kern->getAbsTime($row['uptime']); ?></td>
+              </tr>
               </tbody>
               </table>
            

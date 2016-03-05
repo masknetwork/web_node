@@ -41,7 +41,7 @@ class CTransactions
                      
                           <tr>
                           <td width="55%" align="left">
-                          <a href="#" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong>
+                          <a href="../../explorer/packets/packet.php?hash=<? print $row['hash']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong>
                           </a><p class="font_10"><? print "Received ".$this->kern->getAbsTime($row['tstamp'])." ago"; ?></p></td>
                           <td width="5%" align="center" class="font_14" style="color:#999999">
                           <?
@@ -647,7 +647,7 @@ class CTransactions
 		}
 		else
 	    {
-				// Show panel
+			// Show panel
 				$this->showReqDataPanel($net_fee_adr, 
 				                        $from_adr, 
 										$to_adr, 

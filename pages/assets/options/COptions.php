@@ -44,7 +44,7 @@ class COptions
 		 // Bet ID valid
 		 $query="SELECT * 
 		           FROM feeds_bets 
-				  WHERE uid='".$betID."' 
+				  WHERE mktID='".$betID."' 
 				    AND end_block>".$_REQUEST['sd']['last_block']." 
 					AND accept_block>".$_REQUEST['sd']['last_block']; 
 		 $result=$this->kern->execute($query);	
@@ -155,26 +155,27 @@ class COptions
 		 }
 		 
 		 // Name
-		 if (strlen($name)<5 || strlen($name)>50)
+		 if (strlen($name)<5 || strlen($name)>150)
 		 {
-			 $this->template->showErr("Invalid name length (5-50 characters)");
+			 $this->template->showErr("Invalid name length (5-150 characters)");
 			 return false;
 		 }
 		 
 		 // Description
-		 if (strlen($desc)>250)
+		 if (strlen($desc)>500)
 		 {
-			 $this->template->showErr("Invalid name length (5-50 characters)");
+			 $this->template->showErr("Invalid name length (5-500 characters)");
 			 return false;
 		 }
 		 
 		 // Type 
 		 if ($type!="ID_TOUCH" && 
 		     $type!="ID_NOT_TOUCH" && 
-		     $type!="ID_ABOVE" && 
-		     $type!="ID_BELOW" && 
-		     $type!="ID_BETWEEN" && 
-			 $type!="ID_EXACT")
+		     $type!="ID_CLOSE_ABOVE" && 
+		     $type!="ID_CLOSE_BELOW" && 
+		     $type!="ID_CLOSE_BETWEEN" && 
+			 $type!="ID_NOT_CLOSE_BETWEEN" && 
+			 $type!="ID_CLOSE_EXACT_VALUE")
 		 {
 			  $this->template->showErr("Invalid type");
 			  return false;
@@ -265,26 +266,25 @@ class COptions
 		// Expire 
 		switch ($expire_per)
 		{
-			case "ID_MINUTES" : $expire_block=$_REQUEST['sd']['last_block']+$expire; break;
-			case "ID_HOURS" : $expire_block=$_REQUEST['sd']['last_block']+60*$expire; break;
-			case "ID_DAYS" : $expire_block=$_REQUEST['sd']['last_block']+86400*$expire; break;
-			case "ID_MONTHS" : $expire_block=$_REQUEST['sd']['last_block']+2592000*$expire; break;
-			case "ID_YEARS" : $expire_block=$_REQUEST['sd']['last_block']+31104000*$expire; break;
+			case "ID_MINUTES" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_minute']*$expire; break;
+			case "ID_HOURS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_hour']*$expire; break;
+			case "ID_DAYS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_day']*$expire; break;
+			case "ID_MONTHS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_month']*$expire; break;
+			case "ID_YEARS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_year']*$expire; break;
 		}
 		
 		// Accept bets 
 		switch ($accept_per)
 		{
-			case "ID_MINUTES" : $accept_block=$_REQUEST['sd']['last_block']+$accept; break;
-			case "ID_HOURS" : $accept_block=$_REQUEST['sd']['last_block']+60*$accept; break;
-			case "ID_DAYS" : $accept_block=$_REQUEST['sd']['last_block']+86400*$accept; break;
-			case "ID_MONTHS" : $accept_block=$_REQUEST['sd']['last_block']+2592000*$accept; break;
-			case "ID_YEARS" : $accept_block=$_REQUEST['sd']['last_block']+31104000*$accept; break;
+			case "ID_MINUTES" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_minute']*$accept; break;
+			case "ID_HOURS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_hour']*$accept; break;
+			case "ID_DAYS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_day']*$accept; break;
+			case "ID_MONTHS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_month']*$accept; break;
+			case "ID_YEARS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_year']*$accept; break;
 		}
 	    
 		
 		// Check
-		print $accept_per."...".$expire_per;
 		if ($accept_block>=$expire_block)
 		{
 			$this->template->showErr("Accepting bets is a date before expiration");
@@ -448,9 +448,9 @@ class COptions
                     <td width="10%" colspan="3" align="left" valign="top" class="font_14"><strong>Data Feed 3</strong></td>
                   </tr>
                   <tr>
-                    <td width="10%"><input class="form-control" id="txt_bet_feed_1" name="txt_bet_feed_1" placeholder="XXXXXX" /></td>
+                    <td width="10%"><input class="form-control" id="txt_bet_feed_1" name="txt_bet_feed_1" placeholder="XXXXXX" <? if ($_REQUEST['feed']!="") print "value='".$_REQUEST['feed']."'"; ?>/></td>
                     <td width="1%">&nbsp;-&nbsp;</td>
-                    <td width="10%"><input class="form-control" id="txt_bet_branch_1" name="txt_bet_branch_1" placeholder="XXXXXX"/></td>
+                    <td width="10%"><input class="form-control" id="txt_bet_branch_1" name="txt_bet_branch_1" placeholder="XXXXXX" <? if ($_REQUEST['branch']!="") print "value='".$_REQUEST['branch']."'"; ?>/></td>
                     <td>&nbsp;</td>
                     <td width="10%"><input class="form-control" id="txt_bet_feed_2" name="txt_bet_feed_2" placeholder="XXXXXX" /></td>
                     <td width="1%">&nbsp;-&nbsp;</td>
@@ -634,7 +634,7 @@ class COptions
 	
 	function showBuyBetModal($UID)
 	{
-		$query="SELECT * FROM feeds_bets WHERE uid='".$UID."'";
+		$query="SELECT * FROM feeds_bets WHERE mktID='".$UID."'";
 	    $result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    $cur=$row['cur']; 
@@ -697,33 +697,21 @@ class COptions
 		$this->template->showModalFooter("Invest");
 	}
 	
-	function showOptions($search="", $type="all", $status='ID_PENDING')
+	function showOptions($search="", $status='ID_PENDING')
 	{
 		if ($status=="ID_PENDING")
-		{
-			$status_1="ID_PENDING";
-			$status_2="ID_PENDING";
-		}
-		else
-		{
-			$status_1="ID_WIN";
-			$status_2="ID_LOST";
-		}
-		
-		if ($type=="all")
 		$query="SELECT * FROM feeds_bets 
 		         WHERE (title LIKE '%".$search."%'
 				    OR description LIKE '%".$search."%') 
-				   AND status='".$status."'
+				   AND status='ID_PENDING'
 			  ORDER BY accept_block ASC 
 			     LIMIT 0,25"; 
 	    else
-		$query="SELECT * 
-		          FROM feeds_bets AS bets 
-				 WHERE adr IN (SELECT adr 
-				                 FROM my_adr 
-								WHERE userID='".$_REQUEST['ud']['ID']."') 
-				ORDER BY bets.accept_block ASC 
+		$query="SELECT * FROM feeds_bets 
+		         WHERE (title LIKE '%".$search."%'
+				    OR description LIKE '%".$search."%') 
+				   AND (status='ID_WIN' OR status='ID_LOST')
+			  ORDER BY accept_block ASC 
 			     LIMIT 0,25"; 
 				
 		 $result=$this->kern->execute($query);	
@@ -748,15 +736,102 @@ class COptions
            
                  <tr>
                  <td width="40%">
-                 <a href="bet.php?uid=<? print $row['uid']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
+                 <a href="bet.php?uid=<? print $row['mktID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
                  <p class="font_10"><? print substr(base64_decode($row['description']), 0, 40)."..."; ?></p>
                  </td>
-                 <td class="font_14" width="15%"><? print "~".$this->getTime($row['accept_block']-$_REQUEST['sd']['last_block']); ?></td>
-                 <td class="font_14" width="15%"><? print $row['win_multiplier']; ?>%</td>
-                 <td class="font_14" width="15%"><? print $row['bets']; ?></td>
-                 <td class="font_14" width="15%" style="color:#009900"><strong><? print round($row['budget']/(1+$row['win_multiplier']/100)-$row['invested'], 4)." ".$row['cur']; ?></strong></td>
+                 <td class="font_14" width="15%" <? if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) print "style=\"color:#990000\""; ?>>
+				 <? 
+				      if ($row['accept_block']-$_REQUEST['sd']['last_block']>0)
+				         print "~".$this->getTime($row['accept_block']-$_REQUEST['sd']['last_block']); 
+					  else
+					    print "bets closed"; 
+			     ?>
+                 </td>
+                 <td class="font_14" width="10%"><? print $row['win_multiplier']; ?>%</td>
+                 <td class="font_14" width="10%"><? print $row['bets']; ?></td>
+                 <td class="font_14" width="30%" style="color:#009900"><strong>
+				 <? print round($row['budget']/(1+$row['win_multiplier']/100)-$row['invested'], 4)." ".$row['cur']; ?>
+                 </strong></td>
                  
                 <td class="font_16" width="10%">
+                      <?  
+				          switch ($row['status'])
+					      {
+						      case "ID_PENDING" : print "<span class=\"label label-warning\">Pending</span>"; break;
+							  case "ID_WIN" : print "<span class=\"label label-success\">Winner</span>"; break;
+							  case "ID_LOST" : print "<span class=\"label label-danger\">Lost</span>"; break;
+					      }
+				      ?>
+                 </td>
+                
+                 
+                 </tr>
+                 <tr><td colspan="6"><hr></td></tr>
+           
+           <?
+			  }
+		   ?>
+           
+           </table>
+           
+        <?
+	}
+	
+	function showIssuedOptions($search="")
+	{
+		$query="SELECT * 
+		          FROM feeds_bets AS bets 
+				 WHERE adr IN (SELECT adr 
+				                 FROM my_adr 
+								WHERE userID='".$_REQUEST['ud']['ID']."') 
+				ORDER BY bets.accept_block ASC 
+			     LIMIT 0,25"; 
+				
+		 $result=$this->kern->execute($query);	
+	 
+	  
+		?>
+           
+           <table class="table-responsive" width="90%">
+           <thead bgcolor="#f9f9f9">
+           <th class="font_14" height="35px">&nbsp;&nbsp;Description</th>
+           <th class="font_14" height="35px" align="center">Ends</th>
+           <th class="font_14" height="35px" align="center">Profit</th>
+           <th class="font_14" height="35px" align="center">Bets</th>
+           <th class="font_14" height="35px" align="center">Profit / Loss</th>
+           <th class="font_14" height=\"35px\" align=\"center\">Status</th>
+           </thead>
+           
+           <?
+		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			  {
+		   ?>
+           
+                 <tr>
+                 <td width="40%">
+                 <a href="bet.php?uid=<? print $row['mktID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
+                 <p class="font_10"><? print substr(base64_decode($row['description']), 0, 40)."..."; ?></p>
+                 </td>
+                 <td class="font_14" width="15%" <? if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) print "style=\"color:#990000\""; ?>>
+				 <? 
+				      if ($row['accept_block']-$_REQUEST['sd']['last_block']>0 || $row['status']=="ID_PENDING")
+				         print "~".$this->getTime($row['accept_block']-$_REQUEST['sd']['last_block']); 
+					  else
+					    print "closed"; 
+			     ?>
+                 </td>
+                 <td class="font_14" width="10%"><? print $row['win_multiplier']; ?>%</td>
+                 <td class="font_14" width="10%"><? print $row['bets']; ?></td>
+                 <td class="font_14" width="30%" style="color:<? if ($row['status']=="ID_WIN") print "#009900"; else print "#990000"; ?>"><strong>
+				 <? 
+				    if ($row['status']=="ID_WIN")
+					   print "+".$row['invested']." ".$row['cur'];
+					else
+					    print "-".($row['invested']+$row['invested']*$row['win_multiplier']/100)." ".$row['cur'];
+				  ?>
+                 </strong></td>
+                 
+                <td class="font_16" width="10%" align="center">
                       <?  
 				          switch ($row['status'])
 					      {
@@ -812,7 +887,7 @@ class COptions
 		
 		$query="SELECT * 
 		          FROM feeds_bets_pos AS fbp 
-				  JOIN feeds_bets AS fb ON fb.uid=fbp.bet_uid 
+				  JOIN feeds_bets AS fb ON fb.mktID=fbp.bet_uid 
 				 WHERE fbp.adr IN (SELECT adr 
 				                     FROM my_adr 
 									WHERE userID='".$_REQUEST['ud']['ID']."') 
@@ -830,7 +905,7 @@ class COptions
            <th class="font_14" height="35px">&nbsp;&nbsp;Description</th>
            <th class="font_14" height="35px" align="center">Ends</th>
            <th class="font_14" height="35px" align="center">Profit</th>
-           <th class="font_14" height="35px" align="center">Invested</th>
+           <th class="font_14" height="35px" align="center"><? if ($row['status']=="ID_PENDING") print "Invested"; else print "Net P/L"; ?></th>
            <th class="font_14" height="35px" align="center">Status</th>
            </thead>
            
@@ -841,13 +916,27 @@ class COptions
            
                  <tr>
                  <td width="40%">
-                 <a href="bet.php?uid=<? print $row['uid']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
+                 <a href="bet.php?uid=<? print $row['mktID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
                  <p class="font_10"><? print substr(base64_decode($row['description']), 0, 40)."..."; ?></p>
                  </td>
-                 <td class="font_14" width="15%"><? print "~".$this->getTime($row['end_block']-$_REQUEST['sd']['last_block']); ?></td>
+                 <td class="font_14" width="15%" style="color:<? if ($row['status']=="ID_PENDING") print "#000000"; else print "#990000"; ?>"><? if ($row['status']=="ID_PENDING") print "~".$this->getTime($row['end_block']-$_REQUEST['sd']['last_block']); else print "closed"; ?></td>
                  <td class="font_14" width="15%"><? print $row['win_multiplier']; ?>%</td>
-                 <td class="font_14" width="15%"><? print $row['amount']." ".$row['cur']; ?></td>
-                 <td class="font_16" width="15%" style="color:#009900"><strong>
+                 <td class="font_14" width="15%" style="color:<? if ($status=="ID_WIN") print "#990000"; else print "#009900"; ?>">
+				 <? 
+				    if ($status=="ID_PENDING") 
+					{
+					   print $row['amount']." ".$row['cur']; 
+					}
+					else
+					{
+						if ($row['status']=="ID_WIN") 
+						   print "-".$row['amount']." ".$row['cur'];
+						else
+						   print "+".($row['amount']+$row['amount']*$row['win_multiplier']/100)." ".$row['cur'];
+					}
+				 ?>
+                 </td>
+                 <td class="font_16" width="15%" style="color:#009900" align="center"><strong>
                  
 				 <?
 				      switch ($row['status'])
@@ -867,6 +956,7 @@ class COptions
 		   ?>
            
            </table>
+           <br><br><br>
            
         <?
 	}
@@ -898,7 +988,7 @@ class COptions
 	{
 		$query="SELECT fb.*
 		          FROM feeds_bets AS fb 
-				 WHERE uid='".$betID."'";
+				 WHERE mktID='".$betID."'";
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	  
@@ -915,7 +1005,11 @@ class COptions
               <tbody>
                 <tr>
                   <td width="77%"><span class="font_16"><strong><? print base64_decode($row['title']); ?></strong></span>
-                  <p class="font_14"><? print base64_decode($row['description']); ?></p>
+                  <p class="font_14">
+				  <? 
+				      print base64_decode($row['description']); 
+				  ?>
+                  </p>
                   <?
 				      if ($row['accept_block']<$_REQUEST['sd']['last_block']) print "<span class=\"label label-danger\" class=\"font_14\">Closed Bet</span><br>";
 				  ?>
@@ -942,7 +1036,7 @@ class COptions
             
             <tr>
             <td width="30%" class="font_12" align="center">Bet ID&nbsp;&nbsp;&nbsp;&nbsp;
-			<strong><? print $row['uid']; ?></strong></td>
+			<strong><? print $row['mktID']; ?></strong></td>
             <td width="40%" align="center"><span class="font_12">Address</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="font_12" href="#">
 			<strong><? print $this->template->formatAdr($row['adr']); ?></strong></a></td>
              <td width="30%" align="center"><span class="font_12">Accepts Bets</span>&nbsp;&nbsp;&nbsp;&nbsp;<font class="font_12" style="color:<? if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) print "#990000"; else print "#009900"; ?>">
@@ -951,7 +1045,7 @@ class COptions
 			     if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) 
 				    print "closed"; 
 			     else 
-				    print "~".$this->getTime($row['accept_block']-$_REQUEST['sd']['last_block']); 
+				    print "~".$this->kern->timeFromBlock($row['accept_block']); 
 			?>
             </strong></font></td>
             </tr>
@@ -959,7 +1053,7 @@ class COptions
             
             <tr>
             <td width="33%" class="font_12" align="center">Expires&nbsp;&nbsp;&nbsp;&nbsp;
-			<strong>~ <? print $this->getTime($row['end_block']-$_REQUEST['sd']['last_block']); ?></strong>
+			<strong>~ <? print $this->kern->timeFromBlock($row['end_block']); ?></strong>
             </td>
              <td width="33%" align="center"><span class="font_12">Total Budget&nbsp;&nbsp;&nbsp;&nbsp;
 			 <strong><? print round($row['budget']/(1+$row['win_multiplier']/100), 4); ?></strong></span>&nbsp;&nbsp;<a href="#" class="font_12"><? print $row['cur']; ?></a></td>
@@ -996,23 +1090,14 @@ class COptions
             <tr><td colspan="3"><hr></td></tr>
             <tr>
             <td width="33%" class="font_12" align="center">Feed  1&nbsp;&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_symbol_1']; ?>&symbol=<? print $row['branch_symbol_1'] ?>" class="font_12"><strong><? print $row['feed_symbol_1']." / ".$row['branch_symbol_1']; ?></strong></a></td>
-            <td width="33%" class="font_12" align="center">Feed 1 Price 1&nbsp;&nbsp;&nbsp;&nbsp; 
-			<span class="font_12"><strong><? print $row['price_1']; ?></strong></span></td>
-            <td width="33%" class="font_12" align="center">Feed 2&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_symbol_2']; ?>&symbol=<? print $row['branch_symbol_2'] ?>" class="font_12"><strong><? if ($row['feed_symbol_2']!="") print $row['feed_symbol_2']." / ".$row['branch_symbol_2']; else print "none"; ?></strong></a></td>
+			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_1']; ?>&symbol=<? print $row['branch_1']; ?>" class="font_12"><strong><? print $row['feed_1']." / ".$row['branch_1']; ?></strong></a></td>
+            <td width="33%" class="font_12" align="center">Feed 2&nbsp;&nbsp;&nbsp;&nbsp; 
+			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_2']; ?>&symbol=<? print $row['branch_2']; ?>" class="font_12"><strong><? print $row['feed_2']." / ".$row['branch_2']; ?></strong></a></td></td>
+            <td width="33%" class="font_12" align="center">Feed 3&nbsp;&nbsp;&nbsp; 
+			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_3']; ?>&symbol=<? print $row['branch_3']; ?>" class="font_12"><strong><? print $row['feed_3']." / ".$row['branch_3']; ?></strong></a></td></td>
             </tr>
             
-            <tr><td colspan="3"><hr></td></tr>
-            <tr>
-            <td width="33%" class="font_12" align="center">Feed Price 2&nbsp;&nbsp;&nbsp;&nbsp; 
-			<span href="" class="font_12"><strong><? if ($row['feed_symbol_2']=="") print "0"; print $row['price_2']; ?></strong></span></td>
-            <td width="33%" class="font_12" align="center">Feed 3&nbsp;&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_symbol_3']; ?>&symbol=<? print $row['branch_symbol_3'] ?>" class="font_12"><strong><? if ($row['feed_symbol_2']!="") print $row['feed_symbol_3']." / ".$row['branch_symbol_3']; else print "none"; ?></strong></a></td>
-            <td width="33%" class="font_12" align="center">Feed 3 Price&nbsp;&nbsp;&nbsp; 
-			<span class="font_12"><strong><? if ($row['feed_symbol_3']=="") print "0"; print $row['price_3']; ?></strong></span></td>
-            </tr>
-            
+           
            
             </table>
             <br>
@@ -1069,7 +1154,7 @@ class COptions
 	
 	function showBuyOptionBut($betID)
 	{
-		$query="SELECT * FROM feeds_bets WHERE uid='".$betID."'"; 
+		$query="SELECT * FROM feeds_bets WHERE mktID='".$betID."'"; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    
@@ -1081,8 +1166,8 @@ class COptions
             <br>
 		    <table width="90%">
             <tr><td align="right">
-            <a href=\"javascript:void(0)\" onclick=\"$('#modal_buy_bet').modal()\" class=\"btn btn-primary\";
-            <span class=\"glyphicon glyphicon-ok\"></span>&nbsp;&nbsp;&nbsp;Invest;
+            <a href="javascript:void(0)" onclick="$('#modal_buy_bet').modal()" class="btn btn-primary">
+            <span class="glyphicon glyphicon-plus">&nbsp;</span>&nbsp;&nbsp;&nbsp;Invest
             </a>
 	        </td></tr>
             </table>
@@ -1096,7 +1181,7 @@ class COptions
 	{
 		$query="SELECT fbs.*, fb.cur, fb.status 
 		          FROM feeds_bets_pos AS fbs 
-				  JOIN feeds_bets AS fb ON fb.uid=fbs.bet_uid
+				  JOIN feeds_bets AS fb ON fb.mktID=fbs.bet_uid
 				 WHERE bet_uid='".$betID."' 
 			  ORDER BY ID DESC 
 			     LIMIT 0,25";
@@ -1143,27 +1228,19 @@ class COptions
 		// Load bet data
 		$query="SELECT * 
 		          FROM feeds_bets 
-				 WHERE uid='".$ID."'";
+				 WHERE mktID='".$ID."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$bet_row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    $end_block=$row['end_block'];
-		
-		// Last value
-		$query="SELECT * 
-		          FROM feeds_pos_data 
-				 WHERE pos_type='ID_OPTION' 
-				   AND posID='".$ID."' 
-				ORDER BY ID DESC LIMIT 0,1";
-	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
-	    $last_value=$row['val'];
 		
 		// Min, max, count
 		$query="SELECT MIN(val) AS minimum, 
 		               MAX(val) AS maximum
-			      FROM feeds_pos_data
-				 WHERE pos_type='ID_OPTION' 
-				   AND posID='".$ID."'"; 
+			      FROM feeds_data
+				 WHERE feed='".$bet_row['feed_1']."' 
+				   AND feed_branch='".$bet_row['branch_1']."' 
+				   AND block>=".$bet_row['block']." 
+				   AND block<=".$bet_row['end_block']; 
 	    $result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		?>
@@ -1174,16 +1251,22 @@ class COptions
             <table>
             <tr>
             <td width="25%" valign="top" align="center"><span class="font_10">Last Price</span><br><span class="font_20">
-			<? print round($last_value, 8); ?></span></td>
+			<? print round($bet_row['last_price'], 8); ?></span></td>
             <td style="border-left: solid 1px #aaaaaa;">&nbsp;</td>
-            <td width="25%" valign="top" align="center"><span class="font_10">Min Price 24H</span><br><span class="font_20">
+            <td width="25%" valign="top" align="center"><span class="font_10">Min Price</span><br><span class="font_20">
 			<? print round($row['minimum'], 8); ?></span></td>
             <td style="border-left: solid 1px #aaaaaa;">&nbsp;</td>
-            <td width="25%" valign="top" align="center"><span class="font_10">Max Price 24H</span><br><span class="font_20">
+            <td width="25%" valign="top" align="center"><span class="font_10">Max Price</span><br><span class="font_20">
 			<? print round($row['maximum'], 8); ?></span></td>
             <td style="border-left: solid 1px #aaaaaa;">&nbsp;</td>
-            <td width="25%" valign="top" align="center"><span class="font_10">Bet Ends</span><br><span class="font_20">
-			<? print "~".$this->kern->timeFromBlock($end_block); ?></span></td>
+            <td width="25%" valign="top" align="center"><span class="font_10">Accept Bets</span><br><span class="font_20">
+			<?
+			    if ($_REQUEST['sd']['last_block']<$bet_row['accept_block']) 
+			       print "~".$this->kern->timeFromBlock($bet_row['accept_block']); 
+				else 
+				   print "closed";
+			?>
+            </span></td>
             </tr>
             </table>
             </div>
@@ -1195,10 +1278,23 @@ class COptions
 	function showChart($betID)
 	{
 		// Load branch
+		$query="SELECT * 
+		          FROM feeds_bets 
+				 WHERE mktID='".$betID."'"; 
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$feed_1=$row['feed_1'];
+		$branch_1=$row['branch_1'];
+		$start_block=$row['block'];
+		$end_block=$row['end_block'];
+		
+		// Load branch
 		 $query="SELECT COUNT(*) AS no
-		          FROM feeds_pos_data 
-				  WHERE pos_type='ID_OPTION' 
-				   AND posID='".$betID."'"; 
+		          FROM feeds_data 
+				  WHERE feed='".$feed_1."' 
+				    AND feed_branch='".$branch_1."' 
+				    AND block>=".$start_block." 
+				    AND block<=".$end_block; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		$no=$row['no'];
@@ -1207,10 +1303,12 @@ class COptions
 		if ($no>250) $group=round($no/250);
 		
 		 $query="SELECT AVG(val) AS val
-		          FROM feeds_pos_data 
-				  WHERE pos_type='ID_OPTION' 
-				   AND posID='".$betID."'
-				   GROUP BY round(block/".$group.")"; 
+		          FROM feeds_data 
+				 WHERE feed='".$feed_1."' 
+				   AND feed_branch='".$branch_1."'
+				   AND block>=".$start_block." 
+				   AND block<=".$end_block." 
+			  GROUP BY round(block/".$group.")"; 
 		$result=$this->kern->execute($query);	
 	   
 		?>

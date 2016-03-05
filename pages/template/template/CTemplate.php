@@ -13,8 +13,8 @@ class CTemplate
 		           FROM my_adr AS ma 
 			  LEFT JOIN adr ON ma.adr=adr.adr
 			  LEFT JOIN domains AS dom ON dom.adr=ma.adr
-			  WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
-			ORDER BY balance DESC"; 
+			      WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+			   ORDER BY balance DESC"; 
 		 $result=$this->kern->execute($query);	
 	  
 		 print "<select name='".$name."' id='".$name."' class='form-control' style='width:".$width."px'>";
@@ -40,6 +40,47 @@ class CTemplate
 		           print "<option selected value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
 		        else
 			       print "<option value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
+		    }
+		 }
+		 
+         print "</select>";
+        
+	}
+	
+	function showMyAdrAssetDD($cur, $name="txt_adr", $width=300, $selected="")
+	{
+		 $query="SELECT ma.adr, ao.qty, dom.domain
+		           FROM my_adr AS ma 
+			       JOIN assets_owners AS ao ON ma.adr=ao.owner
+			  LEFT JOIN domains AS dom ON dom.adr=ao.owner
+			  WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+			    AND ao.symbol='".$cur."'
+			ORDER BY ao.qty DESC";
+		 $result=$this->kern->execute($query);	
+	  
+		 print "<select name='".$name."' id='".$name."' class='form-control' style='width:".$width."px'>";
+         
+		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		 {
+			// Balance
+			if ($row['qty']=="")
+			   $balance=0;
+			else
+			   $balance=$row['qty'];
+			   
+		    if (strlen($row['domain'])>0)
+		    {
+			    if ($selected!="" && $selected==$row['adr'])
+		           print "<option selected  value='".$row['adr']."'>".$row['domain']." (".$balance." ".$cur.")</option>";
+		        else
+			       print "<option value='".$row['adr']."'>".$row['domain']." (".$balance." ".$cur.")</option>";
+		    }
+		    else
+		    {
+			    if ($selected!="" && $selected==$row['adr'])
+		           print "<option selected value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." ".$cur.")</option>";
+		        else
+			       print "<option value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." ".$cur.")</option>";
 		    }
 		 }
 		 
@@ -250,6 +291,51 @@ class CTemplate
        
         <?
 		$this->showModalFooter("Send");
+		
+	}
+	
+	function showTestnetModal()
+	{
+		$this->showModalHeader("testnet_modal", "Node running over testnet", "act", "");
+		?>
+        
+           <table width="700" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+           <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td align="center"><img src="../../template/template/GIF/testnet.png" width="180" height="181" alt=""/></td>
+             </tr>
+             <tr>
+               <td align="center">&nbsp;</td>
+             </tr>
+             <tr>
+               <td align="center">&nbsp;</td>
+             </tr>
+             <tr>
+               <td align="center">&nbsp;</td>
+             </tr>
+           </table></td>
+           <td width="90%" align="left" valign="top"><table width="350" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td width="10%" align="left">&nbsp;</td>
+               <td width="90%" height="0" align="left">&nbsp;</td>
+             </tr>
+             <tr>
+               <td align="left" valign="top" style="font-size:16px">&nbsp;</td>
+               <td height="25" align="left" valign="top" style="font-size:16px">This node is running over MaskNetwork testnet. The testnet is an alternative Maskcoin blockchain to be used for testing. Testnet MaskCoins are separate and distinct from actual Maskcoins, and are never supposed to have any value. This allows application developers or bitcoin testers to experiment, without having to use real Maskcoins or worrying about breaking the main network chain.</td>
+             </tr>
+             <tr>
+               <td align="left">&nbsp;</td>
+               <td height="0" align="left">&nbsp;</td>
+             </tr>
+           </table></td>
+         </tr>
+     </table>
+     
+    
+       
+        <?
+		$this->showModalFooter("Close");
 		
 	}
 	
@@ -979,17 +1065,7 @@ class CTemplate
 		$this->showModalFooter("Send");
 	}
 	
-	function showCountriesDD()
-	{
-		$query="SELECT * FROM countries ORDER BY country ASC";
-		$result=$this->kern->execute($query);	
-		
-		print "<select id='dd_country' name='dd_country' class='form-control'>";
-		print "<option value=\"XX\">All Countries</option>";
-	    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
-		  print "<option value=\"".$row['code']."\">".$row['country']."</option>";
-		print "<select>";
-	}
+	
 	
 	function showSearchBox($txt)
 	{
@@ -1127,13 +1203,27 @@ class CTemplate
             </a></li>
             <li <? if ($sel==2) print "class='active'"; ?>><a href="../../adr/adr/index.php">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) $this->showBadge($_REQUEST['ud']['pending_adr']); ?></a></li>       
             <li <? if ($sel==3) print "class='active'"; ?>><a href="../../mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
-            <li class='dropdown open; <? if ($sel==4) print "active"; ?>'><a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Assets<b class="caret"></b></a>
+            <li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
+            <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
             <ul class="dropdown-menu">
+             <li><a href="../../assets/options/index.php">Binary Options</a></li>
+            <li><a href="../../assets/margin_mkts/index.php">Margin Markets</a></li>
+            <li><a href="../../assets/pegged_assets/index.php">Market Pegged Assets</a></li>
+            <li role="separator" class="divider"></li>
             <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
-            <li><a href="../../assets/options/index.php">Binary Options</a></li>
+            <li><a href="../../assets/assets_mkts/index.php">Assets Markets</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="../../assets/exchangers/index.php">Assets Exchangers</a></li>
+            
             <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
             </ul></li>     
-            <li <? if ($sel==5) print "class='active'"; ?>><a href="../../markets/goods/index.php">Markets</a></li>
+            
+             <li class='dropdown open; <? if ($sel==5) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Shop<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="../../shop/goods/index.php">Goods and Services</a></li>
+            <li><a href="../../shop/escrowers/index.php">Escrowers</a></li>
+            </ul></li>
+            
             <li <? if ($sel==6) print "class='active'"; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
             <li <? if ($sel==7) print "class='active'"; ?>><a href="../../tweets/home/index.php">Tweets <? if ($comments>0) $this->showBadge($comments); ?></a></li>
             <li <? if ($sel==8) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
@@ -1165,9 +1255,20 @@ class CTemplate
              </div>
              <div class="collapse navbar-collapse" id="myNavbar">
              <ul class="nav navbar-nav">
-             <li <? if ($sel==1) print "class=\"active\""; ?>><a href="../../tweets/tweets/index.php">Tweets</a></li>
-             <li <? if ($sel==2) print "class=\"active\""; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
-             <li <? if ($sel==3) print "class=\"active\""; ?>><a href="../../help/help/index.php">Help</a></li>       
+             <li <? if ($sel==1) print "class='active'"; ?>><a href="../../tweets/tweets/index.php">Tweets</a></li>
+             <li class='dropdown open; <? if ($sel==4) print "active"; ?>'><a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
+            <li><a href="../../assets/options/index.php">Binary Options</a></li>
+            <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
+            </ul></li>  
+               
+            <li <? if ($sel==5) print "class='active'"; ?>><a href="../../markets/goods/index.php">Shop</a></li>
+            <li <? if ($sel==2) print "class='active'"; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
+            <li <? if ($sel==3) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
+            </ul>
+             
+              
              </ul>
              </div>   
              </div>
@@ -1180,6 +1281,9 @@ class CTemplate
 	
 	function showBalanceBar()
 	{
+		// Testnet
+		$this->showTestnetModal();
+		
 		if ($_SESSION['userID']>0)
 		{
 				$this->showSendModal();
@@ -1188,12 +1292,13 @@ class CTemplate
             <div class="row">
             <table class="table-responsive" width="100%">
             <tr bgcolor="#cad1d7">
-            <td height="65px" width="8%">&nbsp;</td>
+            <td height="65px" width="8%" align="center"><a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-danger">Testnet</span></a></td>
             <td height="50px" width="84%" align="right" id="td_balance">
             <table>
             <tr>
             <td>
-            <span class="balance_msk" id="balance_msk"><? print $_REQUEST['ud']['balance']; ?> MSK&nbsp;&nbsp;</span>
+            <span class="font_20" id="balance_msk"><strong><? print explode(".", $_REQUEST['ud']['balance'])[0]; ?> </strong></span>
+            <span class="font_16"><? print ".".explode(".", $_REQUEST['ud']['balance'])[1]; ?> MSK&nbsp;&nbsp;</span>
            
             </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1301,5 +1406,535 @@ class CTemplate
            print "</ul>";
 	}
 	
+	function showStreaming($type, $data)
+	{
+		?>
+        
+        <script>
+            var ws=new WebSocket("ws://localhost:8181");
+            ws.onopen=function(e) 
+            {
+	          console.log('Connection started...');
+	
+	          var packet={'type' : '<? print $type; ?>', 'data' : [<? print $data; ?>]};
+	          ws.send(JSON.stringify(packet));
+            }
+
+            ws.onmessage=function(e)
+            {
+               console.log(e.data);
+               var data=JSON.parse(e.data);
+   
+              for (a=0; a<=data['positions'].length-1; a++)
+              {
+                var posID=data['positions'][a]['posID'];
+                var pl=data['positions'][a]['pl'];
+                var pl_proc=data['positions'][a]['pl_proc']; 
+				var cur=data['positions'][a]['cur']; 
+      
+	            // Old pl
+	            var old_pl=parseFloat($('#td_pos_'+posID).text());
+				
+				if (pl<0) 
+				   $('#td_pos_'+posID).css('color', '#990000');
+	            else
+				   $('#td_pos_'+posID).css('color', '#009900');
+				   
+				if (pl_proc<0) 
+				   $('#td_pos_proc_'+posID).css('color', '#990000');
+	            else
+				   $('#td_pos_proc_'+posID).css('color', '#009900');
+				   
+	            if (old_pl==parseFloat(pl)) 
+				{
+				   $('#td_pos_'+posID).css('backgroundColor', '#f0f0f0');
+	               $('#td_pos_'+posID).animate({backgroundColor:"#ffffff"});
+				}
+				else if (old_pl<parseFloat(pl)) 
+				{
+	               $('#td_pos_'+posID).css('backgroundColor', '#bfe3c6');
+	               $('#td_pos_'+posID).animate({backgroundColor:"#ffffff"}, 3000);
+				}
+				else if (old_pl>parseFloat(pl)) 
+				{
+	               $('#td_pos_'+posID).css('backgroundColor', '#e3c3bf');
+	               $('#td_pos_'+posID).animate({backgroundColor:"#ffffff"}, 3000);
+				}
+	  
+	            // Old proc
+	            var old_pl_proc=parseFloat($('#td_pos_proc_'+posID).text());
+	  
+	            if (old_pl_proc==parseFloat(pl_proc)) 
+				{
+				   $('#td_pos_proc_'+posID).css('backgroundColor', '#f0f0f0');
+	               $('#td_pos_proc_'+posID).animate({backgroundColor:"#ffffff"});
+				}
+				else if (old_pl_proc<parseFloat(pl_proc)) 
+				{
+	               $('#td_pos_proc_'+posID).css('backgroundColor', '#bfe3c6');
+	               $('#td_pos_proc_'+posID).animate({backgroundColor:"#ffffff"}, 3000);
+				}
+				else if (old_pl_proc>parseFloat(pl_proc)) 
+				{
+	               $('#td_pos_proc_'+posID).css('backgroundColor', '#e3c3bf');
+	               $('#td_pos_proc_'+posID).animate({backgroundColor:"#ffffff"}, 3000);
+				}
+	  
+	            $('#td_pos_'+posID).text(pl+" "+cur)
+	            $('#td_pos_proc_'+posID).text(pl_proc+"%")
+   }
+}
+
+ws.onError=function(e)
+{
+	console.log(e);
+}
+
+</script>
+        
+        <?
+	}
+	
+	function showChart($feed, $branch)
+	{
+		// Feed is mine ?
+		$query="SELECT * 
+		          FROM feeds 
+				 WHERE symbol='".$feed."' 
+				   AND adr IN (SELECT adr 
+				                 FROM my_adr 
+							    WHERE userID='".$_REQUEST['ud']['ID']."')";
+	   $result=$this->kern->execute($query);	
+	   if (mysql_num_rows($result)>0) 
+	      $mine=true;
+	   else
+	     $mine=false;
+		 
+		 // Load branch
+		 $query="SELECT * 
+		           FROM feeds_branches 
+				  WHERE feed_symbol='".$feed."' 
+				    AND symbol='".$branch."'";
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$rl_symbol=$row['rl_symbol'];
+		
+		// Last 100 records
+		$query="SELECT MAX(ID) AS ma
+		          FROM feeds_data 
+				 WHERE feed='".$feed."' 
+				   AND feed_branch='".$branch."'";
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$min=$row['ma']-250;
+		
+		$query="SELECT * 
+		          FROM feeds_data 
+				 WHERE feed='".$feed."' 
+				   AND feed_branch='".$branch."' 
+			       AND ID>".$min; 
+		$result=$this->kern->execute($query);	
+	   
+		?>
+           
+           <script type="text/javascript">
+	       google.load('visualization', '1', {packages: ['corechart', 'line']});
+           google.setOnLoadCallback(drawChart);
+
+      function drawChart() 
+	  {
+         
+		 var data = new google.visualization.DataTable();
+         data.addColumn('string', 'Date');
+		 data.addColumn('number', 'Price');
+		 
+         data.addRows([
+		 <?
+		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			  print "['', ".$row['val']."],";
+		 ?>
+		 ]);
+
+        var options = {
+          title: '<? print $symbol; ?> Chart',
+          curveType: 'function',
+		  legend:'none',
+	      tooltip: { isHtml: true },
+	      chartArea: {'width': '80%', 'height': '85%'},
+	      backgroundColor : '#ffffff'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+    
+           <br>
+           <table width="100%">
+           <tr>
+           <td width="100%"><div id="curve_chart" style="width: 100%; height: 400px"></div></td>
+           </tr>
+           </table>
+           
+           <br><br>
+        
+        <?
+	}
+	
+	function showCurDD($name)
+	{
+		?>
+        
+            <select id="<? print $name; ?>" name="<? print $name; ?>" class="form-control">
+            <option value="USD">America (United States) Dollars – USD</option>
+            <option value="Euro - EUR">Euro – EUR</option>
+            <option value="GBP">United Kingdom Pounds – GBP</option>
+            <option value="AUD">Australia Dollars – AUD</option>
+           
+            <option value="AFN">Afghanistan Afghanis – AFN</option>
+            <option value="ALL">Albania Leke – ALL</option>
+            <option value="DZD">Algeria Dinars – DZD</option>
+            <option value="ARS">Argentina Pesos – ARS</option>
+            <option value="BSD">Bahamas Dollars – BSD</option>
+            <option value="BHD">Bahrain Dinars – BHD</option>
+            <option value="BDT">Bangladesh Taka – BDT</option>
+            <option value="BBD">Barbados Dollars – BBD</option>
+            <option value="BMD">Bermuda Dollars – BMD</option>   
+            <option value="BRL">Brazil Reais – BRL</option>
+            <option value="BGN">Bulgaria Leva – BGN</option>
+            <option value="CAD">Canada Dollars – CAD</option>
+            <option value="CLP">Chile Pesos – CLP</option>
+            <option value="CNY">China Yuan Renminbi – CNY</option>
+            <option value="COP">Colombia Pesos – COP</option>
+            <option value="CRC">Costa Rica Colones – CRC</option>
+<option value="HRK">Croatia Kuna – HRK</option>
+<option value="CZK">Czech Republic Koruny – CZK</option>
+<option value="DKK">Denmark Kroner – DKK</option>
+<option value="DOP">Dominican Republic Pesos – DOP</option>
+<option value="NLG">Dutch (Netherlands) Guilders – NLG</OPTION>
+<option value="XCD">Eastern Caribbean Dollars – XCD</option>
+<option value="EGP">Egypt Pounds – EGP</option>
+<option value="EEK">Estonia Krooni – EEK</option>
+<option value="FJD">Fiji Dollars – FJD</option>
+<option value="FIM">Finland Markkaa – FIM</OPTION>
+<option value="GTQ">Guatemalan Quetzal – GTQ</OPTION>
+<option value="HKD">Hong Kong Dollars – HKD</option>
+<option value="HUF">Hungary Forint – HUF</option>
+<option value="ISK">Iceland Kronur – ISK</option>
+<option value="INR">India Rupees – INR</option>
+<option value="IDR">Indonesia Rupiahs – IDR</option>
+<option value="IRR">Iran Rials – IRR</option>
+<option value="IQD">Iraq Dinars – IQD</option>
+<option value="IEP*">Ireland Pounds – IEP*</OPTION>
+<option value="ILS">Israel New Shekels – ILS</option>
+<option value="JMD">Jamaica Dollars – JMD</option>
+<option value="JPY">Japan Yen – JPY</option>
+<option value="JOD">Jordan Dinars – JOD</option>
+<option value="KES">Kenya Shillings – KES</option>
+<option value="KRW">Korea (South) Won – KRW</option>
+<option value="KWD">Kuwait Dinars – KWD</option>
+<option value="LBP">Lebanon Pounds – LBP</option>
+<option value="MYR">Malaysia Ringgits – MYR</option>
+<option value="MUR">Mauritius Rupees – MUR</option>
+<option value="MXN">Mexico Pesos – MXN</option>
+<option value="MAD">Morocco Dirhams – MAD</option>
+<option value="NZD">New Zealand Dollars – NZD</option>
+<option value="NOK">Norway Kroner – NOK</option>
+<option value="OMR">Oman Rials – OMR</option>
+<option value="PKR">Pakistan Rupees – PKR</option>
+<option value="PEN">Peru Nuevos Soles – PEN</option>
+<option value="PHP">Philippines Pesos – PHP</option>
+<option value="PLN">Poland Zlotych – PLN</option>
+<option value="PTE">Portugal Escudos – PTE</OPTION>
+<option value="QAR">Qatar Riyals – QAR</option>
+<option value="RON">Romania Lei – RON</option>
+<option value="RUB">Russia Rubles – RUB</option>
+<option value="SAR">Saudi Arabia Riyals – SAR</option>
+<option value="SGD">Singapore Dollars – SGD</option>
+<option value="SKK">Slovakia Koruny – SKK</option>
+<option value="SIT">Slovenia Tolars – SIT</option>
+<option value="ZAR">South Africa Rand – ZAR</option>
+<option value="KRW">South Korea Won – KRW</option>
+<option value="ESP">Spain Pesetas – ESP</OPTION>
+<option value="XDR">Special Drawing Rights (IMF) – XDR</option>
+<option value="LKR">Sri Lanka Rupees – LKR</option>
+<option value="SDD">Sudan Dinars – SDD</option>
+<option value="SEK">Sweden Kronor – SEK</option>
+<option value="CHF">Switzerland Francs – CHF</option>
+<option value="TWD">Taiwan New Dollars – TWD</option>
+<option value="THB">Thailand Baht – THB</option>
+<option value="TTD">Trinidad and Tobago Dollars – TTD</option>
+<option value="TND">Tunisia Dinars – TND</option>
+<option value="TRY">Turkey New Lira – TRY</option>
+<option value="AED">United Arab Emirates Dirhams – AED</option>
+<option value="VEB">Venezuela Bolivares – VEB</option>
+<option value="VND">Vietnam Dong – VND</option>
+<option value="ZMK">Zambia Kwacha – ZMK</option>
+</select>
+
+        
+        <?
+	}
+	
+	function showCountriesDD($name="dd_country")
+	{
+		?>
+        
+        <select name="<? print $name; ?>" id="<? print $name; ?>" class="form-control" style="width:90%">
+	<option value="XX">All countries</option>
+    <option value="AF">Afghanistan</option>
+	<option value="AX">Åland Islands</option>
+	<option value="AL">Albania</option>
+	<option value="DZ">Algeria</option>
+	<option value="AS">American Samoa</option>
+	<option value="AD">Andorra</option>
+	<option value="AO">Angola</option>
+	<option value="AI">Anguilla</option>
+	<option value="AQ">Antarctica</option>
+	<option value="AG">Antigua and Barbuda</option>
+	<option value="AR">Argentina</option>
+	<option value="AM">Armenia</option>
+	<option value="AW">Aruba</option>
+	<option value="AU">Australia</option>
+	<option value="AT">Austria</option>
+	<option value="AZ">Azerbaijan</option>
+	<option value="BS">Bahamas</option>
+	<option value="BH">Bahrain</option>
+	<option value="BD">Bangladesh</option>
+	<option value="BB">Barbados</option>
+	<option value="BY">Belarus</option>
+	<option value="BE">Belgium</option>
+	<option value="BZ">Belize</option>
+	<option value="BJ">Benin</option>
+	<option value="BM">Bermuda</option>
+	<option value="BT">Bhutan</option>
+	<option value="BO">Bolivia, Plurinational State of</option>
+	<option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+	<option value="BA">Bosnia and Herzegovina</option>
+	<option value="BW">Botswana</option>
+	<option value="BV">Bouvet Island</option>
+	<option value="BR">Brazil</option>
+	<option value="IO">British Indian Ocean Territory</option>
+	<option value="BN">Brunei Darussalam</option>
+	<option value="BG">Bulgaria</option>
+	<option value="BF">Burkina Faso</option>
+	<option value="BI">Burundi</option>
+	<option value="KH">Cambodia</option>
+	<option value="CM">Cameroon</option>
+	<option value="CA">Canada</option>
+	<option value="CV">Cape Verde</option>
+	<option value="KY">Cayman Islands</option>
+	<option value="CF">Central African Republic</option>
+	<option value="TD">Chad</option>
+	<option value="CL">Chile</option>
+	<option value="CN">China</option>
+	<option value="CX">Christmas Island</option>
+	<option value="CC">Cocos (Keeling) Islands</option>
+	<option value="CO">Colombia</option>
+	<option value="KM">Comoros</option>
+	<option value="CG">Congo</option>
+	<option value="CD">Congo, the Democratic Republic of the</option>
+	<option value="CK">Cook Islands</option>
+	<option value="CR">Costa Rica</option>
+	<option value="CI">Côte d'Ivoire</option>
+	<option value="HR">Croatia</option>
+	<option value="CU">Cuba</option>
+	<option value="CW">Curaçao</option>
+	<option value="CY">Cyprus</option>
+	<option value="CZ">Czech Republic</option>
+	<option value="DK">Denmark</option>
+	<option value="DJ">Djibouti</option>
+	<option value="DM">Dominica</option>
+	<option value="DO">Dominican Republic</option>
+	<option value="EC">Ecuador</option>
+	<option value="EG">Egypt</option>
+	<option value="SV">El Salvador</option>
+	<option value="GQ">Equatorial Guinea</option>
+	<option value="ER">Eritrea</option>
+	<option value="EE">Estonia</option>
+	<option value="ET">Ethiopia</option>
+	<option value="FK">Falkland Islands (Malvinas)</option>
+	<option value="FO">Faroe Islands</option>
+	<option value="FJ">Fiji</option>
+	<option value="FI">Finland</option>
+	<option value="FR">France</option>
+	<option value="GF">French Guiana</option>
+	<option value="PF">French Polynesia</option>
+	<option value="TF">French Southern Territories</option>
+	<option value="GA">Gabon</option>
+	<option value="GM">Gambia</option>
+	<option value="GE">Georgia</option>
+	<option value="DE">Germany</option>
+	<option value="GH">Ghana</option>
+	<option value="GI">Gibraltar</option>
+	<option value="GR">Greece</option>
+	<option value="GL">Greenland</option>
+	<option value="GD">Grenada</option>
+	<option value="GP">Guadeloupe</option>
+	<option value="GU">Guam</option>
+	<option value="GT">Guatemala</option>
+	<option value="GG">Guernsey</option>
+	<option value="GN">Guinea</option>
+	<option value="GW">Guinea-Bissau</option>
+	<option value="GY">Guyana</option>
+	<option value="HT">Haiti</option>
+	<option value="HM">Heard Island and McDonald Islands</option>
+	<option value="VA">Holy See (Vatican City State)</option>
+	<option value="HN">Honduras</option>
+	<option value="HK">Hong Kong</option>
+	<option value="HU">Hungary</option>
+	<option value="IS">Iceland</option>
+	<option value="IN">India</option>
+	<option value="ID">Indonesia</option>
+	<option value="IR">Iran, Islamic Republic of</option>
+	<option value="IQ">Iraq</option>
+	<option value="IE">Ireland</option>
+	<option value="IM">Isle of Man</option>
+	<option value="IL">Israel</option>
+	<option value="IT">Italy</option>
+	<option value="JM">Jamaica</option>
+	<option value="JP">Japan</option>
+	<option value="JE">Jersey</option>
+	<option value="JO">Jordan</option>
+	<option value="KZ">Kazakhstan</option>
+	<option value="KE">Kenya</option>
+	<option value="KI">Kiribati</option>
+	<option value="KP">Korea, Democratic People's Republic of</option>
+	<option value="KR">Korea, Republic of</option>
+	<option value="KW">Kuwait</option>
+	<option value="KG">Kyrgyzstan</option>
+	<option value="LA">Lao People's Democratic Republic</option>
+	<option value="LV">Latvia</option>
+	<option value="LB">Lebanon</option>
+	<option value="LS">Lesotho</option>
+	<option value="LR">Liberia</option>
+	<option value="LY">Libya</option>
+	<option value="LI">Liechtenstein</option>
+	<option value="LT">Lithuania</option>
+	<option value="LU">Luxembourg</option>
+	<option value="MO">Macao</option>
+	<option value="MK">Macedonia, the former Yugoslav Republic of</option>
+	<option value="MG">Madagascar</option>
+	<option value="MW">Malawi</option>
+	<option value="MY">Malaysia</option>
+	<option value="MV">Maldives</option>
+	<option value="ML">Mali</option>
+	<option value="MT">Malta</option>
+	<option value="MH">Marshall Islands</option>
+	<option value="MQ">Martinique</option>
+	<option value="MR">Mauritania</option>
+	<option value="MU">Mauritius</option>
+	<option value="YT">Mayotte</option>
+	<option value="MX">Mexico</option>
+	<option value="FM">Micronesia, Federated States of</option>
+	<option value="MD">Moldova, Republic of</option>
+	<option value="MC">Monaco</option>
+	<option value="MN">Mongolia</option>
+	<option value="ME">Montenegro</option>
+	<option value="MS">Montserrat</option>
+	<option value="MA">Morocco</option>
+	<option value="MZ">Mozambique</option>
+	<option value="MM">Myanmar</option>
+	<option value="NA">Namibia</option>
+	<option value="NR">Nauru</option>
+	<option value="NP">Nepal</option>
+	<option value="NL">Netherlands</option>
+	<option value="NC">New Caledonia</option>
+	<option value="NZ">New Zealand</option>
+	<option value="NI">Nicaragua</option>
+	<option value="NE">Niger</option>
+	<option value="NG">Nigeria</option>
+	<option value="NU">Niue</option>
+	<option value="NF">Norfolk Island</option>
+	<option value="MP">Northern Mariana Islands</option>
+	<option value="NO">Norway</option>
+	<option value="OM">Oman</option>
+	<option value="PK">Pakistan</option>
+	<option value="PW">Palau</option>
+	<option value="PS">Palestinian Territory, Occupied</option>
+	<option value="PA">Panama</option>
+	<option value="PG">Papua New Guinea</option>
+	<option value="PY">Paraguay</option>
+	<option value="PE">Peru</option>
+	<option value="PH">Philippines</option>
+	<option value="PN">Pitcairn</option>
+	<option value="PL">Poland</option>
+	<option value="PT">Portugal</option>
+	<option value="PR">Puerto Rico</option>
+	<option value="QA">Qatar</option>
+	<option value="RE">Réunion</option>
+	<option value="RO">Romania</option>
+	<option value="RU">Russian Federation</option>
+	<option value="RW">Rwanda</option>
+	<option value="BL">Saint Barthélemy</option>
+	<option value="SH">Saint Helena, Ascension and Tristan da Cunha</option>
+	<option value="KN">Saint Kitts and Nevis</option>
+	<option value="LC">Saint Lucia</option>
+	<option value="MF">Saint Martin (French part)</option>
+	<option value="PM">Saint Pierre and Miquelon</option>
+	<option value="VC">Saint Vincent and the Grenadines</option>
+	<option value="WS">Samoa</option>
+	<option value="SM">San Marino</option>
+	<option value="ST">Sao Tome and Principe</option>
+	<option value="SA">Saudi Arabia</option>
+	<option value="SN">Senegal</option>
+	<option value="RS">Serbia</option>
+	<option value="SC">Seychelles</option>
+	<option value="SL">Sierra Leone</option>
+	<option value="SG">Singapore</option>
+	<option value="SX">Sint Maarten (Dutch part)</option>
+	<option value="SK">Slovakia</option>
+	<option value="SI">Slovenia</option>
+	<option value="SB">Solomon Islands</option>
+	<option value="SO">Somalia</option>
+	<option value="ZA">South Africa</option>
+	<option value="GS">South Georgia and the South Sandwich Islands</option>
+	<option value="SS">South Sudan</option>
+	<option value="ES">Spain</option>
+	<option value="LK">Sri Lanka</option>
+	<option value="SD">Sudan</option>
+	<option value="SR">Suriname</option>
+	<option value="SJ">Svalbard and Jan Mayen</option>
+	<option value="SZ">Swaziland</option>
+	<option value="SE">Sweden</option>
+	<option value="CH">Switzerland</option>
+	<option value="SY">Syrian Arab Republic</option>
+	<option value="TW">Taiwan, Province of China</option>
+	<option value="TJ">Tajikistan</option>
+	<option value="TZ">Tanzania, United Republic of</option>
+	<option value="TH">Thailand</option>
+	<option value="TL">Timor-Leste</option>
+	<option value="TG">Togo</option>
+	<option value="TK">Tokelau</option>
+	<option value="TO">Tonga</option>
+	<option value="TT">Trinidad and Tobago</option>
+	<option value="TN">Tunisia</option>
+	<option value="TR">Turkey</option>
+	<option value="TM">Turkmenistan</option>
+	<option value="TC">Turks and Caicos Islands</option>
+	<option value="TV">Tuvalu</option>
+	<option value="UG">Uganda</option>
+	<option value="UA">Ukraine</option>
+	<option value="AE">United Arab Emirates</option>
+	<option value="GB">United Kingdom</option>
+	<option value="US">United States</option>
+	<option value="UM">United States Minor Outlying Islands</option>
+	<option value="UY">Uruguay</option>
+	<option value="UZ">Uzbekistan</option>
+	<option value="VU">Vanuatu</option>
+	<option value="VE">Venezuela, Bolivarian Republic of</option>
+	<option value="VN">Viet Nam</option>
+	<option value="VG">Virgin Islands, British</option>
+	<option value="VI">Virgin Islands, U.S.</option>
+	<option value="WF">Wallis and Futuna</option>
+	<option value="EH">Western Sahara</option>
+	<option value="YE">Yemen</option>
+	<option value="ZM">Zambia</option>
+	<option value="ZW">Zimbabwe</option>
+</select>
+        
+        <?
+	}
 }
 ?>

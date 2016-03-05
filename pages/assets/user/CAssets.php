@@ -11,7 +11,8 @@ class CAssets
 	function showAssets()
 	{
 		$query="SELECT * 
-		          FROM assets 
+		          FROM assets
+				  WHERE linked_mktID=0 
 			  ORDER BY ID ASC
 			     LIMIT 0,20";
 		 $result=$this->kern->execute($query);	
@@ -56,6 +57,7 @@ class CAssets
 				 WHERE aso.owner IN (SELECT adr 
 				                     FROM my_adr 
 									WHERE userID='".$_REQUEST['ud']['ID']."') 
+				   AND ass.linked_mktID=0
 			  ORDER BY aso.qty DESC
 			     LIMIT 0,20";
 		 $result=$this->kern->execute($query);	
@@ -98,6 +100,10 @@ class CAssets
 	{
 		$query="SELECT * 
 		          FROM assets 
+				 WHERE linked_mktID=0 
+				   AND adr IN (SELECT adr 
+				                 FROM my_adr 
+								WHERE userID='".$_REQUEST['ud']['ID']."')
 			  ORDER BY ID ASC
 			     LIMIT 0,20";
 		 $result=$this->kern->execute($query);	

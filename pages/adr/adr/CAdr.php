@@ -135,7 +135,7 @@ class CMyAdr
     
 	function showMyAdr()
 	{
-		$query="SELECT my_adr.*, adr.balance, prof.pic
+		$query="SELECT my_adr.*, adr.balance, prof.pic, adr.last_interest
 		          FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
 				  LEFT JOIN profiles AS prof ON prof.adr=my_adr.adr
@@ -165,8 +165,8 @@ class CMyAdr
                           <img src="<? if ($row['pic']!="") print base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png"; ?>" width="50" height="50" alt="" class="img-circle"  />
                           </td>
                           <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal();" class="font_10" style="color:#999999">full address</a><? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
-                          <td width="10%" align="center" class="font_18" style="color:#005500">
-                          <?
+                          <td width="10%" align="center" class="font_18" style="color:#005500"><span class="font_18" style="color:#005500">
+                            <?
 						     $attr="";
 							 
 							 // Receive interest
@@ -203,14 +203,26 @@ class CMyAdr
 							    
 								 
 						  ?>
+                          </span></td>
+                          <td width="10%" align="center" class="font_18" style="color:#005500">
                           
-						  </td>
+                          <?
+						     $next=60-($_REQUEST['sd']['last_block']-$row['last_interest'])/$_REQUEST['sd']['blocks_per_minute'];
+							 $next=round($next/5);
+							 if ($next==0) $next=1;
+							 
+		                     if ($row['balance']>=1) print "<img src=\"./GIF/".$next.".png\" width=\"35\" style='color:#b5943c;' title='Next interest in ".($next*5)." minutes (+".round($_REQUEST['sd']['interest_h']/100*$row['balance'], 4).") MSK. Interest rate ".$_REQUEST['sd']['interest_y']."% per year' data-toggle='tooltip' data-placement='top'/>";  
+						  ?>
+                          
+                          
+                          
+                          </td>
                         <td width="21%" align="center" class="font_14" style="color:#009900"><strong>
 						<? 
 						   if ($row['balance']=="") 
 						      print "0 MSK"; 
 							else
-							  print $row['balance']." MSK"; 
+							  print round($row['balance'], 8)." MSK"; 
 						?>
                         </strong></td>
                         <td width="25%" align="center" class="simple_maro_12">
@@ -232,7 +244,7 @@ class CMyAdr
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="5" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="6" background="../../template/template/GIF/lp.png">&nbsp;</td>
                         </tr>
                   
                   <?
@@ -267,7 +279,7 @@ class CMyAdr
           <tr>
             <td width="182" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="left"><img src="./GIF/new_adr.png" width="162" height="176" /></td>
+                <td align="left"><img src="GIF/adr.png" width="180" height="181" alt=""/></td>
               </tr>
               </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -310,7 +322,7 @@ class CMyAdr
           <tr>
             <td width="182" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="left"><img src="./GIF/import_address.png"  /></td>
+                <td align="left"><img src="./GIF/import_address.png" width="180"  /></td>
               </tr>
               </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">

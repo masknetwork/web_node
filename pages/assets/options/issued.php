@@ -69,14 +69,14 @@
 	  // Menu
 	 $template->showNav(3,
 	                    "../options/index.php", "Options", "",
-	                    "../options/my_options.php", "My Options", "",
-						"../options/issued.php", "Issued Options", "");
+	                    "../options/my_options.php", "My Positions", "",
+						"../options/issued.php", "My Options", "");
 	 
 	 
 	 if ($_REQUEST['act']!="show_modal")
 	 {
 	     // Help
-	     $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	     $template->showHelp("Below are displayed binary options issued by you. Any user can issue his / her own binary options using an existing data feed. There are seven type of conditions like touch, close below, close above and so on. When you launch a binary option, you have to provide an amount of MaskCoins or  assets as a collateral. The collateral will be frozen until the option expires. In case the conditions imposed by you are met in a specified period of time, you will loose a percent or all your collateral while buyers will win their investment plus a percent specified by you.");
 	 
 	     // Options
 	     $bets->showNewOptionBut();
@@ -107,7 +107,7 @@
 						      break;
   	   }
 	   
-	   $bets->showOptions("", "mine");
+	   $bets->showIssuedOptions();
 	}
 	else $bets->showNewBetModal();
 	

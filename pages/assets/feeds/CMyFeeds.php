@@ -106,7 +106,7 @@
 			 return false;
 		 }
 		 
-		  try
+		 try
 	     {
 		   // Begin
 		   $this->kern->begin();
@@ -228,9 +228,9 @@
               <tr>
                 <td height="30" align="left" valign="top" class="font_14"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td width="36%" height="30" align="left" valign="top"><strong>Symbol</strong></td>
-                    <td width="64%" align="left" valign="top"><strong>Days</strong></td>
-                    <td width="64%" align="left" valign="top"><strong>Updates</strong></td>
+                    <td width="33%" height="30" align="left" valign="top"><strong>Symbol</strong></td>
+                    <td width="33%" align="left" valign="top"><strong>Days</strong></td>
+                    <td width="33%" align="left" valign="top"><strong>Updates</strong></td>
                   </tr>
                   <tr>
                     <td><input class="form-control" id="txt_new_feed_symbol" name="txt_new_feed_symbol" placeholder="XXXXXX" style="width:90px"/></td>

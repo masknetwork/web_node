@@ -9,7 +9,7 @@ class CFeeds
 	
 	function showFeeds($type="mine", $term="")
     {
-	   if ($type!="mine") 
+	   if ($type=="mine") 
 	   $query="SELECT *
 	             FROM feeds
 				WHERE adr IN (SELECT adr 
@@ -22,7 +22,7 @@ class CFeeds
 	             FROM feeds
 				WHERE (name LIKE '%".$term."%' OR description LIKE '%".$term."%')
 			 ORDER BY ID DESC";
-			 
+			
 	   $result=$this->kern->execute($query);	
 	   
 	   

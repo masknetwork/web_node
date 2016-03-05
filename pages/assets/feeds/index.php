@@ -67,13 +67,14 @@
      $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
 	 
 	  // Menu
+	 if ($_REQUEST['ud']['ID']>0)
 	 $template->showNav(1,
 	                    "../feeds/index.php", "Feeds", "",
 	                    "../feeds/my_feeds.php", "My Feeds", "");
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	 $template->showHelp("Data feed is a mechanism for network to receive updated data from data sources. A data feed could provide real time stock rates, currencies rates or any other data like the actual temperature in London. Data feeds are used by users to launch decentralized binary options (bets) or to trade any imaginable asset for wich a data feed exist with no central server / authority. Below are listed available data feeds.");
 	 
     // Feeds
 	$feeds->showFeeds("all");

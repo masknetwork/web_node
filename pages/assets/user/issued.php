@@ -76,7 +76,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are displayed assets issued by your addresses. You can issue your own asset and gain fees on each transaction. Issuing an asset costs 0.0001 MSK / unit plus 0.0001 MSK / day for the period the asset is issued. You can issue more units of an asset anytime you want, unles you have specified that your asset has limited supply.");
+	 $template->showHelp("Below are displayed the assets you have issued. You can issue your own tokens for anything you can imagine and even gain a small fee after each transaction. The potential use cases for user-issued assets are innumerable. They could represent corporate shares, reward points, real world currencies and so n. Below are listed assets issued by you.");
 	 
 	// Issue button
 	$issued->showIssueBut(); 

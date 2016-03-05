@@ -37,6 +37,7 @@
   .txt_expl_inverse_small { font-size:26px; }
   .txt_title_medium { font-size:50px;  padding-top:40px; }
   .txt_expl_medium { font-size:26px;  }
+  .font_16 { font-size:26px;  }
   a.yellow_link { font-size:30px; }
   
   #but_signup { height:100px; font-size:50px; }
@@ -71,6 +72,26 @@
 <ul class="nav navbar-nav">
 <li class="active"><a href="#">Home</a></li>
 <li><a href="./pages/tweets/tweets/index.php">Tweets</a></li>
+<li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
+
+<a href="./pages/assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li><a href="./pages/assets/options/index.php">Binary Options</a></li>
+<li><a href="./pages/assets/margin_mkts/index.php">Margin Markets</a></li>
+<li><a href="./pages/assets/pegged_assets/index.php">Market Pegged Assets</a></li>
+<li role="separator" class="divider"></li>
+<li><a href="./pages/assets/user/index.php">User Issued Assets</a></li>
+<li><a href="./pages/assets/assets_mkts/index.php">Assets Markets</a></li>
+<li role="separator" class="divider"></li>
+<li><a href="./pages/assets/exchangers/index.php">Assets Exchangers</a></li>
+<li><a href="./pages/assets/feeds/index.php">Data Feeds</a></li>
+</ul></li>     
+            
+<li class='dropdown open; <? if ($sel==5) print "active"; ?>'><a href="./pages/shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Shop<b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li><a href="./pages/shop/goods/index.php">Goods and Services</a></li>
+<li><a href="./pages/shop/escrowers/index.php">Escrowers</a></li>
+</ul></li>
 <li><a href="./pages/explorer/packets/index.php">Explorer</a></li>
 <li><a href="./pages/help/help/index.php">Help</a></li>
 </ul>
@@ -82,7 +103,7 @@
  <div class="row" style="padding-left:30px; padding-top:100px; padding-bottom:50px; background-color:#2e4f71">
  <div class="col-md-5" align="center"><img src="./pages/index/index/GIF/main.jpg" class="img-responsive"></div>
  <div class="col-md-7">
- <p class="txt_title">The Descentralized Social Network and Marketplace</p>
+ <p class="txt_title">The Descentralized Social Trading Network </p>
  <p class="txt_expl">MaskNetwork is a peer to peer decentralized social network / marketplace, where you can share or trade any product or digital goods, with no central server and without asking anyone's consent, outside the control of an individual or group. MaskNetwork is a community of people who want to communicate and trade without restrictions, intermediaries or huge taxes imposed by traditional companies. </p><br>
  
  
@@ -143,6 +164,93 @@
  </div>
  <br><br>
  
+ <!-- --------------------------------------------------- SPECULATIVE -------------------------------------------------------------------->
+ 
+ <div class="row" style="padding-left:30px; padding-top:30px; padding-bottom:50px; padding-right:50px; background-color:#2e4f71">>
+ <div class="col-md-7" style="padding-left:30px"><p class="txt_title">Decentralized margin trading</p>
+ <p class="txt_expl">Trade anything. Currencies, stocks, cryptocoins, outside temperature, you name it. If there is a data feed, you can trade it on margin. No central server means that no regulated company is behind the scene. No regulation means, huge leverages, minimum spreads and no minimum trade size. Don't like to trade ? Then start your own leveraged markets and allow others to trade. Masknetwork is the first truly p2p deceentralized trading platform. </p>
+  <a type="button" href="./pages/help/help/index.php" class="btn btn-lg btn-danger" id="but_read_more_margin" style="width:20%">Read More</a>
+ </div>
+ 
+ <br>
+ <div class="col-md-5" align="center">
+ <div class="panel panel-default">
+ <div class="panel-body">
+ 
+ <?
+    $index->showTopTrades();
+ ?>
+ 
+ </div></div></div></div>
+ 
+ 
+  
+ 
+ <!-- --------------------------------------------------- BETS -------------------------------------------------------------------->
+ <div class="row" style="padding-left:30px; padding-bottom:30px;">
+ <br><br>
+ <div class="col-md-5" align="center">
+ <div class="panel panel-default">
+ <div class="panel-body">
+ <?
+    $index->showTopBets();
+ ?>
+ </div></div></div>
+ 
+ 
+
+ <div class="col-md-7">
+    <p class="txt_title_inverse">P2P Binary Options</p>
+    <p class="txt_expl_inverse">Binary options are based on a simple 'yes' or 'no' proposition: Will an underlying asset be above a certain price at a certain time ?   Traders place trades based on whether they believe the answer is yes or no, making it one of the simplest financial assets to trade. In the real world binary options are launched by professional regulated brokers and usually traders have no chance of long time profits, because they are betting against the house and the house always wins. Over Masknetwork binary options are written by users like you and are bought by other regular users. There are no broker fees and no limitations on what you can trade. If there is a data feed then you can launch binary options using that feed, on your own terms. </p>
+    <br>
+</div>
+ 
+ </div></div>
+ <br><br>
+ 
+ 
+ <!-- --------------------------------------------------- SMART ASSETS -------------------------------------------------------------------->
+ 
+ <div class="row" style="padding-left:30px; padding-top:30px; padding-bottom:50px; padding-right:50px; background-color:#2e4f71">>
+ <div class="col-md-7" style="padding-left:30px"><p class="txt_title">Market pegged assets</p>
+ <p class="txt_expl">MaskNetwork market pegged assets are a new type of freely traded digital asset whose value is meant to track the value of a conventional asset such as the U.S. dollar or gold. Market pegged assets can be issued by regular users like you. While Bitcoin for example has demonstrated many useful properties as a currency, its price volatility makes it risky to hold especially for merchants. A currency with the properties and advantages of Bitcoin that maintains price parity with a globally adopted currency such as the US dollar has high utility for a decentralized eCommerce platform like MaskNetwork. Anyway market pegged assets are not limited to stable currencies like USD. Any user can launch a market pegged token, linked to any real life asset like Apple shares or Bitcoin. </p>
+  <a type="button" href="./pages/help/help/index.php" class="btn btn-lg btn-danger" id="but_read_more_margin" style="width:20%">Read More</a>
+ </div>
+ 
+ <br>
+ <div class="col-md-5" align="center">
+ <div class="panel panel-default">
+ <div class="panel-body">
+ 
+ <?
+    $index->showTopAssets();
+ ?>
+ 
+ </div></div></div></div>
+ 
+ 
+  
+ 
+ <!-- --------------------------------------------------- EBAY -------------------------------------------------------------------->
+ <div class="row" style="padding-left:30px; padding-bottom:30px;">
+ <br><br>
+ <div class="col-md-4" align="center">
+ <img src="./pages/index/index/GIF/shop.jpg" class="img img-responsive">
+ </div>
+ 
+ 
+
+ <div class="col-md-8">
+    <p class="txt_title_inverse">Ebay with no central server</p>
+    <p class="txt_expl_inverse">Masknetwork is the first truly web based decentralized peer-to-peer marketplace. It's the eBay with no central server, no restrictions on what you can sell or buy. Because there's no company or organization running MaskNetwork, there's no one to charge you fees to list your products and no one to register an account with. You don't have to download anything or maintain a web server. Just open an eStore, post your products or services and start selling in minutes. It's you and your customers with no thirsd party. No terms of service, no PayPal as the only payment processor. You can accept any type of payment you want. Maskcoins, assets, market-pegged assets, you name it. Whant to sell books for Microsoft shares ? It's possible.</p>
+    <br>
+</div>
+ 
+ </div></div>
+ <br><br>
+ 
+ 
+ <!-- --------------------------------------------------- RELAX -------------------------------------------------------------------->
  <div class="row" style="padding-left:30px; padding-top:30px; padding-bottom:50px; padding-right:50px; background-color:#2e4f71">
  <br><br>
  <div class="row">

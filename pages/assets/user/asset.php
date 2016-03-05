@@ -66,6 +66,9 @@
      // Location
      $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
 	 
+	 // Trade
+	 
+	 
 	 // Panel
 	 $asset->showPanel($_REQUEST['symbol']);
 	
@@ -82,9 +85,9 @@
 	  }
 	 
 	  $template->showNav($sel,
-	                    "../user/index.php", "Owners", "",
-	                    "../user/my_assets.php", "Transactions", $_REQUEST['ud']['pending_adr'],
-						"../user/issued.php", "Markets", "");
+	                    "../user/asset.php?target=owners&symbol=".$_REQUEST['symbol'], "Owners", "",
+	                    "../user/asset.php?target=trans&symbol=".$_REQUEST['symbol'], "Transactions", $_REQUEST['ud']['pending_adr'],
+						"../user/asset.php?target=markets&symbol=".$_REQUEST['symbol'], "Markets", "");
 						
 	  switch ($_REQUEST['target'])
 	  {

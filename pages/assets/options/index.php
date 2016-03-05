@@ -67,21 +67,22 @@
      $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
 	 
 	  // Menu
+	 if ($_REQUEST['ud']['ID']>0)
 	 $template->showNav(1,
 	                    "../options/index.php", "Options", "",
-	                    "../options/my_options.php", "My Options", "",
-						"../options/issued.php", "Issued Options", "");
+	                    "../options/my_options.php", "My Positions", "",
+						"../options/issued.php", "My Options", "");
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are the addresses that you own. An address is a string of characters and works as an anonymous bank account. In an address you can keep coins or other assets. An address never expires. You can assign it a name or security setting. Click the Options button for more details of the addresses.");
+	 $template->showHelp("In finance, a binary option is a type of option in which the payoff can take only two possible outcomes, either some fixed monetary amount or nothing at all, in contrast to ordinary financial options that typically have a continuous spectrum of payoff. Binary options pay some fixed amount of cash if some conditions are met in a specified time interval. Over MaskNetwork you can issue your own binary options or invest in existing options launched by other users. Because there is no central server, you can bet on anything for which a data feed exist. Below are listed active binary options.");
 	 
 	 // Selector
 	 if (!isset($_REQUEST['status'])) $_REQUEST['status']="ID_PENDING";
 	 $bets->showMyOptionsSel($_REQUEST['status']);
 	 
      // Show
-	 $bets->showOptions($_REQUEST['term'], "all", $_REQUEST['status']);
+	 $bets->showOptions($_REQUEST['term'], $_REQUEST['status']);
 	
  ?>
  </div>

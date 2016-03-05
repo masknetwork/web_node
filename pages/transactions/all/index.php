@@ -96,21 +96,24 @@
 			                        $_REQUEST['h_from_adr'], 
 								    $_REQUEST['h_to_adr'], 
 								    $_REQUEST['h_amount'], 
-								    "MSK", 
+									$_REQUEST['h_amount'], 
+								    $_REQUEST['h_moneda'], 
 								    $_REQUEST['h_mes'], 
 								    $_REQUEST['h_escrower'],
 									$_REQUEST['txt_old_pass']);
 									
 				 // Request data ?
 				 if ($_REQUEST['act']=="send_req_coins")
-				 $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
+				     $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
 			                        $_REQUEST['h_from_adr'], 
 								    $_REQUEST['h_to_adr'], 
 								    $_REQUEST['h_amount'], 
-								    "MSK", 
+									$_REQUEST['h_amount'], 
+								    $_REQUEST['h_moneda'],  
 								    $_REQUEST['h_mes'], 
 								    $_REQUEST['h_escrower'],
 									$_REQUEST['h_old_pass']);
+				 
 	  
 	  if ($_REQUEST['act']=="send_coins")
 	  {

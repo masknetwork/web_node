@@ -26,7 +26,7 @@ class CUserData
 				 WHERE my_adr.userID='".$_REQUEST['ud']['ID']."'"; 
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		$balance=round($row['total'], 4);
+		$balance=round($row['total'], 8);
 		
 		// Pending
 		$query="SELECT sum(tp.amount) AS total 
@@ -37,7 +37,7 @@ class CUserData
 				   AND cur='MSK'"; 
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		$balance_pending=round($row['total'], 4);
+		$balance_pending=round($row['total'], 8);
 		
 		// Balance
 		$_REQUEST['ud']['balance']=$balance+$balance_pending;
