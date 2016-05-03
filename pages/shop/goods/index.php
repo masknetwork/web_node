@@ -5,13 +5,13 @@
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
-  
+   include "CShop.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
- 
+   $shop=new CShop($db, $template);
 ?>
 
 <!doctype html>
@@ -73,11 +73,16 @@
 	                    "../goods/index.php", "Phisical Goods", "",
 	                    "../digital/index.php", "Digital Goods", "",
 						"../services/index.php", "Services", "",
-						"../store/index.php", "My Store", "",
+						"../store/index.php", "My Stores", "",
 						"../cart/index.php", "Cart", "");
-    
+	else
+    $template->showNav(1,
+	                   "../goods/index.php", "Phisical Goods", "",
+	                   "../digital/index.php", "Digital Goods", "",
+					   "../services/index.php", "Services", "");
+						
 	print "<br>";
-	$template->showErr("This section will be launched on Mars, 20, 2016");
+	$template->showErr("This section will be launched soon");
 	
  ?>
  </div>

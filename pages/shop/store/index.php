@@ -68,18 +68,31 @@
      $template->showLocation("../../assets/assets/index.php", "Speculative Markets", "", "Markets");
 	 
 	  // Menu
-	 if ($_REQUEST['ud']['ID']>0)
-	 $template->showNav(4,
+	  if ($_REQUEST['ud']['ID']>0)
+	  $template->showNav(4,
 	                    "../goods/index.php", "Phisical Goods", "",
 	                    "../digital/index.php", "Digital Goods", "",
 						"../services/index.php", "Services", "",
-						"../store/index.php", "My Store", "",
+						"../store/index.php", "My Stores", "",
 						"../cart/index.php", "Cart", "");
-	 
-
-	print "<br>";
-	$template->showErr("This section will be launched on Mars, 20, 2016");
 	
+	print "<br>";
+	
+	if ($_REQUEST['ud']['ID']>0) 
+	  $store->showNewStoreBut();
+	  
+	// New store
+	if ($_REQUEST['act']=="new_store")
+	$store->newStore($_REQUEST['dd_new_store_net_fee'], 
+	                 $_REQUEST['dd_new_store_adr'], 
+					 $_REQUEST['txt_new_store_name'], 
+					 $_REQUEST['txt_new_store_desc'], 
+					 $_REQUEST['txt_new_store_website'], 
+					 $_REQUEST['txt_new_store_pic'], 
+					 $_REQUEST['txt_new_store_days']);
+					 
+	// Show stores
+	$store->showMyStores();
  ?>
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>

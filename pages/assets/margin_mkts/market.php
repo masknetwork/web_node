@@ -21,6 +21,7 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
@@ -90,7 +91,10 @@
 													   $_REQUEST['txt_new_pos_tp'],
 													   $_REQUEST['txt_new_pos_leverage'],
 													   $_REQUEST['txt_new_pos_qty']);  
-													   
+	 
+	 // Chart
+	 $mkts->showMktChart($_REQUEST['ID']);
+	 				   
 	 if ($_REQUEST['ud']['ID']>0)
 	 {
 		   if (!isset($_REQUEST['target']) || $_REQUEST['target']=="pos")

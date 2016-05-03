@@ -401,7 +401,7 @@ class CTweets
 	   }
 	}
 	
-	function makeLinks($mes)
+	function formatTweet($mes)
 	{
 		
 		$m="";
@@ -416,6 +416,10 @@ class CTweets
 			  $m=$m." <a href='../../assets/user/asset.php?symbol=".substr($v[$a], 1, 100)."'  class='font_14'>".$v[$a]."</a>";
 			else if (substr($v[$a], 0, 1)=="@")
 			  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			else if (substr($v[$a], 0, 1)=="&")
+			  $m=$m." <a href='../../app/directory/app.php?ID=".str_replace("&", "", $v[$a])."'  class='font_14'>applicaion</a>";
+			else if (substr($v[$a], 0, 8)=="ME4wEAYH")
+			  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>...".$this->template->formatAdr($v[$a])."...</a>";
 			else 
 			   $m=$m." ".$v[$a];
 		}
@@ -558,7 +562,7 @@ class CTweets
 				{
 			  ?>
               
-              <a class="font_16" href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>"><strong><? print $this->template->formatAdr($re_row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print "@".$this->template->formatAdr($re_row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($re_row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $re_row['adr']; ?>'); $('#txt_plain').val('<? print $re_row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print $this->makeLinks(base64_decode($re_row['mes'])); ?></span><br>
+              <a class="font_16" href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>"><strong><? print $this->template->formatAdr($re_row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print "@".$this->template->formatAdr($re_row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($re_row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $re_row['adr']; ?>'); $('#txt_plain').val('<? print $re_row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print $this->formatTweet(base64_decode($re_row['mes'])); ?></span><br>
               <br>
               
               <?
@@ -570,7 +574,7 @@ class CTweets
                      <a class="font_16" href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>">
                      <strong><? print $this->template->formatAdr($row['adr']); ?></strong>
                      </a>&nbsp;&nbsp;&nbsp;
-                     <span class="font_12"><? print "@".$this->template->formatAdr($row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14" style="color:#555555"><? print nl2br($this->makeLinks(base64_decode($row['mes']))); ?></span><br>
+                     <span class="font_12"><? print "@".$this->template->formatAdr($row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14" style="color:#555555"><? print nl2br($this->formatTweet(base64_decode($row['mes']))); ?></span><br>
                     
                     <?
 				}

@@ -76,6 +76,10 @@
 	                    "../margin_mkts/index.php", "Markets", "",
 	                    "../margin_mkts/positions.php", "My Positions", "",
 						"../margin_mkts/my_mkts.php", "My Markets", "");
+	 else
+	  $template->showNav(2,
+	                    "../margin_mkts/index.php", "Markets", "",
+	                    "../margin_mkts/positions.php", "Top Positions", "");
 	 
 	 
 	 // Help
@@ -102,16 +106,22 @@
 	 // Selector
 	 $mkts->showPosSel($_REQUEST['status']);
 	 
+	 // Target
+	 if (!isset($_REQUEST['ud']['ID']))
+	   $target="all";
+	 else
+	   $target="mine";
+	 
 	 // Display
 	 switch ($_REQUEST['status']) 
 	 {
-		 case "ID_MARKET" : $mkts->showPositions(0, "ID_MARKET", "mine", true); 
+		 case "ID_MARKET" : $mkts->showPositions(0, "ID_MARKET", $target, true); 
 		                 break;
 						 
-		case "ID_PENDING" : $mkts->showPositions(0, "ID_PENDING", "mine", true); 
+		case "ID_PENDING" : $mkts->showPositions(0, "ID_PENDING", $target, true); 
 		                    break;
 						 
-		case "ID_CLOSED" : $mkts->showPositions(0, "ID_CLOSED", "mine", true); 
+		case "ID_CLOSED" : $mkts->showPositions(0, "ID_CLOSED", $target, true); 
 		                   break;
 	 }
 	

@@ -1,7 +1,7 @@
 <?
-class CMarket
+class CShop
 {
-	function CMarket($db, $acc, $template)
+	function CShop($db, $acc, $template)
 	{
 		$this->kern=$db;
 		$this->template=$template;

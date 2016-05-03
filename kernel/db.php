@@ -111,6 +111,16 @@
 	
 	 function feeAdrValid($adr)
 	 {
+		// Is contract ?
+		$query="SELECT * FROM agents WHERE adr='".$adr."'"; 
+		$result=$this->execute($query);	
+		if (mysql_num_rows($result)>0) return false;
+		
+		// Has attributes
+		$query="SELECT * FROM adr_options WHERE adr='".$adr."'"; 
+		$result=$this->execute($query);	
+		if (mysql_num_rows($result)>0) return false;
+		
 		return true;
 	 }
 	
@@ -187,28 +197,6 @@
 		 return $t;
 	  }
 	  
-	  // Verifica daca un string este numar
-	  function isNumber($str, $tip="integer")
-	  {
-		if (strlen($str)==0) return false;
-        $str=str_replace(" ", "", $str);
-	    if ($tip=="integer")
-		{
-	      for ($a=0; $a<=strlen($str)-1; $a++) 
-		   if (ord($str[$a])<48 || ord($str[$a])>57)
-		     return false;
-	    }
-		
-		if ($tip=="decimal")
-		{
-		  $str=str_replace(",",  ".", $str);
-	      for ($a=0; $a<=strlen($str)-1; $a++) 
-		   if ((ord($str[$a])<48 || ord($str[$a])>57) && ord($str[$a])!=46)
-		     return false;
-		}		 
-		
-		return true;
-	  }
 	  
 	  function makeNumber($str, $tip="integer", $precizion=2)
 	  {
@@ -586,7 +574,7 @@ $('#back').css("cursor", "pointer");
 		$query="SELECT * 
 		          FROM my_adr 
 				 WHERE userID='".$_REQUEST['ud']['ID']."' 
-				   AND adr='".$adr."'";
+				   AND adr='".$adr."'"; 
 		$result=$this->execute($query);
 		
 		 if (mysql_num_rows($result)>0)
@@ -686,6 +674,26 @@ $('#back').css("cursor", "pointer");
 		  return true;
 	}
 	
+	function isCur($symbol)
+	{
+		// Upper case
+		$symbol=strtoupper($symbol);
+		
+		// MSK ?
+		if ($symbol=="MSK") return true;
+		
+		// Length
+		if (strlen($symbol)!=6)
+		  return false;
+		
+		// Six characters
+		if (preg_match("/^[A-Z]{6}$/", $symbol)!=1)
+		   return false;
+		   
+		// Match
+		return true;
+	}
+	
 	function getMyFirstAdr()
 	{
 		$query="SELECT ma.adr, adr.balance, dom.domain 
@@ -782,6 +790,18 @@ $('#back').css("cursor", "pointer");
 	
 	function isImageLink($link)
 	{
+		return true; 
+		if (strpos($link, ".jpg")===false && 
+			    strpos($link, ".jpeg")===false && 
+				strpos($link, ".png")===false)
+		        return false;
+			else
+			    return true;
+		
+	}
+	
+	function isPic($link)
+	{
 		if (strpos($link, ".jpg")===false && 
 			    strpos($link, ".jpeg")===false && 
 				strpos($link, ".png")===false)
@@ -825,6 +845,84 @@ $('#back').css("cursor", "pointer");
 	function descValid($desc)
 	{
 		return true;
+	}
+	
+	function isLong($var)
+	{
+		if (preg_match("/^[0-9]{1,10}$/", $var)!=1)
+		   return false;
+		else 
+		   return true;
+	}
+	
+	function isDecimal($var)
+	{
+		if (preg_match("/^[0-9]{1,10}\.[0-9]{1,10}$/", $var)!=1)
+		   return false;
+		else 
+		   return true;
+	}
+	
+	function isNumber($var)
+	{
+		if (preg_match("/^[0-9]{1,10}(\.[0-9]{1,10})?$/", $var)!=1)
+		   return false;
+		else 
+		   return true;
+	}
+	
+	function isHAsh($var)
+	{
+		if (preg_match("/^[A-Fa-f0-9]{64}$/", $var)!=1)
+		   return false;
+		else 
+		   return true;
+	}
+	
+	function isDomain($var)
+	{
+		if (preg_match("/^[a-f0-9]{0,30}$/", $var)!=1)
+		   return false;
+		else 
+		   return true;
+	}
+	
+	function isString($var)
+	{
+		$str="1234567890-=!@#$%^&*()_+qwertyuiop[]QWERTYUIOP{}asdfghjkl;'\ASDFGHJKL:\"|'zxcvbnm,./~ZXCVBNM<>?";
+		
+		for ($a=0; $a<=strlen($var); $a++)
+		  if (strpos($str, $var[$a])===false)
+		    return false;
+	}
+	
+	function isAdr($var)
+	{
+		if (strlen($var)<31 && 
+		    $this->isDomain($var)==true)
+		{
+		   // Domain ?
+		   $query="SELECT * 
+		          FROM domains 
+				 WHERE domain='".$var."'";
+		   $result=$this->execute($query);
+		
+		   if (mysql_num_rows($result)>0)
+		      return true;
+		}
+	
+		// Length
+		if (strlen($var)!=108 && 
+		    strlen($var)!=124 && 
+		    strlen($var)!=160 && 
+		    strlen($var)!=212) 
+	       return false;
+	   
+		// Characters	
+		if (preg_match("/^[a-zA-Z0-9\+\/]+={0,2}$/", $var)!=1)
+		   return false;
+		else
+		   return true;
 	}
 }
 ?>

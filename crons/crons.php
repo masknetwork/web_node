@@ -5,5 +5,5 @@
    $db=new db();
    $crons=new CCrons($db);
    
-   $crons->checkTrending();
+   $crons->runCrons();
 ?>

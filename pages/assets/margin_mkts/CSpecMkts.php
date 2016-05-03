@@ -1051,13 +1051,16 @@ class CSpecMkts
 	    return true;
 	}
 	
-	function showMarkets($mine, $search="", $cur="MSK")
+	
+	
+	function showMarkets($mine, $type="ID_CRYPTO", $search="", $cur="MSK")
 	{
 		if ($mine==false)
-		$query="SELECT fsm.*, adr.balance AS mkt_adr_balance
+		$query="SELECT fsm.*, adr.balance AS mkt_adr_balance, fb.type
 		          FROM feeds_spec_mkts AS fsm 
+				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed_1 AND fb.symbol=fsm.branch_1)
 				  JOIN adr ON adr.adr=fsm.adr
-				 WHERE cur='".$cur."'";
+				 WHERE cur='".$cur."' AND fb.type='".$type."'"; 
 		else
 	    $query="SELECT fsm.*, adr.balance AS mkt_adr_balance
 		          FROM feeds_spec_mkts AS fsm 
@@ -1065,11 +1068,12 @@ class CSpecMkts
 				 WHERE cur='".$cur."' 
 				   AND fsm.adr IN (SELECT adr 
 				                     FROM my_adr 
-									WHERE userID='".$_REQUEST['ud']['ID']."')";
+									WHERE userID='".$_REQUEST['ud']['ID']."') 
+				   AND fsm.type='".$type."'";
 				 
 		$result=$this->kern->execute($query);	
+	
 	 
-	  
 		?>
            
            <table class="table-responsive" width="90%">
@@ -1121,8 +1125,17 @@ class CSpecMkts
 	
 	function showPanel($mktID)
 	{
-		$query="SELECT * 
-		          FROM feeds_spec_mkts 
+		$query="SELECT fsm.*, 
+		               fb_1.val AS price_1, 
+					   fb_2.val AS price_2, 
+					   fb_3.val AS price_3
+		          FROM feeds_spec_mkts AS fsm
+				  LEFT JOIN feeds_branches AS fb_1 ON (fb_1.feed_symbol=fsm.feed_1 AND 
+				                                       fb_1.symbol=fsm.branch_1)
+				  LEFT JOIN feeds_branches AS fb_2 ON (fb_2.feed_symbol=fsm.feed_2 AND 
+				                                       fb_2.symbol=fsm.branch_2)
+				  LEFT JOIN feeds_branches AS fb_3 ON (fb_3.feed_symbol=fsm.feed_3 AND 
+				                                       fb_3.symbol=fsm.branch_3)
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -1271,13 +1284,16 @@ class CSpecMkts
 	} 
 	
 	
-	
-	
 	function showTradeButs($mktID)
 	{
+		// Logged in ?
+		if (!isset($_REQUEST['ud']['ID'])) return false;
+		
 		// Load data
-		$query="SELECT * 
-		          FROM feeds_spec_mkts 
+		$query="SELECT*
+		          FROM feeds_spec_mkts AS fsm
+				  JOIN feeds_branches AS feed_1 ON (feed_1.feed_symbol=fsm.feed_1 
+				                                    AND feed_1.symbol=fsm.branch_1)
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -1288,8 +1304,15 @@ class CSpecMkts
         <table width="90%">
         <tr>
         
-        <td width="90%">&nbsp;</td>
+        <td width="90%"><a target="_blank" href="../feeds/chart.php?symbol=<? print $row['rl_symbol']; ?>" class="btn btn-default">Pro Chart</a></td>
         <td width="10%">
+        
+        <?
+	
+		   if ($row['mkt_status']=="online")
+		   {
+		?>
+        
         <a href="javascript:void(0)" onClick="$('#trade_modal').modal(); 
                                               $('#h_type').val('ID_BUY'); 
                                               $('#td_price').css('color', '#009900');
@@ -1310,6 +1333,12 @@ class CSpecMkts
                                               init();" class="btn btn-small btn-danger">
         <span class="glyphicon glyphicon-minus-sign"></span>&nbsp;&nbsp;Sell
         </a>
+        
+        <?
+		   }
+		   else print "<span class=\"label label-danger\">Trading Halted</span>";
+		?>
+        
         </td>
         
         </tr>
@@ -1849,12 +1878,23 @@ class CSpecMkts
 		$this->showChangeModal();
 		
 		if ($target=="all")
-		$query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
-		          FROM feeds_spec_mkts_pos AS fsmp 
-				  JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
-				 WHERE fsm.mktID='".$mktID."' 
-				   AND fsmp.status='".$status."'
-			 ORDER BY fsmp.ID DESC LIMIT 0,25";
+		{
+			if ($mktID>0)
+		    $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
+		              FROM feeds_spec_mkts_pos AS fsmp 
+				      JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+				     WHERE fsm.mktID='".$mktID."' 
+				       AND fsmp.status='".$status."'
+			      ORDER BY fsmp.pl DESC 
+			         LIMIT 0,25";
+			else
+			 $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
+		              FROM feeds_spec_mkts_pos AS fsmp 
+				      JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+				     WHERE fsmp.status='".$status."'
+			      ORDER BY fsmp.pl DESC 
+			         LIMIT 0,25";
+		}
 		
 		if ($target=="mine")
 		{
@@ -1867,7 +1907,8 @@ class CSpecMkts
 				           AND fsmp.adr IN (SELECT adr 
 				                              FROM my_adr 
 							                 WHERE userID='".$_REQUEST['ud']['ID']."'
-				      ORDER BY fsmp.ID DESC LIMIT 0,25";
+				      ORDER BY fsmp.ID DESC 
+					     LIMIT 0,25";
 		   else
 		       $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
 		                 FROM feeds_spec_mkts_pos AS fsmp 
@@ -1876,19 +1917,22 @@ class CSpecMkts
 				          AND fsmp.adr IN (SELECT adr 
 				                             FROM my_adr 
 							                WHERE userID='".$_REQUEST['ud']['ID']."')
-					 ORDER BY fsmp.ID DESC LIMIT 0,25";
+					 ORDER BY fsmp.ID DESC 
+					    LIMIT 0,25";
 		}
 		
 		$result=$this->kern->execute($query);	
 	    
 		if (mysql_num_rows($result)==0)
 		{
-		   print "<div class='font_14' style='color:$990000'>No positions found</div>";
+		   print "<br><div class='font_14' style='color:#990000'>No positions found</div>";
 		   return false;
 		}
 		
 		?>
            
+           <br>
+           <div align="left"><span class="font_18">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open Positions</span></div>
            <br>
            <table class="table-responsive" width="90%">
            <thead bgcolor="#f9f9f9">
@@ -2007,7 +2051,7 @@ class CSpecMkts
 				 ?>
                  
                        <td class="font_16" width="10%">
-                       <a href="market.php?ID=<? print $row['mktID']; ?>" class='btn btn-warning btn-sm' style="color:#000000">Story</a>
+                       <a href="../../assets/margin_mkts/story.php?posID=<? print $row['posID']; ?>" class='btn btn-warning btn-sm' style="color:#000000">Story</a>
                        </td>
                 
                 <?
@@ -2078,7 +2122,7 @@ class CSpecMkts
         <?
 	}
 	
-	function showChart($feed, $branch, $start_block, $end_block, $spread=0)
+	function showChart($feed, $branch, $start_block, $end_block, $open=0)
 	{
 		$query="SELECT COUNT(*) AS total
 		          FROM feeds_data 
@@ -2118,8 +2162,8 @@ class CSpecMkts
 		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{
 			  $a++;
-			  if ($a==1) 
-			     print "['', ".($row['val']+$spread)."],";
+			  if ($a==1 && $open!=0) 
+			     print "['', ".($open)."],";
 			  else
 			     print "['', ".$row['val']."],";
 			}
@@ -2239,16 +2283,11 @@ class CSpecMkts
            
            
            <?
-		       if ($row['tip']=="ID_BUY")
-			      $spread=$row['spread'];
-			   else
-			      $spread=-$row['spread'];
-				  
 		       $this->showChart($row['feed_1'], 
 			                   $row['branch_1'], 
 							   $row['block'], 
 							   $row['last_block'], 
-							   $spread);
+							   $row['open']);
 							   
 		   ?>
            
@@ -2320,6 +2359,20 @@ class CSpecMkts
         <?
 		 
 		$this->template->showStreaming("get_pos", $row['posID']);
+	}
+	
+	function showMktChart($mktID)
+	{
+		$query="SELECT * 
+		          FROM feeds_spec_mkts 
+				 WHERE mktID='".$mktID."'"; 
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
+		$this->showChart($row['feed_1'], 
+		                 $row['branch_1'], 
+						 $_REQUEST['sd']['last_block']-50000, 
+						 $_REQUEST['sd']['last_block']);
 	}
 	
 }

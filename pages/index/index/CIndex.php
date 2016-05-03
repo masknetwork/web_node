@@ -59,8 +59,7 @@
 		$query="SELECT fsmp.*, fsm.real_symbol  
 		          FROM feeds_spec_mkts_pos AS fsmp
 				  JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
-				 WHERE fsmp.block>".($_REQUEST['sd']['last_block']-5000)." 
-				   AND fsmp.status='ID_MARKET' 
+				 WHERE fsmp.status='ID_MARKET' 
 				ORDER BY ROUND(pl*100/margin) DESC 
 			     LIMIT 0,5"; 
 	    $result=$this->kern->execute($query);	

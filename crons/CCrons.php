@@ -55,5 +55,86 @@ class CCrons
 			}
 		}
 	}
+	
+	function checkDirApp()
+	{
+		$query="SELECT * FROM agents_categs";
+		$result=$this->kern->execute($query);	
+		
+	    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		{
+			if ($row['categID']=="ID_ALL")
+			   $query="SELECT COUNT(*) AS no
+			             FROM agents 
+						WHERE status='ID_ONLINE'
+						  AND dir>0";
+		    else
+			   $query="SELECT COUNT(*) AS no
+			             FROM agents 
+						WHERE status='ID_ONLINE'
+						  AND categ='".$row['categID']."'
+						  AND dir>0";
+		    // Load
+			$res=$this->kern->execute($query);
+			
+			// Number
+			$r = mysql_fetch_array($res, MYSQL_ASSOC);
+			$no=$r['no'];
+			
+			// Update
+			$query="UPDATE agents_categs 
+			           SET dir_no='".$no."' 
+					 WHERE categID='".$row['categID']."'"; 
+			$this->kern->execute($query);
+		}
+	}
+	
+	function checkMktApp()
+	{
+		$query="SELECT * FROM agents_categs";
+		$result=$this->kern->execute($query);	
+		
+	    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		{
+			if ($row['categID']=="ID_ALL")
+			   $query="SELECT COUNT(*) AS no
+			             FROM agents 
+						WHERE status='ID_ONLINE'
+						  AND price>0";
+		    else
+			   $query="SELECT COUNT(*) AS no
+			             FROM agents 
+						WHERE status='ID_ONLINE'
+						  AND categ='".$row['categID']."'
+						  AND price>0";
+		    // Load
+			$res=$this->kern->execute($query);
+			
+			// Number
+			$r = mysql_fetch_array($res, MYSQL_ASSOC);
+			$no=$r['no'];
+			
+			// Update
+			$query="UPDATE agents_categs 
+			           SET mkt_no='".$no."' 
+					 WHERE categID='".$row['categID']."'"; 
+			$this->kern->execute($query);
+		}
+	}
+	
+	function runCrons()
+	{
+		// Check trending app
+		$this->checkTrending();
+		
+		// Check dir app
+		$this->checkDirApp();
+		
+		// Check makret app
+		$this->checkMktApp();
+		
+		// Print
+		print "Done.";
+	}
 }
 ?>

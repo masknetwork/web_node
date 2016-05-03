@@ -83,6 +83,7 @@
 	                    $_REQUEST['feed_symbol'], 
 						$_REQUEST['txt_branch_name'], 
 						$_REQUEST['txt_branch_desc'], 
+						$_REQUEST['dd_branch_type'], 
 						$_REQUEST['txt_branch_rl'], 
 						$_REQUEST['txt_branch_symbol'], 
 						$_REQUEST['txt_branch_fee'], 

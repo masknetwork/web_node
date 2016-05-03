@@ -10,12 +10,12 @@ class CStore
 	function newStore($net_fee_adr, 
 	                  $adr, 
 					  $name, 
-					  $description, 
+					  $desc, 
 					  $website, 
 					  $pic,
 					  $days)
 	{
-		// Decode
+		 // Decode
 		 $name=base64_decode($name);
 		 $desc=base64_decode($desc);
 		 $website=base64_decode($website);
@@ -31,7 +31,7 @@ class CStore
 		 // Feed address
 		 if ($this->kern->adrValid($adr)==false)
 		 {
-			$this->template->showErr("Invalid asset address");
+			$this->template->showErr("Invalid address");
 			return false;
 		 }
 		 
@@ -61,26 +61,30 @@ class CStore
 		 }
 		 
 		 // Description
-		 if (strlen($desc)>1000)
+		 if (strlen($desc)<10 || strlen($desc)>1000)
 		 {
-			 $this->template->showErr("Invalid name length (5-50 characters)");
+			 $this->template->showErr("Invalid description length (5-50 characters)");
 			 return false;
 		 }
 		 
 		 // Website
 		 if ($website!="")
 		 {
-		   if ($this->kern->isLink($website)==false)
-		   {
+			// Starts with http ?
+			if (substr($website, 0, 7)!="http://")
+			   $website="http://".$website;
+			
+		    if ($this->kern->isLink($website)==false)
+		    {
 			   $this->template->showErr("Invalid website link");
 			   return false;
-		   }
+		    }
 		 }
 		 
 		 // Pic
 		 if ($pic!="")
 		 {
-		   if ($this->template->isPicLink($pic)==false)
+		   if ($this->kern->isPic($pic)==false)
 		   {
 			   $this->template->showErr("Invalid pic");
 			   return false;
@@ -114,11 +118,11 @@ class CStore
 								par_4='".base64_encode($pic)."',
 								days='".$days."',
 								status='ID_PENDING', 
-								tstamp='".time()."'"; print $query;
+								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
 		 
 		   // Commit
-		   $this->kern->rollback();
+		   $this->kern->commit();
 		   
 		   // Confirm
 		   $this->template->showOk("Your request has been succesfully recorded");
@@ -547,41 +551,34 @@ class CStore
                         <td width="28%" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td align="center"><img src="../GIF/papers.png" width="130" height="106" alt=""/></td>
+                              <td align="center"><img src="GIF/general.png" width="180" alt=""/></td>
                             </tr>
                             <tr>
-                              <td height="30" align="center" class="simple_maro_16"><strong class="simple_red_16">General Data</strong></td>
+                              <td height="30" align="center" class="font_18"><strong class="font_18">General Data</strong></td>
                             </tr>
                           </tbody>
                         </table></td>
                         <td width="72%" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14">Net Fee Address</td>
+                              <td height="30" valign="top" class="font_14"><strong>Net Fee Address</strong></td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14"><? $this->template->showMyAdrDD("dd_net_fee_adr"); ?></td>
+                              <td height="30" valign="top" class="font_14"><? $this->template->showMyAdrDD("dd_net_fee_adr"); ?></td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14">&nbsp;</td>
+                              <td height="30" valign="top" class="font_14">&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14">Item address</td>
+                              <td height="30" valign="top" class="font_14">&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14"><? $this->template->showMyAdrDD("dd_adr"); ?></td>
-                            </tr>
-                            <tr>
-                              <td height="30" valign="top" class="simple_maro_14">&nbsp;</td>
-                            </tr>
-                            <tr>
-                              <td height="30" valign="top" class="simple_maro_14">Main Category</td>
+                              <td height="30" valign="top" class="font_14"><strong>Main Category</strong></td>
                             </tr>
                             <tr>
                               <td>
                               <select id="dd_categ" name="dd_categ" class="form-control">
-                              <option value="ID_ANTIQUES">Antiques</option>
-                              <option value="ID_ART">Art</option>
+                              <option value="ID_ANTIQUES">Antiques & Art</option>
                               <option value="ID_BABY">Baby</option>
                               <option value="ID_BOOKS">Books, Comics and Magazines</option>
                               <option value="ID_BUSINESS">Business, Office & Industrial</option>
@@ -622,7 +619,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Sub-Category</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Sub-Category</strong></span></td>
                             </tr>
                             <tr>
                               <td>
@@ -653,7 +650,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Title</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Title</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_title" name="txt_title" placeholder="Title (5-50 characters)"></td>
@@ -662,7 +659,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Description</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Description</strong></span></td>
                             </tr>
                             <tr>
                               <td><textarea id="txt_desc" name="txt_desc" placeholder="Description" rows="5" class="form-control"></textarea></td>
@@ -671,7 +668,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Web Page</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Web Page</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_webpage" name="txt_webpage" placeholder="Title (5-50 characters)"></td>
@@ -680,7 +677,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Internal ID</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Internal ID</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_internal_ID" name="txt_internal_ID" placeholder="Title (5-50 characters)"></td>
@@ -689,7 +686,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Visibility</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Visibility</strong></span></td>
                             </tr>
                             <tr>
                               <td><select id="dd_delivery_reg2" name="dd_delivery_reg2" class="form-control">
@@ -702,7 +699,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Countries</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Countries</strong></span></td>
                             </tr>
                             <tr>
                               <td><textarea id="txt_delivery_reg2" name="txt_delivery_reg2" placeholder="Description" rows="5" class="form-control"></textarea></td>
@@ -717,7 +714,7 @@ class CStore
                         <td colspan="2" align="center">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td colspan="2" align="center" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="2" align="center"><hr></td>
                       </tr>
                       <tr>
                         <td colspan="2" align="center">&nbsp;</td>
@@ -726,17 +723,17 @@ class CStore
                         <td align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                               <tr>
-                                <td align="center"><img src="../GIF/photo_cam.png" width="130" height="110" alt=""/></td>
+                                <td align="center"><img src="GIF/pics.png" width="180" alt=""/></td>
                               </tr>
                               <tr>
-                                <td height="30" align="center" class="simple_maro_16"><strong class="simple_red_16">Pics</strong></td>
+                                <td height="30" align="center" class="font_18"><strong class="font_18">Pics</strong></td>
                               </tr>
                             </tbody>
                         </table></td>
                         <td align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14">Pic 1 </td>
+                              <td height="30" valign="top" class="font_14"><strong>Pic 1 </strong></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_pic_1" name="txt_pic_1" placeholder="Pic (web link, max 1 Mb)"></td>
@@ -745,7 +742,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Pic 2</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Pic 2</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_pic_2" name="txt_pic_2" placeholder="Pic (web link, max 1 Mb)"></td>
@@ -754,7 +751,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Pic 3</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Pic 3</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_pic_3" name="txt_pic_3" placeholder="Title (5-50 characters)"></td>
@@ -763,7 +760,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Pic 4</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Pic 4</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_pic_4" name="txt_pic_4" placeholder="Pic (web link, max 1 Mb)"></td>
@@ -772,7 +769,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Pic 5</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Pic 5</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_pic_5" name="txt_pic_5" placeholder="Title (5-50 characters)"></td>
@@ -787,7 +784,7 @@ class CStore
                         <td colspan="2" align="center">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td colspan="2" align="center" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="2" align="center"><hr></td>
                       </tr>
                       <tr>
                         <td colspan="2" align="center">&nbsp;</td>
@@ -795,17 +792,17 @@ class CStore
                         <td align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                               <tr>
-                                <td align="center"><img src="../GIF/location.png" width="130" height="129" alt=""/></td>
+                                <td align="center"><img src="GIF/location.png" width="180" alt=""/></td>
                               </tr>
                               <tr>
-                                <td height="30" align="center" class="simple_maro_16"><strong class="simple_red_16">Location</strong></td>
+                                <td height="30" align="center" class="font_18"><strong class="font_18">Location</strong></td>
                               </tr>
                             </tbody>
                         </table></td>
                         <td align="center"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14">Item Location - Country</td>
+                              <td height="30" valign="top" class="font_14"><strong>Item Location - Country</strong></td>
                             </tr>
                             <tr>
                               <td>
@@ -820,7 +817,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Item Location - Town</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Item Location - Town</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_town" name="txt_town" placeholder="Pic (web link, max 1 Mb)"></td>
@@ -829,7 +826,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Delivery </span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Delivery</strong></span></td>
                             </tr>
                             <tr>
                               <td>
@@ -844,7 +841,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Delivery Regions</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Delivery Regions</strong></span></td>
                             </tr>
                             <tr>
                               <td><textarea id="txt_delivery_reg" name="txt_delivery_reg" placeholder="Description" rows="5" class="form-control"></textarea></td>
@@ -859,7 +856,7 @@ class CStore
                         <td colspan="2" align="center">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td colspan="2" align="center" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="2" align="center"><hr></td>
                       </tr>
                       <tr>
                         <td colspan="2" align="center">&nbsp;</td>
@@ -868,17 +865,17 @@ class CStore
                         <td align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                               <tr>
-                                <td align="center"><img src="../GIF/misc.png" width="130" height="122" alt=""/></td>
+                                <td align="center"><img src="GIF/delivery.png" width="180" alt=""/></td>
                               </tr>
                               <tr>
-                                <td height="30" align="center" class="simple_maro_16"><strong class="simple_red_16">Delivery</strong></td>
+                                <td height="30" align="center" class="font_18"><strong class="font_18">Shipping </strong></td>
                               </tr>
                             </tbody>
                         </table></td>
                         <td align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td height="30" valign="top" class="simple_maro_14">Condition</td>
+                              <td height="30" valign="top" class="font_14"><strong>Condition</strong></td>
                             </tr>
                             <tr>
                               <td><select id="dd_condition" name="dd_condition" class="form-control">
@@ -891,7 +888,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Delivery</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Ships</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_delivery" name="txt_delivery" placeholder="Dispatched within 1 day"></td>
@@ -900,7 +897,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Postage</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Postage</strong></span></td>
                             </tr>
                             <tr>
                               <td><input class="form-control" id="txt_postage" name="txt_postage" placeholder="$10 Royal Mail International Signed"></td>
@@ -909,7 +906,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Return policy</span></td>
+                              <td height="30" valign="top"><span class="font_14"><strong>Return policy</strong></span></td>
                             </tr>
                             <tr>
                               <td><textarea id="txt_return_policy" name="txt_return_policy" placeholder="14 days refund, buyer pays return postage" rows="5" class="form-control"></textarea></td>
@@ -924,7 +921,7 @@ class CStore
                         <td colspan="2" align="center">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td colspan="2" align="center" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="2" align="center"><hr></td>
                       </tr>
                       <tr>
                         <td colspan="2" align="center">&nbsp;</td>
@@ -933,10 +930,10 @@ class CStore
                         <td align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                               <tr>
-                                <td align="center"><img src="../GIF/money.png" width="130" height="108" alt=""/></td>
+                                <td align="center"><img src="GIF/price.png" width="180" alt=""/></td>
                               </tr>
                               <tr>
-                                <td height="30" align="center" class="simple_maro_16"><strong class="simple_red_16">Price</strong></td>
+                                <td height="30" align="center" class="font_18"><strong class="font_18">Price</strong></td>
                               </tr>
                           </tbody>
                         </table></td>
@@ -946,9 +943,9 @@ class CStore
                               <td height="30" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                   <tr>
-                                    <td width="33%" valign="top"><span class="simple_maro_14">Price (USD)</span></td>
-                                    <td width="33%" height="30" valign="top"><span class="simple_maro_14">Market Bid</span></td>
-                                    <td width="33%" height="30" valign="top"><span class="simple_maro_14">Market Days</span></td>
+                                    <td width="33%" valign="top"><span class="font_14">Price (USD)</span></td>
+                                    <td width="33%" height="30" valign="top"><span class="font_14">Market Bid</span></td>
+                                    <td width="33%" height="30" valign="top"><span class="font_14">Market Days</span></td>
                                     </tr>
                                   <tr>
                                     <td><input class="form-control" id="txt_price2" name="txt_price2" placeholder="0.00" style="width:100px"></td>
@@ -962,7 +959,7 @@ class CStore
                               <td>&nbsp;</td>
                             </tr>
                             <tr>
-                              <td height="30" valign="top"><span class="simple_maro_14">Escrowing Policy</span></td>
+                              <td height="30" valign="top"><span class="font_14">Escrowing Policy</span></td>
                             </tr>
                             <tr>
                               <td>
@@ -980,7 +977,7 @@ class CStore
                               <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                   <tr>
-                                    <td height="30" align="left" valign="top"><span class="simple_maro_14">Escrower 1</span></td>
+                                    <td height="30" align="left" valign="top"><span class="font_14">Escrower 1</span></td>
                                   </tr>
                                   <tr>
                                     <td align="left">
@@ -990,7 +987,7 @@ class CStore
                                     <td align="left">&nbsp;</td>
                                   </tr>
                                   <tr>
-                                    <td height="30" align="left" valign="top"><span class="simple_maro_14">Escrower 2</span></td>
+                                    <td height="30" align="left" valign="top"><span class="font_14">Escrower 2</span></td>
                                   </tr>
                                   <tr>
                                     <td align="left">
@@ -1000,7 +997,7 @@ class CStore
                                     <td align="left">&nbsp;</td>
                                   </tr>
                                   <tr>
-                                    <td height="30" align="left" valign="top"><span class="simple_maro_14">Escrower 3</span></td>
+                                    <td height="30" align="left" valign="top"><span class="font_14">Escrower 3</span></td>
                                   </tr>
                                   <tr>
                                     <td align="left">
@@ -1025,6 +1022,7 @@ class CStore
                     </tbody>
                   </table>
                   </form>
+                  <br><br><br>
              
                   
         <?
@@ -1033,7 +1031,7 @@ class CStore
 	
 	 function showNewStoreModal()
 	 {
-		$this->template->showModalHeader("modal_new_store", "New Store", "act", "new_store", "opt", "");
+		$this->template->showModalHeader("modal_new_store", "New Store", "act", "new_store");
 		?>
         
           <table width="610" border="0" cellspacing="0" cellpadding="0">
@@ -1072,7 +1070,8 @@ class CStore
                 <td height="30" align="left" valign="top" class="font_14"><strong>Store Name</strong></td>
               </tr>
               <tr>
-                <td align="left"><input class="form-control" id="txt_new_store_name" name="dd_new_store_name" placeholder="Feed Name (5-30 characters)" style="width:350px"/></td>
+                <td align="left">
+                <input class="form-control" id="txt_new_store_name" name="txt_new_store_name" placeholder="Feed Name (5-30 characters)" style="width:350px"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -1082,7 +1081,7 @@ class CStore
               </tr>
               <tr>
                 <td align="left">
-                <textarea rows="3" id="dd_new_store_desc" name="txt_new_store_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:350px"></textarea>
+                <textarea rows="3" id="txt_new_store_desc" name="txt_new_store_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:350px"></textarea>
                 </td>
               </tr>
               
@@ -1097,8 +1096,8 @@ class CStore
                         <td width="51%" valign="top"><strong>Pic</strong></td>
                       </tr>
                       <tr>
-                        <td><input class="form-control" id="txt_new_store_website" name="dd_new_store_website" placeholder="Website address" style="width:90%"/></td>
-                        <td><input class="form-control" id="txt_new_store_pic" name="dd_new_store_pic" placeholder="Website address" style="width:90%"/></td>
+                        <td><input class="form-control" id="txt_new_store_website" name="txt_new_store_website" placeholder="Website address" style="width:90%"/></td>
+                        <td><input class="form-control" id="txt_new_store_pic" name="txt_new_store_pic" placeholder="Website address" style="width:90%"/></td>
                       </tr>
                     </tbody>
                 </table></td>
@@ -1147,6 +1146,172 @@ class CStore
                 </tr>
               </tbody>
             </table>
+        
+        <?
+	}
+	
+	function showNewProdBut()
+	{
+		$this->showNewStoreModal();
+		?>
+        
+           <table width="95%" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+                  <td width="100%" align="right">
+                  <a href="new_prod.php" class="btn btn-primary">
+                  <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;New Product</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        
+        <?
+	}
+	
+	function showStorePanel($storeID, $name, $desc, $pic)
+	{
+		?>
+        
+           <div class="panel panel-default">
+           <div class="panel-body font_14" align="center">
+           <table>
+           <tr><td align="center" valign="top" height="160px">
+           <img src="<? if ($pic!="") print "../../../crop.php?src=".base64_decode($pic)."&w=150"; else print "../../template/template/GIF/empty_pic.png\" width='150px'"; ?>"  class="img-responsive img-rounded">
+           </td></tr>
+           
+           <tr><td align="left" class="font_14"><strong>
+           <? print ucfirst(base64_decode($name)); ?>
+           </strong></td></tr>
+           
+           <tr><td align="left" class="font_12" height="80px" valign="top">
+           <? print substr(base64_decode($desc), 0, 75)."..."; ?>
+           </td></tr>
+           
+           <tr><td align="left" class="font_12" height="50px" valign="bottom">
+           <a href="store_products.php?ID=<? print $storeID; ?>" class="btn btn-sm btn-primary" style="width:100%">Manage</a>
+           </td></tr>
+           
+           </table>
+           </div>
+           </div>
+        
+        <?
+	}
+	
+	function showMyStores()
+	{
+		$query="SELECT * 
+		          FROM shop_stores 
+				 WHERE adr IN (SELECT adr 
+				                 FROM my_adr 
+								WHERE userID='".$_REQUEST['ud']['ID']."')";
+				   
+		$result=$this->kern->execute($query);	
+	    
+		// No results
+		if (mysql_num_rows($result)==0)
+		{
+			print "<br><p class='font_14' style='color:#990000'>No results found</p><br><br>";
+			return false;
+		}
+		
+		// App no
+		$no=mysql_num_rows($result);
+		
+		// Lines
+		$lines=floor($no/4)+1;
+		
+		?>
+           
+           <br>
+           <table width="95%" class="table-responsive">
+           
+           <?
+		       $a=0;
+		       for ($l=1; $l<=$lines; $l++)
+			   {
+				  // Row
+				  print "<tr>";
+				  
+				  // Increase pos
+				  $a++;
+				  
+				  // Display
+				  if ($a<=$no)
+				  { 
+				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     print "<td width='23%' align=center'>";
+					 $this->showStorePanel($row['aID'], $row['name'], $row['description'], $row['pic']);
+					 print "</td>";
+				  }
+				  else
+				  {
+				     print "<td width='23%' align=center'>&nbsp;</td>";
+				  }
+				  
+				  // Space
+				  print "<td width='3%' align=center'>&nbsp;</td>";
+				  
+			      // Increase pos
+				  $a++;
+				  
+				  // Display
+				   if ($a<=$no)
+				   { 
+				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     print "<td width='23%' align=center'>";
+					 $this->showStorePanel($row['aID'], $row['name'], $row['description'], $row['pic']);
+					 print "</td>";
+				  }
+				  else
+				  {
+				     print "<td width='23%' align=center'>&nbsp;</td>";
+				  }
+				  
+				  // Space
+				  print "<td width='3%' align=center'>&nbsp;</td>";
+					 
+				  // Increase pos
+				  $a++;
+				  
+				  // Display
+				   if ($a<=$no)
+				   { 
+				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     print "<td width='23%' align=center'>";
+					 $this->showStorePanel($row['aID'], $row['name'], $row['description'], $row['pic']);
+					 print "</td>";
+				  }
+				  else
+				  {
+				     print "<td width='23%' align=center'>&nbsp;</td>";
+				  }
+				  
+				  // Space
+				  print "<td width='3%' align=center'>&nbsp;</td>";
+					 
+				  // Increase pos
+				  $a++;
+				  
+				  // Display
+				   if ($a<=$no)
+				   { 
+				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     print "<td width='23%' align=center'>";
+					 $this->showStorePanel($row['aID'], $row['name'], $row['description'], $row['pic']);
+					 print "</td>";
+				  }
+				  else
+				  {
+				     print "<td width='23%' align=center'>&nbsp;</td>";
+				  }
+					 
+			      // Row
+				  print "</tr><tr><td colspan='6'>&nbsp;</td></tr>";
+			   }
+           ?>
+           </table>
         
         <?
 	}

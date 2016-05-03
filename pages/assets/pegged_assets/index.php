@@ -6,11 +6,13 @@
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
    include "CMktPeggedAssets.php";
+   include "../CAssets.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
+   $as=new CAssets($db, $template);
    $assets=new CMktPeggedAssets($db, $template);
 ?>
 
@@ -78,8 +80,15 @@
 	 // Help
 	 $template->showHelp("MaskNetwork market pegged assets are a new type of freely traded digital asset whose value is meant to track the value of a conventional asset such as the U.S. dollar or gold. While Bitcoin has demonstrated many useful properties as a currency, its price volatility makes it risky to hold, especially for merchants. A currency with the properties and advantages of Bitcoin that maintains price parity with a globally adopted currency such as the US dollar has high utility for merchants because they eliminate the volatility risk. Market pegged assets are not limited to stablle currencies like USD. Any user can launch a market pegged token, linked to any real life asset like Apple shares or Bitcoin. Below are listed the available market pegged assets.");
 	 
+	 // Target
+	 if (!isset($_REQUEST['target']))
+	    $_REQUEST['target']="ID_CRYPTO";
+	 
+	 // Categ
+	 $as->showSelector($_REQUEST['target']);
+	 
 	// Show assets
-	$assets->showAssets();
+	$assets->showAssets($_REQUEST['target']);
 	
 	
  ?>

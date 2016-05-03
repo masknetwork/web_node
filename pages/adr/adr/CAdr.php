@@ -232,7 +232,26 @@ class CMyAdr
                         <table width="110" border="0" cellspacing="0" cellpadding="0">
                           <tbody>
                             <tr>
-                              <td><a class="btn btn-sm btn-warning" href="../options/index.php?ID=<? print $row['ID']; ?>">Options</a></td>
+                              <td>
+                              
+							  <?
+							      $query="SELECT * 
+								            FROM agents 
+										   WHERE adr='".$row['adr']."'";
+								  $res=$this->kern->execute($query);	
+	                               
+								  if (mysql_num_rows($res)>0)   
+								  {
+									  // Load data
+									  $r = mysql_fetch_array($res, MYSQL_ASSOC);
+									  
+									  // Display
+                                      print "<a class=\"btn btn-sm btn-danger\" href='../../app/directory/app.php?ID=".$r['aID']."' style='width:75px'><span class='glyphicon glyphicon-cog'></span>&nbsp;&nbsp;App</a></td>";
+								  }
+								  else
+								      print "<a class=\"btn btn-sm btn-warning\" href='../options/index.php?ID=".$row['ID']."'>Options</a></td>";
+                              ?>
+                              
                               <td>&nbsp;</td>
                               <td><a href="#" class="btn btn-sm btn-default" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()"><span class="glyphicon glyphicon-qrcode"></span></a></td>
                             </tr>

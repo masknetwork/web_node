@@ -73,12 +73,12 @@
 	                    "../goods/index.php", "Phisical Goods", "",
 	                    "../digital/index.php", "Digital Goods", "",
 						"../services/index.php", "Services", "",
-						"../store/index.php", "My Store", "",
+						"../store/index.php", "My Stores", "",
 						"../cart/index.php", "Cart", "");
 	 
 	 
 	print "<br>";
-	$template->showErr("This section will be launched on Mars, 20, 2016");
+	 $template->showErr("This section will be launched soon");
 	
  ?>
  </div>

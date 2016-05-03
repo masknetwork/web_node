@@ -773,21 +773,24 @@ class CMktPeggedAssets
 		
 	}
 	
-	function showAssets($search="", $cur="MSK")
+	function showAssets($target, $search="", $cur="MSK")
 	{
 		$query="SELECT ass.*, 
 		               adr.balance, 
 					   fam.cur, 
-					   ao.qty AS balance_asset
+					   ao.qty AS balance_asset,
+					   fb.type
 		          FROM assets AS ass
 				  JOIN adr ON adr.adr=ass.adr
-				  JOIN feeds_assets_mkts AS fam ON adr.adr=ass.adr
+				  JOIN feeds_assets_mkts AS fam ON fam.adr=ass.adr
+				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fam.feed_1 AND fb.symbol=fam.branch_1)
 			 LEFT JOIN assets_owners AS ao ON (ao.owner=ass.adr AND ao.symbol=fam.cur)
 				 WHERE linked_mktID>0 
+				 AND fb.type='".$target."'
 			  ORDER BY ID DESC 
 			     LIMIT 0,25"; 
 		$result=$this->kern->execute($query);	
-	 
+	
 	  
 		?>
            
@@ -847,7 +850,7 @@ class CMktPeggedAssets
 		$query="SELECT ass.*, adr.balance, fam.cur 
 		          FROM assets AS ass
 				  JOIN adr ON adr.adr=ass.adr
-				  JOIN feeds_assets_mkts AS fam ON adr.adr=ass.adr
+				  JOIN feeds_assets_mkts AS fam ON fam.adr=ass.adr
 				 WHERE linked_mktID>0 
 				   AND ass.adr IN (SELECT adr 
 				                     FROM my_adr 

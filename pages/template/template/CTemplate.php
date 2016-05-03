@@ -6,6 +6,40 @@ class CTemplate
 	   $this->kern=$db;	
 	}
 	
+	function showProfile()
+	{
+		if ($_REQUEST['ud']['ID']>0)
+		{
+		?>
+            
+            <br>
+            <div class="panel panel-default">
+            <div class="panel-body">
+  
+            <table width="100%">
+            <tr><td colspan="2"><img src="../../template/template/GIF/empty_profile.png" class="img img-rounded img-responsive" width="100%"></td></tr>
+            <tr><td>&nbsp;</td></tr>
+            <tr><td bgcolor="#fafafa" width="75%" class="font_14" align="center"><? print $_REQUEST['ud']['user']; ?></td>
+            <td>
+            
+           <div class="btn-group">
+           <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           <span class="glyphicon glyphicon-cog"></span>
+          </button>
+          <ul class="dropdown-menu">
+          <li><a href="../../../index.php?act=logout">Logout</a></li>
+          <li><a href="../../profile/profile/index.php">Profile</a></li>
+          </ul>
+          </div></td></tr>
+          </table>
+             
+            </div>
+            </div>
+           
+        
+        <?
+		}
+	}
 	
 	function showMyAdrDD($name="txt_adr", $width=300, $selected="")
 	{
@@ -14,6 +48,11 @@ class CTemplate
 			  LEFT JOIN adr ON ma.adr=adr.adr
 			  LEFT JOIN domains AS dom ON dom.adr=ma.adr
 			      WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+				    AND ma.adr NOT IN (SELECT adr 
+				                         FROM agents 
+										WHERE adr IN (SELECT adr 
+										                FROM adr 
+													   WHERE userID='".$_REQUEST['ud']['ID']."'))
 			   ORDER BY balance DESC"; 
 		 $result=$this->kern->execute($query);	
 	  
@@ -179,19 +218,6 @@ class CTemplate
              </tr>
            </table></td>
            <td width="400" align="center"><table width="90%" border="0" cellspacing="0" cellpadding="5">
-             <tr>
-               <td height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">
-               <?
-			      $this->showMyAdrDD("dd_net_fee");
-			   ?>
-               </td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
-             </tr>
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px"><strong>From Address</strong></td>
              </tr>
@@ -417,10 +443,16 @@ class CTemplate
 	
 	function showAds()
 	{
+		// Profile panel
+		$this->showProfile();
+		
 		$this->showAdsModal();
 	
 		?>
         
+              <br>
+              <table><tr>
+                <td><a href="http://www.cryptotalk.net"><img src="../../template/template/GIF/forums.png" class="img img-responsive img-rounded" width="100%"></a></td></tr></table>
               <br>
               <table width="180" border="0" cellspacing="0" cellpadding="0">
                
@@ -516,7 +548,8 @@ class CTemplate
 	{
 		?>
             
-          
+           
+           <br>
            <table width="90%" id="tab_alert">
            <tr><td>
            <div class="alert alert-success alert-dismissible" role="alert">
@@ -544,8 +577,7 @@ class CTemplate
             
            <table width="90%" id="tab_alert">
            <tr><td>
-           <div class="alert alert-danger alert-dismissible" role="alert">
-           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+           <div class="alert alert-danger alert-dismissible font_14" role="alert">
            <? print $mes; ?>
            </div>
            </td></tr>
@@ -554,10 +586,10 @@ class CTemplate
            
            <script>
 		   window.setTimeout(function() {
-           $("#tab_alert").fadeTo(500, 0).slideUp(10, function(){
+           $("#tab_alert").fadeTo(2000, 0).slideUp(10, function(){
            $(this).remove(); 
            });
-           }, 1000);
+           }, 2000);
 		   </script>
         
         <?
@@ -583,14 +615,12 @@ class CTemplate
            
             <table width="580" border="0" cellspacing="0" cellpadding="0">
             <tr>
-            <td width="147" align="center"><img src="../../template/template/GIF/trash.png" width="116" height="181" /></td>
+            <td width="147" align="center"><img src="../../template/template/GIF/confirm.png" width="150" height="150" alt=""/></td>
             <td width="443" align="right" valign="top"><table width="95%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left" class="simple_blue_18"><strong><? print $question; ?></strong></td>
               </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
+             
               <tr>
                 <td align="left" class="simple_gri_12"><? print $details; ?></td>
               </tr>
@@ -702,21 +732,6 @@ class CTemplate
 	}
 	
 	
-	
-	
-	function showRightPic()
-	{
-		?>
-        
-        <table width="140" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td width="79%" height="40" class="inset_gri_14">Welcome <? print $_REQUEST['ud']['user']; ?></td>
-            <td width="21%" height="40" align="left"><a href="../../index.php?act=logout" class="btn btn-default btn-sm" style="height:30px"><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a></td>
-          </tr>
-        </table>
-        
-        <?
-	}
 	
 	
 	
@@ -1224,14 +1239,27 @@ class CTemplate
             <li><a href="../../shop/escrowers/index.php">Escrowers</a></li>
             </ul></li>
             
-            <li <? if ($sel==6) print "class='active'"; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
-            <li <? if ($sel==7) print "class='active'"; ?>><a href="../../tweets/home/index.php">Tweets <? if ($comments>0) $this->showBadge($comments); ?></a></li>
-            <li <? if ($sel==8) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
+            <li class='dropdown open; <? if ($sel==6) print "active"; ?>'><a href="../../app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="../../app/directory/index.php">Applications Directory</a></li>
+            <li><a href="../../app/market/index.php">Applications Market</a></li>
+            <li><a href="../../app/mine/index.php">My Applications</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="../../app/write/index.php">Write Applications</a></li>
+            </ul></li>
+            
+             <li class='dropdown open; <? if ($sel==7) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="../../explorer/packets/index.php">Block Explorer</a></li>
+            <li><a href="../../help/help/index.php">Help</a></li>
+            </ul></li>
+          
+            <li <? if ($sel==8) print "class='active'"; ?>><a href="../../tweets/home/index.php">Tweets <? if ($comments>0) $this->showBadge($comments); ?></a></li>
+            
+            
             </ul>
             
-            <ul class="nav navbar-nav navbar-right">
-            <li><a href="../../../index.php?act=logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Logout</a></li>
-            </ul>
+          
             
             </div>   
             </div>
@@ -1256,14 +1284,33 @@ class CTemplate
              <div class="collapse navbar-collapse" id="myNavbar">
              <ul class="nav navbar-nav">
              <li <? if ($sel==1) print "class='active'"; ?>><a href="../../tweets/tweets/index.php">Tweets</a></li>
-             <li class='dropdown open; <? if ($sel==4) print "active"; ?>'><a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
+            <li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
+            <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
             <ul class="dropdown-menu">
+             <li><a href="../../assets/options/index.php">Binary Options</a></li>
+            <li><a href="../../assets/margin_mkts/index.php">Margin Markets</a></li>
+            <li><a href="../../assets/pegged_assets/index.php">Market Pegged Assets</a></li>
+            <li role="separator" class="divider"></li>
             <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
-            <li><a href="../../assets/options/index.php">Binary Options</a></li>
+            <li><a href="../../assets/assets_mkts/index.php">Assets Markets</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="../../assets/exchangers/index.php">Assets Exchangers</a></li>
+            
             <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
-            </ul></li>  
-               
-            <li <? if ($sel==5) print "class='active'"; ?>><a href="../../markets/goods/index.php">Shop</a></li>
+            </ul></li>     
+            
+             <li class='dropdown open; <? if ($sel==5) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Shop<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="../../shop/goods/index.php">Goods and Services</a></li>
+            <li><a href="../../shop/escrowers/index.php">Escrowers</a></li>
+            </ul></li>
+            
+             <li class='dropdown open; <? if ($sel==6) print "active"; ?>'><a href="../../app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="../../app/directory/index.php">Applications Directory</a></li>
+            <li><a href="../../app/market/index.php">Applications Market</a></li>
+            </ul></li>
+            
             <li <? if ($sel==2) print "class='active'"; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
             <li <? if ($sel==3) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
             </ul>

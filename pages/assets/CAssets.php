@@ -98,6 +98,34 @@ class CAssets
         <?
 	}
 	
+	function showSelector($target="ID_CRYPTO")
+	{
+		?>
+        
+       
+        <div class="btn-group" style="width:90%" align="center">
+        
+        <a class="btn btn<? if ($target=="ID_CRYPTO") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_CRYPTO" style="width:18%">Cryptocoins</a>
+        
+        <a class="btn btn<? if ($target=="ID_FX") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_FX" style="width:14%">Forex</a>
+        
+        <a class="btn btn<? if ($target=="ID_COMM") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_COMM" style="width:16%">Commodities</a>
+        
+        <a class="btn btn<? if ($target=="ID_IND") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_IND" style="width:14%">Indices</a>
+        
+        <a class="btn btn<? if ($target=="ID_STOCKS") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_STOCKS" style="width:12%">Stocks</a>
+        
+        <a class="btn btn<? if ($target=="ID_BONDS") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_BONDS" style="width:12%">Bonds</a>
+        
+        <a class="btn btn<? if ($target=="ID_OTHER") print "-inverse active"; else print "-default"; ?>" href="<? print $_SERVER['PHP_SELF']; ?>?target=ID_OTHER" style="width:12%">Other</a>
+        
+        </div>
+             
+        <br><br><br>
+        
+        <?
+	}
+	
 	
 }
 ?>

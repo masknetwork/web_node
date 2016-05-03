@@ -11,6 +11,7 @@ class CFeed
 	                    $feed_symbol, 
 					    $name, 
 					    $desc,
+						$type,
 					    $real_asset,
 					    $symbol, 
 					    $follow_fee,
@@ -80,6 +81,18 @@ class CFeed
 			 return false;
 		 }
 		 
+		 // Type
+		 if ($type!="ID_CRYPTO" && 
+		    $type!="ID_FX" && 
+			$type!="ID_COMM" && 
+			$type!="ID_IND" && 
+			$type!="ID_STOCKS" &&
+			$type!="ID_OTHER")
+		 {
+			 $this->template->showErr("Invalid category");
+			 return false;
+		 }
+		 
 		 // Symbol
 		 if ($this->kern->symbolValid($symbol)==false)
 		 {
@@ -131,8 +144,9 @@ class CFeed
 								par_2='".$symbol."',
 								par_3='".base64_encode($name)."',
 								par_4='".base64_encode($desc)."',
-								par_5='".$real_asset."',
-								par_6='".$follow_fee."',
+								par_5='".$type."',
+								par_6='".$real_asset."',
+								par_7='".$follow_fee."',
 								days='".$days."',
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
@@ -228,7 +242,7 @@ class CFeed
                       <td width="38%" align="left" valign="top" class="font_14"><strong>Real Asset Symbol</strong></td>
                   </tr>
                     <tr>
-                      <td><input class="form-control" id="txt_branch_name" name="txt_branch_name" placeholder="Address or address name" style="width:200px"/></td>
+                      <td><input class="form-control" id="txt_branch_name" name="txt_branch_name" placeholder="Name" style="width:200px"/></td>
                       <td><input class="form-control" id="txt_branch_rl" name="txt_branch_rl" placeholder="AAPL" style="width:120px"/></td>
                     </tr>
                 </table></td>
@@ -241,7 +255,25 @@ class CFeed
               </tr>
               <tr>
                 <td align="left">
-                <textarea rows="5" id="txt_branch_desc" name="txt_branch_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:350px"></textarea>
+                <textarea rows="3" id="txt_branch_desc" name="txt_branch_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:350px"></textarea>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">&nbsp;</td>
+              </tr>
+              <tr>
+                <td height="30" align="left" valign="top" class="font_14"><strong>Category</strong></td>
+              </tr>
+              <tr>
+                <td align="left">
+                <select name="dd_branch_type" id="dd_branch_type" class="form-control" style="width:340px">
+                <option value="ID_CRYPTO" selected>Cryptocurrencies</option>
+                <option value="ID_FX">Forex</option>
+                <option value="ID_COMM">Commodities</option>
+                <option value="ID_IND">Indices</option>
+                <option value="ID_STOCKS">Stocks</option>
+                <option value="ID_OTHER">Other</option>
+                </select>
                 </td>
               </tr>
               <tr>

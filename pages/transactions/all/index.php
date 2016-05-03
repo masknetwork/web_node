@@ -81,7 +81,7 @@
 	   
 	  // Simpel send
 				  if ($_REQUEST['act']=="send_coins")
-		          $trans->sendCoins($_REQUEST['dd_net_fee'], 
+		          $trans->sendCoins($_REQUEST['dd_from'], 
 			                        $_REQUEST['dd_from'], 
 								    $_REQUEST['txt_to'], 
 								    $_REQUEST['txt_msk'], 
@@ -89,39 +89,8 @@
 								    $_REQUEST['txt_cur'], 
 								    $_REQUEST['txt_mes'], 
 								    $_REQUEST['txt_escrower']);
-				 
-				 // OTP ?
-				 if ($_REQUEST['act']=="send_otp_coins")
-				 $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
-			                        $_REQUEST['h_from_adr'], 
-								    $_REQUEST['h_to_adr'], 
-								    $_REQUEST['h_amount'], 
-									$_REQUEST['h_amount'], 
-								    $_REQUEST['h_moneda'], 
-								    $_REQUEST['h_mes'], 
-								    $_REQUEST['h_escrower'],
-									$_REQUEST['txt_old_pass']);
-									
-				 // Request data ?
-				 if ($_REQUEST['act']=="send_req_coins")
-				     $trans->sendCoins($_REQUEST['h_net_fee_adr'], 
-			                        $_REQUEST['h_from_adr'], 
-								    $_REQUEST['h_to_adr'], 
-								    $_REQUEST['h_amount'], 
-									$_REQUEST['h_amount'], 
-								    $_REQUEST['h_moneda'],  
-								    $_REQUEST['h_mes'], 
-								    $_REQUEST['h_escrower'],
-									$_REQUEST['h_old_pass']);
-				 
-	  
-	  if ($_REQUEST['act']=="send_coins")
-	  {
-		  if ($db->hasAttr($_REQUEST['dd_from'], "ID_OTP")==false && 
-		      $db->hasAttr($_REQUEST['txt_to'], "ID_REQ_DATA")==false) 
-		  $trans->showTrans("ID_ALL"); 		  
-	  }
-	  else if ($_REQUEST['act']!="send_otp_coins") 
+		
+	 
 	     $trans->showTrans("ID_ALL"); 		  
 	  
 	  if ($_REQUEST['act']=="send_block")

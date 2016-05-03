@@ -697,26 +697,34 @@ class COptions
 		$this->template->showModalFooter("Invest");
 	}
 	
-	function showOptions($search="", $status='ID_PENDING')
+	function showOptions($target, $search="", $status='ID_PENDING')
 	{
 		if ($status=="ID_PENDING")
-		$query="SELECT * FROM feeds_bets 
+		$query="SELECT fb.*, fbr.type 
+		          FROM feeds_bets AS fb
+		          JOIN feeds_branches AS fbr ON (fbr.feed_symbol=fb.feed_1 
+				                                 AND fbr.symbol=fb.branch_1)
 		         WHERE (title LIKE '%".$search."%'
-				    OR description LIKE '%".$search."%') 
+				    OR fb.description LIKE '%".$search."%') 
 				   AND status='ID_PENDING'
+				   AND fbr.type='".$target."'
 			  ORDER BY accept_block ASC 
 			     LIMIT 0,25"; 
 	    else
-		$query="SELECT * FROM feeds_bets 
+		$query="SELECT fb.*, fbr.type 
+		          FROM feeds_bets AS fb
+		          JOIN feeds_branches AS fbr ON (fbr.feed_symbol=fb.feed_1 
+				                                 AND fbr.symbol=fb.branch_1)
 		         WHERE (title LIKE '%".$search."%'
-				    OR description LIKE '%".$search."%') 
+				    OR fb.description LIKE '%".$search."%') 
 				   AND (status='ID_WIN' OR status='ID_LOST')
+				   AND fbr.type='".$target."'
 			  ORDER BY accept_block ASC 
 			     LIMIT 0,25"; 
 				
 		 $result=$this->kern->execute($query);	
 	 
-	  
+	    
 		?>
            
            <table class="table-responsive" width="90%">
@@ -1297,18 +1305,15 @@ class COptions
 				    AND block<=".$end_block; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		$no=$row['no'];
+		$total=$row['no'];
 		
-		$group=1;
-		if ($no>250) $group=round($no/250);
-		
-		 $query="SELECT AVG(val) AS val
+	   $query="SELECT AVG(val) AS val
 		          FROM feeds_data 
 				 WHERE feed='".$feed_1."' 
 				   AND feed_branch='".$branch_1."'
 				   AND block>=".$start_block." 
 				   AND block<=".$end_block." 
-			  GROUP BY round(block/".$group.")"; 
+			  GROUP BY round(block/".($total/25).")"; 
 		$result=$this->kern->execute($query);	
 	   
 		?>

@@ -92,6 +92,14 @@
 <li><a href="./pages/shop/goods/index.php">Goods and Services</a></li>
 <li><a href="./pages/shop/escrowers/index.php">Escrowers</a></li>
 </ul></li>
+
+ <li class='dropdown open;'><a href="./pages/app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="./pages/app/directory/index.php">Applications Directory</a></li>
+            <li><a href="./pages/app/market/index.php">Applications Market</a></li>
+            </ul></li>
+
+
 <li><a href="./pages/explorer/packets/index.php">Explorer</a></li>
 <li><a href="./pages/help/help/index.php">Help</a></li>
 </ul>
@@ -164,12 +172,27 @@
  </div>
  <br><br>
  
+  <!-- --------------------------------------------------- SMART CONTRACTS -------------------------------------------------------------------->
+ 
+ <div class="row" style="padding-left:30px; padding-top:30px; padding-bottom:50px; padding-right:50px; background-color:#469eae">
+ <div class="col-md-5" align="center">
+ <img src="pages/index/index/GIF/code.jpg" class="img-responsive">
+ </div>
+ 
+ <div class="col-md-7" align="center">
+ <p class="txt_title">Smart Contracts</p>
+ <p class="txt_expl">Smart contracts also known as decentralized applications are pieces of code that run inside MaskNetowrk, without any possibility of censorship, fraud or third party control. You can write smart contracts using MaskNetwork scripting language and because the wallet has a built in online compiler, you don't have to download anything. Just login and start coding. When ready, publish your application in one click or set a price and sell it over the decentralized application store. </p>
+  <div align="right"><a href="./pages/app/directory/index.php" class="btn btn-lg btn-danger" id="but_read_more_margin" style="width:40%">Applications Directory</a></div>
+ </div>
+ </div>
+ 
+ 
  <!-- --------------------------------------------------- SPECULATIVE -------------------------------------------------------------------->
  
  <div class="row" style="padding-left:30px; padding-top:30px; padding-bottom:50px; padding-right:50px; background-color:#2e4f71">>
  <div class="col-md-7" style="padding-left:30px"><p class="txt_title">Decentralized margin trading</p>
  <p class="txt_expl">Trade anything. Currencies, stocks, cryptocoins, outside temperature, you name it. If there is a data feed, you can trade it on margin. No central server means that no regulated company is behind the scene. No regulation means, huge leverages, minimum spreads and no minimum trade size. Don't like to trade ? Then start your own leveraged markets and allow others to trade. Masknetwork is the first truly p2p deceentralized trading platform. </p>
-  <a type="button" href="./pages/help/help/index.php" class="btn btn-lg btn-danger" id="but_read_more_margin" style="width:20%">Read More</a>
+  <a href="./pages/assets/margin_mkts/index.php" class="btn btn-lg btn-danger" id="but_read_more_margin" style="width:20%">Start Trading</a>
  </div>
  
  <br>

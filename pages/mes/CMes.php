@@ -497,8 +497,8 @@ class CMes
 						?>
                         
                              <tr>
-                               <td width="4%" align="left" class="font_18"><span class="glyphicon glyphicon-envelope"></span></td>
-                             <td width="18%" align="left" valign="top">
+                               <td width="5%" align="left" class="font_18"><span class="glyphicon glyphicon-envelope"></span></td>
+                             <td width="14%" align="left">
                             
                              <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="font_14">
 							 <? 
@@ -510,9 +510,10 @@ class CMes
                              </a>
                             
                              </td>
+                             <td width="1%" align="left" >&nbsp;</td>
                              
                              
-                             <td width="51%" align="left" valign="top">
+                             <td width="50%" align="left" >
                              <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="font_14">
 							 <? 
 							    if ($row['status']==0) 
@@ -523,7 +524,7 @@ class CMes
                              </a>
                              
                              </td>
-                             <td width="13%" align="center">
+                             <td width="15%" align="center">
 							 
                              <a href="index.php?act=show_mes&mesID=<? print $row['ID']; ?>" class="font_14">
                              <? 
@@ -536,7 +537,7 @@ class CMes
                              </td>
                             
                              
-                             <td width="14%" align="center" class="font_14">
+                             <td width="13%" align="center" class="font_14">
                   
                              <div class="dropdown" align="right">
                              <a class="btn btn-sm btn-danger" href="javascript:$('#confirm_modal').modal(); $('#par_1').val('<? print $row['ID']; ?>');">Delete</a></li>
@@ -545,7 +546,7 @@ class CMes
                   
                             </td></tr>
                             <tr>
-                            <td colspan="5" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                            <td colspan="6" background="../../template/template/GIF/lp.png">&nbsp;</td>
                             </tr>
                       
                       <?
@@ -553,6 +554,7 @@ class CMes
 					  ?>
                           
                   </table>
+                  <br><br><br>
                  
         
         <?

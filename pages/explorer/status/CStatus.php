@@ -22,6 +22,10 @@
 	   
 	   function show_data()
 	   {
+		   $query="SELECT * FROM net_stat";
+		   $result=$this->kern->execute($query);	
+	       $stat_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   
 		   $query="SELECT * FROM web_sys_data";
 		   $result=$this->kern->execute($query);	
 	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -79,6 +83,31 @@
               <td align="left" class="font_14">System Up Time</td>
               <td align="center" class="font_14"><? print $this->kern->getAbsTime($row['uptime']); ?></td>
               </tr>
+              
+              <tr>
+              <td colspan="2" align="left"><hr></td>
+              </tr>
+              <tr>
+              <td align="left" class="font_14">Mining</td>
+              <td align="center" class="font_14"><? if (time()-$row['mining']<60) print $row['mining_threads']." threads"; else print "NO";  ?></td>
+              </tr>
+              
+              <tr>
+              <td colspan="2" align="left"><hr></td>
+              </tr>
+              <tr>
+              <td align="left" class="font_14">Hash Rate</td>
+              <td align="center" class="font_14"><? print round($row['hashing_power']/1000, 2)." KHs"; ?></td>
+              </tr>
+              
+              <tr>
+              <td colspan="2" align="left"><hr></td>
+              </tr>
+              <tr>
+              <td align="left" class="font_14">Dificulty</td>
+              <td align="center" class="font_14"><? print $stat_row['net_dif']; ?></td>
+              </tr>
+              
               </tbody>
               </table>
            

@@ -387,7 +387,7 @@ class CTransactions
 					   $moneda, 
 					   $mes, 
 					   $escrower,
-					   $otp_old_pass="")
+					   $sign="")
 	{
 		// Ammount
 		if ($amount_asset>0) $amount=$amount_asset;
@@ -407,24 +407,10 @@ class CTransactions
 			return false;
 		}
 		
-		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
-		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.");
-			return false;
-		}
-		
 		// From Address
 	    if ($this->kern->adrExist($from_adr)==false)
 		{
 			$this->template->showErr("Invalid address");
-			return false;
-		}
-		
-		// Sender frozen ?
-		if ($this->kern->hasAttr($from_adr, "ID_FROZEN")==true)
-		{
-			$this->template->showErr("Source address is frozen");
 			return false;
 		}
 		
@@ -498,7 +484,7 @@ class CTransactions
 			}
 		}
 		
-		// Mesaage
+		// Message
 		if (strlen($mes)>250)
 		{
 			$this->template->showErr("Invalid message length (0-100 characters)");
@@ -515,150 +501,18 @@ class CTransactions
 			}
 		}
 		
-		// Otp
-		if ($this->kern->hasAttr($from_adr, "ID_OTP")==true)
-		{
-			// Load datas
-		    $query="SELECT * 
-				          FROM adr_options 
-						 WHERE adr='".$from_adr."' 
-						   AND op_type='ID_OTP'"; 
-			$result=$this->kern->execute($query);	
-	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
-			
-			if ($row['par_2']!=$to_adr)
-			{
-			   if ($otp_old_pass=="")
-			   {
-				   $this->showOTP($net_fee_adr, 
-				               $from_adr, 
-							   $to_adr, 
-							   $amount, 
-							   $amount, 
-							   $mes, 
-							   $escrower);
-				   return false;
-			   }
-			   else
-		 	   {
-				    // Check pas
-				   if (hash("sha256", $otp_old_pass)!=$row['par_1'])
-				   {
-				      $this->template->showErr("Invalid password", 550);
-				      return false;	
-				   }
-				
-				   // New pass
-				   $otp_new_pass=$this->getSecurePass();
-				   $otp_new_hash=hash("sha256", $otp_new_pass);
-			   }
-			}
-		}
-		
-		// Restricted recipients
-		if ($this->kern->hasAttr($from_adr, "ID_RESTRICT_REC")==true)
-		{
-			// Load data
-			$query="SELECT * 
-			          FROM adr_options 
-					 WHERE adr='".$from_adr."'
-					   AND op_type='ID_RESTRICT_REC'"; 
-			$result=$this->kern->execute($query);	
-	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
-			
-			// Recipient match ?
-			if ($row['par_1']!=$to_adr && 
-			    $row['par_2']!=$to_adr && 
-				$row['par_3']!=$to_adr && 
-				$row['par_4']!=$to_adr && 
-				$row['par_5']!=$to_adr)
-			{
-				 $this->template->showErr("Invalid recipient", 550);
-			     return false;	
-			}
-		}
-		
-		// Additional data
-		if ($this->kern->hasAttr($to_adr, "ID_REQ_DATA")==true)
-		{
-			if ($_REQUEST['act']=="send_req_coins")
-			{
-			   // Load data
-			   $query="SELECT * 
-			          FROM req_data 
-					 WHERE adr='".$to_adr."'";
-			   $result=$this->kern->execute($query);	
-	           $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	  
-			   // Check field 1
-		       if ($row['field_1_name']!="")
-			   {
-				  if (strlen($_REQUEST['txt_field_1'])<$row['field_1_min'] || 
-					   strlen($_REQUEST['txt_field_1'])>$row['field_1_max'])
-				   {
-					   $this->template->showErr("Invalid field 1 length", 550);
-					   return false;	
-				   }
-			   }
-				
-			   // Check field 2
-			   if ($row['field_2_name']!="")
-		 	   {
-			      if (strlen($_REQUEST['txt_field_2'])<$row['field_2_min'] || 
-				      strlen($_REQUEST['txt_field_2'])>$row['field_2_max'])
-				   {
-					   $this->template->showErr("Invalid field 2 length", 550);
-					   return false;	
-				   }
-			   }
-				
-			   // Check field 3
-			   if ($row['field_3_name']!="")
-			   {
-			      if (strlen($_REQUEST['txt_field_3'])<$row['field_3_min'] || 
-				      strlen($_REQUEST['txt_field_3'])>$row['field_3_max'])
-			      {
-				      $this->template->showErr("Invalid field 3 length", 550);
-				      return false;	
-			      }
-			   }
-				
-			   // Check field 4
-			   if ($row['field_4_name']!="")
-			   {
-				   if (strlen($_REQUEST['txt_field_4'])<$row['field_4_min'] || 
-				       strlen($_REQUEST['txt_field_4'])>$row['field_4_max'])
-				   {
-					   $this->template->showErr("Invalid field 4 length", 550);
-					   return false;	
-				   }
-			    }
-				
-			   // Check field 5
-			   if ($row['field_5_name']!="")
-			   {
-				   if (strlen($_REQUEST['txt_field_5'])<$row['field_5_min'] || 
-					   strlen($_REQUEST['txt_field_5'])>$row['field_5_max'])
-				   {
-					   $this->template->showErr("Invalid field 5 length", 550);
-					   return false;	
-				   }
-			   }
-		}
-		else
+	    // Sender controlled by agent ?
+	    $query="SELECT * 
+	            FROM agents 
+			   WHERE adr='".$from_adr."'";
+	    $result=$this->kern->execute($query);	
+	  
+	    if (mysql_num_rows($result)>0)
 	    {
-			// Show panel
-				$this->showReqDataPanel($net_fee_adr, 
-				                        $from_adr, 
-										$to_adr, 
-										$amount, 
-										$moneda, 
-										$mes, 
-										$escrower, 
-										$otp_old_pass);
-				return false;
-		}
-	  }
+		   $this->template->showErr("Sender address has a contract attached. Only the contract can send coins.", 550);
+           return false;	
+	    }
 		
 		try
 	    {
@@ -679,13 +533,7 @@ class CTransactions
 								par_4='".$moneda."', 
 								par_5='".$mes."', 
 								par_6='".$escrower."',
-								par_7='".$otp_old_pass."',
-								par_8='".$otp_new_hash."',
-								par_9='".base64_encode($_REQUEST['txt_field_1'])."',
-								par_10='".base64_encode($_REQUEST['txt_field_2'])."',
-								par_11='".base64_encode($_REQUEST['txt_field_3'])."',
-								par_12='".base64_encode($_REQUEST['txt_field_4'])."',
-								par_13='".base64_encode($_REQUEST['txt_field_5'])."', 
+								par_7='".$sign."',
 								status='ID_PENDING', 
 								tstamp='".time()."'";
 	       $this->kern->execute($query);

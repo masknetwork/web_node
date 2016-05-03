@@ -58,6 +58,26 @@ class CSignup
             echo "Invalid email";
         }
 		
+		// IP
+		if ($_SERVER['HTTP_CF_CONNECTING_IP']=="")
+		  $IP=$_SERVER['REMOTE_ADDR'];
+		else
+		  $IP=$_SERVER['HTTP_CF_CONNECTING_IP'];
+		  
+		if ($IP!="89.38.169.57")
+		{
+		   $query="SELECT * 
+		             FROM web_users
+				    WHERE IP='".$IP."'";
+	       $result=$this->kern->execute($query);
+		
+		   if (mysql_num_rows($result)>0)
+	   	   {
+			  $this->template->showErr("One account per IP allowed.", 510);
+			  return false;
+		   }
+		}
+		
 		try
 	    {
 		   // Begin
@@ -67,6 +87,8 @@ class CSignup
 		   $query="INSERT INTO web_users 
 		                   SET user='".$user."', 
 						       pass='".hash("sha256", $pass)."', 
+							   IP='".$IP."', 
+							   tstamp='".time()."',
 							   email='".$email."'";
 		   $this->kern->execute($query);
 		   
@@ -82,17 +104,18 @@ class CSignup
 								par_3='".$userID."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
-	        $this->kern->execute($query);
+	        $this->kern->execute($query); 
 			
 			// set session
 			$_SESSION['userID']=$userID;
-			
+		    
+			// Commit
+	 	    $this->kern->commit();
+
+	
 			// Redirect
 			print "<script>window.location='../../transactions/all/index.php'</script>";
-		
-		   // Commit
-		   $this->kern->commit();
-
+		   
 		   return true;
 	   }
 	   catch (Exception $ex)
