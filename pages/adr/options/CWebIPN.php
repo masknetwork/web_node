@@ -93,13 +93,13 @@ class CWebIPN
           <tr>
             <td width="182" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="center"><img src="./GIF/adr_web_ipn.png" /></td>
+                <td align="center"><img src="./GIF/adr_web_ipn.png" width="150" /></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel("0.0001", "froze"); ?></td>
+                <td align="center">&nbsp;</td>
               </tr>
             </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">

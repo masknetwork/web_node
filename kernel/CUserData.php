@@ -5,10 +5,23 @@ class CUserData
 	{
 		$this->kern=$db;
 		
-		$query="SELECT * 
-		          FROM web_users 
-				  WHERE web_users.ID=".$_SESSION['userID'];
-		$result=$this->kern->execute($query);
+		if (!isset($_REQUEST['key']))
+		{
+		    $query="SELECT * 
+		              FROM web_users 
+				     WHERE ID=".$_SESSION['userID'];
+		    $result=$this->kern->execute($query);
+			if (mysql_num_rows($result)==0) $this->kern->redirect("../../index.php");
+		}
+		else
+		{
+		    $query="SELECT * 
+		              FROM web_users 
+				     WHERE api_key='".hash("sha256", $_REQUEST['key'])."'"; 
+			$result=$this->kern->execute($query);
+			if (mysql_num_rows($result)==0) die("{\"result\" : \"error\", \"reason\" : \"Invalid API key\"}");
+		}
+		
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		
 		$_REQUEST['ud']['ID']=$row['ID'];

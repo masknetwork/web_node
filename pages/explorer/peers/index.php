@@ -81,8 +81,8 @@
 	 // Add peer					   
      switch ($_REQUEST['act'])
 	 { 
-	    case "add_peer" : $peers->addPeer($_REQUEST['txt_ip'], $_REQUEST['txt_port']);
-		case "remove" : $peers->removePeer($_REQUEST['peer']);
+	    case "add_peer" : $peers->addPeer($_REQUEST['txt_ip'], $_REQUEST['txt_port']); break;
+		case "remove" : $peers->removePeer($_REQUEST['peer']); break;
 	 }
 	 
 	 $peers->showAddBut();

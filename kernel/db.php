@@ -674,25 +674,7 @@ $('#back').css("cursor", "pointer");
 		  return true;
 	}
 	
-	function isCur($symbol)
-	{
-		// Upper case
-		$symbol=strtoupper($symbol);
-		
-		// MSK ?
-		if ($symbol=="MSK") return true;
-		
-		// Length
-		if (strlen($symbol)!=6)
-		  return false;
-		
-		// Six characters
-		if (preg_match("/^[A-Z]{6}$/", $symbol)!=1)
-		   return false;
-		   
-		// Match
-		return true;
-	}
+	
 	
 	function getMyFirstAdr()
 	{
@@ -780,36 +762,7 @@ $('#back').css("cursor", "pointer");
 		return true;
 	}
 	
-	function isLink($link)
-	{
-		if (filter_var($link, FILTER_VALIDATE_URL) === false) 
-           return false;
-		 else
-		   return true;
-	}	
 	
-	function isImageLink($link)
-	{
-		return true; 
-		if (strpos($link, ".jpg")===false && 
-			    strpos($link, ".jpeg")===false && 
-				strpos($link, ".png")===false)
-		        return false;
-			else
-			    return true;
-		
-	}
-	
-	function isPic($link)
-	{
-		if (strpos($link, ".jpg")===false && 
-			    strpos($link, ".jpeg")===false && 
-				strpos($link, ".png")===false)
-		        return false;
-			else
-			    return true;
-		
-	}	
 	
 	function timeFromBlock($block)
 	{
@@ -837,14 +790,52 @@ $('#back').css("cursor", "pointer");
 	    return $row['val'];
 	}
 	
-	function titleValid($title)
+	function isCur($symbol)
 	{
+		// Upper case
+		$symbol=strtoupper($symbol);
+		
+		// MSK ?
+		if ($symbol=="MSK") return true;
+		
+		// Length
+		if (strlen($symbol)!=6)
+		  return false;
+		
+		// Six characters
+		if (preg_match("/^[A-Z]{6}$/", $symbol)!=1)
+		   return false;
+		   
+		// Match
 		return true;
 	}
 	
-	function descValid($desc)
+	function isTitle($title)
 	{
-		return true;
+		// Valid characters
+		if ($this->isString($title)==false)
+		   return false;
+	    
+		// Length
+		if (strlen($title)>100 || strlen($title)<2)
+		   return false;
+	    
+		// Pass
+	 	return true;
+	}
+	
+	function isDesc($desc)
+	{
+		// Valid characters
+		if ($this->isString($title)==false)
+		   return false;
+	    
+		// Length
+		if (strlen($title)>1000 || strlen($title)<5)
+		   return false;
+	    
+		// Pass
+	 	return true;
 	}
 	
 	function isLong($var)
@@ -898,19 +889,6 @@ $('#back').css("cursor", "pointer");
 	
 	function isAdr($var)
 	{
-		if (strlen($var)<31 && 
-		    $this->isDomain($var)==true)
-		{
-		   // Domain ?
-		   $query="SELECT * 
-		          FROM domains 
-				 WHERE domain='".$var."'";
-		   $result=$this->execute($query);
-		
-		   if (mysql_num_rows($result)>0)
-		      return true;
-		}
-	
 		// Length
 		if (strlen($var)!=108 && 
 		    strlen($var)!=124 && 
@@ -923,6 +901,69 @@ $('#back').css("cursor", "pointer");
 		   return false;
 		else
 		   return true;
+	}
+	
+	function canSpend($adr)
+	{
+		// Speculative market address ?
+		$query="SELECT * 
+		          FROM feeds_spec_mkts 
+				 WHERE adr='".$adr."'";
+		$result=$this->execute($query);	
+	    if (mysql_num_rows($result)>0) return false;
+		
+		// Asset address ?
+		$query="SELECT * 
+		          FROM feeds_assets_mkts
+				 WHERE adr='".$adr."'";
+		$result=$this->execute($query);	
+	    if (mysql_num_rows($result)>0) return false;
+		
+		// Contract ?
+		$query="SELECT * 
+		          FROM agents
+				 WHERE adr='".$adr."'";
+		$result=$this->execute($query);	
+	    if (mysql_num_rows($result)>0) return false;
+		
+		// Passed
+		return true;
+	}
+	
+	function isLink($link)
+	{
+		// Max length
+		if (strlen($link)>100) return false;
+		
+		if (filter_var($link, FILTER_VALIDATE_URL) === false) 
+           return false;
+		 else
+		   return true;
+	}	
+	
+	function isEmail($email)
+	{
+		// Max length
+		if (strlen($link)>50) return false;
+		
+		if (filter_var($link, FILTER_VALIDATE_EMAIL) === false) 
+           return false;
+		 else
+		   return true;
+	}	
+	
+	function isPic($link)
+	{
+		// Link ?
+		if ($this->isLink($link)==false) 
+		   return false;
+		
+		if (strpos($link, ".jpg")===false && 
+			strpos($link, ".jpeg")===false)
+		        return false;
+			else
+			    return true;
+		
 	}
 }
 ?>

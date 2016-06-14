@@ -485,10 +485,21 @@ class CWrite
 		?>
         
             <table width="90%">
-            <tr><td align="right">
+            <tr><td width="89%" align="right">
+            
             <a class="btn btn-primary" href="javascript:void(0)" onClick="$('#write_modal').modal()">
             <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;New Project</a>
-            </td></tr>
+            
+            </td>
+              <td width="1%" align="right">&nbsp;</td>
+            <td width="10%" align="right">
+            
+            <a class="btn btn-warning" href="../reference/index.php">
+            <span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;&nbsp;Reference
+            </a>
+            
+            </td>
+            </tr>
             </table>
         
         <?

@@ -118,7 +118,7 @@
                 <td width="80%"><span class="font_14"><? print base64_decode($row['title']); ?></span><p class="font_10">
 				<? print substr(base64_decode($row['description']), 0, 70)."..."; ?></p>
                 </td>
-                <td><a class="btn btn-sm btn-info" width="20%" href="./pages/assets/margin_mkts/story.php?posID=<? print $row['posID']; ?>">Bet Now</a></td>
+                <td><a class="btn btn-sm btn-info" width="20%" href="./pages/assets/options/bet.php?uid=<? print $row['mktID']; ?>">Bet Now</a></td>
                 </tr>
                
         

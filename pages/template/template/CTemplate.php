@@ -1246,6 +1246,7 @@ class CTemplate
             <li><a href="../../app/mine/index.php">My Applications</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="../../app/write/index.php">Write Applications</a></li>
+            <li><a href="../../app/reference/index.php">Language Reference</a></li>
             </ul></li>
             
              <li class='dropdown open; <? if ($sel==7) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>

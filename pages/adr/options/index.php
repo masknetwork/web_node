@@ -7,18 +7,9 @@
    include "../../template/template/CTemplate.php";
    include "../CAdr.php";
    include "CAdrOptions.php";
-   include "CInterest.php";
    include "CName.php";
-   include "CShare.php";
    include "CProfile.php";
-   include "CFroze.php";
-   include "CSeal.php";
-   include "CRestrict.php";
-   include "COTP.php";
-   include "CMultisig.php";
    include "CWebIPN.php";
-   include "CAditionalData.php";
-   include "CAutoresponders.php";
    include "CReveal.php";
    
    // Database
@@ -38,42 +29,15 @@
    
    // Address Options
    $adr_options=new CAdrOptions($db, $template);
-   
-   // Interest
-   $interest=new CInterest($db, $template);
-   
+  
    // Domains
    $name=new CName($db, $template);
-   
-   // Share
-   $share=new CShare($db, $template);
    
    // Profile
    $profile=new CProfile($db, $template);
    
-   // Froze
-   $froze=new CFroze($db, $template);
-   
-   // Seal
-   $seal=new CSeal($db, $template);
-   
-   // Restrict
-   $restrict=new CRestrict($db, $template);
-   
-   // OTP
-   $otp=new COTP($db, $template);
-   
-   // Multisig
-   $multisig=new CMultisig($db, $template);
-   
    // Web IPN
    $ipn=new CWebIPN($db, $template);
-   
-   // Aditional data
-   $aditional=new CAditionalData($db, $template);
-   
-   // Autoresponders
-   $autoresp=new CAutoresponders($db, $template);
    
    // Private key
    $pkey=new CReveal($db, $template);
@@ -224,41 +188,14 @@ $(function (e)
 	           $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	           $adr=$row['adr']; 
 			   
-			   // Interest modal
-			   $interest->showModal($adr);
-			   
-			    // Rent name modal
+			   // Rent name modal
 			   $name->showModal($adr);
-			   
-			   // Share address modal
-			   $share->showModal($adr);
 			   
 			   // Profile
 			   $profile->showModal($adr);
 			   
-			   // Froze address
-			   $froze->showModal($adr);
-			   
-			   // Seal address
-			   $seal->showModal($adr);
-			   
-			   // Restrict recipients
-			   $restrict->showModal($adr);
-			   
-			   // Multisignatures
-			   $multisig->showModal($adr);
-			   
-			   // OTP
-			   $otp->showModal($adr);
-			   
 			   // IPN
 			   $ipn->showModal($adr);
-			   
-			   // Aditional
-			   $aditional->showModal($adr);
-			   
-			   // Autoresponders
-			   $autoresp->showModal($adr);
 			   
 			   // Private key
 			   $pkey->showModal($adr);
@@ -266,60 +203,12 @@ $(function (e)
 			   // Action
 			   switch ($_REQUEST['act'])
 			   {
-				   case "restrict" : $restrict->restrict($_REQUEST['dd_restrict_net_fee'], 
-				                                            $adr, 
-													        $_REQUEST['txt_target_1'],
-													        $_REQUEST['txt_target_2'],
-													        $_REQUEST['txt_target_3'],
-															$_REQUEST['txt_target_4'],
-															$_REQUEST['txt_target_5'],
-													        $_REQUEST['txt_restrict_days']);
-				                         break;
-									  
-				   case "otp_adr" : $otp->otp($_REQUEST['dd_otp_net_fee'], 
-				                             $adr, 
-											 $_REQUEST['txt_next_pass'], 
-											 $_REQUEST['txt_otp_adr'], 
-											 $_REQUEST['txt_otp_days']); 
-				                    break;
-									  
-				   case "multisig" : $multisig->multisig($_REQUEST['dd_multi_net_fee'], 
-				                                        $adr, 
-														$_REQUEST['txt_signer_1'], 
-														$_REQUEST['txt_signer_2'], 
-														$_REQUEST['txt_signer_3'], 
-														$_REQUEST['txt_signer_4'], 
-														$_REQUEST['txt_signer_5'],
-														$_REQUEST['txt_sig_min'], 
-														$_REQUEST['txt_sig_days']); 
-				                      break;
-									  
-				   case "seal_adr" : $seal->sealAdr($_REQUEST['dd_seal_net_fee'], 
-				                                   $adr, 
-												   $_REQUEST['txt_seal_days']);
-				                      break;
-									  
-				  case "froze_adr" : $froze->frozeAdr($_REQUEST['dd_froze_net_fee'], 
-				                                      $adr, 
-													  $_REQUEST['txt_froze_days']);
-				                      break;
-									  
 				   case "rent_domain" : $name->newDomain($_REQUEST['dd_net_fee_adr'], 
 				                                        $adr, 
 													    $_REQUEST['txt_domain'], 
 													    $_REQUEST['txt_days_domain']);
 				                      break;
 									  
-				   case "share_adr" : $share->share($_REQUEST['dd_net_fee'], 
-				                                   $adr, 
-												   $_REQUEST['txt_adr']);
-				                      break;
-									 
-				   case "receive_interest" : $interest->setup($adr, 
-				                                             $_REQUEST['dd_net_fee_adr'], 
-															 $_REQUEST['txt_adr']); 
-									         break;
-											 
 				   case "update_profile" :  if ($_REQUEST['txt_pic_back']=="" && $_REQUEST['txt_pic']=="")
 				                            { 
 											   // Pic back
@@ -348,13 +237,8 @@ $(function (e)
 		                                           $pic="";
 		                                       }
 												   
-											   // Encode
-											   $pic_back=base64_encode($pic_back);
-											   $pic=base64_encode($pic);
-											   
 											   // Profile
-											   $profile->updateProfile($_REQUEST['dd_net_fee'], 
-				                                                      $adr,
+											   $profile->updateProfile($adr,
 				                                                      $_REQUEST['txt_prof_name'], 
 																      $_REQUEST['txt_desc'], 
 																      $_REQUEST['txt_email'], 
@@ -366,8 +250,7 @@ $(function (e)
 											else
 											{
 												// Profile
-											   $profile->updateProfile($_REQUEST['dd_net_fee'], 
-				                                                      $adr,
+											   $profile->updateProfile($adr,
 				                                                      $_REQUEST['txt_prof_name'], 
 																      $_REQUEST['txt_desc'], 
 																      $_REQUEST['txt_email'], 
@@ -385,18 +268,6 @@ $(function (e)
 					                             $_REQUEST['txt_ipn_pass']);
 					                 break;
 									 
-					case "aditional" : $aditional->setup($_REQUEST['dd_req_net_fee'],
-					                                    $adr, 
-	                                                    $_REQUEST['txt_req_mes'], 
-				                                        $_REQUEST['txt_field_1_name'], $_REQUEST['txt_field_1_min'], $_REQUEST['txt_field_1_max'],
-				                                        $_REQUEST['txt_field_2_name'], $_REQUEST['txt_field_2_min'], $_REQUEST['txt_field_2_max'],
-														$_REQUEST['txt_field_3_name'], $_REQUEST['txt_field_3_min'], $_REQUEST['txt_field_3_max'],
-														$_REQUEST['txt_field_4_name'], $_REQUEST['txt_field_4_min'], $_REQUEST['txt_field_4_max'],
-														$_REQUEST['txt_field_5_name'], $_REQUEST['txt_field_5_min'], $_REQUEST['txt_field_5_max'],
-														$_REQUEST['txt_field_6_name'], $_REQUEST['txt_field_6_min'], $_REQUEST['txt_field_6_max'],
-				                                        $_REQUEST['txt_req_days']); 
-									   break;
-									  
 					case "reveal" : $pkey->reveal($adr, $_REQUEST['txt_pass']); 
 					                break;
 			   }

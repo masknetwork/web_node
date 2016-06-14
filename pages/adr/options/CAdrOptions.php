@@ -68,7 +68,7 @@ class CAdrOptions
                   <td align="left"><table width="90%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                         <tr>
-                          <td><img src="./GIF/adr_opt_profile.png"  class="img-responsive" /></td>
+                          <td><img src="./GIF/adr_opt_profile.png"  class="img-responsive img-circle"/></td>
                         </tr>
                         <tr>
                           <td height="50" align="center">
@@ -130,15 +130,7 @@ class CAdrOptions
                   </table></td>
                   </tr>
                 <tr align="left">
-                  <td height="40" colspan="3">&nbsp;</td>
-                </tr>
-                <tr align="left">
-                  <td colspan="3" bgcolor="#f0f0f0" height="40"><span class="font_18"><strong>&nbsp;&nbsp;Merchant Tools</strong></span></td>
-                  </tr>
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
+                  <td height="40" colspan="3"><hr></td>
                 </tr>
                 <tr>
                   <td align="left"><table width="90%" border="0" cellspacing="0" cellpadding="0">
@@ -185,14 +177,6 @@ class CAdrOptions
                 <tr>
                   <td height="40" colspan="3" align="left"><hr></td>
                 </tr>
-                <tr>
-                  <td align="left">&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td height="40">&nbsp;</td>
-                </tr>
-                <tr align="left">
-                  <td height="40" colspan="3" bgcolor="#f0f0f0"><span class="font_18"><strong>&nbsp;&nbsp;Advanced Tools</strong></span></td>
-                  </tr>
                 <tr>
                   <td align="left">&nbsp;</td>
                   <td>&nbsp;</td>

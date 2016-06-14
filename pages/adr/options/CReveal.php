@@ -73,14 +73,7 @@ class CReveal
 		?>
             
             <div id="div_pk" name="div_pk">
-            <table width="500" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_top_simple.png" height="22" alt=""/></td>
-                </tr>
-                <tr>
-                  <td align="center" background="../../template/template/GIF/tab_middle.png">
-                  
+           
                   <table width="500" border="0" cellspacing="0" cellpadding="0">
                   <tbody>
                   <tr>
@@ -92,13 +85,7 @@ class CReveal
                   </tbody>
                   </table>
                   
-                  </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
+                
             </div>
             
             <script>
@@ -124,19 +111,12 @@ class CReveal
 	    
 		?>
            
-            <table width="500" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_top_simple.png" height="22" alt=""/></td>
-                </tr>
-                <tr>
-                  <td align="center" background="../../template/template/GIF/tab_middle.png">
-                  
-           <table width="500" border="0" cellspacing="0" cellpadding="0">
+           
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="182" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="center"><img src="./GIF/adr_opt_reveal.png" width="120" /></td>
+                <td align="center"><img src="./GIF/adr_opt_reveal.png" width="150px" /></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -145,7 +125,7 @@ class CReveal
                 <td align="center">&nbsp;</td>
               </tr>
             </table></td>
-            <td width="368" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
+            <td width="1051" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
               <tr>
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Public Key</strong></td>
               </tr>
@@ -170,13 +150,7 @@ class CReveal
           </tr>
         </table>
         
-         </td>
-                </tr>
-                <tr>
-                  <td><img src="../../template/template/GIF/tab_bottom.png" width="566" height="22" alt=""/></td>
-                </tr>
-              </tbody>
-            </table>
+      
         
         <?
 	}
@@ -190,7 +164,7 @@ class CReveal
           <tr>
             <td width="182" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="center"><img src="./GIF/adr_opt_reveal.png" /></td>
+                <td align="center"><img src="./GIF/adr_opt_reveal.png" width="150" /></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -216,7 +190,7 @@ class CReveal
         </table>
         
         <?
-		$this->template->showModalFooter("Cance", "Reveal");
+		$this->template->showModalFooter("Reveal");
 	}
 }
 ?>
