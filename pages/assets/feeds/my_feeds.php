@@ -23,6 +23,7 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script src="../../../utils.js"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
@@ -85,7 +86,7 @@
 	
 	// New feed ?
 	if ($_REQUEST['act']=="new_feed")
-	   $my_feeds->newFeed($_REQUEST['dd_new_feed_fee'], 
+	   $my_feeds->newFeed($_REQUEST['dd_new_feed_adr'], 
 	                      $_REQUEST['dd_new_feed_adr'], 
 					      $_REQUEST['txt_new_feed_name'], 
 					      $_REQUEST['txt_new_feed_desc'],

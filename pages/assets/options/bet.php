@@ -78,7 +78,7 @@
 	 
 	 // Buy
 	 if ($_REQUEST['act']=="buy_bet")
-	    $bets->buyOption($_REQUEST['dd_buy_bet_fee'], 
+	    $bets->buyOption($_REQUEST['dd_buy_bet_adr'], 
 		                 $_REQUEST['dd_buy_bet_adr'], 
 						 $_REQUEST['uid'],
 						 $_REQUEST['txt_buy_bet_amount']);

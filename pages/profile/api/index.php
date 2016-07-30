@@ -5,13 +5,13 @@
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
-  
+   include "CAPI.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
-  
+   $api=new CAPI($db, $template);
  ?>
 
 <!doctype html>
@@ -77,9 +77,18 @@
 	 // Help
      $template->showHelp("The wallet API is the quickest and easiest way to begin accepting automated MaskCoin payments or to programmatically interact with the web wallet. In order to access the API, you will need and API key. In this page you can generate  a new API key.");
 	 
-	  
+	 // Show Panel
+	 $api->showAPIPanel();
 	 
+	 // Password modal
+	 $api->showPassModal();
  ?>
+ 
+ 
+
+
+ 
+
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
  <div class="col-md-1">&nbsp;</div>

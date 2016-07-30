@@ -228,6 +228,9 @@ class CWrite
 			return false;
 		}
 		
+		// App row
+		$app_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
 		// Already a sealed contract on this address ?
 		$query="SELECT * 
 		          FROM agents 
@@ -240,6 +243,8 @@ class CWrite
 			$this->template->showErr("There is already a sealed contract attached to this address");
 			return false;
 		}
+		
+		
 		
 		// Net fee adr
 		if ($this->kern->adrExist($adr)==false || 
@@ -302,8 +307,12 @@ class CWrite
 							    op='ID_DEPLOY_APP_NET', 
 								fee_adr='".$net_fee_adr."', 
 								target_adr='".$adr."',
-								par_1='".$appID."',
-								par_2='".$interval."',
+								par_1='".$app_row['name']."',
+								par_2='".$app_row['globals']."',
+								par_3='',
+								par_4='',
+								par_5='".$app_row['code']."',
+								par_6='".$interval."',
 								days='".$days."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
@@ -1177,6 +1186,58 @@ class CWrite
 		  print "<span class='label label-warning'>Still Compiling...</span>";
 		else
 		  print "<span class='label label-danger'>".$status."</span>";
+	}
+	
+	function showRefMenu($sel=1)
+	{
+		?>
+        
+           <div class="panel panel-default">
+           <div class="panel-heading font_16">Sections</div>
+           <div class="panel-body">
+           <table width="100%">
+           
+           <tr><td>
+           <a href="index.php" class="font_14">
+           <? if ($sel==1) print "<strong>Intro</strong>"; else print "Intro"; ?>
+           </a></td><td><? if ($sel==1) print "<img src=\"../reference/GIF/arrow.png\">"; ?></td></tr>
+           <tr><td colspan="2"><hr></td></tr>
+           
+           <tr><td>
+           <a href="syntax.php" class="font_14">
+           <? if ($sel==2) print "<strong>Basic Syntax</strong>"; else print "Syntax"; ?>
+           </a></td><td><? if ($sel==2) print "<img src=\"../reference/GIF/arrow.png\">"; ?></td></tr>
+           <tr><td colspan="2"><hr></td></tr>
+           
+           <tr><td>
+           <a href="reference.php" class="font_14">
+           <? if ($sel==3) print "<strong>Registers</strong>"; else print "Registers"; ?>
+           </a></td><td><? if ($sel==3) print "<img src=\"../reference/GIF/arrow.png\">"; ?></td></tr>
+           <tr><td colspan="2"><hr></td></tr>
+           
+           <tr><td>
+           <a href="reference.php" class="font_14">
+           <? if ($sel==4) print "<strong>Variables</strong>"; else print "Variables"; ?>
+           </a></td><td><? if ($sel==4) print "<img src=\"../reference/GIF/arrow.png\">"; ?></td></tr>
+           <tr><td colspan="2"><hr></td></tr>
+           
+           <tr><td>
+           <a href="reference.php" class="font_14">
+           <? if ($sel==5) print "<strong>Network Events</strong>"; else print "Network Events"; ?>
+           </a></td><td><? if ($sel==5) print "<img src=\"../reference/GIF/arrow.png\">"; ?></td></tr>
+           <tr><td colspan="2"><hr></td></tr>
+           
+           <tr><td>
+           <a href="reference.php" class="font_14">
+           <? if ($sel==6) print "<strong>Language Reference</strong>"; else print "Language Reference"; ?>
+           </a></td><td><? if ($sel==6) print "<img src=\"../reference/GIF/arrow.png\">"; ?></td></tr>
+           
+           
+           </table>
+           </div>
+           </div>
+        
+        <?
 	}
 	
 }

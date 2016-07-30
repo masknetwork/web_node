@@ -34,7 +34,7 @@ class CSysData
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);	 
 		
-		$_REQUEST['sd']['last_block']=$row['last_block'];	 	 	 		
+		$_REQUEST['sd']['last_block']=$row['last_block']; 		
 		
 		$_REQUEST['sd']['blocks_per_minute']=3;	 	
 		$_REQUEST['sd']['blocks_per_hour']=$_REQUEST['sd']['blocks_per_minute']*60;	 	 	
@@ -52,7 +52,25 @@ class CSysData
 		
 	    // Interest
 		$_REQUEST['sd']['interest_h']=round(50000000/$in_circ/365/24, 4);         
-		$_REQUEST['sd']['interest_y']=round(50000000/$in_circ, 4);                  
+		$_REQUEST['sd']['interest_y']=round(50000000/$in_circ, 4);      
+		
+		// Votes in 24 hours
+		$query="SELECT SUM(power) AS total 
+		          FROM votes 
+				 WHERE block>".($_REQUEST['sd']['last_block']-1440)." 
+				   AND target_type='ID_POST'";   
+		$result=$this->kern->execute($query);
+		$row = mysql_fetch_array($result, MYSQL_ASSOC); 
+		$_REQUEST['sd']['votes']=$row['total']; 
+		
+		// Comments
+		$query="SELECT SUM(power) AS total 
+		          FROM votes 
+				 WHERE block>".($_REQUEST['sd']['last_block']-1440)." 
+				   AND target_type='ID_COM'";   
+		$result=$this->kern->execute($query);
+		$row = mysql_fetch_array($result, MYSQL_ASSOC); 
+		$_REQUEST['sd']['com_votes']=$row['total']; 
 	}
 }
 ?>

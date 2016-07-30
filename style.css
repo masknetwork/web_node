@@ -2,6 +2,10 @@
 /* CSS Document */
 
 
+.font_14
+{
+	font-size:14px;
+}
 
 .txt_title_medium
 {
@@ -129,10 +133,7 @@ a.yellow_link
 	font-size:10px;
 }
 
-.font_14
-{
-	font-size:14px;
-}
+
 
 .font_16
 {

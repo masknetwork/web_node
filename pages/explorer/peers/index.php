@@ -49,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar(7);
 ?>
  
 
@@ -68,14 +68,7 @@
      // Location
      $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Peers");
 	 
-	 // Menu
-	 $template->showNav(4,
-	                   "../packets/index.php", "Packets", "",
-	                   "../blocks/index.php", "Blocks", "", 
-					   "../adr/index.php", "Addresses", "",
-					   "../peers/index.php", "Peers", "",
-					   "../status/index.php", "Status", "");
-					   
+	 				   
 	$template->showHelp("Below are listed the peers this web node is connected to. A peer is a computer running the MaskNetwork software that accept / forward network packets. Running a MaskNetwork node is a great way to maintain the network security while making proffits.");
      
 	 // Add peer					   

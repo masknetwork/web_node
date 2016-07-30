@@ -21,6 +21,7 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script src="../../../utils.js"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
@@ -86,7 +87,7 @@
 	if ($_REQUEST['act']=="show_modal") $issued->showIssueAssetModal($_REQUEST['symbol']);
 	
 	// Issue ?
-	if ($_REQUEST['act']=="issue") $issued->newAsset($_REQUEST['dd_issue_fee'], 
+	if ($_REQUEST['act']=="issue") $issued->newAsset($_REQUEST['dd_issue_adr'], 
 	                                                $_REQUEST['dd_issue_adr'], 
 													$_REQUEST['txt_issue_name'], 
 													$_REQUEST['txt_issue_desc'], 
@@ -97,7 +98,7 @@
 													$_REQUEST['txt_issue_symbol'], 
 													$_REQUEST['txt_issue_init_qty'], 
 													$_REQUEST['txt_issue_trans_fee'], 
-													$_REQUEST['txt_issue_fee_adr'], 
+													$_REQUEST['txt_issue_trans_fee_adr'], 
 													$_REQUEST['txt_issue_days'], 
 													$_REQUEST['dd_can_issue'],
 													$_REQUEST['txt_interest'],

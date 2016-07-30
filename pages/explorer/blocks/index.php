@@ -49,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar(7);
 ?>
  
 
@@ -72,9 +72,7 @@
 	 $template->showNav(2,
 	                   "../packets/index.php", "Packets", "",
 	                   "../blocks/index.php", "Blocks", "", 
-					   "../adr/index.php", "Addresses", "",
-					   "../peers/index.php", "Peers", "",
-					   "../status/index.php", "Status", "");
+					   "../adr/index.php", "Addresses");
 	 
 	 // Help
      $template->showHelp("The packages contain instructions that are executed by each node separately. For any operation you perform in the network, a new data package is created. The blocks represent a collection of the latest packages distributed through the network. Below the last blocks received are displayed. A block can contain up to 250 packages and has the maximum size of 250kb.");

@@ -9,7 +9,7 @@ class CPackets
 	
 	function showLastPackets()
 	{
-		$query="SELECT * FROM footprints 
+		$query="SELECT * FROM packets 
 		      ORDER BY ID DESC 
 			     LIMIT 0,25";
 		 $result=$this->kern->execute($query);	
@@ -88,7 +88,7 @@ class CPackets
 		$this->template->showQRModal();
 		
 		$query="SELECT * 
-		             FROM footprints 
+		             FROM packets 
 				    WHERE packet_hash='".$hash."' 
 					   OR payload_hash='".$hash."' 
 					   OR fee_hash='".$hash."'"; 
@@ -108,7 +108,12 @@ class CPackets
            
            <br><br>
            <table class="table-responsive" width="90%">
-           <tr><td class="font_20"><strong>Packet Header</strong></td></tr>
+           <tr><td class="font_20"><strong>Packet Header</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+           </td></tr>
+           <tr><td><hr></td></tr>
+           
+           <tr><td class="font_14">
+		   Confirmations : &nbsp;&nbsp;<span class="label label-<? if ($row['confirms']<10) print "danger"; else if ($row['confirms']<20 && $row['confirms']>10) print "warning";  else if ($row['confirms']<30 && $row['confirms']>20) print "success"; ?> font_12"><? print $row['confirms']; ?></span></td></tr>
            <tr><td><hr></td></tr>
            
            <tr><td class="font_14">
@@ -122,6 +127,12 @@ class CPackets
            <tr><td class="font_14">
 		   <? print "Block : <strong>".$row['block']."</strong>"; ?></td></tr>
            <tr><td><hr></td></tr>
+
+           
+           <tr><td>
+		   <? print "Block Hash : <strong><a class='font_14' href='../blocks/block.php?hash=".$row['block_hash']."'>".$row['block_hash']."</a></strong>"; ?></td></tr>
+           <tr><td><hr></td></tr>
+           
            </table>
             
            <br>
@@ -151,6 +162,10 @@ class CPackets
 		   <? print "Payload Hash : <strong>".$row['payload_hash']."</strong>"; ?></td></tr>
            <tr><td><hr></td></tr>
            
+           <tr><td class="font_14">
+		   <? print "Payload Size : <strong>".round($row['payload_size']/1024, 2)."</strong> Kbytes"; ?></td></tr>
+           <tr><td><hr></td></tr>
+           
            <?
 		     for ($a=1; $a<=10; $a++)
 			 {
@@ -175,6 +190,7 @@ class CPackets
         
         <?
 	}
+	
 	
 	function formatStr($str)
 	{

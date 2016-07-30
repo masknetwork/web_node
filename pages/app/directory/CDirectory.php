@@ -228,7 +228,7 @@ class CDirectory
 		// Load code
 		$query="SELECT * 
 		          FROM agents 
-				 WHERE aID='".$appID."'";
+				 WHERE aID='".$appID."'"; 
 	    $result=$this->kern->execute($query); 
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	  

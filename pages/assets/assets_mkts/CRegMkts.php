@@ -283,15 +283,6 @@ class CRegMkts
             </table></td>
             <td width="438" align="right" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td align="left"><? $this->template->showMyAdrDD("dd_new_net_fee_adr", "350"); ?></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
-              <tr>
                 <td height="30" align="left" valign="top"><span class="simple_blue_14"><strong>Market Address</strong></span></td>
               </tr>
               <tr>

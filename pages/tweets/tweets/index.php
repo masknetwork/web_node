@@ -77,35 +77,44 @@
  
  <?
      // Location
-     $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Last Blocks");
+     $template->showLocation("../../explorer/packets/index.php", "Posts", "", "Top Posts");
 	 
-	 // Target
-	 if (!isset($_REQUEST['budget'])) $_REQUEST['budget']=0;
+	 // Time
+	 if (!isset($_REQUEST['time'])) $_REQUEST['time']=24;
 	 
 	 // Menu
 	 if ($_REQUEST['ud']['ID']>0)
 	 {
-	    $template->showNav(2,
+		 switch ($_REQUEST['time'])
+		 {
+			 case "24" :  $sel=2; break;
+			 case "7" :  $sel=3; break;
+			 case "30" :  $sel=4; break;
+		 }
+		 
+	     $template->showNav($sel,
 	                       "../../tweets/home/index.php", "Home", "",
-	                       "../../tweets/tweets/index.php?adr=all", "Tweets", "");
+	                       "../../tweets/tweets/index.php?adr=all&time=24", "Top 24 Hours", "",
+						   "../../tweets/tweets/index.php?adr=all&time=7", "Top 7 Days", "",
+						   "../../tweets/tweets/index.php?adr=all&time=30", "Top 30 Days", "");
 	 }
 	 else
-	 { 
-	     if ($_REQUEST['budget']>0) 
-		    $sel=2;
-	     else
-		    $sel=1;
-			
-	     $template->showNav($sel,
-	                        "../../tweets/tweets/index.php?adr=all&budget=0", "Regular", "",
-	                        "../../tweets/tweets/index.php?adr=all&budget=0.0001", "Get Paid", ""); 
+	 {
+		switch ($_REQUEST['time'])
+	    {
+			 case "24" :  $sel=1; break;
+			 case "7" :  $sel=2; break;
+			 case "30" :  $sel=3; break;
+		}
+		 
+	    $template->showNav($sel,
+	                       "../../tweets/tweets/index.php?adr=all&time=24", "Top 24 Hours", "",
+						   "../../tweets/tweets/index.php?adr=all&time=7", "Top 7 Days", "",
+						   "../../tweets/tweets/index.php?adr=all&time=30", "Top 30 Days", "");
 	 }
 	 
 	 // Search
 	 $tweets->showSearchPanel();
-	 
-	 // New Tweet
-	 $tweets->showNewTweetModal();
 	 
  ?>
  
@@ -113,23 +122,17 @@
  <table width="90%" border="0" cellspacing="0" cellpadding="0">
    <tbody>
      <tr>
-       <td width="25%" height="1000px" valign="top">
-       
-       <?
-	      $tweets->showTrending(); 
+       <td width="75%" height="1000" align="right" valign="top">
+         
+         <?
+	      $tweets->showTweets("all", false, $_REQUEST['time']); 
 	   ?>
-       
-       </td>
-       <td width="75%" valign="top" align="right">
-       
-       <?
-	      $tweets->showTweets("all", false, "", 0, 20, $_REQUEST['budget']); 
-	   ?>
-       
+         
        </td>
      </tr>
    </tbody>
 </table>
+<br><br><br>
  
  </div>
  <div class="col-md-2 col-sm-0" id="div_ads"><? $template->showAds(); ?></div>

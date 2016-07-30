@@ -72,9 +72,8 @@
 	 
 	 // Menu
 	 $template->showNav(2,
-	                   "../all/index.php", "All", "",
-	                   "../escrowed/index.php", "Escrowed", "", 
-					   "../multisig/index.php", "Multisig", "");
+	                   "../all/index.php", "All", $_REQUEST['ud']['unread_trans'],
+	                   "../escrowed/index.php", "Escrowed", $_REQUEST['ud']['unread_esc']);
 	 
 	// Help
 	$template->showHelp("Below the last escrow transactions are displayed. Blocked funds in escrow transactions can be released by escrower or can be returned to the sender by escrower or recipient. Escrow transactions that are not signed in maximum 50,000 blocks from initiation are deleted and the funds are returned to the sender.");

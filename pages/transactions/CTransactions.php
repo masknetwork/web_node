@@ -21,12 +21,12 @@ class CTransactions
 		  $this->kern->execute($query);
 		}
 		
-		$query="SELECT mt.*, rd.field_1_name  
-		          FROM my_trans AS mt 
-				  LEFT JOIN req_data AS rd ON rd.adr=mt.adr
-			     WHERE mt.userID='".$_REQUEST['ud']['ID']."'
-			  ORDER BY mt.ID DESC 
-			     LIMIT 0,20";
+		$query="SELECT mt.*, blocks.confirmations
+		          FROM my_trans AS mt
+				  JOIN blocks ON blocks.hash=mt.block_hash
+				 WHERE mt.userID='".$_REQUEST['ud']['ID']."'
+				ORDER BY ID DESC 
+			     LIMIT 0,20"; 
 		$result=$this->kern->execute($query);
 		
 		?>
@@ -49,44 +49,24 @@ class CTransactions
 						      if ($row['mes']!="") 
 							  print "<span id='gly_msg_".rand(100, 10000)."' data-placement='top' class='glyphicon glyphicon-envelope' data-toggle='popover' data-trigger='hover' title='Message' data-content='".base64_decode($row['mes'])."'></span>&nbsp;&nbsp;";
 							
-							 if ($row['field_1']!="") print "<a href='javascript:void(0)' onclick=\"
-							 $('#modal_req_data').modal(); 
-							 
-							 $('#field_1_name').text('".base64_decode($row['field_1_name'])."'); 
-							 $('#field_1_val').text('".base64_decode($row['field_1'])."');
-							 
-							 $('#field_2_name').text('".base64_decode($row['field_2_name'])."'); 
-							 $('#field_2_val').text('".base64_decode($row['field_2'])."');
-							 
-							 $('#field_3_name').text('".base64_decode($row['field_3_name'])."'); 
-							 $('#field_3_val').text('".base64_decode($row['field_3'])."');
-							 
-							 $('#field_4_name').text('".base64_decode($row['field_4_name'])."'); 
-							 $('#field_4_val').text('".base64_decode($row['field_4'])."');
-							 
-							 $('#field_5_name').text('".base64_decode($row['field_5_name'])."'); 
-							 $('#field_5_val').text('".base64_decode($row['field_5'])."');
-							 
-							 \" class='font_14'><span class='glyphicon glyphicon-list'></span></a>";
 						  ?>
                           </td>
-                          <td width="15%" align="center" class="font_14">
+                          <td width="15%" align="center" class="<? if ($row['confirms']<25) print "font_16"; else print "font_14"; ?>">
                           <?
-					        if ($row['status']=="ID_CLEARED")
-						    {  
-						      print "<span class='label label-success'>Cleared</span>";
-						    }
-						    else
-						    {
-							   $dif=time()-$row['tstamp'];
-							 
-							   if ($dif<600) 
-							      print "<span class='label label-warning'>Pending</span>";
-							   else
-							      print "<span class='label label-danger'>Pending</span>";
-							}
-							?>
-                          
+						      $confirms=$row['confirmations'];
+							  
+						      if ($confirms==0)
+					             print "<span class='label label-danger'>".$confirms."</span>";
+							  else if ($confirms<=10)
+					             print "<span class='label label-info'>".$confirms."</span>";
+						      else if ($confirms>10 && $confirms<25)
+					             print "<span class='label label-warning'>".$confirms."</span>";
+						      else
+							     print "<span class='label label-success'>Confirmed</span>";
+								 
+							  if ($confirms<25) print "<p class=\"font_10\">confirmations</p>";
+						 ?>
+                         
                           </td>
                           <td width="25%" align="center" class="font_14" style=" 
 						  <? 
@@ -94,7 +74,19 @@ class CTransactions
 							     print "color:#990000"; 
 							  else 
 							     print "color:#009900"; 
-						  ?>"><strong><? print $row['amount']." ".strtolower($row['cur']); ?></strong></td>
+						  ?>"><strong><? print $row['amount']." ".strtolower($row['cur']); ?></strong>
+                          <p class="font_12">
+						  <? 
+						      if ($row['cur']=="MSK")
+							  {
+								  if ($row['amount']<0)
+								    print "-$".abs(round($row['amount']*$_REQUEST['sd']['msk_price'], 4));
+								  else
+								     print "+$".round($row['amount']*$_REQUEST['sd']['msk_price'], 4);
+							  }
+					      ?>
+                          </p>
+                          </td>
                           </tr>
                           <tr>
                           <td colspan="4"><hr></td>
@@ -414,13 +406,6 @@ class CTransactions
 			return false;
 		}
 		
-		// Net Fee Address
-		if ($this->kern->adrExist($net_fee_adr)==false)
-		{
-			$this->template->showErr("Invalid network fee address");
-			return false;
-		}
-		
 		// To Address
 		if ($this->kern->adrValid($to_adr)==false)
 		{
@@ -435,6 +420,20 @@ class CTransactions
 			return false;
 		}
 		
+		// Sender and fee address can spend ?
+		if ($this->kern->canSpend($from_adr)==false)
+		{
+			$this->template->showErr("Sender address can't spend funds");
+			return false;
+		}
+		
+		// Fee address can spend ?
+		if ($this->kern->canSpend($net_fee_adr)==false)
+		{
+			$this->template->showErr("Net fee address can't spend funds");
+			return false;
+		}
+		
 		if ($moneda=="MSK")
 		{
 		   // Amount
@@ -445,14 +444,14 @@ class CTransactions
 		   }
 		
 		   // Net fee balance
-		   if (($amount/1000)>$this->kern->getBalance($net_fee_adr))
+		   if ($this->kern->getBalance($net_fee_adr)<0.0001)
 		   {
 			  $this->template->showErr("Insuficient funds to execute this operation");
 			  return false;
 		   }
 		   
 		   // Sender balance
-		   if ($amount>$this->kern->getBalance($from_adr))
+		   if ($this->kern->getBalance($from_adr)<$amount)
 		   {
 			  $this->template->showErr("Insuficient funds to execute this operation");
 			  return false;
@@ -501,18 +500,6 @@ class CTransactions
 			}
 		}
 		
-	  
-	    // Sender controlled by agent ?
-	    $query="SELECT * 
-	            FROM agents 
-			   WHERE adr='".$from_adr."'";
-	    $result=$this->kern->execute($query);	
-	  
-	    if (mysql_num_rows($result)>0)
-	    {
-		   $this->template->showErr("Sender address has a contract attached. Only the contract can send coins.", 550);
-           return false;	
-	    }
 		
 		try
 	    {

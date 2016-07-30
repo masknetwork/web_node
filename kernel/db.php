@@ -824,14 +824,14 @@ $('#back').css("cursor", "pointer");
 	 	return true;
 	}
 	
-	function isDesc($desc)
+	function isDesc($desc, $max_len=1000)
 	{
 		// Valid characters
-		if ($this->isString($title)==false)
+		if ($this->isString($desc)==false)
 		   return false;
 	    
 		// Length
-		if (strlen($title)>1000 || strlen($title)<5)
+		if (strlen($desc)>$max_len || strlen($desc)<5)
 		   return false;
 	    
 		// Pass
@@ -905,20 +905,6 @@ $('#back').css("cursor", "pointer");
 	
 	function canSpend($adr)
 	{
-		// Speculative market address ?
-		$query="SELECT * 
-		          FROM feeds_spec_mkts 
-				 WHERE adr='".$adr."'";
-		$result=$this->execute($query);	
-	    if (mysql_num_rows($result)>0) return false;
-		
-		// Asset address ?
-		$query="SELECT * 
-		          FROM feeds_assets_mkts
-				 WHERE adr='".$adr."'";
-		$result=$this->execute($query);	
-	    if (mysql_num_rows($result)>0) return false;
-		
 		// Contract ?
 		$query="SELECT * 
 		          FROM agents

@@ -111,6 +111,7 @@
 						      // Escrower my address
 						      if ($this->kern->isMine($row['escrower'])==true)
 							     print "Address <strong>".$this->template->formatAdr($row['sender_adr'])."</strong> choosed one of your addresses <strong>(".$this->template->formatAdr($row['escrower'])."</strong>) as escrower for sending <strong>".$row['amount']." ".$row['cur']."</strong> to <strong>".$this->template->formatAdr($row['rec_adr'])."</strong>. You can <strong>relese</strong> the funds to seller or <strong>return</strong> the funds to sender address.";
+							 
 							  else  if ($this->kern->isMine($row['sender_adr'])==true)
 								 print "You have sent <strong>".$row['amount']." ".$row['cur']."</strong> to <strong>".$this->template->formatAdr($row['rec_adr'])."</strong> using an escrower (<strong>".$this->template->formatAdr($row['escrower'])."</strong>). You can release the funds anytime you want.";
 							  

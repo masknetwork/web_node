@@ -68,15 +68,6 @@
      // Location
      $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Peers");
 	 
-	 // Menu
-	 $template->showNav(5,
-	                   "../packets/index.php", "Packets", "",
-	                   "../blocks/index.php", "Blocks", "", 
-					   "../adr/index.php", "Addresses", "",
-					   "../peers/index.php", "Peers", "",
-					   "../status/index.php", "Status", "");
-					   
-	
 	 // Add peer					   
      switch ($_REQUEST['act'])
 	 { 

@@ -19,7 +19,7 @@ class CTweet
 		
 		// Response ID
 		$query="SELECT tweets.* 
-		          FROM tweets_comments AS tc 
+		          FROM comments AS tc 
 				  JOIN tweets ON tweets.tweetID=tc.tweetID 
 				 WHERE tc.rowID='".$resID."'"; 
 		$result=$this->kern->execute($query);	
@@ -90,9 +90,9 @@ class CTweet
 	
 	function newComment($net_fee_adr, 
 	                    $adr,
-					    $tweetID,
-						$comID, 
-					    $mes)
+					    $target_type,
+						$targetID,
+						$mes)
 	{
 		// Decode
 		$mes=base64_decode($mes); 
@@ -120,9 +120,9 @@ class CTweet
 		}
 		
 		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+	    if ($this->kern->canSpend($net_fee_adr)==false)
 		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			$this->template->showErr("Network fee address can't spend coins", 550);
 			return false;
 		}
 		
@@ -137,27 +137,27 @@ class CTweet
 		}
 		
 		// Repply to tweet ?
-		if ($tweetID>0)
+		if ($target_type=="ID_POST")
 		{
 		    $query="SELECT * 
 		              FROM tweets 
-				     WHERE tweetID='".$tweetID."'";
+				     WHERE tweetID='".$targetID."'";
 		    $result=$this->kern->execute($query);	
 			
 	        if (mysql_num_rows($result)==0)
 		    {
-			    $this->template->showErr("Invalid tweet ID", 550);
+			    $this->template->showErr("Invalid post ID", 550);
 		  	    return false;
 		    }
 		}
 		
 		
 		// Reply to comment ?
-		if ($comID>0)
+		if ($target_type=="ID_COM")
 		{
 		    $query="SELECT * 
-		              FROM tweets_comments 
-				     WHERE rowID='".$comID."'";
+		              FROM comments 
+				     WHERE comID='".$targetID."'";
 		    $result=$this->kern->execute($query);	
 			
 	        if (mysql_num_rows($result)==0)
@@ -166,12 +166,25 @@ class CTweet
 		  	    return false;
 		    }
 		}
-	  
-	    
+		
+		// Already commented ?
+		$query="SELECT * 
+		          FROM comments 
+				 WHERE adr='".$adr."' 
+				   AND parent_type='".$target_type."' 
+				   AND parentID='".$targetID."'";
+	     $result=$this->kern->execute($query);	
+	     
+		 if (mysql_num_rows($result)>0)
+	     {
+			    $this->template->showErr("You have already commented this post", 550);
+		  	    return false;
+		  }
+			
 		// Message
-		if (strlen($mes)<3 || strlen($mes)>1000)
+		if (strlen($mes)<10 || strlen($mes)>1000)
 		{
-			$this->template->showErr("Invalid message length (10-500 characters)", 550);
+			$this->template->showErr("Invalid message length (10-1000 characters)", 550);
 			return false;
 		}
 		
@@ -189,8 +202,8 @@ class CTweet
 							   op='ID_NEW_TWEET_COMMENT', 
 							   fee_adr='".$net_fee_adr."', 
 							   target_adr='".$adr."',
-							   par_1='".$tweetID."',
-							   par_2='".$comID."',
+							   par_1='".$target_type."',
+							   par_2='".$targetID."',
 							   par_3='".base64_encode($mes)."',
 							   status='ID_PENDING', 
 							   tstamp='".time()."'"; 
@@ -686,7 +699,7 @@ class CTweet
 		
 		// Load comment data
 		$query="SELECT *
-		          FROM tweets_comments 
+		          FROM comments 
 				 WHERE tweetID='".$tweetID."' 
 				   AND comID='".$comID."'
 				   AND status='ID_APROVE' 

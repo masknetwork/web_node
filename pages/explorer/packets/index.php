@@ -50,7 +50,7 @@
 
 <?
     if ($_REQUEST['ud']['ID']>0)
-      $template->showTopBar(6);
+      $template->showTopBar(7);
    else
       $template->showTopBar(2);
 ?>
@@ -75,9 +75,7 @@
 	 $template->showNav(1,
 	                   "../packets/index.php", "Packets", "",
 	                   "../blocks/index.php", "Blocks", "", 
-					   "../adr/index.php", "Addresses", "",
-					   "../peers/index.php", "Peers", "",
-					   "../status/index.php", "Status", "");
+					   "../adr/index.php", "Addresses");
 	 
 	 // Help
      $template->showHelp("Below are the last packages received. A package can contain any instruction such as renting a name or a transaction. There are dozens of types of packages. Click on the name of the package for more details.");

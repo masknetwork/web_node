@@ -44,7 +44,9 @@
    .font_14 { font-size:22px;  }
 }
 
-.font_14 {font-size:20px;  }
+
+.font_141 {font-size:20px;  }
+.font_141 {font-size:22px;  }
 </style>
 
 </head>
@@ -80,268 +82,88 @@
      <tr>
        <td width="23%" align="left" valign="top">
        
-       <div class="list-group">
-       <a href="#" class="list-group-item active" style="font-size:14px">Instructions</a>
-       <a href="#" class="list-group-item" style="font-size:14px">Environment Variables</a>
-       </div>
+       <?
+	      $write->showRefMenu(1);
+	   ?>
        
        </td>
        <td width="6%" align="right" valign="top">&nbsp;</td>
        <td width="71%" align="right" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
          <tbody>
            <tr>
-             <td align="left" class="font_20"><strong>Instructions</strong></td>
+             <td class="font_16"><strong>Intro</strong></td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td><hr></td>
            </tr>
            <tr>
-             <td align="left"><a href="add.php" style="font-size:14px">ADD</a></span>
-               <p class="font_12" style="color:#999999">Add two operands</p></td>
+             <td class="font_14"><strong>Decentralized applications </strong>(or smart contracts) are applications that have the source code and data stored in a public decentralized blockchain without any possibility of downtime, censorship, fraud or third party interference. Instead of running on a single machine like regular applications, a decentralized application runs on hundreads of computers in the same time avoiding central points of failure. Decentralized applications may enable a wide range of possible business models that were previously impossible or too costly to run</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="atpos.php" style="font-size:14px">ATPOS</a></span>
-               <p class="font_12" style="color:#999999">Returns the character / cell at a specified position</p></td>
+             <td class="font_14">MaskNetwork protocol allows you to build and run decentralized applications that will be executed inside the <strong>Mask Network Virtual Machine</strong> (MVM). <strong>MaskNetwork Scripting Language </strong>(MSL) is an assembly-like <strong>turing complete</strong> programming language designed for developing decentralized applications that will run on MaskNetwork blockchain. MSL is no tcompiled to bytecode, is directly executed by MVM.</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="concat.php" style="font-size:14px">CONCAT</a></span>
-               <p class="font_12" style="color:#999999">Concatenates two operands</p></td>
+             <td class="font_14"><strong>Execution Fees</strong></td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td><hr></td>
            </tr>
            <tr>
-             <td align="left"><a href="div.php" style="font-size:14px">DIV</a></span>
-               <p class="font_12" style="color:#999999">Divides operand one to operand two</p></td>
+             <td class="font_14">In order to stop denial of service attacks from infinite loops and encourage efficiency in the code, all applications will pay a small fee for each step executed inside  virtual machine (VM) . The fee is paid in <strong>MaskCoins</strong> (MSK), the the underlying currency of the network.</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="email.php" style="font-size:14px">EMAIL</a></span>
-               <p class="font_12" style="color:#999999">Sends an email</p></td>
+             <td><span class="font_14">The price for a single step is <strong>not fixed</strong>. It depends on two factors. The first is the number of steps <strong>already executed</strong> by VM and the second is the instruction's <strong>complexity</strong>. Some computational steps cost <strong>more</strong> than others as well either because they are computationally expensive or because they increase the amount of data that has to be stored in the state.</span></td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="atpos.php" style="font-size:14px">EXIT</a></span>
-               <p class="font_12" style="color:#999999">Stops the execution and close the virtual machine</p></td>
+             <td class="font_14">For most instructions like simple mathematical operations, the cost is 1 <strong>MaskBit</strong> (MSB) or <strong>0.00000001</strong> MaskCoins (MSK). The price is increased by 1 MSB after each step executed. For example, an application that runs in 10 steps, will not pay 1 MSB + 2 MSB +....+10 MSB, or 50 MSB.</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="atpos.php" style="font-size:14px">GOTO</a></span>
-               <p class="font_12" style="color:#999999">Jump the execution to the specified line</p></td>
+             <td class="font_14"><strong>Storage Fees</strong></td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td><hr></td>
            </tr>
            <tr>
-             <td align="left"><a href="atpos.php" style="font-size:14px">HASH</a></span>
-               <p class="font_12" style="color:#999999">Returns the hash of an operand</p></td>
+             <td class="font_14">After an application runs, all memory data like variables or stack is <strong>lost</strong>. In order to permanently store data, programmers can use application's data storage. The storage is never lost reset and it can be used to store settings or other important data. It's like a <strong>database stored on the blockchain</strong>, that can be freely accessed by anyone (data in application's storage is not encrypted) but <strong>only</strong> the application can change it.</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="atpos.php" style="font-size:14px">HTTP</a></span>
-               <p class="font_12" style="color:#999999">Calls a web address</p></td>
+             <td class="font_14">To prevent applications from storing too much data, a fee of <strong>100 MSB / kb</strong> stored is paid after each block by all applications that used the storage. For example, an application that stores 10kb of data will pay 0.00001 MSK / block or <strong>0.014 MSK / day.</strong></td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="atpos.php" style="font-size:14px">IF</a></span>
-               <p class="font_12" style="color:#999999">Compares two operands</p></td>
+             <td class="font_14">In case an application<strong> runs out of funds</strong>, the network will automatically <strong>uninstall</strong> it (the nodes will delete application data from the distributed ledger).</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="indexof.php" style="font-size:14px">INDEXOF</a></span>
-               <p class="font_12" style="color:#999999">Returns the index of a character / substring in a string</p></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><hr></td>
+             <td>&nbsp;</td>
            </tr>
            <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">LASTCH</a></span>
-               <p class="font_12" style="color:#999999">Returns the last character of a string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">LISTADD</a>
-               <p class="font_12" style="color:#999999">Push an operand to an array</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">MOV</a></span>
-               <p class="font_12" style="color:#999999">Copy the value of operand</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">MATH</a></span>
-               <p class="font_12" style="color:#999999">Applies a mathematic function to an operand</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">MUL</a></span>
-               <p class="font_12" style="color:#999999">Multiplies two operands</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">MES</a></span>
-               <p class="font_12" style="color:#999999">Sends a message</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">POP</a></span>
-               <p class="font_12" style="color:#999999">Pops an operand to stack</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">PUSH</a></span>
-               <p class="font_12" style="color:#999999">Push an operand from stack</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">PUSH</a></span>
-               <p class="font_12" style="color:#999999">Push an operand from stack</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">RAND</a></span>
-               <p class="font_12" style="color:#999999">Generates a random number</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">REGEX</a></span>
-               <p class="font_12" style="color:#999999">Generates a random number</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">REPLACE</a></span>
-               <p class="font_12" style="color:#999999">Generates a random number</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">REFUND</a></span>
-               <p class="font_12" style="color:#999999">Refunds a transaction</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">SEAL</a></span>
-               <p class="font_12" style="color:#999999">Seales the application address for a specified number of days</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">SIZE</a></span>
-               <p class="font_12" style="color:#999999">Returns the size of an array / string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">SUB</a></span>
-               <p class="font_12" style="color:#999999">Substract two operands</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">SPLIT</a></span>
-               <p class="font_12" style="color:#999999">Splits a string by a specified delimiter</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">STRLEN</a></span>
-               <p class="font_12" style="color:#999999">Returns the length of a string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">SUBSTR</a></span>
-               <p class="font_12" style="color:#999999">Returns a substring of a string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">STORQUERY</a></span>
-               <p class="font_12" style="color:#999999">Executes a SQL-like instruction on application's internal storage</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">TOSTRING</a></span>
-               <p class="font_12" style="color:#999999">Converts an operand to string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">TRIM</a></span>
-               <p class="font_12" style="color:#999999">Converts an operand to string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">TRANS</a></span>
-               <p class="font_12" style="color:#999999">Converts an operand to string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"><a href="lastch.php" style="font-size:14px">TWEET</a></span>
-               <p class="font_12" style="color:#999999">Converts an operand to string</p></td>
-           </tr>
-           <tr>
-             <td align="left"><hr></td>
-           </tr>
-           <tr>
-             <td align="left"></td>
+             <td>&nbsp;</td>
            </tr>
          </tbody>
        </table></td>

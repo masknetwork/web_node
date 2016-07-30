@@ -1,7 +1,6 @@
 <?
     session_start();
-  
-       
+      
    include "../../../kernel/db.php";
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
@@ -120,7 +119,7 @@ $(function (e)
 <body>
 
 <?
-   $template->showTopBar(7);
+   $template->showTopBar(8);
 ?>
  
 
@@ -142,13 +141,11 @@ $(function (e)
 	 // Menu
 	 $template->showNav(1,
 	                   "../../tweets/home/index.php", "Home", "",
-	                   "../../tweets/tweets/index.php?adr=all", "Last Tweets", ""); 
+	                   "../../tweets/tweets/index.php?adr=all", "Top 24 Hours", "",
+					   "../../tweets/tweets/index.php?adr=all", "Top 7 Days", "",
+					   "../../tweets/tweets/index.php?adr=all", "Top 30 Days", ""); 
 	 
-	 // New Tweet
-	 $tweets->showNewTweetModal();
-	 
-	 
- ?>
+?>
  
  <br>
  <table width="90%" border="0" cellspacing="0" cellpadding="0">
@@ -163,91 +160,9 @@ $(function (e)
        
        
        <?
-	       // Pic 1
-	       if ($_REQUEST['h_img_0']!="") 
-		   {
-			   if (strpos($_SERVER['DOCUMENT_ROOT'], "localhost")===false)
-			      $pic_1="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_img_0'];
-			   else
-		          $pic_1="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_img_0'];
-		   }
-		   else
-		   {
-		      $pic_1="";
-		   }
-		   
-		   // Pic 2
-	       if ($_REQUEST['h_img_1']!="") 
-		   {
-			   if (strpos($_SERVER['DOCUMENT_ROOT'], "ocalhost")===false)
-			      $pic_2="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_img_1'];
-			   else
-		          $pic_2="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_img_1'];
-		   }
-		   else
-		   {
-		      $pic_2="";
-		   }
-		   
-		   // Pic 3
-	       if ($_REQUEST['h_img_2']!="") 
-		   {
-			   if (strpos($_SERVER['DOCUMENT_ROOT'], "ocalhost")===false)
-			      $pic_3="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_img_3'];
-			   else
-		          $pic_3="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_img_3'];
-		   }
-		   else
-		   {
-		      $pic_3="";
-		   }
-		   
-		   // Pic 4
-	       if ($_REQUEST['h_img_3']!="") 
-		   {
-			   if (strpos($_SERVER['DOCUMENT_ROOT'], "ocalhost")===false)
-			      $pic_4="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_img_4'];
-			   else
-		          $pic_4="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_img_4'];
-		   }
-		   else
-		   {
-		      $pic_4="";
-		   }
-		   
-		   // Pic 5
-	       if ($_REQUEST['h_img_4']!="") 
-		   {
-			   if (strpos($_SERVER['DOCUMENT_ROOT'], "ocalhost")===false)
-			      $pic_5="http://www.".$_SERVER['HTTP_HOST']."/pages/tweets/home/server/php/files/".$_REQUEST['h_img_5'];
-			   else
-		          $pic_5="http://localhost/wallet/pages/tweets/home/server/php/files/".$_REQUEST['h_img_5'];
-		   }
-		   else
-		   {
-		      $pic_5="";
-		   }
-			  
-			  
 	       switch ($_REQUEST['act'])
 		   {
-		     case "new_tweet" : $home->newTweet($_REQUEST['dd_tweet_net_fee'], 
-			                                   $_REQUEST['tweet_adr'], 
-							                   $_REQUEST['tweet_adr'], 
-							                   $_REQUEST['txt_tweet_mes'], 
-						                  	   0, 
-							                   $pic_1, 
-							                   $pic_2, 
-							                   $pic_3, 
-						                       $pic_4, 
-							                   $pic_5, 
-							                   "", 
-											   $_REQUEST['txt_budget'], 
-											   $_REQUEST['txt_cur'], 
-											   $_REQUEST['dd_days']);
-							     break;
-								 
-			 case "like" : $tweets->like($_REQUEST['dd_like_net_fee'], 
+		     case "like" : $tweets->like($_REQUEST['dd_like_net_fee'], 
 			                            $_REQUEST['dd_like_adr'], 
 										$_REQUEST['like_tweetID']);
 						   break;

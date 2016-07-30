@@ -166,54 +166,11 @@ class CMyAdr
                           </td>
                           <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal();" class="font_10" style="color:#999999">full address</a><? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
                           <td width="10%" align="center" class="font_18" style="color:#005500"><span class="font_18" style="color:#005500">
-                            <?
-						     $attr="";
-							 
-							 // Receive interest
-							 $query="SELECT * 
-							           FROM interest 
-									  WHERE adr='".$row['adr']."'"; 
-							 $r=$this->kern->execute($query);	
-							 if (mysql_num_rows($r)>0)
-							 print "<span class='glyphicon glyphicon-gift' style='color:#b5943c;' title='Receive Interest' data-toggle='tooltip' data-placement='top'></span>";
-								 
-							 // Frozen
-                             if ($this->kern->hasAttr($row['adr'], "ID_FROZEN")==true) 
-							 print "<span class='glyphicon glyphicon-remove-circle' style='color:#6c7a88;' title='Frozen Address' data-toggle='tooltip' data-placement='top'></span>";
-							 
-							 // Sealed
-							 if ($this->kern->hasAttr($row['adr'], "ID_SEALED")==true) 
-							 print "&nbsp;<span class='glyphicon glyphicon-record' style='color:#6c7a88;' title='Sealed Address' data-toggle='tooltip' data-placement='top'></span>";
-							 
-							 // Restricted recipients
-							 if ($this->kern->hasAttr($row['adr'], "ID_RESTRICT_REC")==true) 
-							  print "&nbsp;<span class='glyphicon glyphicon-random' style='color:#6c7a88;' title='Restricted Recipients' data-toggle='tooltip' data-placement='top'></span>";
-							 
-							 // Multisignatures
-							 if ($this->kern->hasAttr($row['adr'], "ID_MULTISIG")==true)
-							  print "&nbsp;<span class='glyphicon glyphicon-pencil' style='color:#6c7a88;' title='Multisig Address' data-toggle='tooltip' data-placement='top'></span>";
-							 
-							 // OTP 
-							 if ($this->kern->hasAttr($row['adr'], "ID_OTP")==true)
-							  print "&nbsp;<span class='glyphicon glyphicon-file' style='color:#6c7a88;' title='One Time Password Enabled' data-toggle='tooltip' data-placement='top'></span>";
-							 
-							 // Request Data 
-							 if ($this->kern->hasAttr($row['adr'], "ID_REQ_DATA")==true)
-							  print "&nbsp;<span class='glyphicon glyphicon-list' style='color:#6c7a88;' title='Request Additional Data' data-toggle='tooltip' data-placement='top'></span>";
-							    
-								 
-						  ?>
+                            
                           </span></td>
                           <td width="10%" align="center" class="font_18" style="color:#005500">
                           
-                          <?
-						     $next=60-($_REQUEST['sd']['last_block']-$row['last_interest'])/$_REQUEST['sd']['blocks_per_minute'];
-							 $next=round($next/5);
-							 if ($next==0) $next=1;
-							 
-		                     if ($row['balance']>=1) print "<img src=\"./GIF/".$next.".png\" width=\"35\" style='color:#b5943c;' title='Next interest in ".($next*5)." minutes (+".round($_REQUEST['sd']['interest_h']/100*$row['balance'], 4).") MSK. Interest rate ".$_REQUEST['sd']['interest_y']."% per year' data-toggle='tooltip' data-placement='top'/>";  
-						  ?>
-                          
+                        
                           
                           
                           </td>

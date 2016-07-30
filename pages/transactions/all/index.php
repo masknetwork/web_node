@@ -71,8 +71,7 @@
 	 // Menu
 	 $template->showNav(1,
 	                   "../all/index.php", "All", $_REQUEST['ud']['unread_trans'],
-	                   "../escrowed/index.php", "Escrowed", $_REQUEST['ud']['unread_esc'], 
-					   "../multisig/index.php", "Multisig", $_REQUEST['ud']['unread_multisig']);
+	                   "../escrowed/index.php", "Escrowed", $_REQUEST['ud']['unread_esc']);
 	 
 	 // Help
      $template->showHelp("Below the last transactions executed are displayed. A transaction is confirmed in the network in about 2 minutes. Then, the transaction is final and it cannot be reversed. The transactions can have attached data such as a message or other information.");

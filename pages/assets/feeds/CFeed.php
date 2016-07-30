@@ -221,7 +221,7 @@ class CFeed
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel(); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel(0.0001, "branch"); ?></td>
               </tr>
             </table></td>
             <td width="450" align="right" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
@@ -307,6 +307,8 @@ class CFeed
 		   $('#txt_branch_name').val(btoa($('#txt_branch_name').val())); 
 		   $('#txt_branch_desc').val(btoa($('#txt_branch_desc').val())); 
 		});
+		
+		linkToNetFee("txt_branch_days", "branch_net_fee_panel_val", "0.0001");
 		</script>
         
         <?

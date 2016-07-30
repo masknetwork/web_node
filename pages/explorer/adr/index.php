@@ -49,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar(7);
 ?>
  
 
@@ -72,13 +72,11 @@
 	 $template->showNav(3,
 	                   "../packets/index.php", "Packets", "",
 	                   "../blocks/index.php", "Blocks", "", 
-					   "../adr/index.php", "Addresses", "",
-					   "../peers/index.php", "Peers", "",
-					   "../status/index.php", "Status", "");
+					   "../adr/index.php", "Addresses");
 	
 	$template->showHelp("Below are listed top network addresses by MSk balance. An address is like a bank account number anonymous in the real world. It is a string of characters that you can send to anyone to receive coins, assets or messages. Like a bank account, you can send messages or coins to an address.");
 	 
-	 
+	 $adr->showAdr();
  ?>
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>

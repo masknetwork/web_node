@@ -83,7 +83,7 @@
 	
 	     switch ($_REQUEST['act'])
 	     {
-		      case "new_bet" : $bets->newOption($_REQUEST['dd_bet_fee'], 
+		      case "new_bet" : $bets->newOption($_REQUEST['dd_bet_adr'], 
 	                                           $_REQUEST['dd_bet_adr'], 
 					                           $_REQUEST['dd_bet_type'], 
 					                           $_REQUEST['txt_bet_lev_1'], 

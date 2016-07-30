@@ -101,10 +101,9 @@
      <tr>
        <td width="23%" align="left" valign="top">
        
-       <div class="list-group">
-       <a href="#" class="list-group-item active" style="font-size:14px">Instructions</a>
-       <a href="#" class="list-group-item" style="font-size:14px">Environment Variables</a>
-       </div>
+       <?
+	      $write->showRefMenu();
+	   ?>
        
        </td>
        <td width="6%" align="right" valign="top">&nbsp;</td>

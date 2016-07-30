@@ -8,9 +8,17 @@ class CTweets
 		$this->mes=$mes;
 	}
 	
-	
-	function remove($net_fee_adr, $tweetID)
+	function newTweet($net_fee_adr, 
+	                  $adr,
+					  $title, 
+					  $mes, 
+					  $retweet_tweet_id=0, 
+					  $pic="")
 	{
+		// Decode
+		$title=base64_decode($title); 
+		$mes=base64_decode($mes); 
+		
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
@@ -19,16 +27,17 @@ class CTweets
 		}
 		
 		// My address
-	    if ($this->kern->isMine($net_fee_adr)==false)
+	    if ($this->kern->isMine($net_fee_adr)==false || 
+		    $this->kern->isMine($adr)==false)
 		{
 			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+	    if ($this->kern->canSpend($net_fee_adr)==false)
 		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			$this->template->showErr("Network fee address can't spend funds", 550);
 			return false;
 		}
 		
@@ -42,27 +51,44 @@ class CTweets
 			return false;
 		}
 		
-		// Tweet ID valid ?
-		$query="SELECT * 
-		          FROM tweets 
-				 WHERE tweetID='".$tweetID."'"; 
-		$result=$this->kern->execute($query);	
-	    
-		if (mysql_num_rows($result)==0)
+		
+		// Pic 1
+		if ($pic_1!="")
 		{
-			$this->template->showErr("Invalid entry data", 550);
+		  if (filter_var($pic_1, FILTER_VALIDATE_URL) === false) 
+		  {
+			$this->template->showErr("Invalid pic 1 link", 550);
 			return false;
+		  }
 		}
 		
-		// Load follow data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		
-		// Address
-		if ($this->kern->isMine($row['adr'])==false)
+		// Message
+		if ($retweet_tweet_id==0)
 		{
-			$this->template->showErr("Invalid entry data", 550);
-			return false;
+		   if ($this->kern->isDesc($mes, 10000))
+		   {
+			  $this->template->showErr("Invalid message", 550);
+			  return false;
+		   }
+		   
+		   if ($this->kern->isTitle($title))
+		   {
+			  $this->template->showErr("Invalid title", 550);
+			  return false;
+		   }
 		}
+		else
+		{
+		   if ($mes!="")
+		   {
+		     if (strlen($mes)<10 || strlen($mes)>500)
+		     {
+			    $this->template->showErr("Invalid message length (10-500 characters)", 550);
+			    return false;
+		     }
+		   }
+		}
+		
 		
 		try
 	    {
@@ -70,18 +96,21 @@ class CTweets
 		   $this->kern->begin();
 
            // Action
-           $this->kern->newAct("Follows an address");
+           $this->kern->newAct("Updates a profile");
 		   
 		   // Insert to stack
 		   $query="INSERT INTO web_ops 
 			               SET user='".$_REQUEST['ud']['user']."', 
-							   op='ID_REMOVE_TWEET', 
+							   op='ID_NEW_TWEET', 
 							   fee_adr='".$net_fee_adr."', 
-							   target_adr='".$row['adr']."',
-							   par_1='".$tweetID."',
+							   target_adr='".$adr."',
+							   par_1='".base64_encode($title)."',
+							   par_2='".base64_encode($mes)."',
+							   par_3='".$retweet_tweet_id."',
+							   par_4='".base64_encode($pic)."',
 							   status='ID_PENDING', 
 							   tstamp='".time()."'"; 
-	       $this->kern->execute($query); 
+	       $this->kern->execute($query);
 		
 		   // Commit
 		   $this->kern->commit();
@@ -101,33 +130,36 @@ class CTweets
 	   }
 	}
 	
-	function unfollow($net_fee_adr, $adr)
+	function unfollow($net_fee_adr, $adr, $unfollow_adr)
 	{
-		// Fee Address
-		if ($this->kern->adrExist($net_fee_adr)==false)
+		// Valid addresses
+		if (!$this->kern->adrValid($net_fee_adr) || 
+		    !$this->kern->adrValid($adr) || 
+			!$this->kern->adrValid($unfollow_adr))
 		{
-			$this->template->showErr("Invalid network fee address", 550);
+			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Address valid
-		if ($this->kern->adrValid($adr)==false)
+		if ($this->kern->adrValid($net_fee_adr)==false)
 		{
 			$this->template->showErr("Invalid target address", 550);
 			return false;
 		}
 		
 		// My address
-	    if ($this->kern->isMine($net_fee_adr)==false)
+	    if (!$this->kern->adrValid($net_fee_adr) || 
+		    !$this->kern->adrValid($adr))
 		{
 			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+	    if ($this->kern->canSpend($net_fee_adr)==false)
 		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			$this->template->showErr("Network fee address can't spend funds", 550);
 			return false;
 		}
 		
@@ -144,10 +176,8 @@ class CTweets
 		// Following this adddress ?
 		$query="SELECT * 
 		          FROM tweets_follow 
-		         WHERE follows='".$adr."' 
-				   AND adr IN (SELECT adr 
-				                 FROM my_adr 
-								WHERE userID='".$_REQUEST['ud']['ID']."')";
+		         WHERE follows='".$unfollow_adr."' 
+				   AND adr='".$adr."'";
 		$result=$this->kern->execute($query);	
 	    
 		if (mysql_num_rows($result)==0)
@@ -156,11 +186,6 @@ class CTweets
 			return false;
 		}
 		
-		// Load follow data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		
-		// Address
-		$following_adr=$row['adr'];
 		
 		try
 	    {
@@ -175,8 +200,8 @@ class CTweets
 			               SET user='".$_REQUEST['ud']['user']."', 
 							   op='ID_UNFOLLOW', 
 							   fee_adr='".$net_fee_adr."', 
-							   target_adr='".$following_adr."',
-							   par_1='".$adr."',
+							   target_adr='".$adr."',
+							   par_1='".$unfollow_adr."',
 							   status='ID_PENDING', 
 							   tstamp='".time()."'"; 
 	       $this->kern->execute($query); 
@@ -199,49 +224,62 @@ class CTweets
 	   }
 	}
 	
-	function follow($net_fee_adr, $adr, $follow_adr)
+	function follow($net_fee_adr, 
+	                $follow_with_adr, 
+					$follow_adr, 
+					$months)
 	{
-	    // Fee Address
+		// Addresses valid
+		if (!$this->kern->adrValid($net_fee_adr) || 
+	        !$this->kern->adrValid($follow_with_adr) || 
+			!$this->kern->adrValid($follow_adr))
+		{
+			$this->template->showErr("Invalid entry data", 550);
+			return false;
+		}
+		
+		// My address
+	    if (!$this->kern->isMine($net_fee_adr) || 
+		    !$this->kern->isMine($follow_with_adr))
+		{
+			$this->template->showErr("Invalid entry data", 550);
+			return false;
+		}
+		
+		// Months
+		if ($months!=3 && 
+		    $months!=6 && 
+			$months!=9 && 
+			$months!=12 && 
+			$months!=24 && 
+			$months!=36)
+		{
+			$this->template->showErr("Invalid months", 550);
+			return false;
+		}
+		
+		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
 			$this->template->showErr("Invalid network fee address", 550);
 			return false;
 		}
 		
-		// Address valid
-		if ($this->kern->adrValid($adr)==false)
+		// Fee address can spend ?
+		if (!$this->kern->canSpend($net_fee_adr))
 		{
-			$this->template->showErr("Invalid target address", 550);
+			$this->template->showErr("Net fee address can't spedn funds", 550);
 			return false;
 		}
 		
-		// Follow address valid
-		if ($this->kern->adrValid($follow_adr)==false)
-		{
-			$this->template->showErr("Invalid follow address", 550);
-			return false;
-		}
-		
-		// My address
-	    if ($this->kern->isMine($net_fee_adr)==false || 
-		    $this->kern->isMine($adr)==false)
-		{
-			$this->template->showErr("Invalid entry data", 550);
-			return false;
-		}
-		
-		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
-		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
-			return false;
-		}
+		// Fee
+		$fee=$months*0.0001;
 		
 		// Balance
 		$balance=$this->kern->getBalance($net_fee_adr);
 		
 		// Funds
-		if ($balance<0.0001)
+		if ($balance<$fee)
 		{
 			$this->template->showErr("Insufficient funds to execute this operation", 550);
 			return false;
@@ -273,10 +311,11 @@ class CTweets
 			               SET user='".$_REQUEST['ud']['user']."', 
 							   op='ID_FOLLOW', 
 							   fee_adr='".$net_fee_adr."', 
-							   target_adr='".$adr."',
+							   target_adr='".$follow_with_adr."',
 							   par_1='".$follow_adr."',
+							   par_2='".$months."',
 							   status='ID_PENDING', 
-							   tstamp='".time()."'";
+							   tstamp='".time()."'"; 
 	       $this->kern->execute($query); 
 		
 		   // Commit
@@ -298,7 +337,7 @@ class CTweets
 	}
 	
 	
-	function like($net_fee_adr, $adr, $tweetID)
+	function vote($net_fee_adr, $adr, $target_type, $targetID, $type)
 	{
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
@@ -323,7 +362,7 @@ class CTweets
 		}
 		
 		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+	    if ($this->kern->canSpend($net_fee_adr)==false)
 		{
 			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
 			return false;
@@ -339,10 +378,16 @@ class CTweets
 			return false;
 		}
 		
-		// Tweet exist ?
-		$query="SELECT * 
-		          FROM tweets 
-				 WHERE tweetID='".$tweetID."'";
+		// Target exist ?
+		if ($target_type=="ID_POST")
+		   $query="SELECT * 
+		             FROM tweets 
+				    WHERE tweetID='".$targetID."'";
+	    else
+		   $query="SELECT * 
+		             FROM comments 
+				    WHERE comID='".$targetID."'";
+				 
 		$result=$this->kern->execute($query);	
 	    
 		if (mysql_num_rows($result)==0)
@@ -351,11 +396,12 @@ class CTweets
 			return false;
 		}
 		
-		// Already liked ?
+		// Already likedvoted?
 		$query="SELECT * 
-		          FROM tweets_likes 
+		          FROM votes 
 				 WHERE adr='".$adr."' 
-				   AND tweetID='".$tweetID."'";
+				   AND target_type='".$target_type."' 
+				   AND targetID='".$targetID."'";
 		$result=$this->kern->execute($query);	
 	    
 		if (mysql_num_rows($result)>0)
@@ -375,12 +421,14 @@ class CTweets
 		   // Insert to stack
 		   $query="INSERT INTO web_ops 
 			               SET user='".$_REQUEST['ud']['user']."', 
-							   op='ID_LIKE_TWEET', 
+							   op='ID_VOTE', 
 							   fee_adr='".$net_fee_adr."', 
 							   target_adr='".$adr."',
-							   par_1='".$tweetID."',
+							   par_1='".$target_type."',
+							   par_2='".$targetID."',
+							   par_3='".$type."',
 							   status='ID_PENDING', 
-							   tstamp='".time()."'";
+							   tstamp='".time()."'"; 
 	       $this->kern->execute($query);
 		
 		   // Commit
@@ -427,22 +475,18 @@ class CTweets
 		return $m;
 	}
 	
-	function showTweets($adr="", $all=false, $term="", $start=0, $end=20, $budget=0)
+	function showTweets($adr="", $all=false, $time="24", $term="", $start=0, $end=20)
 	{
-		// Like modal
-		$this->showLikeModal();
-		
-		// Delete modal
-	    $this->showRemoveModal($adr);
-		
 		// QR modal
 		$this->template->showQRModal();
 		
-		// Retweet modal
-		$this->showRetweet($adr);
-		
-		// Report
-		$this->showReport();
+		// Time
+		switch ($time)
+		{
+			case "24" : $start_block=$_REQUEST['sd']['last_block']-1440; break;
+			case "7" : $start_block=$_REQUEST['sd']['last_block']-10080; break;
+			case "30" : $start_block=$_REQUEST['sd']['last_block']-43200; break;
+		}
 		
 		// No address provided
 		if ($adr=="")
@@ -452,7 +496,9 @@ class CTweets
 		              FROM my_adr AS ma
 					  LEFT JOIN adr ON adr.adr=ma.adr 
 			         WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
-			      ORDER BY adr.tweets DESC"; 
+					  AND block>".$start_block."
+			      ORDER BY adr.balance DESC 
+				     LIMIT ".$start.", ".$end; 
 		    $result=$this->kern->execute($query);	
 			$row = mysql_fetch_array($result, MYSQL_ASSOC);
 			$adr=$row['adr']; 
@@ -460,36 +506,35 @@ class CTweets
 		
 		if ($adr=="all")
 		{
-		   $query="SELECT tw.*, pr.pic
+		   $query="SELECT tw.*
 		             FROM tweets AS tw 
-				LEFT JOIN profiles AS pr ON pr.adr=tw.adr 
-					 WHERE FROM_BASE64(tw.mes) LIKE '%".$term."%'
-					 AND tw.budget>=".$budget."
-			     ORDER BY tw.ID DESC 
-			        LIMIT 0,20"; 
+			        WHERE FROM_BASE64(tw.mes) LIKE '%".$term."%'
+					  AND block>".$start_block."
+				 ORDER BY (tw.upvotes_power-tw.downvotes_power) DESC 
+			        LIMIT ".$start.", ".$end; 
 		}
 		else
 		{
 			if ($all==true)
-		        $query="SELECT tw.*, pr.pic
+		        $query="SELECT tw.*
 		                 FROM tweets AS tw 
-					LEFT JOIN profiles AS pr ON pr.adr=tw.adr
-			            WHERE tw.adr='".$adr."' 
+					    WHERE (tw.adr='".$adr."' 
 						   OR tw.adr IN (SELECT follows 
 						                   FROM tweets_follow
-										  WHERE adr='".$adr."') 
-			         ORDER BY tw.ID DESC 
-			            LIMIT 0,20"; 
+										  WHERE adr='".$adr."')) 
+						  AND block>".$start_block." 
+			         ORDER BY ID DESC 
+			            LIMIT ".$start.", ".$end; 
 		   else
-		        $query="SELECT tw.*, pr.pic
+		        $query="SELECT tw.*
 		                 FROM tweets AS tw 
-					LEFT JOIN profiles AS pr ON pr.adr=tw.adr
-			            WHERE tw.adr='".$adr."' 
-			         ORDER BY tw.ID DESC 
-			            LIMIT 0,20"; 
+				        WHERE tw.adr='".$adr."' 
+						  AND block>".$start_block."
+			         ORDER BY ID DESC 
+			            LIMIT ".$start.", ".$end; 
 		    
 		}
-		
+	
 		$result=$this->kern->execute($query);	
 		 
 		 // No results
@@ -499,322 +544,106 @@ class CTweets
 			 return false;
 		 }
 		 
-		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
-	     {
-			 if ($row['budget']>0)
-			 {
-				 print "<div class='alert alert-warning font_14' role='alert' style='width:95%' align='left'><span class='glyphicon glyphicon-gift'></span>&nbsp;&nbsp;&nbsp;Incentives inside. Left budget <strong>".$row['budget']." ".$row['budget_cur']."</strong> </div>";
-			 }
-		?>
-              
-              <a href="../tweet/index.php?ID=<? print $row['tweetID']; ?>">
-              <div class="panel panel-default" style="width:95%; " align="left">
-              <div class="panel-body">
-              
-              <?
-			     if ($row['retweet_tweet_ID']>0)
-				 {
-					 $query="SELECT tw.*, pr.pic, pr.pic_back 
-					          FROM tweets AS tw 
-							  LEFT JOIN profiles AS pr ON pr.adr=tw.adr 
-							 WHERE tw.tweetID='".$row['retweet_tweet_ID']."'"; 
-					 $re_result=$this->kern->execute($query);	
-					 $re_row = mysql_fetch_array($re_result, MYSQL_ASSOC);
-					
-					 
+		 ?>
+         
+         <table width="<? if ($adr=="all") print "100%"; else print "90%"; ?>" border="0" cellpadding="0" cellspacing="0">
+         <tbody>
+         
+         <?
+		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			{
+		 ?>
+         
+           <tr>
+             <td><table width="100%" border="0" cellpadding="0" cellspacing="0">
+               <tbody>
+                 <tr>
+                   <td width="17%" align="center">
+                   <img src="<? if ($row['pic']=="") print "../../template/template/GIF/mask.jpg"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; ?>" width="100" height="100" alt="" class="img img-responsive img-rounded"/></td>
+                   <td width="3%" valign="top">&nbsp;</td>
+                   <td width="80%" valign="top"><strong>
+                   <a href="../tweet/index.php?ID=<? print $row['tweetID']; ?>" class="<? if ($adr=="all") print "font_16"; else print "font_14"; ?>">
+				   <? 
+				      $title=base64_decode($row['title']); 
+					  if (strlen($title)>50)
+					     print substr($title, 0, 50)."...";
+					  else
+					     print $title;
+				   ?>
+                   </a></strong>
+                     <p class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>">
+					 <? 
+					    $mes=base64_decode($row['mes']); 
+						
+					    if (strlen($mes)>200)
+					      print substr($mes, 0, 200)."...";
+					    else
+					      print $mes; 
 					 ?>
-                     
-					 <table width="100%"><tr><td bgcolor="#f0f0f0" class="font_12" height="30">&nbsp;&nbsp;&nbsp;<? print $this->template->formatadr($adr)." retweeted ".$this->template->formatAdr($re_row['adr'])." post "; if ($row['mes']!="") print "and commented <strong>\"".base64_decode($row['mes'])."\"</strong>" ?></td></tr></table>
-                     <br>
-                     <?
-				 }
-			  ?>
-              
-              <table>
-              <tr>
-              <td width="20%" valign="top">
-              
-              <?
-			    if ($row['retweet_tweet_ID']>0)
-				{
-			  ?>
-                  
-                  <img src="<? if ($re_row['pic']!="") print "../../../crop.php?src=".base64_decode($re_row['pic'])."&w=74&h=75"; else print "../../template/template/GIF/empty_pic.png"; ?>" width="75" height="75" class="img-responsive img-rounded">
-                  
-              <?
-				}
-				else
-				{
-					?>
-                    
-                    <img src="<? if ($row['pic']!="") print "../../../crop.php?src=".base64_decode($row['pic'])."&w=74&h=75"; else print "../../template/template/GIF/empty_pic.png"; ?>" width="75" height="75" class="img-responsive img-rounded">
-                    
-                    <?
-				}
-			  ?>
-              
-              </td>
-              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-              <td width="80%" valign="top">
-              
-              <?
-			    if ($row['retweet_tweet_ID']>0)
-				{
-			  ?>
-              
-              <a class="font_16" href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>"><strong><? print $this->template->formatAdr($re_row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_12"><? print "@".$this->template->formatAdr($re_row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($re_row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $re_row['adr']; ?>'); $('#txt_plain').val('<? print $re_row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14"><? print $this->formatTweet(base64_decode($re_row['mes'])); ?></span><br>
-              <br>
-              
-              <?
-				}
-				else
-				{
-					?>
-                    
-                     <a class="font_16" href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>">
-                     <strong><? print $this->template->formatAdr($row['adr']); ?></strong>
-                     </a>&nbsp;&nbsp;&nbsp;
-                     <span class="font_12"><? print "@".$this->template->formatAdr($row['adr']).", &nbsp;&nbsp;&nbsp;".$this->kern->getAbsTime($row['received'])." ago, &nbsp;&nbsp;&nbsp;"; ?></span><a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal()" class="font_12" style="color:#999999">view full address</a><br><span class="font_14" style="color:#555555"><? print nl2br($this->formatTweet(base64_decode($row['mes']))); ?></span><br>
-                    
-                    <?
-				}
-			  ?>
-              
-              
-       
-       <?
-	       if (strlen($row['pic_1'])>10 && $row['retweet_tweet_ID']==0)
-		   {
-	   ?>
-       
-            <a href="<? print base64_decode($row['pic_1']); ?>" data-gallery>
-            <img src="../../../crop.php?src=<? print base64_decode($row['pic_1']); ?>&w=400&h=300" class="img-responsive img-rounded" style="padding-bottom:10px">
-            </a>
-       
-       <?
-		   }
-		   else if ($row['retweet_tweet_ID']>0 && strlen($re_row['pic_1'])>10)
-		   {
-			   ?>
-               
-                <a href="<? print base64_decode($re_row['pic_1']); ?>" data-gallery>
-                <img src="../../../crop.php?src=<? print base64_decode($re_row['pic_1']); ?>&w=400&h=300" class="img-responsive img-rounded" style="padding-bottom:10px">
-                </a>
-               
-               <?
-		   }
-	   ?>
-       
-       <table width="100%">
-       <td width="25%">
-       
-       <?
-	       if (strlen($row['pic_2'])>10 && $row['retweet_tweet_ID']==0)
-		   {
-		?>
-       
-             <a href="<? print base64_decode($row['pic_2']); ?>" data-gallery>
-             <img src="../../../crop.php?src=<? print base64_decode($row['pic_2']); ?>&w=100&h=100" class="img-responsive img-rounded">
-             </a>
-       
-       <?
-		   }
-		   else if ($row['retweet_tweet_ID']>0 && strlen($re_row['pic_2'])>10)
-		   {
-			   ?>
-               
-                <a href="<? print base64_decode($re_row['pic_2']); ?>" data-gallery>
-                <img src="../../../crop.php?src=<? print base64_decode($re_row['pic_2']); ?>&w=100&h=100" class="img-responsive img-rounded">
-                </a>
-               
-               <?
-		   }
-	   ?>
-       
-       </td>
-       <td>&nbsp;&nbsp;&nbsp;</td>
-     
-       <td width="25%">
-       
-       <?
-	       if (strlen($row['pic_3'])>10 && $row['retweet_tweet_ID']==0)
-		   {
-	   ?>
-       
-             <a href="<? print base64_decode($row['pic_3']); ?>" data-gallery>
-             <img src="../../../crop.php?src=<? print base64_decode($row['pic_3']); ?>&w=100&h=100" class="img-responsive img-rounded">
-             </a>
-       
-       <?
-		   }
-		   else if ($row['retweet_tweet_ID']>0 && strlen($re_row['pic_3'])>10)
-		   {
-			   ?>
-               
-                <a href="<? print base64_decode($re_row['pic_3']); ?>" data-gallery>
-                <img src="../../../crop.php?src=<? print base64_decode($re_row['pic_3']); ?>&w=100&h=100" class="img-responsive img-rounded">
-                </a>
-               
-               <?
-		   }
-	   ?>
-       
-       </td>
-       
-       <td>&nbsp;&nbsp;&nbsp;</td>
-       
-       <td width="25%">
-       
-       <?
-	       if (strlen($row['pic_4'])>10 && $row['retweet_tweet_ID']==0)
-		   {
-	   ?>
-       
-             <a href="<? print base64_decode($row['pic_4']); ?>" data-gallery>
-             <img src="../../../crop.php?src=<? print base64_decode($row['pic_4']); ?>&w=100&h=100" class="img-responsive img-rounded">
-             </a>
-       
-       <?
-		   }
-		    else if ($row['retweet_tweet_ID']>0 && strlen($re_row['pic_4'])>10)
-		    {
-			   ?>
-               
-                <a href="<? print base64_decode($re_row['pic_4']); ?>" data-gallery>
-                <img src="../../../crop.php?src=<? print base64_decode($re_row['pic_4']); ?>&w=100&h=100" class="img-responsive img-rounded">
-                </a>
-               
-               <?
-		   }
-	   ?>
-       
-       </td>
-       
-       <td>&nbsp;&nbsp;&nbsp;</td>
-       
-       <td width="25%">
-       
-       <?
-	       if (strlen($row['pic_5'])>10 && $row['retweet_tweet_ID']==0)
-		   {
-	   ?>
-       
-              <a href="<? print base64_decode($row['pic_5']); ?>" data-gallery>
-              <img src="../../../crop.php?src=<? print base64_decode($row['pic_5']); ?>&w=100&h=100" class="img-responsive img-rounded">
-              </a>
-       
-       <?
-		    }
-		    else if ($row['retweet_tweet_ID']>0 && strlen($re_row['pic_5'])>10)
-		    {
-			   ?>
-               
-                <a href="<? print base64_decode($re_row['pic_5']); ?>" data-gallery>
-                <img src="../../../crop.php?src=<? print base64_decode($re_row['pic_5']); ?>&w=100&h=100" class="img-responsive img-rounded">
-                </a>
-               
-               <?
-		   }
-	   ?>
-       
-       </td>
-       
-       </tr>
-       </table>
-       
-       </td>
-       </tr>
-       </table>
-       
-       </div>
-       
-       <?
-	      if ($_REQUEST['ud']['ID']>0)
-		  {
-			  if ($row['retweet_tweet_ID']>0)
-			  {
-				  ?>
-                  
-                   <div class="panel-footer">
-                   <table>
-                   <tr><td style="width:100%">
-                    <a href="../tweet/index.php?ID=<? print $re_row['tweetID']; ?>" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;&nbsp;<? print $re_row['comments']; ?></a>&nbsp;
-       
-                   <a href="javascript:void(0)" onclick="$('#retweet_modal').modal(); $('#retweet_tweet_ID').val('<? print $re_ow['tweetID']; ?>')" class="btn btn-default btn-sm">
-                   <span class="glyphicon glyphicon-retweet"></span>&nbsp;&nbsp;&nbsp;<? print $re_row['retweets']; ?></a>&nbsp;
-       
-                   <a href="javascript:void(0)" onclick="$('#like_modal').modal(); $('#like_tweetID').val('<? print $re_row['tweetID']; ?>');" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;&nbsp;&nbsp;<? print $re_row['likes']; ?></a>&nbsp;
-       
+                     </p></td>
+                 </tr>
+                 <tr>
+                   <td align="center">
+                   
+                   <?
+				      // Votes
+				      $votes=$row['upvotes_power']-$row['downvotes_power'];
+					  
+					  // Percent
+					  $p=$votes*100/$_REQUEST['sd']['votes'];
+					  
+					  // Paiment
+					  $pay=round($p*3*$_REQUEST['sd']['msk_price'], 2);
+					  
+					  // Negative ?
+					  if ($pay<0) $pay=0.00;
+				   ?>
+                   
+                   <span style="color:<? if ($pay==0) print "#999999"; else print "#009900"; ?>" class="<? if ($adr=="all") print "font_20"; else print "font_18"; ?>"><? print "$".$this->kern->split($pay)[0]; ?></span><span style="color:<? if ($pay==0) print "#afafaf"; else print "#61CD5F"; ?>" class="<? if ($adr=="all") print "font_12"; else print "font_10"; ?>"><? print ".".$this->kern->split($pay)[1]; ?></span>
+                   
+                   
                    </td>
-                   <td style="width:10%">
-                   <div class="btn-group" role="group">
-                   <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                   <span class="glyphicon glyphicon-cog"></span>
-                   <span class="caret"></span>
-                   </button>
-                   <ul class="dropdown-menu">
-                   <li><a href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>">Message Author</a></li>
-                   <li><a href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>">Tip Author</a></li>
-                   <li><a href="../adr/index.php?adr=<? print urlencode($re_row['adr']); ?>">Follow / Unfollow Author</a></li>
-                   <li><a href="javascript:void(0); $('#report_modal').modal(); $('#report_tweetID').val('<? print $re_row['tweetID']; ?>');">Report Tweet</a></li>
-       
-                  <? 
-	                 if ($this->kern->isMine($re_row['adr'])==true) 
-		               print "<li><a href='javascript:void(0)' onClick=\"$('#remove_modal').modal(); $('#remove_tweet_ID').val('".$re_row['tweetID']."'); \">Delete Tweet</a></li>";
-	              ?>
-      
-       
-                  </ul></div></td>
-                  </tr></table>
-                  </div></div>
-                  
-                  
-                  <?
-			  }
-			  else
-			  {
-	   ?>
-       
-       <div class="panel-footer">
-       <table>
-       <tr><td style="width:100%">
-       <a href="../tweet/index.php?ID=<? print $row['tweetID']; ?>" class="btn <? if ($row['comments']>0) print "btn-info"; else print "btn-default"; ?> btn-sm"><span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;&nbsp;<? print $row['comments']; ?></a>&nbsp;
-       
-       <a href="javascript:void(0)" onclick="$('#retweet_modal').modal(); $('#retweet_tweet_ID').val('<? print $row['tweetID']; ?>')" class="btn btn-default btn-sm">
-       <span class="glyphicon glyphicon-retweet"></span>&nbsp;&nbsp;&nbsp;<? print $row['retweets']; ?></a>&nbsp;
-       
-       <a href="javascript:void(0)" onclick="$('#like_modal').modal(); $('#like_tweetID').val('<? print $row['tweetID']; ?>');" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;&nbsp;&nbsp;<? print $row['likes']; ?></a>&nbsp;
-       
-       </td>
-       <td style="width:10%">
-       <div class="btn-group" role="group">
-       <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-       <span class="glyphicon glyphicon-cog"></span>
-       <span class="caret"></span>
-       </button>
-       <ul class="dropdown-menu">
-       <li><a href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>">Message Author</a></li>
-       <li><a href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>">Tip Author</a></li>
-       <li><a href="../adr/index.php?adr=<? print urlencode($row['adr']); ?>">Follow / Unfollow Author</a></li>
-       <li><a href="javascript:void(0); $('#report_modal').modal(); $('#report_tweetID').val('<? print $row['tweetID']; ?>');">Report Tweet</a></li>
-       
-       <? 
-	      if ($this->kern->isMine($row['adr'])==true) 
-		     print "<li><a href='javascript:void(0)' onClick=\"$('#remove_modal').modal(); $('#remove_tweet_ID').val('".$row['tweetID']."'); \">Delete Tweet</a></li>";
-	   ?>
-      
-       
-       </ul></div></td>
-       </tr></table>
-       </div></div>
-       </a><br>
-        
-        <?
-			  }
-		   }
-		   else print "</div></div></a><br>";
-		   
-		 }
+                   <td align="right" valign="top">&nbsp;</td>
+                   <td align="right" valign="top">
+                   
+                   <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                     <tbody>
+                       <tr>
+                         <td align="left" style="color:#999999" class="<? if ($adr=="all") print "font_12"; else print "font_10"; ?>">
+						 <? 
+						    print "Posted ~".$this->kern->timeFromBlock($row['block'])." ago by ".$this->template->formatAdr($row['adr']);
+						 ?>
+                         </td>
+                         <td width="50" align="center" style="color:<? if ($row['upvotes']==0) print "#999999"; else print "#009900"; ?>">
+                         <span class="glyphicon glyphicon-thumbs-up <? if ($adr=="all") print "font_16"; else print "font_14"; ?>"></span>&nbsp;<span class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>"><? print $row['upvotes']; ?></span>
+                         </td>
+                         <td width="50" align="center" style="color:<? if ($row['downvotes']==0) print "#999999"; else print "#990000"; ?>">
+                         <span class="glyphicon glyphicon-thumbs-down <? if ($adr=="all") print "font_14"; else print "font_12"; ?>"></span>&nbsp;&nbsp;<span class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>"><? print $row['downvotes']; ?></span>
+                         </td>
+                         <td width="50" align="center" class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>" style="color:<? if ($row['comments']==0) print "#999999"; else print "#304971"; ?>">
+                         <span class="glyphicon glyphicon-bullhorn <? if ($adr=="all") print "font_14"; else print "font_12"; ?>"></span>&nbsp;&nbsp;<span class="<? if ($adr=="all") print "font_12"; else print "font_10"; ?>"><? print $row['comments']; ?></span>
+                         </td>
+                         </tr>
+                     </tbody>
+                   </table>
+                   
+                   </td>
+                 </tr>
+               </tbody>
+             </table></td>
+           </tr>
+           <tr>
+             <td><hr></td>
+           </tr>
+           
+           <?
+	}
+		   ?>
+           
+         </tbody>
+       </table>
+         
+         <?
 	}
 	
 	function showReport()
@@ -870,12 +699,11 @@ class CTweets
 		
 	}
 	
-	function showRetweet($adr)
+	function showRetweetModal()
 	{
-		$this->template->showModalHeader("retweet_modal", "Retweet", "act", "retweet", "retweet_tweet_ID", "", "../home/index.php?act=retweet");
+		$this->template->showModalHeader("retweet_modal", "Retweet", "act", "retweet", "retweet_tweet_ID", "");
 		?>
           
-          <input id="remove_tweet_ID" name="remove_tweet_ID" value="" type="hidden">
           <table width="700" border="0" cellspacing="0" cellpadding="0">
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -884,25 +712,12 @@ class CTweets
              </tr>
              <tr><td>&nbsp;</td></tr>
              <tr>
-               <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
+               <td align="center"><? $this->template->showNetFeePanel("0.0001"); ?></td>
              </tr>
            </table></td>
            <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
              <tr>
-               <td width="391" height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">
-			   <?
-			      $this->template->showMyAdrDD("dd_retweet_net_fee");
-			   ?>
-               </td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Retweet Address</strong></td>
+               <td width="391" height="25" align="left" valign="top" style="font-size:14px"><strong>Retweet Address</strong></td>
              </tr>
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px">
@@ -915,10 +730,10 @@ class CTweets
                <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Short Message</strong></td>
+               <td height="25" align="left" valign="top" style="font-size:14px"><strong>Short Message (optional)</strong></td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">
+               <td height="25" align="left" valign="top" style="font-size:14px">
                <textarea id="retweet_mes" name="retweet_mes" class="form-control" style="width:300px"></textarea></td>
              </tr>
              <tr>
@@ -978,11 +793,12 @@ class CTweets
 		
 	}
 	
-	function showUnfollowModal($adr)
+	function showUnfollowModal($adr, $unfollow_adr)
 	{
 		$this->template->showModalHeader("unfollow_modal", "Unfollow", "act", "unfollow", "adr", $adr);
 		?>
           
+          <input name="unfollow_adr" id="unfollow_adr" value="<? print $unfollow_adr; ?>" type="hidden">
           <table width="700" border="0" cellspacing="0" cellpadding="0">
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -991,7 +807,7 @@ class CTweets
              </tr>
              <tr><td>&nbsp;</td></tr>
              <tr>
-               <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
+               <td align="center"><? $this->template->showNetFeePanel("0.0001"); ?></td>
              </tr>
            </table></td>
            <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -1028,11 +844,11 @@ class CTweets
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
              <tr>
-               <td align="center"><img src="../GIF/follow.png" width="150" alt=""/></td>
+               <td align="center"><img src="../GIF/follow.png" width="180" height="180" alt=""/></td>
              </tr>
              <tr><td>&nbsp;</td></tr>
              <tr>
-               <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
+               <td align="center"><? $this->template->showNetFeePanel("0.0003"); ?></td>
              </tr>
            </table></td>
            <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
@@ -1050,7 +866,7 @@ class CTweets
                <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Following Address</strong></td>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Follow with address</strong></td>
              </tr>
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px">
@@ -1058,11 +874,39 @@ class CTweets
 			      $this->template->showMyAdrDD("dd_follow_adr");
 			   ?></td>
              </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Months</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               <select id="dd_months" name="dd_months" style="width:300px" class="form-control">
+               <option value='3'>3 Months</option>
+               <option value='6'>6 Months</option>
+               <option value='9'>9 Months</option>
+               <option value='12'>12 Months</option>
+               <option value='24'>24 Months</option>
+               <option value='36'>36 Months</option>
+               </select>
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
              
            </table></td>
-         </tr>
-     </table>
-     
+           </tr>
+           </table>
+           
+           <script>
+		   $('#dd_months').change(
+		   function() 
+		   { 
+		      $('#ss_net_fee_panel_val').text(parseFloat($('#dd_months').val()*0.0001).toFixed(4)); 
+		   });
+		   </script>
         
        
         <?
@@ -1070,11 +914,12 @@ class CTweets
 		
 	}
 	
-	function showLikeModal()
+	function showUpvoteModal($postID)
 	{
-		$this->template->showModalHeader("like_modal", "Like", "act", "like", "like_tweetID", "");
+		$this->template->showModalHeader("upvote_modal", "Upvote", "act", "upvote", "targetID", $postID);
 		?>
           
+          <input type="hidden" name="target_type" id="target_type" value="ID_POST">
           <table width="700" border="0" cellspacing="0" cellpadding="0">
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -1093,7 +938,7 @@ class CTweets
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px">
                <?
-			      $this->template->showMyAdrDD("dd_like_net_fee");
+			      $this->template->showMyAdrDD("dd_upvote_net_fee");
 			   ?>
                </td>
              </tr>
@@ -1106,22 +951,194 @@ class CTweets
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px">
 			   <?
-			      $this->template->showMyAdrDD("dd_like_adr");
+			      $this->template->showAllMyAdrDD("dd_upvote_adr");
 			   ?>
                </td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+               <td height="40" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               
+               <div id="div_power" name="div_power">
+               <?
+			      $query="SELECT ma.adr, adr.balance
+		                    FROM my_adr AS ma 
+			           LEFT JOIN adr ON ma.adr=adr.adr
+			               WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+				             AND ma.adr NOT IN (SELECT adr 
+				                                  FROM agents 
+										         WHERE adr IN (SELECT adr 
+										                FROM adr 
+													   WHERE userID='".$_REQUEST['ud']['ID']."'))
+			             ORDER BY balance DESC"; 
+		          $result=$this->kern->execute($query);	
+				  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 
+			      $this->getPower($row['adr']);
+			   ?>
+               </div>
+                      
+               </td>
              </tr>
              
            </table></td>
          </tr>
      </table>
      
+<script>
+	 $('#dd_upvote_adr').change(
+	 function() 
+	 { 
+	    $('#div_power').load("get_page.php?act=get_power&type=up&adr="+encodeURIComponent($('#dd_upvote_adr').val()), ""); 
+     });
+     </script>
+     
        
        
         <?
-		$this->template->showModalFooter("Send");
+		$this->template->showModalFooter("Upvote");
+		
+	}
+	
+	function getPower($adr, $mode="up")
+	{
+		// Votes
+		$query="SELECT COUNT(*) AS total 
+		          FROM votes 
+				 WHERE adr='".$adr."' 
+				   AND block>".($_REQUEST['sd']['last_block']-1440); 
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$votes=$row['total'];
+	    
+		// Voting power
+		$power=round($this->kern->getBalance($adr, "MSK")/($votes+1), 2);
+		?>
+        
+               <table width="100" border="0" cellpadding="0" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td align="center">
+                     
+                     <div class="panel panel-default" style="width:150px">
+                     <div class="panel-heading font_14">Votes 24 Hours</div>
+                     <div class="panel-body">
+                     <? print $votes; ?>
+                     </div>
+                     </div>
+                     
+                     </td>
+                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                     <td align="center">
+                     
+                     <div class="panel panel-default" style="width:150px">
+                     <div class="panel-heading font_14">Voting Power</div>
+                     <div class="panel-body" style="color:<? if ($mode=="up") print "#009900"; else print "#990000"; ?>">
+                     <? 
+					    if ($mode=="up") 
+						   print "+".$power; 
+						else 
+						   print "-".$power; 
+				     ?>
+                     </div>
+                     </div>
+                     
+                     </td>
+                   </tr>
+                 </tbody>
+               </table>
+        
+        <?
+	}
+	
+	
+	function showDownvoteModal($postID)
+	{
+		$this->template->showModalHeader("downvote_modal", "Downvote", "act", "downvote", "down_targetID", $postID);
+		?>
+          
+<input type="hidden" name="down_target_type" id="down_target_type" value="ID_POST">
+          <table width="700" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+           <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td align="center"><img src="../GIF/down.png" width="180" alt=""/></td>
+             </tr>
+             <tr><td>&nbsp;</td></tr>
+             <tr>
+               <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
+             </tr>
+           </table></td>
+           <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td width="391" height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               <?
+			      $this->template->showMyAdrDD("dd_downvote_net_fee");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+			   <?
+			      $this->template->showAllMyAdrDD("dd_downvote_adr");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="40" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               
+               <div id="div_power_down" name="div_power_down">
+               <?
+			      $query="SELECT ma.adr, adr.balance
+		                    FROM my_adr AS ma 
+			           LEFT JOIN adr ON ma.adr=adr.adr
+			               WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+				             AND ma.adr NOT IN (SELECT adr 
+				                                  FROM agents 
+										         WHERE adr IN (SELECT adr 
+										                FROM adr 
+													   WHERE userID='".$_REQUEST['ud']['ID']."'))
+			             ORDER BY balance DESC"; 
+		          $result=$this->kern->execute($query);	
+				  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 
+			      $this->getPower($row['adr'], "down");
+			   ?>
+               </div>
+                      
+               </td>
+             </tr>
+             
+           </table></td>
+         </tr>
+     </table>
+     
+<script>
+	 $('#dd_downvote_adr').change(
+	 function() 
+	 { 
+	    $('#div_power_down').load("get_page.php?act=get_power&type=down&adr="+encodeURIComponent($('#dd_downvote_adr').val()), ""); 
+     });
+     </script>
+     
+       
+       
+        <?
+		$this->template->showModalFooter("Downvote");
 		
 	}
 	
@@ -1131,14 +1148,17 @@ class CTweets
 		$this->template->showModalHeader("new_comment_modal", "New Comment", "act", "new_comment");
 		?>
           
-          <input type="hidden" id="com_tweetID" name="com_tweetID" value="0"> 
-          <input type="hidden" id="com_comID" name="com_comID" value="0"> 
+          <input type="hidden" id="com_target_type" name="com_target_type" value="ID_POST"> 
+          <input type="hidden" id="com_targetID" name="com_targetID" value="0"> 
           
           <table width="700" border="0" cellspacing="0" cellpadding="0">
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
              <tr>
                <td align="center"><img src="./GIF/comment.png" width="180" height="173" alt=""/></td>
+             </tr>
+             <tr>
+               <td align="center">&nbsp;</td>
              </tr>
              <tr>
                <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
@@ -1159,22 +1179,11 @@ class CTweets
                <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Address</strong></td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px"><?
-			      $this->template->showMyAdrDD("dd_comm_adr");
-			   ?></td>
-             </tr>
-             <tr>
-               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
-             </tr>
-             <tr>
                <td height="25" valign="top" style="font-size:16px"><strong>Comment</strong></td>
              </tr>
              <tr>
                <td>
-               <textarea name="txt_com_mes" id="txt_com_mes" rows="3"  style="width:300px" class="form-control" placeholder="Comments (optional)" onfocus="this.placeholder=''"></textarea>
+               <textarea name="txt_com_mes" id="txt_com_mes" rows="5"  style="width:300px" class="form-control" placeholder="Comments (10-1000 charcaters)"></textarea>
                </td>
              </tr>
              <tr>
@@ -1200,12 +1209,12 @@ class CTweets
 	
 	
 	
-	function showNewTweetModal()
-	{
-		
-		$this->template->showModalHeader("new_tweet_modal", "New Tweet", "act", "new_tweet", "adr", $_REQUEST['adr'], "../../tweets/home/index.php");
+	function showNewTweetPanel()
+	{	
 		?>
            
+           <br><br>
+<form id="form_new_tweet_modal" name="form_new_tweet_modal" action="new.php?act=new_tweet" method="post">
            <input id="fileupload" type="file" name="files[]" data-url="server/php/" multiple style="display:none">
            
            <input type="hidden" id="tweet_adr" name="tweet_adr" value="">
@@ -1215,11 +1224,33 @@ class CTweets
            <input type="hidden" id="h_img_3" name="h_img_3" value="">
            <input type="hidden" id="h_img_4" name="h_img_4" value="">
            
-           <table width="700" border="0" cellspacing="0" cellpadding="0">
+           <table width="90%" border="0" cellspacing="0" cellpadding="0">
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
              <tr>
-               <td align="center"><img src="GIF/chat.png" width="180" height="173" alt=""/></td>
+               <td align="center">&nbsp;</td>
+             </tr>
+             <tr>
+               <td align="center">
+               <table width="150" border="0" cellpadding="0" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td height="150" align="center" background="../home/GIF/drop_pic.png">
+                     <img id="img_0" src="" style="display:none" class="img img-responsive img-rounded">
+                     </td>
+                   </tr>
+                   <tr>
+                     <td height="50" align="center" id="row_progress">
+                     <div id="progress" class="progress" style="width:150px">
+                     <div class="progress-bar progress-bar-success">&nbsp;</div>
+                     </div>
+                     </td>
+                   </tr>
+                 </tbody>
+               </table></td>
+             </tr>
+             <tr>
+               <td align="center">&nbsp;</td>
              </tr>
              <tr>
                <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
@@ -1232,7 +1263,7 @@ class CTweets
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px">
                <?
-			      $this->template->showMyAdrDD("dd_tweet_net_fee");
+			      $this->template->showMyAdrDD("dd_tweet_net_fee", "90%");
 			   ?>
                </td>
              </tr>
@@ -1240,89 +1271,30 @@ class CTweets
                <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" valign="top" style="font-size:16px"><strong>Tweet</strong></td>
+               <td height="25" valign="top" style="font-size:16px"><strong>Title</strong></td>
+             </tr>
+             <tr>
+               <td height="25" valign="top" style="font-size:16px"><input type="text" class="form-control" name="txt_tweet_title" id="txt_tweet_title" value=""></td>
+             </tr>
+             <tr>
+               <td height="25" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" valign="top" style="font-size:16px"><strong>Post</strong></td>
              </tr>
              <tr>
                <td>
-               <textarea name="txt_tweet_mes" id="txt_tweet_mes" rows="3"  style="width:300px" class="form-control" placeholder="Comments (optional)" onfocus="this.placeholder=''"></textarea>
+               <textarea name="txt_tweet_mes" id="txt_tweet_mes" rows="20" class="form-control" placeholder="Comments (optional)" onfocus="this.placeholder=''"></textarea>
                </td>
              </tr>
              <tr>
                <td height="0" align="left">&nbsp;</td>
              </tr>
              <tr>
-               <td height="30" align="left" valign="top"><strong>Pics</strong></td>
-             </tr>
-             <tr id="row_drop">
-               <td height="50" align="left"><img src="GIF/drop.png"/></td>
-             </tr>
-             <tr id="row_progress">
-               <td height="0" align="left">
-               <div id="progress" class="progress" style="width:300px">
-               <div class="progress-bar progress-bar-success">&nbsp;</div>
-               </div>
+               <td height="30" align="right" valign="top">
+               <a href="javascript:void" onClick="$('#form_new_tweet_modal').submit()" class="btn btn-success">
+               <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;&nbsp;Post</a>
                </td>
-             </tr>
-             
-             <tr>
-               <td height="0" align="left">
-              
-               <table width="300" border="0" cellspacing="0" cellpadding="0">
-               <tr>
-               <td align="center" width="60"><img id="img_0" src="" style="display:none"></td>
-               <td align="center">&nbsp;</td>
-               <td align="center" width="60"><img id="img_1" src="" style="display:none"></td>
-               <td align="center">&nbsp;</td>
-               <td align="center" width="60"><img id="img_2" src="" style="display:none"></td>
-               <td align="center">&nbsp;</td>
-               <td align="center" width="60"><img id="img_3" src="" style="display:none"></td>
-               <td align="center">&nbsp;</td>
-               <td align="center" width="60"><img id="img_4" src="" style="display:none"></td>
-              </tr>
-              </table>
-              
-              </td>
-             </tr>
-             <tr>
-               <td height="0" align="left">&nbsp;</td>
-             </tr>
-             <tr>
-               <td height="30" align="left" valign="top"><table width="320px" border="0" cellpadding="0" cellspacing="0">
-                 <tbody>
-                   <tr>
-                     <td height="100" valign="top"><input type="checkbox" name="chk_incentive" id="chk_incentive" onChange="if ($('#tab_budget').css('display')=='none') $('#tab_budget').css('display', 'block'); else $('#tab_budget').css('display', 'display'); ">
-                     &nbsp;&nbsp;&nbsp; <span class="font_14">Offer Incentive</span>&nbsp;&nbsp;&nbsp;<span class="font_10">( You can offer a reward to incentivize people to engage with your post or execute other actions like social media posts / likes and so on.)</span></td>
-                   </tr>
-                   <tr>
-                     <td>
-                     
-                     <table width="290" border="0" cellpadding="0" cellspacing="0" id="tab_budget" style="display:none">
-                       <tbody>
-                         <tr>
-                           <td width="122" align="left" class="font_14" height="35" valign="top"><strong>Budget</strong></td>
-                           <td width="128" align="left" class="font_14" height="35" ><strong>Currency</strong></td>
-                           <td width="128" align="left" class="font_14" height="35" ><strong>Period</strong></td>
-                         </tr>
-                         <tr>
-                           <td align="left"><input name="txt_budget" id="txt_budget" class="form-control" style="width:80px" placeholder="0"></td>
-                           <td align="left"><input name="txt_cur" id="txt_cur" class="form-control" style="width:80px" placeholder="MSK"></td>
-                           <td align="left">
-                           <select id="dd_days" name="dd_days" class="form-control" style="width:80px">
-                           <option value="1">1 Day</option>
-                           <option value="2">2 Day</option>
-                           <option value="3">3 Day</option>
-                           <option value="4">4 Day</option>
-                           <option value="5">5 Day</option>
-                           </select>
-                           </td>
-                         </tr>
-                       </tbody>
-                     </table>
-                     
-                     </td>
-                   </tr>
-                 </tbody>
-               </table></td>
              </tr>
              <tr>
                <td height="30" align="left" valign="top">&nbsp;</td>
@@ -1331,17 +1303,18 @@ class CTweets
            </table></td>
          </tr>
      </table>
+     </form>
      
          <script>
 		   $('#form_new_tweet_modal').submit(
 		   function() 
 		   {
+			  $('#txt_tweet_title').val(btoa(unescape(encodeURIComponent($('#txt_tweet_title').val())))); 
 		      $('#txt_tweet_mes').val(btoa(unescape(encodeURIComponent($('#txt_tweet_mes').val())))); 
 		   });
 		</script>
        
         <?
-		$this->template->showModalFooter("Send");
 		
 	}
 	
@@ -1440,19 +1413,6 @@ class CTweets
 			$adr=$row['adr'];
 		}
 		
-		// Load unmoderated commnets
-		$query="SELECT COUNT(*) AS total 
-		          FROM tweets_comments 
-		         WHERE tweetID IN (SELECT tweetID 
-				                     FROM tweets 
-								    WHERE adr IN (SELECT adr 
-									                FROM my_adr 
-												   WHERE userID='".$_REQUEST['ud']['ID']."')) 
-			       AND status='ID_PENDING'";
-		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		$comments=$row['total'];
-		
 		// Load address data
 		$query="SELECT adr.*, pr.*, ma.ID as adrID 
 		          FROM adr 
@@ -1470,10 +1430,32 @@ class CTweets
 		}
 		else
 		{
-	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	       // Tweets
+		   $query="SELECT COUNT(*) AS total 
+		             FROM tweets 
+					WHERE adr='".$adr."'";
+		   $result=$this->kern->execute($query);	
+		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		   $tweets=$row['tweets'];
+		   if ($tweets=="") $tweets=0;
+		   
+		   // Following
+		   $query="SELECT COUNT(*) AS total 
+		             FROM tweets_follow 
+					WHERE adr='".$adr."'";
+		   $result=$this->kern->execute($query);	
+		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		   $following=$row['following'];
+		   if ($following=="") $following=0;
+		   
+		   // Followers
+		   $query="SELECT COUNT(*) AS total 
+		             FROM tweets 
+					WHERE follow_adr='".$adr."'";
+		   $result=$this->kern->execute($query);	
+		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		   $followers=$row['followers'];
+		   if ($followers=="") $followers=0;
 		}
 	
 		
@@ -1515,8 +1497,8 @@ class CTweets
             <span class="font_12"><? if ($row['name']=="") print "No name"; else print substr(base64_decode($row['name']), 0, 50); ?></span>
             <p class="font_10" style="color:#999999"><? if ($row['description']=="") print "No profile setup"; else print substr(base64_decode($row['description']), 0, 100)."..."; ?></p>
             
-            <a href="javascript:void(0)" onClick="$('#new_tweet_modal').modal(); $('#tweet_adr').val('<? print $adr; ?>');" class="btn btn-danger" style="width:100%">
-            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;&nbsp;&nbsp;Tweet
+            <a href="../home/new.php" class="btn btn-danger" style="width:100%">
+            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;&nbsp;&nbsp;New Post
             </a>
             <div style="height:10px">&nbsp;</div>
             <a href="../../adr/options/index.php?ID=<? print $row['adrID']; ?>" class="btn btn-default" style="width:100%;">
@@ -1916,6 +1898,282 @@ class CTweets
 		print "</table>";
 	  
 	}
-
+	
+	
+    function showPost($ID)
+	{
+		$query="SELECT * 
+		          FROM tweets 
+				  LEFT JOIN votes_stats AS vs ON (vs.target_type='ID_POST' AND vs.targetID='".$ID."')
+				 WHERE tweetID='".$ID."'";
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
+		// Modals
+		$this->showFollowModal($row['adr']);
+		$this->showRetweetModal();
+	  
+		?>
+        
+<table width="90%" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+          <tr>
+          <td width="22%" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+           <tr>
+             <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/mask.jpg"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; ?>" width="200" height="201" class="img img-responsive img-rounded" /></td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+         </tbody>
+       </table>
+       
+       <?
+	       if ($_REQUEST['ud']['ID']>0)
+		   {
+	   ?>
+       
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                      <tr>
+                        <td width="75%" align="center"><a href="javascript:void(0)" onclick="$('#upvote_modal').modal()" class="btn btn-success" style="width:100%"> <span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;&nbsp;Upvote </a></td>
+                        <td>&nbsp;&nbsp;</td>
+                        <td width="26%" align="center"><a href="javascript:void(0)" class="btn btn-danger" style="width:100%" onClick="$('#downvote_modal').modal()"> <span class="glyphicon glyphicon-thumbs-down"></span> </a></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td height="60" align="center">
+                  <?
+				     // Already following
+					 $query="SELECT * 
+					           FROM tweets_follow 
+							  WHERE adr IN (SELECT adr 
+							                  FROM my_adr 
+											 WHERE userID='".$_REQUEST['ud']['ID']."') 
+								AND follows='".$row['adr']."'"; 
+					 $result=$this->kern->execute($query);	
+	                 
+					 if (mysql_num_rows($result)>0)
+					 {
+						 // Load data
+						 $row_unfollow=mysql_fetch_array($result, MYSQL_ASSOC);
+						 
+						 // Unfollow modal
+						 $this->showUnFollowModal($row_unfollow['adr'], $row['adr']);
+				  ?>
+                  
+                       <a href="javascript:void(0)" onClick="$('#unfollow_modal').modal()" class="btn btn-warning" style="width:100%"> 
+                       <span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;&nbsp;&nbsp;Unfollow Author
+                       </a>
+                  
+                  <?
+					 }
+					 else
+					 {
+						 ?>
+                         
+                          <a href="javascript:void(0)" onClick="$('#follow_modal').modal()" class="btn btn-default" style="width:100%"> 
+                          <span class="glyphicon glyphicon-random"></span>&nbsp;&nbsp;&nbsp;&nbsp;Follow Author
+                          </a>
+                         
+                         <?
+					 }
+				  ?>
+                  
+                  </td>
+                </tr>
+                <tr>
+                  <td height="40" align="center"><a href="javascript:void(0)" onClick="$('#retweet_modal').modal(); $('#retweet_tweet_ID').val('<? print $row['tweetID']; ?>');" class="btn btn-default" style="width:100%"> <span class="glyphicon glyphicon-retweet"></span>&nbsp;&nbsp;&nbsp;&nbsp;Retweet Post </a></td>
+                </tr>
+                <tr>
+                  <td height="60" align="center"><a href="javascript:void(0)" onclick="$('#compose_modal').modal(); $('#txt_rec').val('<? print $row['adr']; ?>')" class="btn btn-default" style="width:100%"> <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;&nbsp;&nbsp;Message Author </a></td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <?
+		   }
+			?>
+            
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td align="center">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td align="center"><div class="panel panel-default">
+                    <div class="panel-heading font_14">Income Today</div>
+                    <div class="panel-body font_18"> <strong style="color:#009900"><? print "$".$this->kern->split($row['pay'])[0]; ?></strong><strong style="color:#5FBE54" class="font_12"><? print ".".$this->kern->split($row['pay'])[1]; ?></strong></div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td align="center"><div class="panel panel-default">
+                    <div class="panel-heading font_14">Upvotes Today</div>
+                    <div class="panel-body"><a href="../../explorer/voters/index.php?tab=upvoters_24&target_type=ID_POST&targetID=<? print $_REQUEST['ID']; ?>"><span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;<strong><? print $row['upvotes_24']; ?></strong><span class="font_12">&nbsp;/&nbsp;<? print $row['upvotes_total']; ?></span></a></div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td align="center"><div class="panel panel-default">
+                    <div class="panel-heading font_14">Downvotes Today</div>
+                    <div class="panel-body"><a style="color:#990000" href="../../explorer/voters/index.php?tab=downvoters_24&target_type=ID_POST&targetID=<? print $_REQUEST['ID']; ?>"><span class="glyphicon glyphicon-thumbs-down"></span>&nbsp;<strong><? print $row['downvotes_24']; ?></strong><span class="font_12">&nbsp;/&nbsp;<? print $row['downvotes_total']; ?></span></a></div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr>
+              </tbody>
+            </table></td>
+       <td width="78%" align="right" valign="top"><table width="95%" border="0" cellpadding="0" cellspacing="0">
+         <tbody>
+           <tr>
+             <td><span class="font_22"><? print base64_decode($row['title']); ?></span><p class="font_12"><? print "Posted by ".$this->template->formatAdr($row['adr'])." ~".$this->kern->timeFromBlock($row['block'])." ago"; ?></p></td>
+           </tr>
+           <tr>
+             <td><hr></td>
+           </tr>
+           <tr>
+             <td class="font_16"><? print nl2br($this->template->makeLinks(base64_decode($row['mes']))); ?></td>
+           </tr>
+           <tr>
+             <td class="font_14">&nbsp;</td>
+           </tr>
+         </tbody>
+       </table></td>
+     </tr>
+     <tr>
+       <td colspan="2"><hr></td>
+       </tr>
+     <tr>
+       <td colspan="2">&nbsp;</td>
+     </tr>
+   </tbody>
+ </table>
+        
+        <?
+	}
+	
+	
+	
+	function showComments($target_type, $targetID, $branch=0)
+	{
+		$query="SELECT com.*, prof.pic, vs.*
+		          FROM comments AS com
+			 LEFT JOIN profiles AS prof ON prof.adr=com.adr
+			 LEFT JOIN votes_stats AS vs ON (vs.target_type='ID_COM' AND vs.targetID=com.comID)
+				 WHERE com.parent_type='".$target_type."' 
+				   AND com.parentID='".$targetID."' 
+			  ORDER BY (vs.upvotes_power_total-vs.downvotes_power_total) DESC"; 
+		$result=$this->kern->execute($query);	
+	  
+	  
+		
+		?>
+        
+        <table width="<? if ($branch==0) print "90%"; else print "100%"; ?>" border="0" cellpadding="0" cellspacing="0" align="center">
+        <tbody>
+        
+        <?
+		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   {
+		?>
+        
+               <tr>
+               <td width="<? print $branch*14; ?>%">&nbsp;</td>
+               <td width="7%" align="center" valign="top">
+               <table width="100%" border="0" cellpadding="0" cellspacing="0">
+           <tbody>
+             <tr>
+               <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_profile.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=80&h=80"; ?>"  class="img img-responsive img-rounded"/></td>
+               </tr>
+             <tr>
+               <td align="center" class="font_14" height="40">
+               
+               <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td><a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="$('#upvote_modal').modal(); $('#target_type').val('ID_COM'); $('#targetID').val('<? print $row['comID']; ?>');"><span class="glyphicon glyphicon-thumbs-up"></span></a></td>
+                     <td>&nbsp;</td>
+                     <td><a href="javascript:void(0)" onclick="$('#downvote_modal').modal(); $('#down_target_type').val('ID_COM'); $('#down_targetID').val('<? print $row['comID']; ?>');" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-thumbs-down"></span></a></td>
+                   </tr>
+                 </tbody>
+               </table>
+            
+               </td>
+               </tr>
+             <tr>
+              
+              <td height="0" align="center" bgcolor="<? if ($row['pay']>0) print "#e7ffef"; else print "#fafafa"; ?>" class="font_14">
+               <strong><span style="color:<? if ($row['pay']==0) print "#999999"; else print "#009900"; ?>"><? print "$".$this->kern->split($row['pay'])[0]; ?></span><span style="color:<? if ($row['pay']==0) print "#afafaf"; else print "#52B65D"; ?>" class="font_12"><? print ".".$this->kern->split($row['pay'])[1]; ?></span></strong></td>
+             </tr>
+             </tbody>
+         </table></td>
+       <td width="733" align="right" valign="top"><table width="95%" border="0" cellpadding="0" cellspacing="0">
+         <tbody>
+           <tr>
+             <td align="left"><a class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_10" style="color:#999999"><? print "~".$this->kern->timeFromBlock($row['block'])." ago"; ?></span>
+               <p class="font_14"><? print  nl2br($this->template->makeLinks(base64_decode($row['mes']))); ?></p></td>
+           </tr>
+           <tr>
+             <td align="right">
+             
+             <table width="150" border="0" cellpadding="0" cellspacing="0">
+               <tbody>
+                 <tr>
+                   <td width="25%" align="center" style="color:#999999"><a class="font_12" href="javascript:void(0)" onClick="$('#new_comment_modal').modal(); $('#com_target_type').val('ID_COM'); $('#com_targetID').val('<? print $row['comID']; ?>');"><? if ($branch<3 && $_REQUEST['ud']['ID']>0) print "reply"; ?></a></td>
+                   
+                   <td width="25%" align="center" style="color:#999999"><span class="font_12 glyphicon glyphicon-thumbs-up"></span>&nbsp;<span class="font_12"><? print $row['upvotes']; ?></span></td>
+                   
+                   <td width="25%" align="center" style="color:#999999"><span class="font_12 glyphicon glyphicon-thumbs-down"></span>&nbsp;<span class="font_12"><? print $row['downvotes']; ?></span></td>
+                   </tr>
+               </tbody>
+             </table>
+             
+             </td>
+           </tr>
+         </tbody>
+       </table>         
+       
+     </tr>
+     <tr><td colspan="3">
+	 <?
+	     $this->showComments("ID_COM", $row['comID'], $branch+1);
+	 ?>
+     </td></tr> 
+     
+     <?
+	    if ($branch==0)
+		  print "<tr><td colspan='3'><hr></td></tr>";
+		else
+		  print "<tr><td colspan='3'>&nbsp;</td></tr>";  
+		   }
+	 ?>
+   
+   
+   </tbody>
+ </table>
+ 
+        
+        <?
+	}
+	
+	function showNewCommentBut($ID)
+	{
+		if (!isset($_REQUEST['ud']['ID'])) return false;
+		
+		?>
+        
+        <table width="90%">
+        <tr><td align="right"><a href="javascript:void()" onClick="$('#new_comment_modal').modal(); $('#com_target_type').val('ID_POST'); $('#com_targetID').val('<? print $ID; ?>'); " class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;New Comment</a></td></tr>
+        </table>
+        <br>
+        
+        <?
+	}
 }
 ?>

@@ -88,7 +88,7 @@
 	// New market ?
 	switch ($_REQUEST['act'])
 	{
-		case "new_market" : $reg_mkts->newMarket($_REQUEST['dd_new_net_fee_adr'], 
+		case "new_market" : $reg_mkts->newMarket($_REQUEST['dd_new_mkt_adr'], 
 	                                            $_REQUEST['dd_new_mkt_adr'], 
 					                            $_REQUEST['txt_new_asset_symbol'], 
 					                            $_REQUEST['txt_new_cur'], 

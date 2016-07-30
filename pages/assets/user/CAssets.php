@@ -12,7 +12,7 @@ class CAssets
 	{
 		$query="SELECT * 
 		          FROM assets
-				  WHERE linked_mktID=0 
+				 WHERE linked_mktID=0 
 			  ORDER BY ID ASC
 			     LIMIT 0,20";
 		 $result=$this->kern->execute($query);	
@@ -72,9 +72,9 @@ class CAssets
 					  ?>
                       
                             <tr>
-                            <td width="10%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; ?>"  class="img-circle img-responsive"/></td>
+                            <td width="10%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=80&h=80"; ?>"  class="img-circle img-responsive"/></td>
                             <td width="2%">&nbsp;</td>
-                            <td width="30%">
+                            <td width="30%" valign="top">
                             <span class="font_14"><a href="asset.php?symbol=<? print $row['symbol']; ?>">
 							<? print base64_decode($row['title'])." (".$row['symbol'].")"; ?></a>
                             <p class="font_10"><? print substr(base64_decode($row['description']), 0, 100)."..."; ?></p></td>
@@ -118,9 +118,9 @@ class CAssets
 					  ?>
                       
                             <tr>
-                            <td width="10%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; ?>"  class="img-circle img-responsive"/></td>
-                            <td width="2%">&nbsp;</td>
-                            <td width="88%">
+                            <td width="4%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; ?>"  class="img-circle img-responsive"/></td>
+                            <td width="1%">&nbsp;</td>
+                            <td width="95%">
                             <span class="font_16"><a href="asset.php?symbol=<? print $row['symbol']; ?>">
 							<? print base64_decode($row['title'])." (".$row['symbol'].")"; ?></a>
                             <p class="font_12"><? print substr(base64_decode($row['description']), 0, 250)."..."; ?></p></td>

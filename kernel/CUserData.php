@@ -11,7 +11,6 @@ class CUserData
 		              FROM web_users 
 				     WHERE ID=".$_SESSION['userID'];
 		    $result=$this->kern->execute($query);
-			if (mysql_num_rows($result)==0) $this->kern->redirect("../../index.php");
 		}
 		else
 		{
@@ -31,6 +30,7 @@ class CUserData
 		$_REQUEST['ud']['unread_multisig']=$row['unread_multisig'];
 		$_REQUEST['ud']['unread_esc']=$row['unread_esc'];
 		$_REQUEST['ud']['pending_adr']=$row['pending_adr'];
+		$_REQUEST['ud']['api_key']=$row['api_key'];
 		
 		// Balance
 		$query="SELECT sum(adr.balance) AS total 
@@ -56,56 +56,32 @@ class CUserData
 		$_REQUEST['ud']['balance']=$balance+$balance_pending;
 		
 		// Update unsigned escrowed transactions
-		   $query="SELECT COUNT(*) AS total 
+		$query="SELECT COUNT(*) AS total 
 		             FROM escrowed 
 					WHERE sender_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
 					   OR rec_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
 					   OR escrower IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')";
-		   $result=$this->kern->execute($query);
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		   $unread_esc=$row['total'];
-		   
+		$result=$this->kern->execute($query);
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$unread_esc=$row['total']; 
 		  
-		   // Update unsigned multisig transactions
-		   $query="SELECT COUNT(*) AS total 
-		             FROM multisig 
-					WHERE sender_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
-					   OR rec_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
-					   OR signer_1 IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')
-					   OR signer_2 IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')
-					   OR signer_3 IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')
-					   OR signer_4 IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')
-					   OR signer_5 IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')";
-		   $result=$this->kern->execute($query);
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		   $unread_multisig=$row['total'];
-		    
-		   // Unread messages
-		   $query="SELECT COUNT(*) AS total 
+		// Unread messages
+		$query="SELECT COUNT(*) AS total 
 		             FROM mes 
 					WHERE (from_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') OR 
 					       to_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')) 
 					  AND status=0";
-		   $result=$this->kern->execute($query);
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		   $unread_mes=$row['total'];
+		$result=$this->kern->execute($query);
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$unread_mes=$row['total'];
 		   
-		   // Pending addresses
-		   $query="SELECT COUNT(*) AS total 
-		             FROM pending_adr 
-					WHERE share_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')";
-		   $result=$this->kern->execute($query);
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		   $pending_adr=$row['total'];
-		   
-		   // Update
-		   $query="UPDATE web_users 
-		              SET unread_multisig='".$unread_multisig."', 
-					      unread_esc='".$unread_esc."', 
-						  unread_mes='".$unread_mes."',
-						  pending_adr='".$pending_adr."'  
-				    WHERE ID='".$_REQUEST['ud']['ID']."'"; 
-		   $this->kern->execute($query);
+		 
+		 // Update
+		 $query="UPDATE web_users 
+		            SET unread_esc='".$unread_esc."', 
+				   	    unread_mes='".$unread_mes."' 
+				  WHERE ID='".$_REQUEST['ud']['ID']."'"; 
+		 $this->kern->execute($query);
 	}
 }
 ?>

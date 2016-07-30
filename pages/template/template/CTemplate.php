@@ -86,6 +86,51 @@ class CTemplate
         
 	}
 	
+	function showAllMyAdrDD($name="txt_adr", $width=300, $selected="")
+	{
+		 $query="SELECT ma.adr, adr.balance, dom.domain 
+		           FROM my_adr AS ma 
+			  LEFT JOIN adr ON ma.adr=adr.adr
+			  LEFT JOIN domains AS dom ON dom.adr=ma.adr
+			      WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+				    AND ma.adr NOT IN (SELECT adr 
+				                         FROM agents 
+										WHERE adr IN (SELECT adr 
+										                FROM adr 
+													   WHERE userID='".$_REQUEST['ud']['ID']."'))
+			   ORDER BY balance DESC"; 
+		 $result=$this->kern->execute($query);	
+	  
+		 print "<select name='".$name."' id='".$name."' class='form-control' style='width:".$width."px'>";
+         
+		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		 {
+			// Balance
+			if ($row['balance']=="")
+			   $balance=0;
+			else
+			   $balance=$row['balance'];
+			   
+		    if (strlen($row['domain'])>0)
+		    {
+			    if ($selected!="" && $selected==$row['adr'])
+		           print "<option selected  value='".$row['adr']."'>".$row['domain']." (".$balance." MSK)</option>";
+		        else
+			       print "<option value='".$row['adr']."'>".$row['domain']." (".$balance." MSK)</option>";
+		    }
+		    else
+		    {
+			    if ($selected!="" && $selected==$row['adr'])
+		           print "<option selected value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
+		        else
+			       print "<option value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
+		    }
+		 }
+		 
+         print "</select>";
+        
+	}
+	
 	function showMyAdrAssetDD($cur, $name="txt_adr", $width=300, $selected="")
 	{
 		 $query="SELECT ma.adr, ao.qty, dom.domain
@@ -524,14 +569,14 @@ class CTemplate
         
            <div class="row" style="background-color:#4d5d6d; padding-top:10px; padding-bottom:10px;" align="center">
            <div class="col-md-2"></div>
-           <div class="col-md-1"><a href="../../../index.php" class="font_14" style="color:#e1e6eb">Home</a></div>
-           <div class="col-md-1"><a href="../../transactions/all/index.php" class="font_14" style="color:#e1e6eb">Transactions&nbsp;&nbsp;</a></div>
-           <div class="col-md-1"><a href="../../addresses/adr/index.php" class="font_14" style="color:#e1e6eb">Addresses</a></div>
-           <div class="col-md-1"><a href="../../mes/inbox/index.php" class="font_14" style="color:#e1e6eb">Messages</a></div>
-           <div class="col-md-1"><a href="../../assets/regular/index.php" class="font_14" style="color:#e1e6eb">Assets</a></div>
-           <div class="col-md-1"><a href="../../markets/goods/index.php" class="font_14" style="color:#e1e6eb">Markets</a></div>
-           <div class="col-md-1"><a href="../../explorer/packets/index.php" class="font_14" style="color:#e1e6eb">Explorer</a></div>
-           <div class="col-md-1"><a href="../../help/help/index.php" class="font_14" style="color:#e1e6eb">Help</a></div>
+           <div class="col-md-1"><a href="../../../index.php" class="font_12" style="color:#e1e6eb">Home</a></div>
+           <div class="col-md-1"><a href="../../transactions/all/index.php" class="font_12" style="color:#e1e6eb">Transactions&nbsp;&nbsp;</a></div>
+           <div class="col-md-1"><a href="../../addresses/adr/index.php" class="font_12" style="color:#e1e6eb">Addresses</a></div>
+           <div class="col-md-1"><a href="../../mes/inbox/index.php" class="font_12" style="color:#e1e6eb">Messages</a></div>
+           <div class="col-md-1"><a href="../../assets/regular/index.php" class="font_12" style="color:#e1e6eb">Assets</a></div>
+           <div class="col-md-1"><a href="../../markets/goods/index.php" class="font_12" style="color:#e1e6eb">Markets</a></div>
+           <div class="col-md-1"><a href="../../explorer/packets/index.php" class="font_12" style="color:#e1e6eb">Explorer</a></div>
+           <div class="col-md-1"><a href="../../help/help/index.php" class="font_12" style="color:#e1e6eb">Help</a></div>
            <div class="col-md-2"></div>
            </div>     
            
@@ -1184,7 +1229,7 @@ class CTemplate
 		{
 			// Load unmoderated commnets
 		    $query="SELECT COUNT(*) AS total 
-		          FROM tweets_comments 
+		          FROM comments 
 		         WHERE tweetID IN (SELECT tweetID 
 				                     FROM tweets 
 								    WHERE adr IN (SELECT adr 
@@ -1216,29 +1261,22 @@ class CTemplate
 			    if ($unread>0) $this->showBadge($unread); 
 		    ?>
             </a></li>
+            
             <li <? if ($sel==2) print "class='active'"; ?>><a href="../../adr/adr/index.php">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) $this->showBadge($_REQUEST['ud']['pending_adr']); ?></a></li>       
+            
             <li <? if ($sel==3) print "class='active'"; ?>><a href="../../mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
+            
             <li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
             <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
             <ul class="dropdown-menu">
-             <li><a href="../../assets/options/index.php">Binary Options</a></li>
-            <li><a href="../../assets/margin_mkts/index.php">Margin Markets</a></li>
-            <li><a href="../../assets/pegged_assets/index.php">Market Pegged Assets</a></li>
-            <li role="separator" class="divider"></li>
             <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
             <li><a href="../../assets/assets_mkts/index.php">Assets Markets</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="../../assets/exchangers/index.php">Assets Exchangers</a></li>
-            
             <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
+            <li><a href="../../assets/options/index.php">Binary Options</a></li>
             </ul></li>     
             
-             <li class='dropdown open; <? if ($sel==5) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Shop<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <li><a href="../../shop/goods/index.php">Goods and Services</a></li>
-            <li><a href="../../shop/escrowers/index.php">Escrowers</a></li>
-            </ul></li>
-            
+           
             <li class='dropdown open; <? if ($sel==6) print "active"; ?>'><a href="../../app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
             <ul class="dropdown-menu">
             <li><a href="../../app/directory/index.php">Applications Directory</a></li>
@@ -1249,11 +1287,15 @@ class CTemplate
             <li><a href="../../app/reference/index.php">Language Reference</a></li>
             </ul></li>
             
-             <li class='dropdown open; <? if ($sel==7) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <li><a href="../../explorer/packets/index.php">Block Explorer</a></li>
-            <li><a href="../../help/help/index.php">Help</a></li>
-            </ul></li>
+             <li class='dropdown open; <? if ($sel==7) print "active"; ?>'>
+             <a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
+             <ul class="dropdown-menu">
+             <li><a href="../../explorer/packets/index.php">Blockchain Explorer</a></li>
+             <li><a href="../../explorer/peers/index.php">Peers</a></li>
+             <li><a href="../../explorer/status/index.php">Status</a></li>
+             <li><a href="../../help/help/index.php">Help</a></li>
+             <li><a href="../../api/docs/index.php">API</a></li>
+             </ul></li>
           
             <li <? if ($sel==8) print "class='active'"; ?>><a href="../../tweets/home/index.php">Tweets <? if ($comments>0) $this->showBadge($comments); ?></a></li>
             
@@ -1286,25 +1328,14 @@ class CTemplate
              <ul class="nav navbar-nav">
              <li <? if ($sel==1) print "class='active'"; ?>><a href="../../tweets/tweets/index.php">Tweets</a></li>
             <li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
-            <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
+            <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Assets<b class="caret"></b></a>
             <ul class="dropdown-menu">
-             <li><a href="../../assets/options/index.php">Binary Options</a></li>
-            <li><a href="../../assets/margin_mkts/index.php">Margin Markets</a></li>
-            <li><a href="../../assets/pegged_assets/index.php">Market Pegged Assets</a></li>
-            <li role="separator" class="divider"></li>
             <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
             <li><a href="../../assets/assets_mkts/index.php">Assets Markets</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="../../assets/exchangers/index.php">Assets Exchangers</a></li>
-            
+             <li role="separator" class="divider"></li>
             <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
+            <li><a href="../../assets/options/index.php">Binary Options</a></li>
             </ul></li>     
-            
-             <li class='dropdown open; <? if ($sel==5) print "active"; ?>'><a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Shop<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <li><a href="../../shop/goods/index.php">Goods and Services</a></li>
-            <li><a href="../../shop/escrowers/index.php">Escrowers</a></li>
-            </ul></li>
             
              <li class='dropdown open; <? if ($sel==6) print "active"; ?>'><a href="../../app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -1312,9 +1343,17 @@ class CTemplate
             <li><a href="../../app/market/index.php">Applications Market</a></li>
             </ul></li>
             
-            <li <? if ($sel==2) print "class='active'"; ?>><a href="../../explorer/packets/index.php">Explorer</a></li>
-            <li <? if ($sel==3) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
-            </ul>
+             <li class='dropdown open; <? if ($sel==2) print "active"; ?>'>
+             <a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
+             <ul class="dropdown-menu">
+             <li><a href="../../explorer/packets/index.php">Blockchain Explorer</a></li>
+             <li><a href="../../explorer/peers/index.php">Peers</a></li>
+             <li><a href="../../explorer/status/index.php">Status</a></li>
+             <li><a href="../../help/help/index.php">Help</a></li>
+             </ul></li>
+            
+             <li <? if ($sel==3) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
+             </ul>
              
               
              </ul>
@@ -1390,7 +1429,8 @@ class CTemplate
 	                 $link_2="", $txt_2="", $no_2="", 
 					 $link_3="", $txt_3="", $no_3="", 
 					 $link_4="", $txt_4="", $no_4="", 
-					 $link_5="", $txt_5="", $no_5="")
+					 $link_5="", $txt_5="", $no_5="",
+					 $link_6="", $txt_6="", $no_6="")
 	{
 		   // Zero ?
 		   if ($no_1==0) $no_1="";
@@ -1398,6 +1438,7 @@ class CTemplate
 		   if ($no_3==0) $no_3="";
 		   if ($no_4==0) $no_4="";
 		   if ($no_5==0) $no_5="";
+		   if ($no_6==0) $no_6="";
 		   
 		   print "<br><ul class=\"nav nav-tabs\" style=\"width:90%\">";
            
@@ -1448,6 +1489,16 @@ class CTemplate
 			      print "<li role='presentation' class='active'><a href='".$link_5."'>".$txt_5."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_5."</span></a></li>";
 			   else
 			      print "<li role='presentation'><a href='".$link_5."'>".$txt_5."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_5."</span></a></li>";
+				
+		   }
+		   
+		   // Tab 6
+		   if ($link_6!="") 
+		   {  
+		       if ($active==6) 
+			      print "<li role='presentation' class='active'><a href='".$link_6."'>".$txt_6."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_6."</span></a></li>";
+			   else
+			      print "<li role='presentation'><a href='".$link_6."'>".$txt_6."&nbsp;&nbsp;&nbsp;<span class='badge'>".$no_6."</span></a></li>";
 				
 		   }
 		  
@@ -1983,6 +2034,27 @@ ws.onError=function(e)
 </select>
         
         <?
+	}
+	
+	function makeLinks($mes)
+	{
+		$m="";
+		$v=explode(" ", $mes);
+		for ($a=0; $a<=sizeof($v)-1; $a++)
+		{
+			if (substr($v[$a], 0, 4)=="http")
+			  $m=$m." <a href='".$v[$a]."' target='_blank' class='font_14'>".substr($v[$a], 0, 10)."...</a>";
+			else if (substr($v[$a], 0, 1)=="#")
+			  $m=$m." <a href='../search/index.php?term=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			else if (substr($v[$a], 0, 1)=="$")
+			  $m=$m." <a href='../../assets/user/asset.php?symbol=".substr($v[$a], 1, 100)."'  class='font_14'>".$v[$a]."</a>";
+			else if (substr($v[$a], 0, 1)=="@")
+			  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			else 
+			   $m=$m." ".$v[$a];
+		}
+		
+		return $m;
 	}
 }
 ?>

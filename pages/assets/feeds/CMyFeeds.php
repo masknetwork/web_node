@@ -129,6 +129,14 @@
 								status='ID_PENDING', 
 								tstamp='".time()."'";
 	       $this->kern->execute($query);
+		   
+		   $query="INSERT INTO feeds_sources 
+		                   SET  feed_symbol='".$symbol."',  
+						        url='".base64_encode($source)."', 
+								adr='".$adr."', 
+								ping_interval='30', 
+								next_run='0'"; 
+		   $this->kern->execute($query);
 		 
 		   // Commit
 		   $this->kern->commit();
@@ -165,21 +173,15 @@
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel(); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0001", "feeds"); ?></td>
               </tr>
             </table></td>
             <td width="450" align="right" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td align="left"><? $this->template->showMyAdrDD("dd_new_feed_fee", "350"); ?></td>
-              </tr>
-              <tr>
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td height="30" align="left" valign="top"><strong>Feed Address</strong></td>
+                <td height="30" align="left" valign="top" class="font_14"><strong>Feed Address</strong></td>
               </tr>
               <tr>
                 <td align="left"><? $this->template->showMyAdrDD("dd_new_feed_adr", "350"); ?></td>
@@ -209,7 +211,8 @@
                 <td align="left">&nbsp;</td>
               </tr> 
               <tr>
-                <td height="30" align="left" valign="top" class="font_14"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                <td height="30" align="left" valign="top" class="font_14">
+                <table width="90%" border="0" cellpadding="0" cellspacing="0">
                   <tbody>
                       <tr>
                         <td width="49%"><strong>Datasource</strong></td>
@@ -226,16 +229,17 @@
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td height="30" align="left" valign="top" class="font_14"><table width="90%" border="0" cellspacing="0" cellpadding="0">
+                <td height="30" align="left" valign="top" class="font_14">
+                <table width="90%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td width="33%" height="30" align="left" valign="top"><strong>Symbol</strong></td>
                     <td width="33%" align="left" valign="top"><strong>Days</strong></td>
-                    <td width="33%" align="left" valign="top"><strong>Updates</strong></td>
+                    <td width="33%" align="left" valign="top">&nbsp;</td>
                   </tr>
                   <tr>
                     <td><input class="form-control" id="txt_new_feed_symbol" name="txt_new_feed_symbol" placeholder="XXXXXX" style="width:90px"/></td>
                     <td><input class="form-control" id="txt_new_feed_days" name="txt_new_feed_days" placeholder="1000" style="width:90px"/></td>
-                    <td><input class="form-control" id="txt_new_feed_updates" name="txt_new_feed_updates" placeholder="1" style="width:90px"/></td>
+                    <td>&nbsp;</td>
                   </tr>
                 </table></td>
               </tr>
@@ -255,6 +259,8 @@
 		   $('#txt_new_feed_desc').val(btoa($('#txt_new_feed_desc').val())); 
 		   $('#txt_new_feed_website').val(btoa($('#txt_new_feed_website').val()));  
 		});
+		
+		linkToNetFee("txt_new_feed_days", "feeds_net_fee_panel_val", "0.0001");
 		</script>
         
         <?

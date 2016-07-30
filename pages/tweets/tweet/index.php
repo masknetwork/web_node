@@ -5,6 +5,7 @@
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
+   include "../../mes/CMes.php";
    include "../CTweets.php";
    include "CTweet.php";
    
@@ -14,6 +15,7 @@
    $sd=new CSysData($db);
    $tweets=new CTweets($db, $template);
    $tweet=new CTweet($db, $template, $tweets);
+   $mes=new CMes($db, $template);
 ?>
 
 <!doctype html>
@@ -53,6 +55,8 @@
    .font_14 { font-size:22px;  }
 }
 
+.font_101 {font-size:18px;  }
+.font_141 {font-size:22px;  }
 </style>
 
 <script>
@@ -110,7 +114,7 @@ $(function (e)
 <body>
 
 <?
-   $template->showTopBar(7);
+   $template->showTopBar(8);
 ?>
  
 
@@ -126,67 +130,100 @@ $(function (e)
  <div class="col-md-8 col-sm-12" align="center" style="height:100%; background-color:#ffffff">
  
  <?
+     // Modals
+	 $tweets->showUpvoteModal($_REQUEST['ID']);
+	 $tweets->showDownvoteModal($_REQUEST['ID']);
+	 $mes->showComposeModal();
+	 
      // Location
-     $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Last Blocks");
+     $template->showLocation("../tweets/home/index.php", "Posts", "", "Post");
+	 
+	 // Target
+	 $sel=1;
+	 if ($_REQUEST['target']=="upvoters") $sel=2;
+	 if ($_REQUEST['target']=="downvoters") $sel=3;
 	 
 	 // Menu
-	 if ($_REQUEST['ud']['ID']>0)
-	 $template->showNav(2,
-	                   "../../tweets/home/index.php", "Home", "",
-	                   "../../tweets/tweets/index.php?adr=all", "Tweets", ""); 
+	 if ($sel>1)
+	 $template->showNav($sel,
+	                   "index.php?ID=".$_REQUEST['ID'], "Post", "",
+	                   "index.php?ID=".$_REQUEST['ID']."&target=upvoters&target_type=".$_REQUEST['target_type'], "Upvoters", "",
+					   "index.php?ID=".$_REQUEST['ID']."&target=downvoters&target_type=".$_REQUEST['target_type'], "Downvoters", ""); 
 	
 					    
-	 // New Tweet
-	 $tweets->showNewTweetModal();
+	
 	 
 	 // New comment
 	 $tweets->showNewCommentModal();
  ?>
  
  <br>
- <table width="90%" border="0" cellspacing="0" cellpadding="0">
-   <tbody>
-     <tr>
-       <td width="25%" height="1000px" valign="top">
-       
-       <? $tweets->showTrending(); ?>
-       
-       </td>
-       <td width="75%" valign="top" align="right">
-       
-     
-       <?
+ <?
 	      switch ($_REQUEST['act'])
-		   {
+		  {
 		     case "new_comment" : $tweet->newComment($_REQUEST['dd_comm_net_fee'], 
-	                                                $_REQUEST['dd_comm_adr'], 
-					                                $_REQUEST['com_tweetID'],
-								                    $_REQUEST['com_comID'],
+	                                                $_REQUEST['dd_comm_net_fee'], 
+					                                $_REQUEST['com_target_type'],
+								                    $_REQUEST['com_targetID'],
 					         	                    $_REQUEST['txt_com_mes']);
-								  break;
-								  
-			 case "reward" : $tweet->reward($_REQUEST['dd_reward_net_fee'], 
-			                               $_REQUEST['reward_resID'], 
-										   $_REQUEST['txt_reward']); 
-			                break;
+			 break;
+			 
+			 case "upvote" : $tweets->vote($_REQUEST['dd_upvote_net_fee'], 
+			                              $_REQUEST['dd_upvote_adr'], 
+										  $_REQUEST['target_type'], 
+										  $_REQUEST['targetID'], 
+										  "ID_UP"); 
+			 break;
+			 
+			 case "downvote" : $tweets->vote($_REQUEST['dd_downvote_net_fee'], 
+			                                 $_REQUEST['dd_downvote_adr'], 
+										     $_REQUEST['down_target_type'], 
+										     $_REQUEST['down_targetID'], 
+										     "ID_DOWN"); 
+			 break;
+			 
+			 case "follow" : $tweets->follow($_REQUEST['dd_follow_net_fee'], 
+			                                $_REQUEST['dd_follow_adr'], 
+											$_REQUEST['adr'], 
+											$_REQUEST['dd_months']); 
+			 break;
+			 
+			 case "unfollow" : $tweets->unfollow($_REQUEST['adr'], 
+			                                   $_REQUEST['adr'], 
+											   $_REQUEST['unfollow_adr']); 
+			 break;
+			 
+			 case "retweet" : $tweets->newTweet($_REQUEST['dd_retweet_adr'], 
+			                                   $_REQUEST['dd_retweet_adr'], 
+											   "", 
+					                           $_REQUEST['retweet_mes'], 
+					                           $_REQUEST['retweet_tweet_ID'], 
+					                           ""); 
+			 break;
+			
 		   }
 	       
-		   $tweet->showTweet($_REQUEST['ID']); 
-		   $tweet->showCommentBut($_REQUEST['ID']);
-		   $tweet->showTweetComments($_REQUEST['ID']); 
-		   $tweet->showRewardModal($_REQUEST['ID']);
+		   switch ($sel)
+		   {
+		      case 1 : $tweets->showPost($_REQUEST['ID']); break;
+			  case 2 : $tweets->showVoters($_REQUEST['target_type'], $_REQUEST['ID'], "ID_UP"); break;
+			  case 3 : $tweets->showVoters($_REQUEST['target_type'], $_REQUEST['ID'], "ID_DOWN"); break;
+		   }
+		   
+		   if ($sel==1) 
+		   {
+			   $tweets->showNewCommentBut($_REQUEST['ID']);
+			   $tweets->showComments("ID_POST", $_REQUEST['ID']);
+		   }
 	   ?>
-       
-       </td>
-     </tr>
-   </tbody>
-</table>
+ 
+ 
  
  </div>
  <div class="col-md-2 col-sm-0" id="div_ads"><? $template->showAds(); ?></div>
  <div class="col-md-1 col-sm-0">&nbsp;</div>
  </div>
- </div>
+</div>
  
  <?
     $template->showBottomMenu();

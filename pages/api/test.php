@@ -1,17 +1,15 @@
 <?
-    include "../db.php";
-	include "../CKernel.php";
-	include "../CTemplate.php";
-	include "../CSysData.php";
-	include "../CAPI.php";
+    include "../../kernel/db.php";
+	include "../../kernel/CUserData.php";
+	include "../template/template/CTemplate.php";
+	include "../../kernel/CSysData.php";
+	include "CAPI.php";
 	
 	$db=new db();
 	$sd=new CSysData($db);
 	$template=new CTemplate();
-	$kernel=new CKernel($db, $template);
 	$api=new CAPI($db);
+	$api->cols("trans");
+	//$api->info("adr", "block", "exact", 456, 0, 0);
 ?>
 
-<form action="test.php?act=inject" method="post">
-<textarea name="txt_data" id="txt_data" rows="10" style="width:300px"></textarea>
-</form>

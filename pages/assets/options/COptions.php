@@ -403,7 +403,7 @@ class COptions
            
            <br><br>
            <form id="form_new_bet" name="form_new_bet" method="post" action="issued.php?act=new_bet">
-          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <table width="90%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="20%" align="center" valign="top"><table width="180" border="0" cellspacing="0" cellpadding="0">
               <tr>
@@ -418,15 +418,6 @@ class COptions
             </table></td>
             <td width="50%" align="right" valign="top">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td align="left"><? $this->template->showMyAdrDD("dd_bet_fee", "100%"); ?></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
               <tr>
                 <td height="30" align="left" valign="top"><strong class="font_14">Bet  Address</strong></td>
               </tr>
@@ -656,15 +647,6 @@ class COptions
               </tr>
             </table></td>
             <td width="450" align="right" valign="top"><table width="410" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td align="left"><? $this->template->showMyAdrDD("dd_buy_bet_fee", "350"); ?></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
               <tr>
                 <td height="30" align="left" valign="top"><strong class="font_14">Bet  Address</strong></td>
               </tr>
