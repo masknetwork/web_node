@@ -68,7 +68,7 @@
  
  <?
      // Location
-     $template->showLocation("../../transactions/all/index.php", "Transactions", "", "All");
+     $template->showLocation("../../transactions/all/index.php", "Transactions", "", "Escrowed");
 	 
 	 // Menu
 	 $template->showNav(2,

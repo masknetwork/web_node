@@ -14,8 +14,6 @@
    $sd=new CSysData($db);
    $app=new CApp($db, $template);
    $write=new CWrite($db, $template, $app);
-   
-   if (!isset($_SESSION['userID'])) $this->kern->redirect("../../../index.php");
 ?>
 
 <!doctype html>
@@ -54,7 +52,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("help");
 ?>
  
 
@@ -106,7 +104,7 @@
              <td class="font_14">MaskNetwork protocol allows you to build and run decentralized applications that will be executed inside the <strong>Mask Network Virtual Machine</strong> (MVM). <strong>MaskNetwork Scripting Language </strong>(MSL) is an assembly-like <strong>turing complete</strong> programming language designed for developing decentralized applications that will run on MaskNetwork blockchain. MSL is no tcompiled to bytecode, is directly executed by MVM.</td>
            </tr>
            <tr>
-             <td>&nbsp;</td>
+             <td height="40">&nbsp;</td>
            </tr>
            <tr>
              <td class="font_14"><strong>Execution Fees</strong></td>
@@ -130,7 +128,7 @@
              <td class="font_14">For most instructions like simple mathematical operations, the cost is 1 <strong>MaskBit</strong> (MSB) or <strong>0.00000001</strong> MaskCoins (MSK). The price is increased by 1 MSB after each step executed. For example, an application that runs in 10 steps, will not pay 1 MSB + 2 MSB +....+10 MSB, or 50 MSB.</td>
            </tr>
            <tr>
-             <td>&nbsp;</td>
+             <td height="40">&nbsp;</td>
            </tr>
            <tr>
              <td class="font_14"><strong>Storage Fees</strong></td>
@@ -152,6 +150,141 @@
            </tr>
            <tr>
              <td class="font_14">In case an application<strong> runs out of funds</strong>, the network will automatically <strong>uninstall</strong> it (the nodes will delete application data from the distributed ledger).</td>
+           </tr>
+           <tr>
+             <td height="40">&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_16"><strong>Developing  applications</strong></td>
+           </tr>
+           <tr>
+             <td class="font_14"><hr></td>
+           </tr>
+           <tr>
+             <td class="font_14">Writing scripts using MaskNetwork Scripting Language can be done using any web wallet. Wallets have an editor and debugger integrated. You can write and even step by step debug your applications using a regular browser without downloading anything. </td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">You can also test different use cases or events like incoming transactions or messages. When you test a script, a full featured virtual machine will execute your code, but no real transactions / messages will be performed.</td>
+           </tr>
+           <tr>
+             <td height="40">&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_16"><strong>Installing / uninstalling applications</strong></td>
+           </tr>
+           <tr>
+             <td class="font_14"><hr></td>
+           </tr>
+           <tr>
+             <td class="font_14">Just writing a script and testing it on your local virtual machine doesn't mean it's active on the network and can be used by anyone else. In order to be active on the network, you need to &quot;install&quot; it. Installing an application it's a 2 clicks process and can be done using any web wallet. </td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">Just like any other MaskNetwork record, applications are installed  for a limited period and will pay a daily fee of 0.0001 MSK. You can increase this period anytime you want. The fee is paid in advance.</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">An application has an address associated. Once installed, the app  will  take full control of address funds. From that moment, only the app code will be able to spend funds from associated address. Always test your application using the local debugger before deploying.</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">In order to install an application, go to Applications / Write Applications, click on the red selector and choose &quot;Deploy to Network&quot;. Select on which address you want to install it, set a number of days and click &quot;Deploy&quot;. You can also set a run interval. Applications can run autonomously at regular intervals (in blocks). For example, if you set run period to 1, your application will wake up after each block and execute the function #block#.</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td><span class="font_14">When you click Deploy,  a special packet containing the application code and other details will be broadcasted to all nodes and once included in a block, your application will be ready for action.</span></td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">Once installed, your application will be visible in My Applications section (Applications / My Applications). In order to uninstall an application, click on the red selector and choose Remove from Network. You will need to provide just an address to pay the network fee for the unistall data packet (0.0001 MSK). </td>
+           </tr>
+           <tr>
+             <td height="40">&nbsp;</td>
+           </tr>
+           <tr>
+             <td  class="font_16"><strong>Application execution</strong></td>
+           </tr>
+           <tr>
+             <td><hr></td>
+           </tr>
+           <tr>
+             <td class="font_14">Once installed, an application can &quot;wake up&quot; itself and execute after a specified number of blocks or can be programmed to execute when certain events occur, like receiving a transaction or a message.</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">In order to &quot;intercept&quot; those events, you need to implement some predefine functions that will be called when such an event occur. For example, when an application receives a transaction, the virtual machine will call #transaction# function. If this function is not defined by your code, nothing will happen. If #transaction# function is defined, it will be executed. Programmers will be able to access transaction details by using some predefine variables that stores events details.</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_14">For more informations regarding application's events check Events section.</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td class="font_16"><strong>Publishing your application to Directory</strong></td>
+           </tr>
+           <tr>
+             <td><hr></td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
            </tr>
            <tr>
              <td>&nbsp;</td>

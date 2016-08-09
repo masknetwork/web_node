@@ -523,6 +523,7 @@ class CTemplate
                          <td align="left">
                          <a href="<? print base64_decode($row['link']); ?>" style="font-size:14px"><strong><? print base64_decode($row['title']); ?></strong></a>
                          <br><span style="font-size:12px"><? print base64_decode($row['message']); ?></span> 
+                         <br><span class="font_10" style="color:#999999"><? print $row['mkt_bid']." MSK / hour"; ?></span>
                          </td></tr><tr>
                          <td align="left"><hr></td>
                          </tr>
@@ -563,22 +564,139 @@ class CTemplate
         <?
 	}
 	
-	function showBottomMenu()
+	function showBottomMenu($index=false)
 	{
+	    if ($index==true)
+		   $path="./pages/";
+		else
+		   $path="../../";
+		   
+		if ($_REQUEST['ud']['ID']>0)
+		{
+		   	
 		?>
         
-           <div class="row" style="background-color:#4d5d6d; padding-top:10px; padding-bottom:10px;" align="center">
-           <div class="col-md-2"></div>
-           <div class="col-md-1"><a href="../../../index.php" class="font_12" style="color:#e1e6eb">Home</a></div>
-           <div class="col-md-1"><a href="../../transactions/all/index.php" class="font_12" style="color:#e1e6eb">Transactions&nbsp;&nbsp;</a></div>
-           <div class="col-md-1"><a href="../../addresses/adr/index.php" class="font_12" style="color:#e1e6eb">Addresses</a></div>
-           <div class="col-md-1"><a href="../../mes/inbox/index.php" class="font_12" style="color:#e1e6eb">Messages</a></div>
-           <div class="col-md-1"><a href="../../assets/regular/index.php" class="font_12" style="color:#e1e6eb">Assets</a></div>
-           <div class="col-md-1"><a href="../../markets/goods/index.php" class="font_12" style="color:#e1e6eb">Markets</a></div>
-           <div class="col-md-1"><a href="../../explorer/packets/index.php" class="font_12" style="color:#e1e6eb">Explorer</a></div>
-           <div class="col-md-1"><a href="../../help/help/index.php" class="font_12" style="color:#e1e6eb">Help</a></div>
-           <div class="col-md-2"></div>
-           </div>     
+           <table width="100%" align="center" style="background-color:#4d5d6d;">
+           <tr><td><br>
+           <table width="1000" border="0" cellpadding="0" cellspacing="0" class="font_12" align="center">
+           <tbody>
+           <tr>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Transactions</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Messages</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Trade</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Applications</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Blogs</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Explorer</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Help</strong></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/all/index.php"; ?>" class="font_12" style="color:#cde4ec">My Transactions</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."mes/inbox/index.php"; ?>" class="font_12" style="color:#cde4ec">Inbox</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/user/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/directory/index.php"; ?>" class="font_12" style="color:#cde4ec">Directory</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/home/new.php"; ?>" class="font_12" style="color:#cde4ec">Write</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Packets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."help/help/index.php"; ?>" class="font_12" style="color:#cde4ec">Wallet</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Escrowed</a> </td>
+           <td width="150" height="30" align="center"><a href="<? print $path."mes/sent/index.php"; ?>" class="font_12" style="color:#cde4ec">Outbox</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/assets_mkts/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets Markets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/market/index.php"; ?>" class="font_12" style="color:#cde4ec">App Market</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Top 24 Hours</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/blocks/index.php"; ?>" class="font_12" style="color:#cde4ec">Blocks</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/reference/index.php"; ?>" class="font_12" style="color:#cde4ec">Applications</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/mine/index.php"; ?>" class="font_12" style="color:#cde4ec">My Applications</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=7"; ?>" class="font_12" style="color:#cde4ec">Top 7 Days</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/adr/index.php"; ?>" class="font_12" style="color:#cde4ec">Addressess</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."api/docs/index.php"; ?>" class="font_12" style="color:#cde4ec">API</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/write/index.php"; ?>" class="font_12" style="color:#cde4ec">Write Applications</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=30"; ?>" class="font_12" style="color:#cde4ec">Top 30 Days</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/status/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">System Status</a></td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           </tr>
+           </tbody>
+           </table>
+           </td></tr></table>
+          
+           <?
+		}
+		else
+		{
+			?>
+            
+            <table width="100%" align="center" style="background-color:#4d5d6d;">
+           <tr><td><br>
+           <table width="1000" border="0" cellpadding="0" cellspacing="0" class="font_12" align="center">
+           <tbody>
+           <tr>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Trade</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Applications</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Blogs</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Explorer</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Help</strong></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/user/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/directory/index.php"; ?>" class="font_12" style="color:#cde4ec">Directory</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/home/new.php"; ?>" class="font_12" style="color:#cde4ec">Write</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Packets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."help/help/index.php"; ?>" class="font_12" style="color:#cde4ec">Wallet</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/assets_mkts/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets Markets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/market/index.php"; ?>" class="font_12" style="color:#cde4ec">App Market</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Top 24 Hours</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/blocks/index.php"; ?>" class="font_12" style="color:#cde4ec">Blocks</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/reference/index.php"; ?>" class="font_12" style="color:#cde4ec">Applications</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/mine/index.php"; ?>" class="font_12" style="color:#cde4ec">My Applications</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=7"; ?>" class="font_12" style="color:#cde4ec">Top 7 Days</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/adr/index.php"; ?>" class="font_12" style="color:#cde4ec">Addressess</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."api/docs/index.php"; ?>" class="font_12" style="color:#cde4ec">API</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."app/write/index.php"; ?>" class="font_12" style="color:#cde4ec">Write Applications</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=30"; ?>" class="font_12" style="color:#cde4ec">Top 30 Days</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/status/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">System Status</a></td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           </tr>
+           </tbody>
+           </table>
+           </td></tr></table>
+            
+            <?
+		}
+		   ?>
            
  
            <div class="row" style="background-color:#334456" align="center">
@@ -952,9 +1070,10 @@ class CTemplate
 	
 	function showRenewModal($link="")
 	{
-		$this->showModalHeader("modal_renew", "Renew", "act", "renew", "", "", $link);
+		$this->showModalHeader("modal_renew", "Renew", "act", "renew", "renew_table", "", $link);
 		?>
         
+           <input type="hidden" name="renew_rowhash" id="renew_rowhash" val="">
            <table width="610" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="172" align="center" valign="top"><table width="180" border="0" cellspacing="0" cellpadding="0">
@@ -973,7 +1092,7 @@ class CTemplate
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
               </tr>
               <tr>
-                <td align="left"><? $this->showMyAdrDD("dd_fee", "370"); ?></td>
+                <td align="left"><? $this->showMyAdrDD("dd_renew_net_fee", "370"); ?></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -983,7 +1102,7 @@ class CTemplate
               </tr>
               <tr>
                 <td align="left">
-                <input class="form-control" id="txt_ren_days" name="txt_ren_days" placeholder="Days" style="width:100px" value="365"/></td>
+                <input class="form-control" id="txt_renew_days" name="txt_renew_days" placeholder="Days" style="width:100px" value="365"/></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -992,8 +1111,12 @@ class CTemplate
           </tr>
         </table>
         
+        <script>
+		linkToNetFee("txt_renew_days", "renew_net_fee_panel_val", 0.0365);
+		</script>
+        
         <?
-		$this->showModalFooter(true, "Renew");
+		$this->showModalFooter("Renew");
 	}
 	
 	function showAdsModal()
@@ -1065,15 +1188,6 @@ class CTemplate
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td height="30" align="left"><span class="simple_blue_14"><strong>Country</strong></span></td>
-              </tr>
-              <tr>
-                <td align="left"><? $this->showCountriesDD(); ?></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
-              <tr>
                 <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td width="33%" align="left" class="simple_blue_14" valign="top" height="30px"><strong>Hours</strong></td>
@@ -1127,11 +1241,12 @@ class CTemplate
 	
 	
 	
-	function showSearchBox($txt)
+	function showSearchBox($action="")
 	{
 		?>
            
            <br />
+           <form id="form_src" name="form_src" action="<? print $action; ?>" method="post">
            <table width="93%" border="0" cellspacing="0" cellpadding="5">
            <tr>
             <td width="81%">
@@ -1142,6 +1257,7 @@ class CTemplate
             </td>
             </tr>
             </table>
+            </form>
             <br />
         
         <?
@@ -1223,8 +1339,16 @@ class CTemplate
 	
 	
 	
-	function showTopBar($sel=1)
+	function showTopBar($sel="", $index=false)
 	{
+		// Path
+		if ($index==true)
+		    $path="./pages/";
+		else
+			$path="../../";
+			
+		
+			  
 		if ($_SESSION['userID']>0)
 		{
 			// Load unmoderated commnets
@@ -1239,13 +1363,13 @@ class CTemplate
 		    $result=$this->kern->execute($query);	
 		    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		    $comments=$row['total'];
-		
-		    ?>
+			
+			?>
         
             <nav class="navbar navbar-inverse navbar-static-top" style="margin-bottom:0px">
             <div class="container-fluid">
             <div class="navbar-header">
-            <div class="navbar-brand"><a href="../../../index.php">Wallet</a></div>
+            <div class="navbar-brand"><a href="<? if ($index==false) print "../../../index.php"; else print "index.php"; ?>">Wallet</a></div>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -1255,50 +1379,76 @@ class CTemplate
            
             <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-            <li <? if ($sel==1) print "class='active'"; ?>><a href="../../transactions/all/index.php?act=clear">Transactions
+            
+            
+            <li <? if ($sel=="trans") print "class='active'"; ?>>
+            <a href="<? print $path; ?>transactions/all/index.php?act=clear">Transactions
 			<? 
 			    $unread=$_REQUEST['ud']['unread_trans']+$_REQUEST['ud']['unread_esc']+$_REQUEST['ud']['unread_multisig'];
 			    if ($unread>0) $this->showBadge($unread); 
 		    ?>
             </a></li>
             
-            <li <? if ($sel==2) print "class='active'"; ?>><a href="../../adr/adr/index.php">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) $this->showBadge($_REQUEST['ud']['pending_adr']); ?></a></li>       
+            <li <? if ($sel=="adr") print "class='active'"; ?>><a href="<? print $path; ?>adr/adr/index.php">Addresses <? if ($_REQUEST['ud']['pending_adr']>0) $this->showBadge($_REQUEST['ud']['pending_adr']); ?></a></li>       
             
-            <li <? if ($sel==3) print "class='active'"; ?>><a href="../../mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
+            <li <? if ($sel=="mes") print "class='active'"; ?>><a href="<? print $path; ?>mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
             
-            <li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
-            <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
+            <li class='dropdown open; <? if ($sel=="trade") print "active"; ?>'>
+            <a href="<? print $path; ?>assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
-            <li><a href="../../assets/assets_mkts/index.php">Assets Markets</a></li>
+            <li><a href="<? print $path; ?>assets/user/index.php">User Issued Assets</a></li>
+            <li><a href="<? print $path; ?>assets/assets_mkts/index.php">Assets Markets</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
-            <li><a href="../../assets/options/index.php">Binary Options</a></li>
+            <li><a href="<? print $path; ?>assets/feeds/index.php">Data Feeds</a></li>
+            <li><a href="<? print $path; ?>assets/options/index.php">Binary Options</a></li>
             </ul></li>     
-            
            
-            <li class='dropdown open; <? if ($sel==6) print "active"; ?>'><a href="../../app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+           
+            <li class='dropdown open; <? if ($sel=="app") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <li><a href="../../app/directory/index.php">Applications Directory</a></li>
-            <li><a href="../../app/market/index.php">Applications Market</a></li>
-            <li><a href="../../app/mine/index.php">My Applications</a></li>
+            <li><a href="<? print $path; ?>app/directory/index.php">Applications Directory</a></li>
+            <li><a href="<? print $path; ?>app/market/index.php">Applications Market</a></li>
+            <li><a href="<? print $path; ?>app/mine/index.php">My Applications</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="../../app/write/index.php">Write Applications</a></li>
-            <li><a href="../../app/reference/index.php">Language Reference</a></li>
+            <li><a href="<? print $path; ?>app/write/index.php">Write Applications</a></li>
+            <li><a href="<? print $path; ?>app/reference/index.php">Language Reference</a></li>
             </ul></li>
             
-             <li class='dropdown open; <? if ($sel==7) print "active"; ?>'>
-             <a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
+             <li <? if ($sel=="blogs") print "class='active'"; ?>><a href="<? print $path; ?>tweets/home/index.php">Blogs <? if ($comments>0) $this->showBadge($comments); ?></a></li>
+            
+             <li class='dropdown open; <? if ($sel=="explorer") print "active"; ?>'>
+             <a href="<? print $path; ?>explorer/packets/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
              <ul class="dropdown-menu">
-             <li><a href="../../explorer/packets/index.php">Blockchain Explorer</a></li>
-             <li><a href="../../explorer/peers/index.php">Peers</a></li>
-             <li><a href="../../explorer/status/index.php">Status</a></li>
-             <li><a href="../../help/help/index.php">Help</a></li>
-             <li><a href="../../api/docs/index.php">API</a></li>
+             <li><a href="<? print $path; ?>explorer/packets/index.php">Blockchain Explorer</a></li>
+             <li><a href="<? print $path; ?>explorer/peers/index.php">Peers</a></li>
+             <li><a href="<? print $path; ?>explorer/status/index.php">Status</a></li>
              </ul></li>
           
-            <li <? if ($sel==8) print "class='active'"; ?>><a href="../../tweets/home/index.php">Tweets <? if ($comments>0) $this->showBadge($comments); ?></a></li>
+              <li class='dropdown open; <? if ($sel=="help") print "active"; ?>'>
+              <a href="<? print $path; ?>shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Help<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              <li><a href="<? print $path; ?>help/help/index.php">Wallet</a></li>
+              <li><a href="<? print $path; ?>app/reference/index.php">Applications</a></li>
+              <li><a href="<? print $path; ?>api/docs/index.php">API</a></li>
+              </ul></li>
+              
+              <?
+			      if ($_REQUEST['ud']['user']=="root")
+				  {
+			  ?>
+              
+                     <li class='dropdown open; <? if ($sel=="admin") print "active"; ?>'>
+                     <a href="<? print $path; ?>admin/users/index.php" class="dropdown-toggle" data-toggle="dropdown" style="color:#D6FFDA">Admin<b class="caret"></b></a>
+                     <ul class="dropdown-menu">
+                     <li><a href="<? print $path; ?>admin/users/index.php">Users</a></li>
+                     <li><a href="<? print $path; ?>admin/mining/index.php">Mining</a></li>
+                     <li><a href="<? print $path; ?>admin/peers/index.php">Peers</a></li>
+                     <li><a href="<? print $path; ?>admin/settings/index.php">Settings</a></li>
+                     </ul></li>
             
+              <?
+				  }
+			  ?>
             
             </ul>
             
@@ -1315,51 +1465,62 @@ class CTemplate
 			?>
             
              <nav class="navbar navbar-inverse navbar-static-top" style="margin-bottom:0px">
-             <div class="container-fluid">
-             <div class="navbar-header">
-             <div class="navbar-brand"><a href="../../../index.php">Wallet</a></div>
-             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span> 
-             </button>
-             </div>
-             <div class="collapse navbar-collapse" id="myNavbar">
-             <ul class="nav navbar-nav">
-             <li <? if ($sel==1) print "class='active'"; ?>><a href="../../tweets/tweets/index.php">Tweets</a></li>
-            <li class='dropdown open; <? if ($sel==4) print "active"; ?>'>
-            <a href="../../assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Assets<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <li><a href="../../assets/user/index.php">User Issued Assets</a></li>
-            <li><a href="../../assets/assets_mkts/index.php">Assets Markets</a></li>
-             <li role="separator" class="divider"></li>
-            <li><a href="../../assets/feeds/index.php">Data Feeds</a></li>
-            <li><a href="../../assets/options/index.php">Binary Options</a></li>
-            </ul></li>     
+            <div class="container-fluid">
+            <div class="navbar-header">
+            <div class="navbar-brand"><a href="<? if ($index==false) print "../../../index.php"; else print "index.php"; ?>">Wallet</a></div>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span> 
+            </button>
+            </div>
+           
+            <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
             
-             <li class='dropdown open; <? if ($sel==6) print "active"; ?>'><a href="../../app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+            <li class='dropdown open; <? if ($sel=="trade") print "active"; ?>'>
+            <a href="<? print $path; ?>assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <li><a href="../../app/directory/index.php">Applications Directory</a></li>
-            <li><a href="../../app/market/index.php">Applications Market</a></li>
+            <li><a href="<? print $path; ?>assets/user/index.php">User Issued Assets</a></li>
+            <li><a href="<? print $path; ?>assets/assets_mkts/index.php">Assets Markets</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="<? print $path; ?>assets/feeds/index.php">Data Feeds</a></li>
+            <li><a href="<? print $path; ?>assets/options/index.php">Binary Options</a></li>
+            </ul></li>     
+           
+           
+            <li class='dropdown open; <? if ($sel=="app") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="<? print $path; ?>app/directory/index.php">Applications Directory</a></li>
+            <li><a href="<? print $path; ?>app/market/index.php">Applications Market</a></li>
             </ul></li>
             
-             <li class='dropdown open; <? if ($sel==2) print "active"; ?>'>
-             <a href="../../shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
-             <ul class="dropdown-menu">
-             <li><a href="../../explorer/packets/index.php">Blockchain Explorer</a></li>
-             <li><a href="../../explorer/peers/index.php">Peers</a></li>
-             <li><a href="../../explorer/status/index.php">Status</a></li>
-             <li><a href="../../help/help/index.php">Help</a></li>
-             </ul></li>
+             <li <? if ($sel=="blogs") print "class='active'"; ?>><a href="<? print $path; ?>tweets/home/index.php">Blogs <? if ($comments>0) $this->showBadge($comments); ?></a></li>
             
-             <li <? if ($sel==3) print "class='active'"; ?>><a href="../../help/help/index.php">Help</a></li>
-             </ul>
-             
-              
-             </ul>
-             </div>   
-             </div>
-             </nav>
+             <li class='dropdown open; <? if ($sel=="explorer") print "active"; ?>'>
+             <a href="<? print $path; ?>shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
+             <ul class="dropdown-menu">
+             <li><a href="<? print $path; ?>explorer/packets/index.php">Blockchain Explorer</a></li>
+             <li><a href="<? print $path; ?>explorer/peers/index.php">Peers</a></li>
+             <li><a href="<? print $path; ?>explorer/status/index.php">Status</a></li>
+             </ul></li>
+          
+              <li class='dropdown open; <? if ($sel=="help") print "active"; ?>'>
+              <a href="<? print $path; ?>shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Help<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              <li><a href="<? print $path; ?>help/help/index.php">Wallet</a></li>
+              <li><a href="<? print $path; ?>app/reference/index.php">Applications</a></li>
+              <li><a href="<? print $path; ?>api/docs/index.php">API</a></li>
+              </ul></li>
+            
+            
+            </ul>
+            
+          
+            
+            </div>   
+            </div>
+            </nav> 
             
             
             <?
@@ -2055,6 +2216,497 @@ ws.onError=function(e)
 		}
 		
 		return $m;
+	}
+	
+	function renew($net_fee_adr, $table, $days, $rowhash)
+	{
+		// Fee address is security options free
+	    if ($this->kern->adrValid($net_fee_adr)==false)
+		{
+			$this->showErr("(nvalid entry data", 550);
+			return false;
+		}
+		
+		// Fee Address
+		if ($this->kern->adrExist($net_fee_adr)==false)
+		{
+			$this->showErr("Invalid network fee address");
+			return false;
+		}
+		
+		// Fee address can spend
+		if (!$this->kern->canSpend($net_fee_adr))
+		{
+			$this->showErr("Network fee address can't spend funds");
+			return false;
+		}
+		
+		// Days
+		if ($days<1)
+		{
+			$this->showErr("Invalid days (minimum 1 day)", 550);
+			return false;
+		}
+	   
+	   // Funds
+	   if ($this->kern->getBalance($net_fee_adr)<$days*0.0001)
+	   {
+		   $this->showErr("Insufficient funds to execute the transaction", 550);
+		   return false;
+	   }
+	   
+	   // Table valid
+	   if ($table!="ads" && 
+	       $table!="agents" && 
+		   $table!="assets" && 
+		   $table!="assets_mkts" && 
+		   $table!="assets_mkts_pos" && 
+		   $table!="domains" && 
+		   $table!="feeds" && 
+		   $table!="feeds_branches")
+	   {
+		   $this->showErr("Invalid table", 550);
+		   return false;
+	   }
+	   
+	   // Hash
+	   if (!$this->kern->isHash($rowhash))
+	   {
+		   $this->showErr("Invalid rowhash", 550);
+		   return false;
+	   }
+	   
+	   // Load row details
+	   $query="SELECT * 
+	             FROM ".$table." 
+				WHERE rowhash='".$rowhash."'"; 
+	   $result=$this->kern->execute($query);	
+	   
+	   // No data
+	   if (mysql_num_rows($result)==0)
+	   {
+		   $this->showErr("Invalid rowhash", 550);
+		   return false;
+	   }
+	   
+	   // Owner valid
+	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   if (!$this->kern->isMine($row['adr']))
+	   {
+		   $this->showErr("Invalid owner", 550);
+		   return false;
+	   }
+	   
+	   // Address
+	   $adr=$row['adr'];
+	   
+	   
+		try
+	    {
+		   // Begin
+		   $this->kern->begin();
+
+           // Action
+           $this->kern->newAct("Renew a network asset");
+		   
+		   // Insert to stack
+		   $query="INSERT INTO web_ops 
+			                SET user='".$_REQUEST['ud']['user']."', 
+							    op='ID_RENEW', 
+								fee_adr='".$net_fee_adr."', 
+								target_adr='".$adr."', 
+								par_1='".$table."',
+								par_2='".$rowhash."',
+								days='".$days."', 
+								status='ID_PENDING', 
+								tstamp='".time()."'"; 
+	       $this->kern->execute($query);
+		
+		   // Commit
+		   $this->kern->commit();
+		   
+		   // Confirm
+		   $this->showOk("Your request has been succesfully recorded", 550);
+	   }
+	   catch (Exception $ex)
+	   {
+	      // Rollback
+		  $this->kern->rollback();
+
+		  // Mesaj
+		  $this->showErr("Unexpected error.");
+
+		  return false;
+	   }
+	}
+	
+	function showVotePanel($target_type, $targetID)
+	{
+		$this->showVoteModal($target_type, $targetID);
+		
+		$query="SELECT * 
+		          FROM votes_stats 
+				 WHERE target_type='".$target_type."' 
+				   AND targetID='".$targetID."'";
+		$result=$this->kern->execute($query);	
+		
+		if (mysql_num_rows($result)==0)
+		{
+			$pay=0;
+			$upvotes=0;
+			$downvotes=0;
+		}
+		else
+		{
+	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   $pay=$row['pay'];
+		   $upvotes=$row['upvotes_24'];
+		   $downvotes=$row['downvotes_24'];
+		}
+		
+		?>
+        
+            <table width="150" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td height="30" align="center" bgcolor="#fafafa" class="font_12">Upvotes Reward Today</td>
+                </tr>
+                <tr>
+                  <td height="30" align="center" class="font_20" style="color:#009900"  bgcolor="#FAFAFA">
+                  <table width="90%" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                      <tr>
+                        <td align="center" width="50%"><strong class="font_16"><? print "$".round($pay, 2); ?></strong></td>
+                        
+                        <td align="center" width="25%"><a href="javascript:void(0)" onClick="$('#vote_modal').modal(); $('#vote_type').val('up'); $('#vote_img').attr('src', '../../tweets/GIF/like.png');" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-thumbs-up"></span></a></td>
+                        
+                        <td align="center" width="25%"><a href="javascript:void(0)" onClick="$('#vote_modal').modal(); $('#vote_type').val('down'); $('#vote_img').attr('src', '../../tweets/GIF/down.png');" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-thumbs-down"></span></a></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td height="30" align="center" class="font_14"  bgcolor="#FAFAFA">
+                  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                      <tr>
+                        <td width="50%">&nbsp;</td>
+                        <td width="25%" align="center"><span class="glyphicon glyphicon-thumbs-up font_12"></span><span class="font_12">&nbsp;<? print $upvotes; ?></span></td>
+                        <td width="25%" align="center"><span class="glyphicon glyphicon-thumbs-down font_12"></span><span class="font_12">&nbsp;<? print $downvotes; ?></span></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                </tr>
+              </tbody>
+            </table>
+        
+        <?
+	}
+	
+	function showVoteModal($target_type, $targetID)
+	{
+		$this->showModalHeader("vote_modal", "Vote", "act", "vote", "vote_targetID", $targetID);
+		  
+		?>
+          
+          <input type="hidden" name="vote_target_type" id="vote_target_type" value="<? print $target_type; ?>">
+          <input type="hidden" name="vote_type" id="vote_type" value="">
+          
+          <table width="700" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+           <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td align="center"><img src="../../tweets/GIF/like.png" width="180" name="vote_img" id="vote_img"/></td>
+             </tr>
+             <tr><td>&nbsp;</td></tr>
+             <tr>
+               <td align="center"><? $this->showNetFeePanel("0.0001", "trans"); ?></td>
+             </tr>
+           </table></td>
+           <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td width="391" height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               <?
+			      $this->showMyAdrDD("dd_vote_net_fee");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+			   <?
+			      $this->showAllMyAdrDD("dd_vote_adr");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="40" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               
+               <div id="div_power" name="div_power">
+               <?
+			      $query="SELECT ma.adr, adr.balance
+		                    FROM my_adr AS ma 
+			           LEFT JOIN adr ON ma.adr=adr.adr
+			               WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
+				             AND ma.adr NOT IN (SELECT adr 
+				                                  FROM agents 
+										         WHERE adr IN (SELECT adr 
+										                FROM adr 
+													   WHERE userID='".$_REQUEST['ud']['ID']."'))
+			             ORDER BY balance DESC"; 
+		          $result=$this->kern->execute($query);	
+				  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 
+			      $this->getPower($row['adr']);
+			   ?>
+               </div>
+                      
+               </td>
+             </tr>
+             
+           </table></td>
+         </tr>
+     </table>
+     
+<script>
+	 $('#dd_vote_adr').change(
+	 function() 
+	 { 
+	    $('#div_power').load("../../tweets/tweet/get_page.php?act=get_power&adr="+encodeURIComponent($('#dd_vote_adr').val()), ""); 
+     });
+     </script>
+     
+       
+       
+        <?
+		
+		$this->showModalFooter("Vote");
+	}
+	
+	function getPower($adr)
+	{
+		// Votes
+		$query="SELECT COUNT(*) AS total 
+		          FROM votes 
+				 WHERE adr='".$adr."' 
+				   AND block>".($_REQUEST['sd']['last_block']-1440); 
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$votes=$row['total'];
+	    
+		// Voting power
+		$power=round($this->kern->getBalance($adr, "MSK")/($votes+1), 2);
+		?>
+        
+               <table width="100" border="0" cellpadding="0" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td align="center">
+                     
+                     <div class="panel panel-default" style="width:150px">
+                     <div class="panel-heading font_14">Votes 24 Hours</div>
+                     <div class="panel-body">
+                     <? print $votes; ?>
+                     </div>
+                     </div>
+                     
+                     </td>
+                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                     <td align="center">
+                     
+                     <div class="panel panel-default" style="width:150px">
+                     <div class="panel-heading font_14">Voting Power</div>
+                     <div class="panel-body" style="color:#009900">
+                     <? 
+					    print "+".$power; 
+				     ?>
+                     </div>
+                     </div>
+                     
+                     </td>
+                   </tr>
+                 </tbody>
+               </table>
+        
+        <?
+	}
+	
+	function vote($net_fee_adr, 
+	              $adr, 
+				  $target_type, 
+				  $targetID, 
+				  $type)
+	{
+		// Fee Address
+		if ($this->kern->adrExist($net_fee_adr)==false)
+		{
+			$this->showErr("Invalid network fee address", 550);
+			return false;
+		}
+		
+		// Address valid
+		if ($this->kern->adrValid($adr)==false)
+		{
+			$this->showErr("Invalid target address", 550);
+			return false;
+		}
+		
+		// My address
+	    if ($this->kern->isMine($net_fee_adr)==false || 
+		    $this->kern->isMine($adr)==false)
+		{
+			$this->showErr("Invalid entry data", 550);
+			return false;
+		}
+		
+		// Fee address is security options free
+	    if ($this->kern->canSpend($net_fee_adr)==false)
+		{
+			$this->showErr("Network fee address can't spend funds", 550);
+			return false;
+		}
+		
+		// Balance
+		$balance=$this->kern->getBalance($net_fee_adr);
+		
+		// Funds
+		if ($balance<0.0001)
+		{
+			$this->showErr("Insufficient funds to execute this operation", 550);
+			return false;
+		}
+		
+		// Target exist ?
+		switch ($target_type)
+		{
+			case "ID_POST" : $query="SELECT * 
+		                              FROM tweets 
+				                     WHERE tweetID='".$targetID."'";
+					         break;
+							 
+			case "ID_COM" : $query="SELECT * 
+		                             FROM comments 
+				                    WHERE comID='".$targetID."'";
+					        break;
+							
+		   case "ID_FEED" : $query="SELECT * 
+		                             FROM feeds 
+				                    WHERE feedID='".$targetID."'";
+					        break;
+							
+		   case "ID_BET" : $query="SELECT * 
+		                             FROM feeds_bets 
+				                    WHERE betID='".$targetID."'";
+					        break;
+							
+		   case "ID_APP" : $query="SELECT * 
+		                             FROM agents 
+				                    WHERE aID='".$targetID."'";
+					        break;
+							
+		   case "ID_ASSET" : $query="SELECT * 
+		                             FROM assets 
+				                    WHERE assetID='".$targetID."'";
+					        break;
+							
+		  case "ID_ASSET_MKT" : $query="SELECT * 
+		                             FROM assets_mkts 
+				                    WHERE mktID='".$targetID."'"; 
+					        break;
+		}
+		
+		// Execute
+		$result=$this->kern->execute($query);	
+	    
+		if (mysql_num_rows($result)==0)
+		{
+			$this->showErr("Invalid content ID", 550);
+			return false;
+		}
+		
+		// Already voted?
+		$query="SELECT * 
+		          FROM votes 
+				 WHERE adr='".$adr."' 
+				   AND target_type='".$target_type."' 
+				   AND targetID='".$targetID."'";
+		$result=$this->kern->execute($query);	
+	    
+		if (mysql_num_rows($result)>0)
+		{
+			$this->showErr("Already liked this post", 550);
+			return false;
+		}
+		
+		if ($this->kern->getBalance($adr)<1)
+		{
+			$this->showErr("Minimum balance for voting is 1 MSK", 550);
+			return false;
+		}
+		
+		// Type
+		if ($type!="up" && 
+	        $type!="down")
+		{
+			$this->showErr("Invalid vote type", 550);
+		    return false;
+		}
+		
+		// Vote type
+		switch ($type)
+		{
+			case "up" : $type="ID_UP"; break;
+			case "down" : $type="ID_DOWN"; break;
+		}
+		
+		try
+	    {
+		   // Begin
+		   $this->kern->begin();
+
+           // Action
+           $this->kern->newAct("Like a tweet");
+		   
+		   // Insert to stack
+		   $query="INSERT INTO web_ops 
+			               SET user='".$_REQUEST['ud']['user']."', 
+							   op='ID_VOTE', 
+							   fee_adr='".$net_fee_adr."', 
+							   target_adr='".$adr."',
+							   par_1='".$target_type."',
+							   par_2='".$targetID."',
+							   par_3='".$type."',
+							   status='ID_PENDING', 
+							   tstamp='".time()."'"; 
+	       $this->kern->execute($query);
+		
+		   // Commit
+		   $this->kern->commit();
+		   
+		   // Confirm
+		   $this->showOk("Your request has been succesfully recorded", 550);
+	   }
+	   catch (Exception $ex)
+	   {
+	      // Rollback
+		  $this->kern->rollback();
+
+		  // Mesaj
+		  $this->showErr("Unexpected error.", 550);
+
+		  return false;
+	   }
 	}
 }
 ?>

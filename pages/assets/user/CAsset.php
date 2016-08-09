@@ -43,15 +43,22 @@ class CAsset
             <div class="panel-body">
             <table width="100%">
             <tr>
-            <td width="15%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=150&h=150"; ?>"  class="img-circle img-responsive"/></td>
-            <td width="3%">&nbsp;</td>
-            <td width="83%" valign="top"><span class="font_16"><strong><? print base64_decode($row['title']); ?></strong></span>
+            <td width="14%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=150&h=150"; ?>"  class="img-circle img-responsive"/></td>
+            <td width="1%">&nbsp;</td>
+            <td width="71%" valign="top"><span class="font_16"><strong><? print base64_decode($row['title']); ?></strong></span>
             <p class="font_14"><? print base64_decode($row['description']); ?></p></td>
+            <td width="14%" valign="top">
+            
+            <?
+			   $this->template->showVotePanel("ID_ASSET", $row['assetID']);
+			?>
+            
+            </td>
             </tr>
-            <tr><td colspan="3"><hr></td></tr>
-            <tr><td colspan="3">
+            <tr><td colspan="4"><hr></td></tr>
+            <tr><td colspan="4">
     
-            <table class="table-responsive" width="100%">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table-responsive">
              <tr>
             <td width="30%" align="center"><span class="font_12">Symbol&nbsp;&nbsp;&nbsp;&nbsp;<strong><? print $row['symbol']; ?></strong></span></td>
             <td width="40%" class="font_12" align="center">Available&nbsp;&nbsp;&nbsp;&nbsp;<strong><? print $row['qty']; ?> units</strong></td>

@@ -44,7 +44,7 @@
    .font_14 { font-size:22px;  }
 }
 
-.font_14 {font-size:20px;  }
+
 </style>
 
 <style type="text/css" media="screen">
@@ -73,7 +73,7 @@
 
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("help");
 ?>
  
 

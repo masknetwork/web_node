@@ -11,7 +11,7 @@ class CAdrOptions
 	{
 		$query="SELECT * 
 		          FROM my_adr 
-				 WHERE ID='".$adrID."'";
+				 WHERE ID='".$adrID."'"; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    $adr=$row['adr'];
@@ -131,6 +131,50 @@ class CAdrOptions
                   </tr>
                 <tr align="left">
                   <td height="40" colspan="3"><hr></td>
+                </tr>
+                <tr>
+                  <td align="left"><table width="90%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td align="center"><img src="GIF/seal.png" width="235" height="235" class="img-responsive"/></td>
+                      </tr>
+                      <tr>
+                        <td height="50" align="center">
+						<?
+						     $query="SELECT * 
+							           FROM adr 
+									  WHERE adr='".$adr."'"; 
+							 $result=$this->kern->execute($query);	
+	                         
+							 $row = mysql_fetch_array($result, MYSQL_ASSOC);
+							 
+							 
+							 if ($row['sealed']<$_REQUEST['sd']['last_block']) 
+							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal(); \" class=\"btn btn-primary\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Seal</a>";
+						     else
+							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal();\" class=\"btn btn-warning\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Renew</a>";
+								
+                          ?></td>
+                      </tr>
+                    </tbody>
+                  </table></td>
+                  <td valign="top">&nbsp;</td>
+                  <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+                    <tr>
+                      <td align="left" class="inset_gri_16"><table width="100%" border="0" cellspacing="1" cellpadding="0">
+                        <tr>
+                          <td width="68%"><span class="font_16"><strong>Seal Address</strong></span> <span class="font_14">( 0.0001 MSK / day )</span><a href="javascript:$('#modal_profile').modal()" class="blue_16"></a></td>
+                          <td width="32%" height="30">&nbsp;</td>
+                        </tr>
+                      </table></td>
+                    </tr>
+                    <tr>
+                      <td align="left" class="font_14">You can seal an address for a specified number of days. A sealed address has some restrictions applied. The most important is that applications installed on sealed addresses can nor be chenged or uninstalled. Once you seal an address, you loose any control over the installed application.</td>
+                    </tr>
+                  </table></td>
+                </tr>
+                <tr>
+                  <td colspan="3" align="left"><hr></td>
                 </tr>
                 <tr>
                   <td align="left"><table width="90%" border="0" cellspacing="0" cellpadding="0">

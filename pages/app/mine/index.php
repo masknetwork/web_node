@@ -51,7 +51,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -68,7 +68,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/market/index.php", "Applications", "", "Inbox");
+     $template->showLocation("../../app/mine/index.php", "My Applications", "", "My Application");
 	
 	 // Action
 	 switch ($_REQUEST['act'])

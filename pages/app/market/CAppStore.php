@@ -532,5 +532,81 @@
         <?
 	}
 	
+	function showWonPanel($appID)
+	{
+		// Load app data
+		$query="SELECT * 
+		          FROM agents 
+				 WHERE aID='".$appID."'";
+	    $result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$owner=$row['adr']; 
+		
+		// Total sum
+		$query="SELECT SUM(adr.balance) AS total
+		          FROM agents 
+				  JOIN adr ON adr.adr=agents.adr 
+				 WHERE agents.owner<>agents.adr";
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$total=$row['total']; 
+		
+		// Balance on installed addresses
+		$query="SELECT SUM(adr.balance) AS total
+		          FROM agents 
+				  JOIN adr ON adr.adr=agents.adr 
+				 WHERE agents.owner='".$owner."' 
+				   AND agents.owner<>agents.adr";
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$used=$row['total'];
+		
+		// Percent
+		$p=$used*100/$total; 
+		
+		// Amount
+		$pay=round($p/100*$this->kern->getReward("ID_APP")*$_REQUEST['sd']['msk_price'], 2); 
+		
+		// Number of installs
+		$query="SELECT COUNT(*) AS total 
+		          FROM agents 
+				 WHERE owner<>adr 
+				   AND owner='".$owner."'";
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$no=$row['total'];
+		
+		?>
+        
+            <div class="panel panel-default" style="width:90%">
+            <div class="panel-heading">
+            <h3 class="panel-title font_14">Panel title</h3>
+            </div>
+            <div class="panel-body">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+            <td width="15%"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+            <tr>
+            <td align="center" class="font_12">Won Today</td>
+            </tr>
+            <tr>
+            <td align="center" style="color:#<? if ($pay>0) print "009900"; else print "999999"; ?>"><strong><? print "$".$pay; ?></strong></td>
+            </tr>
+            <tr>
+            <td align="center" class="font_12"><? print $no." installs"; ?></td>
+            </tr>
+            </tbody>
+            </table></td>
+            <td width="2%">&nbsp;</td>
+            <td width="83%" class="font_14">Publishing your application to decentralized app store is one of the easiest way to make money with MaskNetwork. Everyday, 10% of distributed MaskCoins goes to applications owners. The payment depends on the number of coins held by addresses on which the application is installed.</td>
+            </tr>
+            </table>
+            </div>
+            </div>
+        
+        <?
+	}
+	
   }
 ?>

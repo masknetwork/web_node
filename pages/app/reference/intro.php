@@ -52,7 +52,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("help");
 ?>
  
 

@@ -51,7 +51,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -68,7 +68,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/write/index.php", "Applications", "", "Write");
+     $template->showLocation("../../app/mine/index.php", "My Applications", "", "Write Applications");
 	 
 	 // Write
 	 $write->showWriteBut();

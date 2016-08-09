@@ -89,6 +89,13 @@
 		                                     $_REQUEST['new_trade_orderID'], 
 											 $_REQUEST['txt_new_trade_order_qty']); 
 		                  break;
+						  
+		case "vote" : $template->vote($_REQUEST['dd_vote_net_fee'], 
+		                                  $_REQUEST['dd_vote_adr'], 
+				                          $_REQUEST['vote_target_type'], 
+				                          $_REQUEST['vote_targetID'], 
+				                          $_REQUEST['vote_type']);
+						   break;
 	 }
 	 
 	 // Show panel

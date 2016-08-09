@@ -66,7 +66,7 @@ $(document).ready(function(){
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -84,6 +84,14 @@ $(document).ready(function(){
  <?
      // Location
      $template->showLocation("../../app/directory/index.php", "Applications", "", "Application");
+	 
+	 // Vote
+	 if ($_REQUEST['act']=="vote")
+	    $template->vote($_REQUEST['dd_vote_net_fee'], 
+		                $_REQUEST['dd_vote_adr'], 
+				        $_REQUEST['vote_target_type'], 
+				        $_REQUEST['vote_targetID'], 
+				        $_REQUEST['vote_type']);
 	
 	 // Buttons
 	 $dir->showButs($_REQUEST['ID']);
@@ -102,6 +110,9 @@ $(document).ready(function(){
 		 case "code" : $sel=2; break;
 		 case "storage" : $sel=3; break;
 	 }
+	 
+	 // Sealed panel
+	 $dir->showSealPanel($_REQUEST['ID']);
 	 
 	 // Details
 	 print "<br>";

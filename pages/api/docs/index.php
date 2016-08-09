@@ -11,7 +11,7 @@
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
-   $api=new CAPI($db);
+   $api=new CAPI($db, $template);
 ?>
 
 <!doctype html>
@@ -48,7 +48,7 @@
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("help");
 ?>
  
 
@@ -67,15 +67,8 @@
      // Location
      $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
 	 
-	  // Menu
-	 if ($_REQUEST['ud']['ID']>0)
-	 $template->showNav(1,
-	                    "../feeds/index.php", "Public API", "",
-	                    "../feeds/my_feeds.php", "Key API", "");
-	 
-	 
-	 
-	
+	// Browser
+    $api->showMenu();
  ?>
  
  <br>

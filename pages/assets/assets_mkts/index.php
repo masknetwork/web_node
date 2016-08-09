@@ -48,7 +48,7 @@
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("trade");
 ?>
  
 
@@ -65,7 +65,7 @@
  
  <?
      // Location
-     $template->showLocation("../../assets/assets/index.php", "Speculative Markets", "", "Markets");
+     $template->showLocation("../../assets/assets_mkts/index.php", "Assets Markets", "", "Markets");
 	 
 	  // Menu
 	 if ($_REQUEST['ud']['ID']>0)

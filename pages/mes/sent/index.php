@@ -49,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar(3);
+   $template->showTopBar("mes");
 ?>
  
 

@@ -49,44 +49,21 @@ class CDirectory
             <br><br>
             <div class="panel panel-default" style="width:90%">
             <div class="panel-body">
+            
             <table width="100%" border="0" cellpadding="0" cellspacing="0">
             <tr>
             <td width="16%" valign="top"><img src="<? if ($row['pic']!="") print "../../../crop.php?src=".base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png\""; ?>" class="img-responsive img-rounded"></td>
             <td width="3%">&nbsp;</td>
             <td width="71%" valign="top"><span class="font_20"><strong><? print base64_decode($row['name']); ?></strong></span><p class="font_14"><? print base64_decode($row['description']); ?></p></td>
              <td width="3%">&nbsp;</td>
-            <td width="11%" align="center" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
-              <tbody>
-                <tr>
-                  <td align="center" class="font_12">
-                  
-                  <?
-				     if ($row['sealed']==0)
-					 {
-				  ?>
-                  
-                  <img src="GIF/not_sealed.png" width="100" height="101" data-toggle="popover" data-trigger="hover" title="Unsealed Application" data-content="This application is not sealed. This means the owner has full control over the application and funds. He / she can modify the source code or shut the app down, without requiring user approval." data-placement="top"/>
-                  
-                  <?
-					 }
-					 else
-					 {
-						 ?>
-                         
-                          <img src="GIF/guarantee.png" width="100" height="101" data-toggle="popover" data-trigger="hover" title="Sealed Application" data-content="This application is sealed. This means the owner has no control over the application or funds. He / she can not modify the source code or shut the app down. This is a 100% autonomus app that will run as long as it has funds." data-placement="top"/>
-                         
-                         <?
-						 
-					 }
-				  ?>
-                  
-                  </td>
-                </tr>
-                <tr>
-                  <td height="30" align="center" class="font_14" style="color:#<? if ($row['sealed']>0) print "009900"; else print "990000"; ?>"><? if ($row['sealed']>0) print "sealed"; else print "not_sealed"; ?></td>
-                </tr>
-              </tbody>
-            </table></td>
+            <td width="11%" align="center" valign="top">
+            
+            <?
+			   $this->template->showVotePanel("ID_APP", $appID);
+			?>
+            
+            
+            </td>
             </tr>
             <tr><td colspan="5"><hr></td></tr>
             <tr><td colspan="5">
@@ -152,6 +129,49 @@ class CDirectory
         <?
 	}
 	
+	function showSealPanel($appID)
+	{
+		$query="SELECT * FROM agents WHERE aID='".$appID."'";
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	  
+		?>
+        
+        <div class="panel panel-default" style="width:90%">
+        <div class="panel-body">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td width="6%">
+            
+            <?
+				if ($row['sealed']==0)
+				   print "<img src='GIF/not_sealed.png' width='100' height='101'>";	 
+				else
+				   print "<img src='GIF/guarantee.png' width='100' height='101'>";	   
+			    		 
+		    ?>
+                
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td width="94%"> 
+			<?
+				if ($row['sealed']==0)
+				   print "<span class='font_16'><strong>Unsealed Application</strong></span><p class='font_12'>This application is not sealed. This means the owner has full control over the application and funds. He / she can modify the source code or shut the app down, without requiring user approval.</p>";	 
+				else
+				   print "<span class='font_16'><strong>Sealed Application</strong></span><p class='font_12'>This application is sealed. This means the owner has no control over the application or funds. He / she can not modify the source code or shut the app down. This is a 100% autonomus app that will run as long as it has funds.</p>";	   
+			    		 
+		    ?>
+            </td>
+          </tr>
+        </tbody>
+        </table>
+        </div>
+        </div>
+        
+        <?
+	}
+	
 	function showTrans($appID)
 	{
 		$query="SELECT * 
@@ -207,7 +227,7 @@ class CDirectory
                         </td>
                         
                         <td width="25%" align="center" class="font_14" style="color : <? if ($row['amount']<0) print "#990000"; else print "#009900"; ?>">
-                        <span<strong><? print round($row['amount'], 8)." ".$row['cur']; ?></strong></span></td>
+                        <span><strong><? print round($row['amount'], 8)." ".$row['cur']; ?></strong></span></td>
                         </tr>
                         <tr>
                         <td colspan="4"><hr></td>

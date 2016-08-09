@@ -131,8 +131,7 @@ $(function (e)
  
  <?
      // Modals
-	 $tweets->showUpvoteModal($_REQUEST['ID']);
-	 $tweets->showDownvoteModal($_REQUEST['ID']);
+	 $template->showVoteModal("ID_POST", $_REQUEST['ID']);
 	 $mes->showComposeModal();
 	 
      // Location
@@ -168,12 +167,12 @@ $(function (e)
 					         	                    $_REQUEST['txt_com_mes']);
 			 break;
 			 
-			 case "upvote" : $tweets->vote($_REQUEST['dd_upvote_net_fee'], 
-			                              $_REQUEST['dd_upvote_adr'], 
-										  $_REQUEST['target_type'], 
-										  $_REQUEST['targetID'], 
-										  "ID_UP"); 
-			 break;
+			 case "vote" : $template->vote($_REQUEST['dd_vote_net_fee'], 
+		                                  $_REQUEST['dd_vote_adr'], 
+				                          $_REQUEST['vote_target_type'], 
+				                          $_REQUEST['vote_targetID'], 
+				                          $_REQUEST['vote_type']);
+				           break;
 			 
 			 case "downvote" : $tweets->vote($_REQUEST['dd_downvote_net_fee'], 
 			                                 $_REQUEST['dd_downvote_adr'], 

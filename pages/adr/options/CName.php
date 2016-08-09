@@ -60,7 +60,7 @@ class CName
 	   }
 	   
 	   // Domain valid
-	   if ($this->kern->domainValid($domain)==false)
+	   if ($this->kern->isDomain($domain)==false)
 	   {
 		    $this->template->showErr("Invalid domain name", "90%");
 		    return false;

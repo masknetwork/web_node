@@ -49,7 +49,7 @@
 
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("trade");
 ?>
  
 
@@ -66,13 +66,13 @@
  
  <?
      // Location
-     $template->showLocation("../../assets/assets/index.php", "Speculative Markets", "", "Markets");
+     $template->showLocation("../../assets/assets_mkts/index.php", "Assets Markets", "", "My Orders");
 	 
 	  // Menu
 	 if ($_REQUEST['ud']['ID']>0)
 	 $template->showNav(2,
 	                    "../assets_mkts/index.php", "Markets", "",
-	                    "../assets_mkts/my_pos.php", "My Positions", "",
+	                    "../assets_mkts/my_pos.php", "My Orders", "",
 						"../assets_mkts/issued.php", "My Markets", "");
 	 
 	 

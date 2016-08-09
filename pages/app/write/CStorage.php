@@ -1,141 +1,158 @@
 <?
 class CStorage
 {
-	function CStorage($db, $template, $appID)
+	function CStorage($db, $template, $appID, $table, $local)
 	{
 		$this->kern=$db;
 		$this->template=$template;
-		$this->aID=$appID; 
+		$this->ID=$appID;
+		$this->table=$table;
+		$this->local=$local; 
+	}
+	
+	function showTable()
+	{
+		if ($this->local==true)
+			   $tab="storage_local";
+			else
+			   $tab="storage";
+			   
+		if ($this->table=="")
+		{
+			$query="SELECT DISTINCT(tab) FROM ".$tab;
+			$result=$this->kern->execute($query);
+			if (mysql_num_rows($result)==0) die ("Storage is empty");
+			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$this->table=$row['tab']; 
+		}
 		
-		// Load data
 		$query="SELECT * 
-		          FROM agents_mine 
-				 WHERE ID='".$appID."'";
-		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		          FROM ".$tab." 
+				 WHERE tab='".$this->table."' 
+				   AND aID='".$this->ID."'"; 
+		$result=$this->kern->execute($query);
 		
-		// Storage
-		$storage=base64_decode($row['storage']);
-		
-		// Decoded
-		$this->decoded=json_decode($storage);
+		?>
+        
+         <table width="3000px" border="1" class="table table-bordered table-bordered table-hover">
+         <thead class="font_14">
+         <th>S1</th>
+         <th>S2</th>
+         <th>S3</th>
+         <th>S4</th>
+         <th>S5</th>
+         <th>S6</th>
+         <th>S7</th>
+         <th>S8</th>
+         <th>S9</th>
+         <th>S10</th>
+         <th>D1</th>
+         <th>D2</th>
+         <th>D3</th>
+         <th>D4</th>
+         <th>D5</th>
+         <th>D6</th>
+         <th>D7</th>
+         <th>D8</th>
+         <th>D9</th>
+         <th>D10</th>
+         <th>Block</th>
+         </thead>
+         
+         <tbody>
+         
+         <?
+		    while  ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			{
+		 ?>
+         
+            <tr>
+            <td class="font_12"><? print base64_decode($row['s1']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s2']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s3']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s4']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s5']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s6']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s7']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s8']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s9']); ?></td>
+            <td class="font_12"><? print base64_decode($row['s10']); ?></td>
+            <td class="font_12"><? print $row['d1']; ?></td>
+            <td class="font_12"><? print $row['d2']; ?></td>
+            <td class="font_12"><? print $row['d3']; ?></td>
+            <td class="font_12"><? print $row['d4']; ?></td>
+            <td class="font_12"><? print $row['d5']; ?></td>
+            <td class="font_12"><? print $row['d6']; ?></td>
+            <td class="font_12"><? print $row['d7']; ?></td>
+            <td class="font_12"><? print $row['d8']; ?></td>
+            <td class="font_12"><? print $row['d9']; ?></td>
+            <td class="font_12"><? print $row['d10']; ?></td>
+            <td class="font_12"><? print $row['block']; ?></td>
+            
+            </tr>
+     
+        <?
+			}
+		?>
+        
+        </tbody>
+        </table>
+        
+        <?
 	}
 	
 	function showTables()
 	{
-		?>
-        
-           <div class="panel panel-default">
-           <div class="panel-heading font_16">Tables</div>
-           <div class="panel-body">
-           <table width="100%">
-          
-           <?
-		      for ($a=0; $a<=sizeof($this->decoded->tables)-1; $a++)
-			  {
-				 print "<tr><td><a href='storage.php?ID=".$_REQUEST['ID']."&table=".$this->decoded->tables[$a]->name."' class='font_14'>".$this->decoded->tables[$a]->name."</a></td></tr>";
-				 print "<tr><td><hr></td></tr>";
-			  }
-           ?>
+		if ($this->local==true)
+		   $query="SELECT DISTINCT(tab) FROM storage_local WHERE aID='".$this->ID."'"; 
+		else
+	       $query="SELECT DISTINCT(tab) FROM storage ".$table." WHERE aID='".$this->ID."'"; 
 		   
-           </table>
-           </div>
-           </div>
+		
+		$result=$this->kern->execute($query);	
+	    
+		?>
+        
+        <div class="panel panel-default">
+        <div class="panel-heading font_14">Tables</div>
+        <div class="panel-body">
+        <table style="width:100%">
+        
+        <?
+		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			{
+		?>
+        
+                <tr><td><a href="storage.php?aID=<? print $this->ID; ?>&table=<? print $row['tab']; ?>" class="font_14"><? print $row['tab']; ?></a></td></tr>
+                <tr><td><hr></td></tr>
+        
+        <?
+			}
+		?>
+        
+        </table>
+        </div>
+        </div>
         
         <?
 	}
 	
-	function showColumns($table)
+	function showStorage()
 	{
-		if ($table=="")
-		{
-			$pos=0;
-		}
-		else
-		{
-		   for ($a=0; $a<=sizeof($this->decoded->tables)-1; $a++)
-               if ($this->decoded->tables[$a]->name==$table)
-			      $pos=$a;	
-		}
-	    
-		// Table	
-		$table=$this->decoded->tables[$pos]->name;
-		
 		?>
         
-            <form id="form_col" name="form_col" action="storage.php?ID=<? print $_REQUEST['ID']; ?>&table=<? print $table; ?>" method="post">
-            <select id="dd_col" name="dd_col" class="form-control" onChange="$('#form_col').submit()">
-            
-			<?
-			    for ($a=0; $a<=sizeof($this->decoded->tables[$pos]->columns)-1; $a++) 
-				{
-			       if ($_REQUEST['dd_col']==$this->decoded->tables[$pos]->columns[$a]->name) 
-				      print "<option selected value='".$this->decoded->tables[$pos]->columns[$a]->name."'>";
-				   else
-				      print "<option value='".$this->decoded->tables[$pos]->columns[$a]->name."'>";
-					  
-				   print $this->decoded->tables[$pos]->columns[$a]->name;
-				   print "</option>"; 
-				}
-			?>
-            
-            </select>
-            </form>
+        <table style="width:6000px">
+        <tr><td colspan="3">&nbsp;</td></tr>
+        <tr>
+        <td width="30px">&nbsp;</td>
+        <td width="200px" valign="top"><? $this->showTables(); ?></td>
+        <td width="50px">&nbsp;</td>
+        <td valign="top" align="left"><? $this->showTable(); ?></td>
+        </tr>
+        </table>
         
         <?
 	}
 	
-	function showData($table, $col)
-	{
-		if ($table=="")
-		{
-			$pos=0;
-		}
-		else
-		{
-		   for ($a=0; $a<=sizeof($this->decoded->tables)-1; $a++)
-               if ($this->decoded->tables[$a]->name==$table)
-			      $pos=$a;	
-		}
-	    
-		// Table	
-		$table=$this->decoded->tables[$pos];
-		
-		// Column
-		if ($col=="") 
-		{
-			$col=$table->columns[0];
-		}
-		else
-		{
-			for ($a=0; $a<=sizeof($table->columns)-1; $a++)
-               if ($table->columns[$a]->name==$col)
-			      $pos=$a;	
-				  
-		    $col=$table->columns[$pos];
-		}
-		
-		
-		?>
-        
-          <table width="100%" class="table-responsive">
-          
-          
-          <?
-		     for ($a=0; $a<=sizeof($col->data)-1; $a++)
-			 {
-				print "<tr>"; 
-                print "<td class='font_14'>#$a</td>";
-                print "<td align='right' class='font_14'>".$col->data[$a]."</td>";
-				print "</tr>";
-				print "<tr><td colspan='2'><hr></td></tr>";
-			 }
-          ?>
-          
-          
-          </table>
-        
-        <?
-	}
 }
 ?>

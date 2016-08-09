@@ -184,12 +184,19 @@ class CFeed
             <div class="panel-body">
             <table width="100%">
             <tr>
-            <td width="15%"><img src="../../template/template/GIF/empty_pic.png" class="img-responsive img-circle"></td>
+            <td width="19%"><img src="../../template/template/GIF/empty_pic.png" class="img-responsive img-circle"></td>
             <td width="3%">&nbsp;</td>
-            <td width="83%" valign="top"><span class="font_16"><strong><? print base64_decode($row['name']); ?></strong></span><p class="font_14"><? print base64_decode($row['description']); ?></p></td>
+            <td width="61%" valign="top"><span class="font_16"><strong><? print base64_decode($row['name']); ?></strong></span><p class="font_14"><? print base64_decode($row['description']); ?></p></td>
+            <td width="17%" valign="top">
+            
+            <?
+			    $this->template->showVotePanel("ID_FEED", $row['feedID']);
+			?>
+            
+            </td>
             </tr>
-            <tr><td colspan="3"><hr></td></tr>
-            <tr><td colspan="3">
+            <tr><td colspan="4"><hr></td></tr>
+            <tr><td colspan="4">
     
             <table class="table-responsive" width="100%">
             <tr>

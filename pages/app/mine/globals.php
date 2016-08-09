@@ -51,7 +51,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -68,7 +68,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/market/index.php", "Applications", "", "Settings");
+     $template->showLocation("../../app/mine/index.php", "My Applications", "", "Global Variables");
 	 
 	 if ($_REQUEST['act']=="update") 
 	 $globals->update($_REQUEST['ID'],  $_REQUEST['net_fee_adr']);

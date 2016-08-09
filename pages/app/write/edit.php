@@ -73,7 +73,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -90,13 +90,12 @@
  
  <?
      // Location
-     $template->showLocation("../../app/write/index.php", "Applications", "", "Edit");
+     $template->showLocation("../../app/mine/index.php", "My Applications", "", "Edit Code");
 	 
 	 // Menu
 	$template->showNav(1,
 	                    "edit.php?ID=".$_REQUEST['ID'], "Source Code", "",
-	                    "storage.php?ID=".$_REQUEST['ID'], "Storage", "",
-						"globals.php?ID=".$_REQUEST['ID'], "Globals", "");
+	                    "globals.php?ID=".$_REQUEST['ID'], "Settings Variables", "");
 	 print "<br>";
 	 
 	 // Editor

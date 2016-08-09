@@ -38,7 +38,7 @@ class CAdr
                               <?
 							    print $this->template->formatAdr($row['adr']); 
 							  ?>
-                              </strong></a><br><span class="font_10"><? print "Hash : ".substr($row['packet_hash'], 0, 25)."..."; ?></span></td>
+                              </strong></a><br><span class="font_10"><? print "Created ~".$this->kern->timeFromBlock($row['created'])." ago"; ?></span></td>
                             </tr>
                           </tbody>
                         </table></td>

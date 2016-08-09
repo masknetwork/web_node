@@ -47,7 +47,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -64,7 +64,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/market/index.php", "Applications", "", "Market");
+     $template->showLocation("../../app/market/index.php", "Applications Market", "", "Market");
 	 
 	 
  ?>

@@ -96,7 +96,7 @@ class CAPI
            <tbody>
            <tr>
            <td width="95%" align="center" class="<? if (strlen($_REQUEST['ud']['api_key'])>40) print "font_16"; else print "font_22"; ?>"><? print $_REQUEST['ud']['api_key']; ?></td>
-           <td width="5%"><a class="btn btn-success" href="javascript:void(0)" onClick="$('#pass_modal').modal()"><span class="glyphicon glyphicon-refresh"></span></a></td>
+           <td width="5%"><a class="btn btn-success" href="javascript:void(0)" onClick="$('#pass_modal').modal()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;Renew Key</a></td>
            </tr>
            </tbody>
            </table>
@@ -113,7 +113,7 @@ class CAPI
              <tbody>
              <tr>
              <td width="100%" align="right">
-             <a class="btn btn-success" href="index.php?act=renew"><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;&nbsp;Generate Key</a>
+             <a class="btn btn-success" href="javascript:void(0)" onClick="$('#pass_modal').modal()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;Renew Key</a>
              </td>
              </tr>
              </tbody>

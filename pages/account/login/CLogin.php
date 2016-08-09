@@ -61,8 +61,10 @@ class CLogin
 		
 		$query="SELECT * 
 		          FROM web_users 
-				 WHERE user='".$user."'";
+				 WHERE (user='".$user."' OR email='".$user."') 
+				   AND pass='".hash("sha256", $pass)."'";
 		$result=$this->kern->execute($query);
+		
 		if (mysql_num_rows($result)==0)
 		{
 			$this->template->showerr("Invalid username or password", 460);

@@ -58,7 +58,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -75,7 +75,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/store/index.php", "Applications", "", "Application");
+     $template->showLocation("../../app/market/index.php", "Applications Market", "", "Application Details");
 	
 	 // Action
 	 switch ($_REQUEST['act'])
@@ -89,6 +89,9 @@
 	 
 	 // Show
 	 $store->showPanel($_REQUEST['ID']);
+	 
+	 // Won
+	 $store->showWonPanel($_REQUEST['ID']);
 	 
 	 // Target
 	 if (!isset($_REQUEST['target']))
@@ -112,8 +115,13 @@
 		 case "code" : $app->showSource($_REQUEST['ID']); break;
 	 }
  ?>
+
+ 
  
  </div>
+ 
+
+
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
  <div class="col-md-1">&nbsp;</div>
  </div>

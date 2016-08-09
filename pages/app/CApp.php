@@ -211,13 +211,6 @@ class CApp
 		// Address balance
 		if ($type=="ID_STORE")
 		{
-		   if ($this->kern->getBalance($adr)<0.01)
-		   {
-			  $this->template->showErr("Minimum address balance is 0.01");
-			  return false;
-		   }
-		
-		
 		   // Payment address
 		   if ($this->kern->isAdr($pay_adr)==false)
 		   {
@@ -251,14 +244,14 @@ class CApp
 		}
 		
 		// Name
-		if ($this->kern->titleValid($name)==false)
+		if ($this->kern->isTitle($name)==false)
 		{
 			$this->template->showErr("Invalid name");
 			return false;
 		}
 		
 		// Description
-		if ($this->kern->descValid($desc)==false)
+		if ($this->kern->isDesc($desc)==false)
 		{
 			$this->template->showErr("Invalid description");
 			return false;
@@ -277,7 +270,7 @@ class CApp
 		// Pic
 		if ($pic!="")
 		{
-			if ($this->kern->isImageLink($pic)==false)
+			if ($this->kern->isLink($pic)==false)
 		    {
 			   $this->template->showErr("Invalid pic");
 			   return false;

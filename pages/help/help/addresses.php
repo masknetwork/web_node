@@ -47,7 +47,7 @@
 <body>
 
 <?
-   $template->showTopBar(7);
+   $template->showTopBar("help");
 ?>
  
 

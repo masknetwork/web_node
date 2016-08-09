@@ -47,7 +47,7 @@
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("trade");
 ?>
  
 
@@ -66,7 +66,13 @@
      // Location
      $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
 	 
-	 // Trade
+	 // Vote
+	 if ($_REQUEST['act']=="vote")
+	    $template->vote($_REQUEST['dd_vote_net_fee'], 
+		                $_REQUEST['dd_vote_adr'], 
+				        $_REQUEST['vote_target_type'], 
+				        $_REQUEST['vote_targetID'], 
+				        $_REQUEST['vote_type']);
 	 
 	 
 	 // Panel

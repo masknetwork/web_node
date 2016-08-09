@@ -1,9 +1,10 @@
 <?
 class CAPI
 {
-	function CAPI($db)
+	function CAPI($db, $template)
 	{
 		$this->kern=$db;
+		$this->template=$template;
 	}
 	
 	function showLeftMenu($sel=1)
@@ -125,6 +126,44 @@ class CAPI
   <br><br>
         
         <?
+	}
+	
+	function showKeyLeftMenu($sel=1)
+	{
+		?>
+        
+         <div class="panel panel-default" style="width:180px">
+         <div class="panel-heading font_14">Public API Tables</div>
+         <div class="panel-body">
+         <table width="100%">
+         
+         <tr><td>
+         <a href="index.php" class="font_14"><? if ($sel==1) print "<strong>Overview</strong>"; else print "Overview"; ?></a>
+         </td><td colspan="2"><? if ($sel==1) print "<img src=\"../../app/reference/GIF/arrow.png\">"; ?></td></tr>
+         <tr><td><hr></td></tr>
+         
+         <tr><td>
+         <a href="key_trans.php" class="font_14"><? if ($sel==2) print "<strong>Transactions</strong>"; else print "Transactions"; ?></a>
+         </td><td colspan="2"><? if ($sel==2) print "<img src=\"../../app/reference/GIF/arrow.png\">"; ?></td></tr>
+         <tr><td><hr></td></tr>
+         
+         
+        
+         </table>
+       </div>
+  </div>
+  <br><br>
+        
+        <?
+	}
+	
+	function showMenu($sel=1)
+	{
+		 // Menu
+	     if ($_REQUEST['ud']['ID']>0)
+	     $this->template->showNav($sel,
+	                              "index.php", "Public API", "",
+	                              "key_api.php", "Key API", "");
 	}
 }
 ?>

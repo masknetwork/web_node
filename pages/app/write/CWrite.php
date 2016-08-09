@@ -496,14 +496,14 @@ class CWrite
             <table width="90%">
             <tr><td width="89%" align="right">
             
-            <a class="btn btn-primary" href="javascript:void(0)" onClick="$('#write_modal').modal()">
+            <a class="btn btn-primary btn-sm" href="javascript:void(0)" onClick="$('#write_modal').modal()">
             <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;New Project</a>
             
             </td>
               <td width="1%" align="right">&nbsp;</td>
             <td width="10%" align="right">
             
-            <a class="btn btn-warning" href="../reference/index.php">
+            <a class="btn btn-warning btn-sm" href="../reference/index.php">
             <span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;&nbsp;Reference
             </a>
             
@@ -980,7 +980,7 @@ class CWrite
             
             </td>
             <td align="right">
-            <a class="btn btn-danger btn-sm" href="javascript:void(0)" onClick="
+            <a style="width:90px" class="btn btn-danger btn-sm" href="javascript:void(0)" onClick="
             $.post('write.php?act=save_code', 
                    { appID : <? print $appID; ?>, code : <? print $editor; ?>.getValue() }, 
                    function() 
@@ -1004,9 +1004,12 @@ class CWrite
             <span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;&nbsp;Save</a></td>
             <td width="2%">&nbsp;</td>
             
-            <td><a class="btn btn-success btn-sm" <? if (base64_decode($row['compiler'])!="ID_OK") print "disabled"; ?> href="javascript:void(0)" onClick="$('#test_modal').modal(); $('#txt_test_block_hash').val('<? print $row['block_hash']; ?>'); $('#txt_test_block_no').val('<? print $row['block_no']; ?>'); $('#txt_test_block_nonce').val('<? print $row['block_nonce']; ?>'); $('#txt_test_mes_sender').val('<? print $row['mes_sender']; ?>'); $('#txt_test_mes_subj').val('<? print base64_decode($row['mes_subj']); ?>'); $('#txt_test_mes_mes').val('<? print base64_decode($row['mes_mes']); ?>'); $('#txt_test_sender').val('<? print $row['trans_sender']; ?>'); $('#txt_test_amount').val('<? print $row['trans_amount']; ?>'); $('#txt_test_cur').val('<? print $row['trans_cur']; ?>'); $('#txt_test_mes').val('<? print base64_decode($row['trans_mes']); ?>'); $('#txt_test_escrower').val('<? print $row['trans_escrower']; ?>');" id="but_test" name="but_test"><span class="glyphicon glyphicon-road"></span>&nbsp;&nbsp;&nbsp;Test</a></td>
+            <td><a style="width:90px" class="btn btn-success btn-sm" <? if (base64_decode($row['compiler'])!="ID_OK") print "disabled"; ?> href="javascript:void(0)" onClick="$('#test_modal').modal(); $('#txt_test_block_hash').val('<? print $row['block_hash']; ?>'); $('#txt_test_block_no').val('<? print $row['block_no']; ?>'); $('#txt_test_block_nonce').val('<? print $row['block_nonce']; ?>'); $('#txt_test_mes_sender').val('<? print $row['mes_sender']; ?>'); $('#txt_test_mes_subj').val('<? print base64_decode($row['mes_subj']); ?>'); $('#txt_test_mes_mes').val('<? print base64_decode($row['mes_mes']); ?>'); $('#txt_test_sender').val('<? print $row['trans_sender']; ?>'); $('#txt_test_amount').val('<? print $row['trans_amount']; ?>'); $('#txt_test_cur').val('<? print $row['trans_cur']; ?>'); $('#txt_test_mes').val('<? print base64_decode($row['trans_mes']); ?>'); $('#txt_test_escrower').val('<? print $row['trans_escrower']; ?>');" id="but_test" name="but_test"><span class="glyphicon glyphicon-road"></span>&nbsp;&nbsp;&nbsp;Test</a></td>
             
-            </td></tr>
+            </td>
+            <td width="2%">&nbsp;</td>
+            <td width="2%"><a href="storage.php?aID=<? print $_REQUEST['ID']; ?>" target="_blank" class="btn btn-warning btn-sm" style="width:90px"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;Storage</a></td>
+            </tr>
             </table>
             <br>
         

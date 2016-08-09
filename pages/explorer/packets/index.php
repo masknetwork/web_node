@@ -49,10 +49,7 @@
 <body>
 
 <?
-    if ($_REQUEST['ud']['ID']>0)
-      $template->showTopBar(7);
-   else
-      $template->showTopBar(2);
+      $template->showTopBar("explorer");
 ?>
  
 

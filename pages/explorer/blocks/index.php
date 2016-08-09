@@ -49,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar(7);
+   $template->showTopBar("explorer");
 ?>
  
 

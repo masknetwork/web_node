@@ -51,7 +51,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -68,7 +68,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/write/index.php", "My Applications", "", "Storage");
+     $template->showLocation("../../app/directory/index.php", "Applications", "", "Application Storage");
 	 
 	 // Menu
 	 $template->showNav(2,

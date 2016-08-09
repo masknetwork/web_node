@@ -5,7 +5,7 @@
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
-   include "../CTweets.php";
+   include "../../tweets/CTweets.php";
   
    
    $db=new db();
@@ -16,6 +16,6 @@
    
    switch ($_REQUEST['act'])
    {
-	   case "get_power" : $tweets->getPower($_REQUEST['adr'], $_REQUEST['type']); break;
+	   case "get_power" : $template->getPower($_REQUEST['adr'], $_REQUEST['type']); break;
    }
 ?>

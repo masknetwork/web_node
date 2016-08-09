@@ -79,7 +79,9 @@ class CAssets
 							<? print base64_decode($row['title'])." (".$row['symbol'].")"; ?></a>
                             <p class="font_10"><? print substr(base64_decode($row['description']), 0, 100)."..."; ?></p></td>
                             <td width="40%" align="center"><a href="../../tweets/adr/index.php" class="font_14"><? print $this->template->formatAdr($row['owner']); ?></a></td>
-                            <td width="20%" class="font_14" align="center"><strong><? print $row['qty']; ?></strong><br><a href="javascript:void(0)" onclick="$('#send_coins_modal').modal(); $('#tab_msk').css('display', 'none'); $('#tab_assets').css('display', 'block'); $('#txt_cur').val('<? print $row['symbol']; ?>'); $('#dd_from').val('<? print $row['owner']; ?>');" class="font_12" style="color:#dd4e00">send coins</a></td>
+                            <td width="20%" class="font_14" align="center"><strong><? print $row['qty']; ?></strong></td>
+                            
+                            <td width="20%" ><a class="btn btn-danger" href="javascript:void(0)" onclick="$('#send_coins_modal').modal(); $('#tab_msk').css('display', 'none'); $('#tab_assets').css('display', 'block'); $('#txt_cur').val('<? print $row['symbol']; ?>'); $('#dd_from').val('<? print $row['owner']; ?>');"><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;Send</a></td>
                             </tr>
                             <tr>
                             <td colspan="5"><hr></td>

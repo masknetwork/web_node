@@ -119,7 +119,7 @@ $(function (e)
 <body>
 
 <?
-   $template->showTopBar(8);
+   $template->showTopBar("blogs");
 ?>
  
 

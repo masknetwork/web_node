@@ -7,8 +7,7 @@
    include "../../template/template/CTemplate.php";
    include "CWrite.php";
    include "CGlobals.php";
-   include "CInterface.php";
-   include "CSignals.php";
+
    
    // Db
    $db=new db();
@@ -28,11 +27,6 @@
    // Globals
    $globals=new CGlobals($db, $template, $_REQUEST['appID']);
    
-   // Interface
-   $interface=new CInterface($db, $template, $_REQUEST['appID']);
-   
-   // Signals
-   $signals=new CSignals($db, $template, $_REQUEST['appID']);
   
    switch ($_REQUEST['act'])
    {

@@ -44,7 +44,7 @@ class COptions
 		 // Bet ID valid
 		 $query="SELECT * 
 		           FROM feeds_bets 
-				  WHERE mktID='".$betID."' 
+				  WHERE betID='".$betID."' 
 				    AND end_block>".$_REQUEST['sd']['last_block']." 
 					AND accept_block>".$_REQUEST['sd']['last_block']; 
 		 $result=$this->kern->execute($query);	
@@ -623,14 +623,14 @@ class COptions
         <?
 	}
 	
-	function showBuyBetModal($UID)
+	function showBuyBetModal($betID)
 	{
-		$query="SELECT * FROM feeds_bets WHERE mktID='".$UID."'";
+		$query="SELECT * FROM feeds_bets WHERE betID='".$betID."'";
 	    $result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    $cur=$row['cur']; 
 		 
-		$this->template->showModalHeader("modal_buy_bet", "Invest", "act", "buy_bet", "uid", $UID);
+		$this->template->showModalHeader("modal_buy_bet", "Invest", "act", "buy_bet", "betID", $betID);
 		?>
         
           <table width="610" border="0" cellspacing="0" cellpadding="0">
@@ -726,7 +726,7 @@ class COptions
            
                  <tr>
                  <td width="40%">
-                 <a href="bet.php?uid=<? print $row['mktID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
+                 <a href="bet.php?betID=<? print $row['betID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
                  <p class="font_10"><? print substr(base64_decode($row['description']), 0, 40)."..."; ?></p>
                  </td>
                  <td class="font_14" width="15%" <? if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) print "style=\"color:#990000\""; ?>>
@@ -799,7 +799,7 @@ class COptions
            
                  <tr>
                  <td width="40%">
-                 <a href="bet.php?uid=<? print $row['mktID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
+                 <a href="bet.php?betID=<? print $row['betID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
                  <p class="font_10"><? print substr(base64_decode($row['description']), 0, 40)."..."; ?></p>
                  </td>
                  <td class="font_14" width="15%" <? if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) print "style=\"color:#990000\""; ?>>
@@ -877,7 +877,7 @@ class COptions
 		
 		$query="SELECT * 
 		          FROM feeds_bets_pos AS fbp 
-				  JOIN feeds_bets AS fb ON fb.mktID=fbp.bet_uid 
+				  JOIN feeds_bets AS fb ON fb.betID=fbp.bet_betID 
 				 WHERE fbp.adr IN (SELECT adr 
 				                     FROM my_adr 
 									WHERE userID='".$_REQUEST['ud']['ID']."') 
@@ -906,7 +906,7 @@ class COptions
            
                  <tr>
                  <td width="40%">
-                 <a href="bet.php?uid=<? print $row['mktID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
+                 <a href="bet.php?betID=<? print $row['betID']; ?>" class="font_14"><? print base64_decode($row['title'])."<br>"; ?></a>
                  <p class="font_10"><? print substr(base64_decode($row['description']), 0, 40)."..."; ?></p>
                  </td>
                  <td class="font_14" width="15%" style="color:<? if ($row['status']=="ID_PENDING") print "#000000"; else print "#990000"; ?>"><? if ($row['status']=="ID_PENDING") print "~".$this->getTime($row['end_block']-$_REQUEST['sd']['last_block']); else print "closed"; ?></td>
@@ -978,7 +978,7 @@ class COptions
 	{
 		$query="SELECT fb.*
 		          FROM feeds_bets AS fb 
-				 WHERE mktID='".$betID."'";
+				 WHERE betID='".$betID."'";
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	  
@@ -1005,16 +1005,12 @@ class COptions
 				  ?>
                   </td>
                   <td width="23%" align="center">
-                  <table width="90%" border="0" cellpadding="0" cellspacing="0" >
-                    <tbody>
-                      <tr>
-                        <td height="30" align="center" class="font_12" style="color:#1B4B39"  bgcolor="#d4f4e4">Profit Ratio</td>
-                      </tr>
-                      <tr>
-                        <td height="50" align="center" class="font_24" style="color:#1B4B39"  bgcolor="#E7FFF3"><strong><? print "+".$row['win_multiplier']."%"; ?></strong></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
+                  
+                  <?
+				     $this->template->showVotePanel("ID_BET", $row['betID']);
+				  ?>
+                  
+                  </td>
                 </tr>
               </tbody>
             </table>              <p class="font_14">&nbsp;</p></td>
@@ -1026,7 +1022,7 @@ class COptions
             
             <tr>
             <td width="30%" class="font_12" align="center">Bet ID&nbsp;&nbsp;&nbsp;&nbsp;
-			<strong><? print $row['mktID']; ?></strong></td>
+			<strong><? print $row['betID']; ?></strong></td>
             <td width="40%" align="center"><span class="font_12">Address</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="font_12" href="#">
 			<strong><? print $this->template->formatAdr($row['adr']); ?></strong></a></td>
              <td width="30%" align="center"><span class="font_12">Accepts Bets</span>&nbsp;&nbsp;&nbsp;&nbsp;<font class="font_12" style="color:<? if ($row['accept_block']-$_REQUEST['sd']['last_block']<0) print "#990000"; else print "#009900"; ?>">
@@ -1094,10 +1090,10 @@ class COptions
             
             <table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="table-responsive">
             <tr>
-            <td width="18%" height="100" align="center" bgcolor="#f9f9f9">
+            <td width="15%" height="100" align="center" bgcolor="#f9f9f9">
             <img src="GIF/confirm.png"  alt="" class="img-circle img-responsive" style="padding-left:5px; padding-top:5px; padding-right:5px; padding-bottom:5px"/></td>
             <td  bgcolor="#f9f9f9">&nbsp;&nbsp;&nbsp;</td>
-            <td width="83%" bgcolor="#f9f9f9" class="font_12">Read this carrefully before investing !!! Address <a href="#"><? print $this->template->formatAdr($row['adr']); ?></a> is proposing a bet based on a data feed. You can get more info about the data feed <a href="../feeds/branch.php?feed=<? print $row['feed_symbol']; ?>&branch=<? print $row['branch_symbol']; ?>" class="font_12">here</a>. In case the price provided by this data feed  
+            <td width="70%" bgcolor="#f9f9f9" class="font_10">Address <a href="#"><? print $this->template->formatAdr($row['adr']); ?></a> is proposing a bet based on a data feed (<a href="../feeds/branch.php?feed=<? print $row['feed_symbol']; ?>&branch=<? print $row['branch_symbol']; ?>" class="font_12">feed</a>). In case the price provided by this data feed  
 			<? 
 			   // Touch
 			   if ($row['tip']=="ID_TOUCH_UP" || $row['tip']=="ID_TOUCH_DOWN")
@@ -1130,7 +1126,21 @@ class COptions
 			   
 			?>
             </td>
-            <td width="2%" bgcolor="#f9f9f9">&nbsp;&nbsp;&nbsp;</td>
+            <td width="3%">&nbsp;&nbsp;</td>
+            <td align="center" width="20%">
+     
+             <table width="120px" border="0" cellpadding="0" cellspacing="0" >
+                    <tbody>
+                      <tr>
+                        <td height="30" align="center" class="font_12" style="color:#1B4B39"  bgcolor="#d4f4e4">Profit Ratio</td>
+                      </tr>
+                      <tr>
+                        <td height="65" align="center" class="font_24" style="color:#1B4B39"  bgcolor="#E7FFF3"><strong><? print "+".$row['win_multiplier']."%"; ?></strong></td>
+                      </tr>
+                    </tbody>
+                  </table>
+            
+            </td>
             </tr>
             </table>
     
@@ -1144,7 +1154,7 @@ class COptions
 	
 	function showBuyOptionBut($betID)
 	{
-		$query="SELECT * FROM feeds_bets WHERE mktID='".$betID."'"; 
+		$query="SELECT * FROM feeds_bets WHERE betID='".$betID."'"; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    
@@ -1171,8 +1181,8 @@ class COptions
 	{
 		$query="SELECT fbs.*, fb.cur, fb.status 
 		          FROM feeds_bets_pos AS fbs 
-				  JOIN feeds_bets AS fb ON fb.mktID=fbs.bet_uid
-				 WHERE bet_uid='".$betID."' 
+				  JOIN feeds_bets AS fb ON fb.betID=fbs.bet_betID
+				 WHERE bet_betID='".$betID."' 
 			  ORDER BY ID DESC 
 			     LIMIT 0,25";
 	    $result=$this->kern->execute($query);	
@@ -1218,7 +1228,7 @@ class COptions
 		// Load bet data
 		$query="SELECT * 
 		          FROM feeds_bets 
-				 WHERE mktID='".$ID."'";
+				 WHERE betID='".$ID."'";
 		$result=$this->kern->execute($query);	
 		$bet_row = mysql_fetch_array($result, MYSQL_ASSOC);
 	    $end_block=$row['end_block'];
@@ -1270,7 +1280,7 @@ class COptions
 		// Load branch
 		$query="SELECT * 
 		          FROM feeds_bets 
-				 WHERE mktID='".$betID."'"; 
+				 WHERE betID='".$betID."'"; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		$feed_1=$row['feed_1'];

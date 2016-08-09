@@ -43,7 +43,7 @@
           <tr>
             <td align="left">
             <?
-			    $template->showTopMenu(8);
+			    $template->showTopBar("help");
 			?>
             </td>
             </tr>

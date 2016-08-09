@@ -426,13 +426,20 @@ class CRegMkt
             <div class="panel-body">
             <table width="100%">
             <tr>
-            <td width="15%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=150&h=150"; ?>"  class="img-circle img-responsive"/></td>
-            <td width="3%">&nbsp;</td>
-            <td width="83%" valign="top"><span class="font_16"><strong><? print base64_decode($row['name']); ?></strong></span>
+            <td width="12%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=150&h=150"; ?>"  class="img-circle img-responsive"/></td>
+            <td width="2%">&nbsp;</td>
+            <td width="72%" valign="top"><span class="font_16"><strong><? print base64_decode($row['name']); ?></strong></span>
             <p class="font_14"><? print base64_decode($row['description']); ?></p></td>
+            <td width="14%" valign="top">
+            
+            <?
+			   $this->template->showVotePanel("ID_ASSET_MKT", $row['mktID']);
+			?>
+            
+            </td>
             </tr>
-            <tr><td colspan="3"><hr></td></tr>
-            <tr><td colspan="3">
+            <tr><td colspan="4"><hr></td></tr>
+            <tr><td colspan="4">
     
             <table class="table-responsive" width="100%">
              <tr>
@@ -632,7 +639,7 @@ class CRegMkt
            <th class="font_14" height="35px">&nbsp;&nbsp;Address</th>
            <th class="font_14" height="35px" align="center">Qty</th>
            <th class="font_14" height="35px" align="center">Price</th>
-           <th class="font_14" height=\"35px\" align=\"center\"><? if ($tip=="ID_BUY") print "Sell"; else print "Buy"; ?></th>
+           <th class="font_14" height=\"35px\" align=\"center\">Remove</th>
            </thead>
            
            <br>
@@ -665,38 +672,9 @@ class CRegMkt
                  
                  <td class="font_16" width="12%">
                  
-                 <?
-				     if ($a==1)
-					 {
-                     if ($tip=="ID_SELL")
-					 {
-				 ?>
-                 
-                            <a href="javascript:void(0)" onclick="$('#modal_new_trade').modal(); 
-                                                $('#new_trade_orderID').val('<? print $row['orderID']; ?>'); 
-                                                $('#dd_new_trade_adr').css('display', 'block');
-                                                $('#dd_new_trade_adr_assets').css('display', 'none');" class='btn btn-primary btn-sm'>
-				            Buy</a>
-                 
-                 <?
-					 }
-					 else
-					 {
-						 ?>
-                         
-                            <a href="javascript:void(0)" onclick="$('#modal_new_trade').modal(); 
-                                                 $('#new_trade_orderID').val('<? print $row['orderID']; ?>'); 
-                                                 $('#dd_new_trade_adr').css('display', 'none'); 
-                                                 $('#dd_new_trade_adr_assets').css('display', 'block');" class='btn btn-danger btn-sm'>
-				            Sell</a>
-                         
-                         <?
-					 }
-					 }
-					 
-					 
-				    if ($row['userID']==$_REQUEST['ud']['ID'])
-					   print "<a class='btn btn-danger btn-sm' href='javascript:void(0)' onclick=\"$('#modal_close_order').modal(); $('#orderID').val('".$row['orderID']."'); \"><span class='glyphicon glyphicon-remove'></span></a>";
+                <?
+					if ($row['userID']==$_REQUEST['ud']['ID'])
+					   print "<a class='btn btn-danger btn-sm' href='javascript:void(0)' onclick=\"$('#modal_close_order').modal(); $('#orderID').val('".$row['orderID']."'); \"><span class='glyphicon glyphicon-remove'></span>&nbsp;&nbsp;Remove</a>";
 				 ?>
                  </td>
                 

@@ -49,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar(2);
+   $template->showTopBar("adr");
 ?>
  
 
@@ -66,14 +66,13 @@
  
  <?
      // Location
-     $template->showLocation("../adr/index.php", "My Addresses", 
-	                         "", "Pending Addresses");
+     $template->showLocation("../adr/index.php", "Addresses", 
+	                         "", "Names Market");
 	 
 	 // Menu
-	 $template->showNav(4,
+	 $template->showNav(3,
 	                    "../adr/index.php", "My Addresses", "",
-	                    "../pending/index.php", "Pending", "",
-						"../names/index.php", "Names", "",
+	                    "../names/index.php", "Names", "",
 						"../market/index.php", "Names Market", "");
 	 
 	 
@@ -81,10 +80,8 @@
 			   
 	 switch ($_REQUEST['act'])
 	 {
-		case "buy_domain" :  $market->buyDomain($_REQUEST['dd_net_fee_adr'], 
-			                                             $_REQUEST['dd_pay_adr'], 
-													     $_REQUEST['dd_adr'], 
-													     $_REQUEST['buy_adr']);
+		case "buy_domain" :  $market->buyDomain($_REQUEST['dd_pay_adr'], 
+			                                   $_REQUEST['buy_domain']);
 			                 break;
 	 }
 			   

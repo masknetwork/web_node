@@ -48,7 +48,7 @@
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("trade");
 ?>
  
 
@@ -65,35 +65,50 @@
  
  <?
      // Location
-     $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
+     $template->showLocation("../../assets/options/index.php", "Binary Options", "", "Option Details");
 	 
 	 // Buy Modal 
-	 $bets->showBuyOptionBut($_REQUEST['uid']);
+	 $bets->showBuyOptionBut($_REQUEST['betID']);
 	 
-	 // Bet
-	 $bets->showPanel($_REQUEST['uid']);
-	 
-	 // Modal
-	 $bets->showBuyBetModal($_REQUEST['uid']);
 	 
 	 // Buy
-	 if ($_REQUEST['act']=="buy_bet")
-	    $bets->buyOption($_REQUEST['dd_buy_bet_adr'], 
-		                 $_REQUEST['dd_buy_bet_adr'], 
-						 $_REQUEST['uid'],
-						 $_REQUEST['txt_buy_bet_amount']);
-	
+	 switch ($_REQUEST['act'])
+	 {
+	    case "buy_bet" : $bets->buyOption($_REQUEST['dd_buy_bet_adr'], 
+		                                 $_REQUEST['dd_buy_bet_adr'], 
+						                 $_REQUEST['uid'],
+						                 $_REQUEST['txt_buy_bet_amount']);
+						 break;
+						 
+		case "vote" : $template->vote($_REQUEST['dd_vote_net_fee'], 
+		                             $_REQUEST['dd_vote_adr'], 
+				                     $_REQUEST['vote_target_type'], 
+				                     $_REQUEST['vote_targetID'], 
+				                     $_REQUEST['vote_type']);
+				     break;
+	 }
+	 
+	 // Bet
+	 $bets->showPanel($_REQUEST['betID']);
+	 
+	 // Modal
+	 $bets->showBuyBetModal($_REQUEST['betID']);
+	 
 	// Report
-	$bets->showReport($_REQUEST['uid']);
+	$bets->showReport($_REQUEST['betID']);
 	
 	// Chart
-	$bets->showChart($_REQUEST['uid']);
+	$bets->showChart($_REQUEST['betID']);
 	
 	// Buyers
-	$bets->showBuyers($_REQUEST['uid']);
+	$bets->showBuyers($_REQUEST['betID']);
 	
 	
  ?>
+ 
+ 
+
+
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
  <div class="col-md-1">&nbsp;</div>

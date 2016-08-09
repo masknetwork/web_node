@@ -21,10 +21,10 @@ class CAPI
 		$this->assets_mkts_cols=array("ID", "adr", "asset", "cur", "name", "description", "decimals", "block", "expire", "last_price", "ask", "bid", "rowhash", "mktID");
 		
 		// Assets markets pos
-		$this->assets_mkts_pos=array("ID", "adr", "mktID", "tip", "qty", "price", "block", "orderID", "rowhash", "expire");
+		$this->assets_mkts_po_colss=array("ID", "adr", "mktID", "tip", "qty", "price", "block", "orderID", "rowhash", "expire");
 		
 		// Assets owners
-		$this->assets_owners=array("ID", "owner", "symbol", "qty", "invested", "rowhash", "block");
+		$this->assets_owners_cols=array("ID", "owner", "symbol", "qty", "invested", "rowhash", "block");
 		
 		// Escrowed
 		$this->escrowed_cols=array("ID", "trans_hash", "sender_adr", "rec_adr", "escrower", "amount", "cur", "block", "rowhash");
@@ -36,25 +36,25 @@ class CAPI
 		$this->escrowed_cols=array("ID", "tweetID", "adr", "mes", "pic_1", "pic_2", "pic_3", "pic_4", "pic_5", "video", "rowhash", "block", "retweet", "retweet_tweet_ID", "likes", "comments", "retweets");
 		
 		// Tweets comments
-		$this->comments=array("ID", "adr", "parent_type", "parentID", "comID", "mes", "status", "rowhahs", "block");
+		$this->comments_cols=array("ID", "adr", "parent_type", "parentID", "comID", "mes", "status", "rowhahs", "block");
 		
 		// Tweets follow
-		$this->tweets_follow=array("ID", "adr", "follows", "expire", "block", "rowhash");
+		$this->tweets_follow_cols=array("ID", "adr", "follows", "expire", "block", "rowhash");
 		
 		// Tweets likes
-		$this->tweets_follow=array("ID", "adr", "tweetID", "block", "rowhash");
+		$this->tweets_follow_cols=array("ID", "adr", "tweetID", "block", "rowhash");
 		
 		// Blocks
-		$this->blocks=array("ID", "hash", "block", "prev_hash", "signer", "packets", "tstamp", "nonce", "size", "net_dif", "commited", "confirmations", "payload_hash", "tab_1", "tab_2", "tab_3", "tab_4", "tab_5", "tab_6", "tab_7", "tab_8", "tab_9", "tab_10", "tab_11", "tab_12", "tab_13", "tab_14", "tab_15", "signer_balance");
+		$this->blocks_cols=array("ID", "hash", "block", "prev_hash", "signer", "packets", "tstamp", "nonce", "size", "net_dif", "commited", "confirmations", "payload_hash", "tab_1", "tab_2", "tab_3", "tab_4", "tab_5", "tab_6", "tab_7", "tab_8", "tab_9", "tab_10", "tab_11", "tab_12", "tab_13", "tab_14", "tab_15", "signer_balance");
 		
 		// packets
-		$this->packets=array("ID", "packet_hash", "par_1_name", "par_1_val", "par_2_name", "par_2_val", "par_3_name", "par_3_val", "par_4_name", "par_4_val", "par_5_name", "par_5_val", "block", "tstamp", "confirms", "block_hash", "payload_hash", "payload_size", "packet_type", "fee_src", "fee_amount", "fee_hash");
+		$this->packets_cols=array("ID", "packet_hash", "par_1_name", "par_1_val", "par_2_name", "par_2_val", "par_3_name", "par_3_val", "par_4_name", "par_4_val", "par_5_name", "par_5_val", "block", "tstamp", "confirms", "block_hash", "payload_hash", "payload_size", "packet_type", "fee_src", "fee_amount", "fee_hash");
 		
 		// Trans
-		$this->trans=array("ID", "src", "amount", "invested", "cur", "escrower", "hash", "tID", "block", "status", "tstamp");
+		$this->trans_cols=array("ID", "src", "amount", "invested", "cur", "escrower", "hash", "tID", "block", "status", "tstamp");
 		
 		// Net stat
-		$this->net_stat=array("ID");
+		$this->net_stat_cols=array("ID");
 	}
 	
    
@@ -483,6 +483,7 @@ class CAPI
 			$table!="assets_mkts_pos" && 
 			$table!="assets_owners" && 
 			$table!="domains" && 
+			$table!="packets" && 
 			$table!="escrowed" && 
 			$table!="profiles" && 
 			$table!="tweets" && 
@@ -511,6 +512,7 @@ class CAPI
 			($table=="domains" && $this->colExist($col, $this->domains_cols)==false) || 
 			($table=="escrowed" && $this->colExist($col, $this->escrowed_cols)==false) || 
 			($table=="profiles" && $this->colExist($col, $this->profiles_cols)==false) || 
+			($table=="packets" && $this->colExist($col, $this->packets_cols)==false) || 
 			($table=="tweets" && $this->colExist($col, $this->tweets_cols)==false) || 
 			($table=="tweets_likes" && $this->colExist($col, $this->tweets_likes_cols)==false) || 
 			($table=="tweets_follow" && $this->colExist($col, $this->tweets_follow_cols)==false) || 
@@ -529,7 +531,7 @@ class CAPI
 		}
 		
 		// Value, min, max
-		if (strlen($val)>100 || 
+		if (strlen($val)>10000 || 
 		    strlen($min)>100 || 
 			strlen($max)>100)
 		{
@@ -538,11 +540,31 @@ class CAPI
 		}
 		
 		
+		
 		// Query
 		if ($req_type=="exact")
-		   $query="SELECT * 
-		             FROM ".$table." 
-					WHERE ".$col."='".$val."'";
+		{
+			// More than one value ?
+		    if (strpos($val, ",")>0)
+		    {
+			   $vals=explode(",", $val);
+			   for ($a=0; $a<=sizeof($vals)-1; $a++)
+			     if ($a==(sizeof($vals)-1)) 
+				    $v=$v."'".$vals[$a]."'";
+			     else
+				    $v=$v."'".$vals[$a]."',";
+				  
+			   $query="SELECT * 
+		                 FROM ".$table." 
+				    	WHERE ".$col." IN (".$v.")";
+		    }
+			else
+			{
+		       $query="SELECT * 
+		                 FROM ".$table." 
+				    	WHERE ".$col."='".$val."'";
+			}
+		}
 		else
 		   $query="SELECT * 
 		             FROM ".$table." 

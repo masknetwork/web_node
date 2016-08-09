@@ -103,96 +103,17 @@
 	   }
 	}
 	
-	function renewDomain($net_fee_adr, $domain, $days)
-	{
-		// Fee Address
-		if ($this->kern->adrExist($net_fee_adr)==false)
-		{
-			$this->template->showErr("Invalid network fee address");
-			return false;
-		}
-		
-		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
-		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
-			return false;
-		}
-		
-		// Days
-		if ($days<1)
-		{
-			$this->template->showErr("Invalid days (minimum 1 day)", 550);
-			return false;
-		}
-	   
-	   // Funds
-	   if ($this->kern->getBalance($net_fee_adr)<$days*0.0001)
-	   {
-		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
-		   return false;
-	   }
-	   
-	   // Domain valid
-	   if ($this->kern->domainValid($domain)==false)
-	   {
-		    $this->template->showErr("Invalid domain name", 550);
-		    return false;
-	   }
-	   
-	   // Domain exist
-	   if ($this->kern->domainExist($domain)==false)
-	   {
-		    $this->template->showErr("Domain doesn't exist", 550);
-		    return false;
-	   }
-	   
-	   // My domain
-	   if ($this->kern->myDomain($domain)==false)
-	   {
-		    $this->template->showErr("You don't own this domain", 550);
-		    return false;
-	   }
-	   	
-		try
-	    {
-		   // Begin
-		   $this->kern->begin();
-
-           // Action
-           $this->kern->newAct("Renew a domain ($domain)");
-		   
-		   // Insert to stack
-		   $query="INSERT INTO web_ops 
-			                SET user='".$_REQUEST['ud']['user']."', 
-							    op='ID_RENEW_DOMAIN', 
-								fee_adr='".$net_fee_adr."', 
-								par_1='".$domain."',
-								days='".$days."', 
-								status='ID_PENDING', 
-								tstamp='".time()."'"; 
-	       $this->kern->execute($query);
-		
-		   // Commit
-		   $this->kern->commit();
-		   
-		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded", 550);
-	   }
-	   catch (Exception $ex)
-	   {
-	      // Rollback
-		  $this->kern->rollback();
-
-		  // Mesaj
-		  $this->template->showErr("Unexpected error.");
-
-		  return false;
-	   }
-	}
 	
 	function transferDomain($net_fee_adr, $domain, $to_adr)
 	{
+		// Addresses valid
+		if ($this->kern->adrValid($net_fee_adr)==false || 
+	        $this->kern->adrValid($to_adr)==false)
+	    {
+		   $this->template->showErr("Invalid entry data", 550);
+		   return false;
+	    }
+	   
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
@@ -200,14 +121,7 @@
 			return false;
 		}
 		
-		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
-		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
-			return false;
-		}
-		
-		// Funds
+	   // Funds
 	   if ($this->kern->getBalance($net_fee_adr)<0.0001)
 	   {
 		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
@@ -215,31 +129,35 @@
 	   }
 	   
 	   // Domain valid
-	   if ($this->kern->domainValid($domain)==false)
+	   if ($this->kern->isDomain($domain)==false)
 	   {
 		    $this->template->showErr("Invalid domain name", 550);
 		    return false;
 	   }
 	   
-	   // Domain exist
-	   if ($this->kern->domainExist($domain)==false)
-	   {
-		    $this->template->showErr("Domain doesn't exist", 550);
-		    return false;
-	   }
+	   // Load domain data
+	   $query="SELECT * 
+	             FROM domains 
+				WHERE domain='".$domain."'";
+	   $result=$this->kern->execute($query);	
 	   
-	   // Target address valid
-	   if ($this->kern->adrValid($to_adr)==false)
+	   if (mysql_num_rows($result)==0)
 	   {
-		   $this->template->showErr("Invalid target address", 550);
+		   $this->template->showErr("Invalid domain name", 550);
 		   return false;
 	   }
 	   
+	   // Load
+	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   
+	   // Address
+	   $adr=$row['adr'];
+	  
 	   // My domain
-	   if ($this->kern->myDomain($domain)==false)
+	   if ($this->kern->isMine($adr)==false)
 	   {
-		    $this->template->showErr("You don't own this domain", 550);
-		    return false;
+		   $this->template->showErr("Invalid owner", 550);
+		   return false;
 	   }
 	   
 		try
@@ -255,6 +173,7 @@
 			                SET user='".$_REQUEST['ud']['user']."', 
 							    op='ID_TRANSFER_DOMAIN', 
 								fee_adr='".$net_fee_adr."', 
+								target_adr='".$adr."', 
 								par_1='".$domain."',
 								par_2='".$to_adr."',
 								status='ID_PENDING', 
@@ -279,55 +198,68 @@
 	   }
 	}
 	
-	function setSalePrice($net_fee_adr, $domain, $price, $days, $mkt_bid)
+	function setSalePrice($net_fee_adr, $domain, $price)
 	{
 		// Fee Address
-		if ($this->kern->adrExist($net_fee_adr)==false)
+		if ($this->kern->adrValid($net_fee_adr)==false)
 		{
 			$this->template->showErr("Invalid network fee address", 550);
 			return false;
 		}
 		
 		// Fee address is security options free
-	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
+	    if ($this->kern->canSpend($net_fee_adr)==false)
 		{
-			$this->template->showErr("Only addresses that have no security options applied can be used to pay the network fee.", 550);
+			$this->template->showErr("Net fee address can't spend funds", 550);
 			return false;
 		}
 		
 		// Funds
-	   if ($this->kern->getBalance($net_fee_adr)<0.0001)
-	   {
+	    if ($this->kern->getBalance($net_fee_adr)<0.0001)
+	    {
 		   $this->template->showErr("Insufficient funds to execute the transaction", 550);
 		   return false;
-	   }
+	    }
 	   
 	   // Domain valid
-	   if ($this->kern->domainValid($domain)==false)
+	   if ($this->kern->isDomain($domain)==false)
 	   {
 		    $this->template->showErr("Invalid domain name", 550);
 		    return false;
 	   }
 	   
-	   // Domain exist
-	   if ($this->kern->domainExist($domain)==false)
-	   {
-		    $this->template->showErr("Domain doesn't exist", 550);
-		    return false;
-	   }
-	   
-	   // Target address valid
+	   // Price valid
 	   if ($price<0.0001)
 	   {
 		   $this->template->showErr("Invalid price");
 		   return false;
 	   }
 	   
-	   // My domain
-	   if ($this->kern->myDomain($domain)==false)
+	   
+	   // Domain valid ?
+	   $query="SELECT * 
+	             FROM domains 
+				WHERE domain='".$domain."'";
+	   $result=$this->kern->execute($query);	
+	   
+	   // No results ?
+	   if (mysql_num_rows($result)==0)
 	   {
-		    $this->template->showErr("You don't own this domain", 550);
-		    return false;
+		   $this->template->showErr("Invalid domain");
+		   return false;
+	   }
+	   
+	   // Load data
+	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   
+	   // Address
+	   $adr=$row['adr'];
+	   
+	   // My domain ?
+	   if ($this->kern->isMine($adr)==false)
+	   {
+		   $this->template->showErr("Invalid domain name");
+		   return false;
 	   }
 	   
 		try
@@ -343,10 +275,9 @@
 			                SET user='".$_REQUEST['ud']['user']."', 
 							    op='ID_SALE_DOMAIN', 
 								fee_adr='".$net_fee_adr."', 
+								target_adr='".$adr."', 
 								par_1='".$domain."',
 								par_2='".$price."',
-								days='".$days."',
-								bid='".$mkt_bid."',
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
@@ -371,7 +302,7 @@
 	
 	function showMyDomains()
 	{
-		$query="SELECT my_adr.*, adr.balance, dom.domain, dom.expires, dom.sale_price
+		$query="SELECT my_adr.*, adr.balance, dom.domain, dom.expire, dom.sale_price, dom.rowhash
 		          FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
 				  JOIN domains AS dom ON dom.adr=my_adr.adr
@@ -407,49 +338,35 @@
                             </tr>
                           </tbody>
                         </table></td>
-                        <td width="17%" align="center" class="font_14" style="color:#009900">
-                        <span class="font_15"><strong><? print $row['sale_price']; ?></strong></span><span class="font_12">&nbsp;MSK</span>
+                        <td width="17%" align="center" class="font_14">
+                        <span class="font_14" style="color:<? if ($row['sale_price']>0) print "#009900"; else print "#999999"; ?>">
+						
+						<? 
+						    if ($row['sale_price']>0) 
+						       print "<strong>".$row['sale_price']."</strong>"; 
+							else
+							   print $row['sale_price']; 
+						?>
+                        
+                        </span><span class="font_12">&nbsp;MSK</span>
                         </td>
-                        <td width="16%" align="center" class="simple_green_12">
-                        <span class="font_14"><? print $this->kern->daysFromBlock($row['expires']); ?></span>
-                        <p class="font_10">days</p>
+                        <td width="16%" align="center" class="font_14">
+                        <span class="font_14"><? print $this->kern->timeFromBlock($row['expire']); ?></span>
+                       
                         </td>
                         <td width="15%" align="center" class="font_14">
                         
                         
                          <div class="dropdown">
-                         <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                         <button class="btn btn-danger dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown">
                          <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span class="caret"></span>
                          </button>
                          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                         <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#renew_domain').val('<? print $row['domain']; ?>'); $('#modal_renew').modal()">Renew</a></li>
+                         <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#renew_domain').val('<? print $row['domain']; ?>'); $('#modal_renew').modal(); $('#renew_table').val('domains'); $('#renew_rowhash').val('<? print $row['rowhash']; ?>');">Renew</a></li>
                          <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#transfer_domain').val('<? print $row['domain']; ?>'); $('#modal_transfer').modal()">Transfer</a></li>
-                         <li role="presentation" class="divider"></li>
-                 
-                         <?
-				           if ($row['sale_price']==0)
-				           {
-				         ?>
-                 
-                 
-                             <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#set_price_domain').val('<? print $row['domain']; ?>'); $('#modal_set_price').modal()">Set Sale Price</a></li>
-                 
-                         <?
-				          }
-				          else
-				         {
-				         ?>
-                 
-                          <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#set_price_domain').val('<? print $row['domain']; ?>'); $('#modal_update_price').modal(); ">Update Sale Price</a></li>
-                          <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#set_price_domain').val('<? print $row['domain']; ?>'); $('#modal_update_price').modal(); $('#txt_upd_price').val('0'); ">Suspend from Market</a></li>
-                          
-                 
-                 <?
-					}
-				 ?>
-                 
-                 </ul>
-                 </div>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:$('#set_price_domain').val('<? print $row['domain']; ?>'); $('#modal_set_price').modal()"><? if ($row['sale_price']==0) print "Set Sale Price"; else print "Update Sale Price"; ?></a></li>
+                         </ul>
+                         </div>
                         
                         </td>
                         </tr>
@@ -474,15 +391,12 @@
 		$query="SELECT my_adr.*, 
 		               adr.balance, 
 					   dom.domain, 
-					   dom.expires, 
-					   dom.sale_price, 
-					   dom.market_bid, 
-					   dom.market_expires 
-		          FROM my_adr 
+					   dom.expire, 
+					   dom.sale_price
+				  FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
 				  JOIN domains AS dom ON dom.adr=adr.adr
-				 WHERE dom.sale_price>0
-			  ORDER BY dom.market_bid DESC"; 
+				 WHERE dom.sale_price>0"; print $query;
 	    $result=$this->kern->execute($query);
 		
 			
@@ -531,52 +445,7 @@
 		
 	}
 	
-	function showRenewModal()
-	{
-		$this->template->showModalHeader("modal_renew", "Renew Address Name", "act", "renew", "renew_domain", "");
-		
-		?>
-        
-<table width="550" border="0" cellspacing="0" cellpadding="5">
-          <tr>
-            <td width="240" align="left" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td align="center"><img src="./GIF/renew.png" width="200" height="200" /></td>
-              </tr>
-              <tr>
-                <td align="center">&nbsp;</td>
-              </tr>
-              <tr>
-                <td align="center"><? $this->template->showNetFeePanel(0.0365, "renew"); ?></td>
-              </tr>
-            </table></td>
-            <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td height="30" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td><? $this->template->showMyAdrDD("dd_my_adr_renew"); ?></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" valign="top" class="simple_blue_14"><strong>Days</strong></td>
-              </tr>
-              <tr>
-                <td><input name="txt_days_re" id="txt_days_re" class="form-control" value="365" style="width:100px" type="number" min="10" step="1"/></td>
-              </tr>
-            </table></td>
-          </tr>
-        </table>
-        
-        <script>
-		linkToNetFee("txt_days_re", "renew_net_fee_panel_val", 0.0365);
-		</script>
-        
-        <?
-		$this->template->showModalFooter();
-	}
+	
 	
 	function showTransferModal()
 	{
@@ -587,10 +456,13 @@
           <tr>
             <td width="240" align="left" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="center"><img src="./GIF/transfer.png" /></td>
+                <td align="center"><img src="./GIF/transfer.png" width="150" height="150" /></td>
               </tr>
               <tr>
                 <td align="center">&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center"><? $this->template->shownetFeePanel(0.0001); ?></td>
               </tr>
             </table></td>
             <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
@@ -626,42 +498,35 @@
           <tr>
             <td width="240" align="left" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td align="center"><img src="./GIF/domain_price.png" /></td>
+                <td align="center"><img src="./GIF/domain_price.png" width="150" /></td>
               </tr>
               <tr>
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->shownetFeePanel(0.0365, "sp"); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0001"); ?></td>
               </tr>
             </table></td>
             <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td height="30" colspan="3" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
+                <td height="30" colspan="2" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
               </tr>
               <tr>
-                <td colspan="3"><? $this->template->showMyAdrDD("dd_my_adr_set_sale_price"); ?></td>
+                <td colspan="2"><? $this->template->showMyAdrDD("dd_my_adr_set_sale_price"); ?></td>
               </tr>
               <tr>
                 <td width="34%">&nbsp;</td>
-                <td width="36%">&nbsp;</td>
-                <td width="30%">&nbsp;</td>
+                <td width="66%">&nbsp;</td>
               </tr>
               <tr>
                 <td height="30" valign="top" class="simple_blue_14"><strong>Price</strong></td>
-                <td valign="top" class="simple_blue_14"><strong> Days</strong></td>
-                <td valign="top" class="simple_blue_14"><strong> Bid</strong></td>
+                <td valign="top" class="simple_blue_14">&nbsp;</td>
               </tr>
               <tr>
                 <td>
                 <input name="txt_price" id="txt_price" class="form-control" value="1" style="width:80px" type="number" min="0.0001" step="0.0001"/>
                 </td>
-                <td>
-                <input name="txt_days_sp" id="txt_days_sp" class="form-control" value="365" style="width:80px" type="number" min="0.0001" step="0.0001"/>
-                </td>
-                <td>
-                <input name="txt_bid_sp" id="txt_bid_sp" class="form-control" value="0.0001" style="width:80px" type="number" min="0.0001" step="0.0001"/>
-                </td>
+                <td>&nbsp;</td>
               </tr>
             </table></td>
           </tr>

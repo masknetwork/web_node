@@ -47,7 +47,7 @@
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("trade");
 ?>
  
 
@@ -64,7 +64,7 @@
  
  <?
      // Location
-     $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
+     $template->showLocation("../../assets/options/index.php", "Binary Options", "", "My Options");
 	 
 	  // Menu
 	 $template->showNav(3,

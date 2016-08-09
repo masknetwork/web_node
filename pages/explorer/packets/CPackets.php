@@ -63,11 +63,7 @@ class CPackets
 		     case "ID_REQ_INTEREST_PACKET" : return "Request Interest Packet"; break;
 			 case "ID_RENT_DOMAIN_PACKET" : return "Rent Name Packet"; break;
 			 case "ID_TRANS_PACKET" : return "Simple Transaction Packet"; break;
-			 case "ID_SHARE_ADR_PACKET" : return "Share Address Packet"; break;
-			 case "ID_FROZE_ADR_PACKET" : return "Froze Address Packet"; break;
 			 case "ID_SEAL_ADR_PACKET" : return "Seal Address Packet"; break;
-			 case "ID_RESTRICT_REC_PACKET" : return "Restrict Recipients Packet"; break;
-			 case "ID_MULTISIG_PACKET" : return "Setup Multisignature Packet"; break;
 			 case "ID_NEW_AD_PACKET" : return "Ad Packet"; break;
 			 case "ID_SEND_MES" : return "Private Message Packet"; break;
 			 case "ID_ESCROWED_TRANS_SIGN" : return "Escrowed Transaction Signature"; break;
@@ -79,6 +75,8 @@ class CPackets
 			 case "ID_FEED_PACKET" : return "Data Feed Packet"; break;
 			 case "ID_NEW_FEED_BET_PACKET" : return "New Bet Packet"; break;
 			 case "ID_NEW_BUY_BET_PACKET" : return "Place Bet Packet"; break;
+			 case "ID_RENEW_PACKET" : return "Renew Packet"; break;
+			 case "ID_TRANSFER_DOMAIN_PACKET" : return "Transfer Domain Packet"; break;
 		}
 	}
 	

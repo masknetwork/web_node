@@ -19,9 +19,10 @@
 		   // Confirm modal
 		   $this->template->showConfirmModal();
 		
-		   $query="SELECT ag.*, adr.balance 
+		   $query="SELECT ag.*, adr.balance, my_adr.ID AS adrID
 		             FROM agents AS ag
 					 JOIN adr ON adr.adr=ag.adr
+					 JOIN my_adr ON my_adr.adr=adr.adr
 				    WHERE ag.adr IN (SELECT adr 
 					                   FROM my_adr 
 								      WHERE userID='".$_REQUEST['ud']['ID']."') 
@@ -136,22 +137,11 @@
                                                            $('#update_act').val('ID_UNINSTALL');
                                                            $('#txt_update_days_txt').css('display', 'none');
                                                            $('#txt_update_days').css('display', 'none');
-                                                           $('#img_update').attr('src', './GIF/uninstall.png');">Remove from Network</a></li>
+                                                           $('#img_update').attr('src', './GIF/uninstall.png');">Uninstall</a></li>
                                                            
                  
-                 <li><a href="javascript:void(0)" onClick="$('#update_modal').modal(); 
-                                                           $('#update_appID').val('<? print $row['aID']; ?>'); 
-                                                           $('#update_act').val('ID_SEAL');
-                                                           $('#txt_update_days_txt').css('display', 'block');
-                                                           $('#txt_update_days').css('display', 'block');
-                                                           $('#img_update').attr('src', './GIF/sealed.png');">Seal</a></li>
-                                                           
-                 <li><a href="javascript:void(0)" onClick="$('#update_modal').modal(); 
-                                                           $('#update_appID').val('<? print $row['aID']; ?>');
-                                                           $('#update_act').val('ID_FROZE');
-                                                           $('#txt_update_days_txt').css('display', 'none');
-                                                           $('#txt_update_days').css('display', 'none');
-                                                           $('#img_update').attr('src', './GIF/froze.png');">Froze</a></li>
+                 <li><a href="../../adr/options/index.php?ID=<? print $row['adrID']; ?>" >Seal Address</a></li>
+                                                          
                  </div>
                  
                  </td>

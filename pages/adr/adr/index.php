@@ -51,7 +51,7 @@
 <body>
 
 <?
-   $template->showTopBar(2);
+   $template->showTopBar("adr");
 ?>
  
 
@@ -68,13 +68,12 @@
  
  <?
      // Location
-     $template->showLocation("../../adr/market/index.php", "My Addresses", "", "Names Market");
+     $template->showLocation("../../adr/adr/index.php", "Addresses", "", "My Addresses");
 	 
 	 // Menu
 	 $template->showNav(1,
 	                    "../adr/index.php", "My Addresses", "",
-	                    "../pending/index.php", "Pending", $_REQUEST['ud']['pending_adr'],
-						"../names/index.php", "Names", "",
+	                    "../names/index.php", "Names", "",
 						"../market/index.php", "Names Market", "");
 	 
 	 
@@ -102,6 +101,7 @@
     $my_adr->showMyAdr();
 	
  ?>
+ 
  
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>

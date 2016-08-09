@@ -11,6 +11,7 @@
    include "CProfile.php";
    include "CWebIPN.php";
    include "CReveal.php";
+   include "CSeal.php";
    
    // Database
    $db=new db();
@@ -32,6 +33,9 @@
   
    // Domains
    $name=new CName($db, $template);
+   
+   // Seal
+   $seal=new CSeal($db, $template);
    
    // Profile
    $profile=new CProfile($db, $template);
@@ -200,6 +204,9 @@ $(function (e)
 			   // Private key
 			   $pkey->showModal($adr);
 			   
+			   // Seal
+			   $seal->showModal();
+			   
 			   // Action
 			   switch ($_REQUEST['act'])
 			   {
@@ -270,6 +277,11 @@ $(function (e)
 									 
 					case "reveal" : $pkey->reveal($adr, $_REQUEST['txt_pass']); 
 					                break;
+									
+					case "seal_adr" : $seal->sealAdr($_REQUEST['dd_net_fee_adr_seal'], 
+					                                $adr, 
+											        $_REQUEST['txt_days_seal']); 
+					                  break;
 			   }
 			   
 			   if ($_REQUEST['act']!="reveal") $adr_options->showOptions($_REQUEST['ID']);

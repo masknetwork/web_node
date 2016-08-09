@@ -50,7 +50,7 @@
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showTopBar("trade");
 ?>
  
 
@@ -67,7 +67,7 @@
  
  <?
      // Location
-     $template->showLocation("../../assets/assets/index.php", "Assets", "", "Assets");
+     $template->showLocation("../../assets/feeds/index.php", "Data feeds", "", "Feed Details");
 	 
 	 // Details
 	 $feed->showPanel($_REQUEST['symbol']);
@@ -79,17 +79,27 @@
 	 $feed->showNewBranchBut($_REQUEST['symbol']);
 	 
 	 // New branch ?
-	 if ($_REQUEST['act']=="new_branch")
-	   $feed->newBranch($_REQUEST['dd_branch_fee_adr'], 
-	                    $_REQUEST['feed_symbol'], 
-						$_REQUEST['txt_branch_name'], 
-						$_REQUEST['txt_branch_desc'], 
-						$_REQUEST['dd_branch_type'], 
-						$_REQUEST['txt_branch_rl'], 
-						$_REQUEST['txt_branch_symbol'], 
-						$_REQUEST['txt_branch_fee'], 
-						$_REQUEST['txt_branch_days']);
+	 switch ($_REQUEST['act'])
+	 {
+	   case "new_branch" :   $feed->newBranch($_REQUEST['dd_branch_fee_adr'], 
+	                                          $_REQUEST['feed_symbol'], 
+				                        	  $_REQUEST['txt_branch_name'], 
+						                      $_REQUEST['txt_branch_desc'], 
+						                      $_REQUEST['dd_branch_type'], 
+						                      $_REQUEST['txt_branch_rl'], 
+						                      $_REQUEST['txt_branch_symbol'], 
+						                      $_REQUEST['txt_branch_fee'], 
+						                      $_REQUEST['txt_branch_days']);
+							break;
 						
+	   case "vote" : $template->vote($_REQUEST['dd_vote_net_fee'], 
+		                            $_REQUEST['dd_vote_adr'], 
+				                    $_REQUEST['vote_target_type'], 
+				                    $_REQUEST['vote_targetID'], 
+				                    $_REQUEST['vote_type']);
+				     break;
+	 }
+	 
 	// Show branches
 	$feed->showBranches($_REQUEST['symbol']);
  ?>

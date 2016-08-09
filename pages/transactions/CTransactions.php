@@ -23,7 +23,7 @@ class CTransactions
 		
 		$query="SELECT mt.*, blocks.confirmations
 		          FROM my_trans AS mt
-				  JOIN blocks ON blocks.hash=mt.block_hash
+		     LEFT JOIN blocks ON blocks.hash=mt.block_hash
 				 WHERE mt.userID='".$_REQUEST['ud']['ID']."'
 				ORDER BY ID DESC 
 			     LIMIT 0,20"; 
@@ -57,6 +57,8 @@ class CTransactions
 							  
 						      if ($confirms==0)
 					             print "<span class='label label-danger'>".$confirms."</span>";
+							  if ($confirms=="")
+					             print "<span class='label label-danger'>0</span>";
 							  else if ($confirms<=10)
 					             print "<span class='label label-info'>".$confirms."</span>";
 						      else if ($confirms>10 && $confirms<25)

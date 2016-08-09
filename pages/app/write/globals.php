@@ -59,7 +59,7 @@
 <body>
 
 <?
-   $template->showTopBar(6);
+   $template->showTopBar("app");
 ?>
  
 
@@ -76,7 +76,7 @@
  
  <?
      // Location
-     $template->showLocation("../../app/write/index.php", "My Applications", "", "Global Variables");
+     $template->showLocation("../../app/mine/index.php", "My Applications", "", "Global Variables");
 	 
 	 // Menu
 	 $template->showNav(3,

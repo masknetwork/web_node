@@ -110,7 +110,7 @@ $(function (e)
 <body>
 
 <?
-   $template->showTopBar(7);
+   $template->showTopBar("blogs");
 ?>
  
 
@@ -156,13 +156,12 @@ $(function (e)
 	 
 	    $template->showNav($target,
 	                   "../home/index.php", "Home", "",
-	                   "index.php?adr=".urlencode($_REQUEST['adr']), "Tweets", "",
+	                   "index.php?adr=".urlencode($_REQUEST['adr']), "Posts", "",
 	                   "index.php?target=followers&adr=".urlencode($_REQUEST['adr']), "Followers", "", 
 					   "index.php?target=following&adr=".urlencode($_REQUEST['adr']), "Following", "", 
 					   "index.php?target=trans&adr=".urlencode($_REQUEST['adr']), "Transactions"); 
 	 
-	    // New Tweet
-	    $tweets->showNewTweetModal();
+	    
 	 }
 	 else $this->template->showErr("Invalid address");
 	 

@@ -50,7 +50,7 @@
 <body>
 
 <?
-   $template->showTopBar(2);
+   $template->showTopBar("adr");
 ?>
  
 
@@ -67,14 +67,13 @@
  
  <?
      // Location
-     $template->showLocation("../adr/index.php", "My Addresses", 
-	                         "", "Pending Addresses");
+     $template->showLocation("../adr/index.php", "Addresses", 
+	                         "", "Address Names");
 	 
 	 // Menu
-	 $template->showNav(3,
+	 $template->showNav(2,
 	                    "../adr/index.php", "My Addresses", "",
-	                    "../pending/index.php", "Pending", "",
-						"../names/index.php", "Names", "",
+	                    "../names/index.php", "Names", "",
 						"../market/index.php", "Names Market", "");
 	 
 	 
@@ -83,7 +82,7 @@
 			   // Modals
 			   $domains->showBuyDomainModal();
 			   $domains->showNewDomainModal();
-			   $domains->showRenewModal();
+			   $template->showRenewModal();
 			   $domains->showSetPriceModal();
 			   $domains->showTransferModal();
 			   
@@ -108,9 +107,10 @@
 									     break;
 			   
 			         // Renew		
-			         case "renew" : $domains->renewDomain($_REQUEST['dd_my_adr_renew'], 
-			                                             $_REQUEST['renew_domain'], 
-													     $_REQUEST['txt_days_re']);
+			         case "renew" : $template->renew($_REQUEST['dd_renew_net_fee'], 
+			                                        $_REQUEST['renew_table'], 
+										            $_REQUEST['txt_renew_days'],
+											        $_REQUEST['renew_rowhash']);
 			                        break;
 			   
 			         // Transfer	  
