@@ -53,14 +53,14 @@ class CProfile
 		}
 		
 		// Name
-		if ($this->kern->isTitle($name))
+		if ($this->kern->isTitle($name)==false)
 		{
 			$this->template->showErr("Invalid name", 550);
 			return false;
 		}
 		
 		// Description
-		if ($this->kern->isDesc($desc))
+		if ($this->kern->isDesc($desc)==false)
 		{
 			$this->template->showErr("Invalid name", 550);
 			return false;
@@ -122,22 +122,21 @@ class CProfile
 		   $query="INSERT INTO web_ops 
 			               SET user='".$_REQUEST['ud']['user']."', 
 							   op='ID_UPDATE_PROFILE', 
-							   fee_adr='".$net_fee_adr."', 
+							   fee_adr='".$adr."', 
 							   target_adr='".$adr."',
 							   par_1='".base64_encode($name)."',
 							   par_2='".base64_encode($desc)."',
-							   par_3='".$email."',
-							   par_4='".$website."',
-							   par_5='".$pic_back."',
-							   par_6='".$pic."',
-							   par_7='".$sign."',
+							   par_3='".base64_encode($email)."',
+							   par_4='".base64_encode($website)."',
+							   par_5='".base64_encode($pic_back)."',
+							   par_6='".base64_encode($pic)."',
 							   days='".$days."',
 							   status='ID_PENDING', 
-							   tstamp='".time()."'"; print $query;
+							   tstamp='".time()."'"; 
 	       $this->kern->execute($query);
 		
 		   // Commit
-		   $this->kern->rollback();
+		   $this->kern->commit();
 		   
 		   // Confirm
 		   $this->template->showOk("Your request has been succesfully recorded", 550);

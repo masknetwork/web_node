@@ -3,18 +3,31 @@
 	include "../../kernel/CUserData.php";
 	include "../template/template/CTemplate.php";
 	include "../../kernel/CSysData.php";
+	include "../transactions/CTransactions.php";
 	include "CAPI.php";
 	
 	$db=new db();
 	$sd=new CSysData($db);
-	if (isset($_REQUEST['key'])) $ud=new CUserData($db);
-	$template=new CTemplate();
+	$ud=new CUserData($db);
+	$template=new CTemplate($db);
 	$api=new CAPI($db);
-	$api->API($_REQUEST['act']);
+	$trans=new CTransactions($db, $template);
+	
+	// API Key
+	if (!isset($_REQUEST['key']))
+	   die("Invalid API key");
+	
+	switch ($_REQUEST['act'])
+	{
+		case "ID_SEND_COINS" : $trans->sendCoins($_REQUEST['net_fee_adr'], 
+	                                            $_REQUEST['from_adr'], 
+					                            $_REQUEST['to_adr'], 
+					                            $_REQUEST['amount'], 
+					                            $_REQUEST['amount_asset'], 
+					                            $_REQUEST['cur'], 
+					                            $_REQUEST['mes'], 
+					                            $_REQUEST['escrower']); 
+							break; 
+	}
 	
 ?>
-
-<form method="post" action="api.php?act=ID_ADR_INFO">
-<textarea rows="10" style="width:500px" name="data" id="data"></textarea>
-<button type="submit">Submit</button>
-</form>

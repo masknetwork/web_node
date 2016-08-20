@@ -1,17 +1,18 @@
 <?
-   session_start();
-   
+    session_start();
+    
    include "../../../kernel/db.php";
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
-   include "CVote.php";
+  
+   include "CPeers.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
-   $vote=new CVote($db, $template);
+   $peers=new CPeers($db, $template);
 ?>
 
 <!doctype html>
@@ -47,7 +48,7 @@
 <body>
 
 <?
-   $template->showTopBar("adr");
+   $template->showTopBar(7);
 ?>
  
 
@@ -64,19 +65,22 @@
  
  <?
      // Location
-     $template->showLocation("../adr/index.php", "Addresses", 
-	                         "", "Voting Rewards");
-							 
-    // Votes
-	$vote->showPanel($_REQUEST['adr']);
+     $template->showLocation("../../explorer/packets/index.php", "Admin", "", "Peers");
 	 
-	// Votes
-	$vote->showVotes($_REQUEST['adr']);
-	
-	// Older votes
-	$vote->showVotes($_REQUEST['adr'], "all");
+	 				   
+	$template->showHelp("Below are listed the peers this web node is connected to. A peer is a computer running the MaskNetwork software that accept / forward network packets. Running a MaskNetwork node is a great way to maintain the network security while making proffits.");
+     
+	 // Add peer					   
+     switch ($_REQUEST['act'])
+	 { 
+	    case "add_peer" : $peers->addPeer($_REQUEST['txt_ip'], $_REQUEST['txt_port']); break;
+		case "remove" : $peers->removePeer($_REQUEST['peer']); break;
+	 }
+	 
+	 $peers->showAddBut();
+	 $peers->showPeers();
+	 $peers->addPeerModal();
  ?>
-
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
  <div class="col-md-1">&nbsp;</div>

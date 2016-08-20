@@ -77,6 +77,13 @@ class CPackets
 			 case "ID_NEW_BUY_BET_PACKET" : return "Place Bet Packet"; break;
 			 case "ID_RENEW_PACKET" : return "Renew Packet"; break;
 			 case "ID_TRANSFER_DOMAIN_PACKET" : return "Transfer Domain Packet"; break;
+			 case "ID_VOTE_DEL_PACKET" : return "Vote Delegate Packet"; break;
+			 case "ID_NEW_FEED_PACKET" : return "New Feed Packet"; break;
+			 case "ID_NEW_FEED_BRANCH_PACKET" : return "New Feed Branch Packet"; break;
+			 case "ID_DEPLOY_APP_NET_PACKET" : return "Deploy Application Packet"; break;
+			 case "ID_VOTE_PACKET" : return "Vote Packet"; break;
+			 case "ID_UPDATE_APP_PACKET" : return "Update Application Packet"; break;
+			 case "ID_PROFILE_PACKET" : return "Profile Packet"; break;
 		}
 	}
 	

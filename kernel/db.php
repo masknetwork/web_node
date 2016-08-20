@@ -20,7 +20,7 @@
 		 }
 		 else
 		 {
-			 $user="root";
+			 $user="wallet";
 			 $pass="dicatrenu";
 			 $db="wallet";
 			 $ho="localhost";
@@ -32,6 +32,12 @@
 		 
 		 error_reporting(E_ERROR);
          ini_set("display_errors", "1");
+		 
+		 foreach($_REQUEST as $key => $value)
+		 {
+		    if (!strpos($_REQUEST[$key], "'")===false) 
+			die ("Invalid characters");
+		 }
 	}
 	
 	 function new_con($host, $db, $user, $pass)
@@ -84,9 +90,12 @@
 	
 	function domainExist($domain)
 	{
-		if ($this->domainValid($domain)==false) return false;
+		if ($this->isDomain($domain)==false) 
+		   return false;
 		
-		$query="SELECT * FROM domains WHERE domain='".$domain."'";
+		$query="SELECT * 
+		          FROM domains 
+				 WHERE domain='".$domain."'";
 		$result=$this->execute($query);	
 		
 		if (mysql_num_rows($result)>0)
@@ -95,10 +104,6 @@
 		   return false;
 	}
 	
-	function domainValid($domain)
-	{
-		return true;
-	}
 	
 	  function execute($query)
 	  {  
@@ -331,13 +336,37 @@
                 case 'url': $replacement = '<a target="blank" class="marox12" href="' . ($param? $param : $innertext) . "\">$innertext</a>"; break;
                 case 'img':
                     list($width, $height) = preg_split('`[Xx]`', $param);
-                    $replacement = "<img style=\"max-width:600px;\" border=\"0\" src=\"$innertext\" " . (is_numeric($width)? "width=\"$width\" " : '') . (is_numeric($height)? "height=\"$height\" " : '') . '/>';
+                    $replacement = "<img style=\"max-width:550px;\" border=\"0\" src=\"$innertext\" " . (is_numeric($width)? "width=\"$width\" " : '') . (is_numeric($height)? "height=\"$height\" " : '') . '/>';
                 break;
             }
             $string = str_replace($match, $replacement, $string);
         }
         return $string;
     }
+	
+	function txtExplode($str)
+	{
+		$f=0;
+		$s="";
+		
+		for ($a=0; $a<=strlen($str)-1; $a++)
+		{
+			if ($str[$a]!=" ") 
+			   $f++;
+			else
+			   $f=0;
+			   
+		    $s=$s.$str[$a]; 
+			
+			if ($f>=50)
+			{
+			  $s=$s." "; 
+			  $f=0;
+			}
+		}
+		
+		return $s;
+	}
 	
 	function split($amount, $prec=2)
 	{
@@ -668,10 +697,10 @@ $('#back').css("cursor", "pointer");
 	
 	function symbolValid($symbol)
 	{
-		if (strlen($symbol)!=6)
-		  return false;
+		if (preg_match("/^[A-Z0-9]{6}$/", $symbol)!=1)
+		   return false;
 		else
-		  return true;
+		   return true;
 	}
 	
 	
@@ -719,13 +748,21 @@ $('#back').css("cursor", "pointer");
 	
 	function adrFromDomain($domain)
 	{
-		if (strlen($domain)>30) return $domain;
-		
-		$query="SELECT * FROM domains WHERE domain='".$domain."'";
-		$result=$this->execute($query);
-		
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		return $row['adr'];
+		// Is address
+		if ($this->isAdr($domain)==true) 
+		   return $domain;
+	    
+		// Is domain ?
+		if ($this->isDomain($domain)==true)
+	    {
+		   $query="SELECT * 
+		             FROM domains 
+				    WHERE domain='".$domain."'"; 
+		   $result=$this->execute($query);
+		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   return $row['adr'];
+		}
+		else return "";
 	}
 	
 	function domainFromAdr($adr)
@@ -766,17 +803,13 @@ $('#back').css("cursor", "pointer");
 	
 	function timeFromBlock($block)
 	{
-		$dif=abs($block-$_REQUEST['sd']['last_block']);
+		$dif=abs($block-$_REQUEST['sd']['last_block']); 
 	    	
-		if ($dif<($_REQUEST['sd']['blocks_per_day']/24)) return round($dif/($_REQUEST['sd']['blocks_per_day']/24/60))." minutes";
-		
-		else if ($dif>($_REQUEST['sd']['blocks_per_day']/24) && 
-		         $dif<$_REQUEST['sd']['blocks_per_day']) 
-		return round($dif/($_REQUEST['sd']['blocks_per_day']/24))." hours";
-		
-		else if ($dif>$_REQUEST['sd']['blocks_per_day'] && $dif<($_REQUEST['sd']['blocks_per_day']*30)) return round($dif/4320)." days";
-		else if ($dif>($_REQUEST['sd']['blocks_per_day']*30) && $dif<($_REQUEST['sd']['blocks_per_day']*365)) return round($dif/129600)." months";
-		else if ($dif>($_REQUEST['sd']['blocks_per_day']*365)) return round($dif/($_REQUEST['sd']['blocks_per_day']*365))." years";
+		if ($dif<60) return $dif." minutes";
+		else if ($dif>60 && $dif<=1440) return round($dif/60)." hours";
+		else if ($dif>1440 && $dif<=43200) return round($dif/1440)." days";
+		else if ($dif>43200 && $dif<=525600) return round($dif/43200)." months";
+		else if ($dif>525600) return round($dif/525600)." years";
 	}
 	
 	function getFeedVal($feed, $branch)
@@ -870,21 +903,53 @@ $('#back').css("cursor", "pointer");
 		   return true;
 	}
 	
-	function isDomain($var)
+	function isDomain($domain)
 	{
-		if (preg_match("/^[a-f0-9]{0,30}$/", $var)!=1)
-		   return false;
+		// Domain
+		$domain=strtolower($domain);
+		
+		// Check
+		if (preg_match("/^[a-z0-9]{0,30}$/", $var)!=1)
+		   return false; 
 		else 
 		   return true;
 	}
 	
 	function isString($var)
 	{
-		$str="1234567890-=!@#$%^&*()_+qwertyuiop[]QWERTYUIOP{}asdfghjkl;'\ASDFGHJKL:\"|'zxcvbnm,./~ZXCVBNM<>?";
+		for ($a=0; $a<=strlen($var)-1; $a++)
+		{
+		   $code=ord($var[$a]);
+		   if ($code<32 || $code>126)
+		   {
+			  if (ord($var[$a])!=10)
+		      {
+				  print $code;
+			      return false;
+			  }
+		   }
+		}
 		
-		for ($a=0; $a<=strlen($var); $a++)
-		  if (strpos($str, $var[$a])===false)
-		    return false;
+		return true;
+	}
+	
+	function toString($var)
+	{
+		$str="";
+		
+		for ($a=0; $a<=strlen($var)-1; $a++)
+		{
+		   $code=ord($var[$a]);
+		   
+		   if ($code<32 || $code>126)
+		   {
+			  if (ord($var[$a])==10)
+		         $str=$str.$var[$a];
+		   }
+		   else $str=$str.$var[$a];
+		}
+		
+		return $str;
 	}
 	
 	function isAdr($var)
@@ -949,7 +1014,56 @@ $('#back').css("cursor", "pointer");
 		        return false;
 			else
 			    return true;
+	}
+	
+	function getReward($content)
+	{
+		// Load default balance
+		$query="SELECT * FROM adr WHERE adr='default'";
+		$result=$this->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    
+		// Per day
+		$daily=($row['balance']/20)/365;  
 		
+		switch ($content)
+		{
+			case "ID_MINER" : return round($daily*0.20/1440, 4); break;
+			case "ID_CONTENT" : return round($daily*0.30, 2); break;
+			case "ID_VOTER" : return round($daily*0.20, 2); break;
+			case "ID_COM" : return round($daily*0.15, 2); break;
+			case "ID_APP" : return round($daily*0.15, 2); break;
+		}
+	}
+	
+    function isDelegate($adr)
+	{
+		// Valid address
+		if ($this->isAdr($adr)==false) 
+		   return false;
+		   
+		// My address ?   
+		if ($this->isMine($adr)==false)
+		   return false;
+		   
+		// Delegate ?
+		$query="SELECT * 
+    		      FROM delegates 
+				 WHERE delegate='".$adr."'";
+	    $result=$this->execute($query);	
+	    
+		if (mysql_num_rows($result)>0)
+		   return true;
+		else
+		   return false;   
+	}
+	
+	function isIP($ip)
+	{
+		if (filter_var($ip, FILTER_VALIDATE_IP)===false)
+		   return flase;
+		else
+		   return true;
 	}
 }
 ?>

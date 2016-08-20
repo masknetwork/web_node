@@ -31,19 +31,9 @@
 <script src="../../../utils.js"></script>
 
 <style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_12 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
+.popover-content {
+    font-size: 12px;
 }
-
 </style>
 
 </head>

@@ -31,7 +31,7 @@
    switch ($_REQUEST['act'])
    {
 	  // Save code
-      case "save_code" : $write->save($_REQUEST['appID'], $_REQUEST['code']); 
+      case "save_code" : $write->save($_REQUEST['appID'], base64_decode( $_REQUEST['code'])); 
 	                     break;
 						  
 	  // Save globals

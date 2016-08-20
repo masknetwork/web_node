@@ -215,114 +215,6 @@ class CTransactions
         <?
 	}
 	
-	function showOTP($net_fee_adr, 
-	                 $from_adr, 
-					 $to_adr, 
-					 $amount, 
-					 $moneda, 
-					 $mes, 
-					 $escrower)
-	{
-		?>
-           
-           <form id="form_otp" name="form_otp" action="index.php?act=send_otp_coins" method="post">
-           
-           <input type="hidden" id="h_net_fee_adr" name="h_net_fee_adr" value="<? print $net_fee_adr; ?>">
-           <input type="hidden" id="h_from_adr" name="h_from_adr" value="<? print $from_adr; ?>">
-           <input type="hidden" id="h_to_adr" name="h_to_adr" value="<? print $to_adr; ?>">
-           <input type="hidden" id="h_amount" name="h_amount" value="<? print $amount; ?>">
-           <input type="hidden" id="h_moneda" name="h_moneda" value="<? print $moneda; ?>">
-           <input type="hidden" id="h_mes" name="h_mes" value="<? print $mes; ?>">
-           <input type="hidden" id="h_escrower" name="h_escrower" value="<? print $escrower; ?>">
-           
-           <table width="90%" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td class="font_16">&nbsp;&nbsp;&nbsp;Password Required</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="15%" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" class="img-responsive"/></td>
-                        <td width="85%" align="center" bgcolor="#f0f0f0" class="font_14">This address is requesting an unique 25 characters password before spending funds. A new password is generated after each transaction. Please provide the password.</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                          <tbody>
-                            <tr>
-                              <td height="30" align="left" valign="top" class="font_14"><strong>Password</strong></td>
-                            </tr>
-                            <tr>
-                              <td><input class="form-control" type="password" name="txt_old_pass" id="txt_old_pass" placeholder="0-25 characters"></td>
-                            </tr>
-                          </tbody>
-                        </table></td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2" align="right">
-                        <a href="javascript:void(0)" onClick="$('#form_otp').submit()" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;Send</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-              </tbody>
-            </table> 
-            </form>
-            
-        <?
-	}
-	
-	function showOTPConfirm($pass)
-	{
-		?>
-           
-           <table width="90%" border="0" cellspacing="0" cellpadding="0">
-              <tbody>
-                <tr>
-                  <td class="font_16">&nbsp;&nbsp;Next Password</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr>
-                  <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td width="15%" align="center"><img src="../../adr/options/GIF/adr_opt_froze.png" class="img-responsive" /></td>
-                        <td width="85%" align="center" bgcolor="#fff4eb" class="simple_red_12">Below is displayed your new password. Please keep the passoword safe because you will need it if you want to send funds from this address.</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td height="60" colspan="2" align="center" class="simple_green_22"><strong><? print $pass; ?></strong></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                </tr>
-                
-              </tbody>
-            </table> 
-            
-             
-           
-       
-        <?
-	}
 	
 	function getSecurePAss($length = 25, $add_dashes = false, $available_sets = 'lud')
     {
@@ -380,19 +272,22 @@ class CTransactions
 					   $amount_asset, 
 					   $moneda, 
 					   $mes, 
-					   $escrower,
-					   $sign="")
+					   $escrower)
 	{
 		// Ammount
 		if ($amount_asset>0) $amount=$amount_asset;
 		
+		// Network fee address name ?
+		$net_fee_adr=$this->kern->adrFromDomain($net_fee_adr);
+			
+	    // Source a name ?
+		$from_adr=$this->kern->adrFromDomain($from_adr);
+			
 		// Recipient a name ?
-		if (strlen($to_adr)<31) 
-		    $to_adr=$this->template->adrFromDomain($to_adr);
+		$to_adr=$this->kern->adrFromDomain($to_adr);
 		
 		// Escrower a name ?
-		if (strlen($escrower)<31) 
-		   $escrower=$this->template->adrFromDomain($escrower);
+		$escrower=$this->kern->adrFromDomain($escrower);
 		
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
@@ -526,15 +421,31 @@ class CTransactions
 								status='ID_PENDING', 
 								tstamp='".time()."'";
 	       $this->kern->execute($query);
-		
+		   
+		   // Request ID
+		   $reqID=mysql_insert_id();
+		   
 		   // Commit
 		   $this->kern->commit();
 		   
 		   // Confirm
-		   if ($otp_new_hash=="") 
+		   if (!$_REQUEST['key'])
+		   { 
 		      $this->template->showOk("Your request has been succesfully recorded", 550);
+		   }
 		   else
-		      $this->showOTPConfirm($otp_new_pass);
+		   {
+			  // Sleep
+		      sleep(2);
+			  
+			  // Load txID
+			  $query="SELECT * FROM web_ops WHERE ID='".$reqID."'";
+			  $result=$this->kern->execute($query);	
+	          $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	          
+			  // Result
+			  print "{\"result\" : \"success\", \"data\" : { \"txID\" : \"".$row['response']."\"}}";
+		   }
 	   }
 	   catch (Exception $ex)
 	   {

@@ -55,9 +55,10 @@ class CFeed
 				  WHERE symbol='".$feed_symbol."' 
 				    AND adr IN (SELECT adr 
 					              FROM my_adr 
-								 WHERE userID='".$_REQUEST['ud']['ID']."')";
+								 WHERE userID='".$_REQUEST['ud']['ID']."')";  
 		 $result=$this->kern->execute($query);
-		 if (mysql_num_rows($result)==false)
+		 
+		 if (mysql_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid feed symbol");
 		     return false;

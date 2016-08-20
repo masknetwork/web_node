@@ -135,7 +135,7 @@ class CMyAdr
     
 	function showMyAdr()
 	{
-		$query="SELECT my_adr.*, adr.balance, prof.pic, adr.last_interest
+		$query="SELECT my_adr.*, adr.balance, prof.pic
 		          FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
 				  LEFT JOIN profiles AS prof ON prof.adr=my_adr.adr
@@ -165,23 +165,36 @@ class CMyAdr
                           <img src="<? if ($row['pic']!="") print base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png"; ?>" width="50" height="50" alt="" class="img-circle"  />
                           </td>
                           <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal();" class="font_10" style="color:#999999">full address</a><? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
-                          <td width="10%" align="center" class="font_18" style="color:#005500"><span class="font_18" style="color:#005500">
-                            
-                          </span></td>
-                          <td width="10%" align="center" class="font_18" style="color:#005500">
+                         
+                          <td width="10%" align="center">
+                          <?
+						      if ($row['balance']>=1)
+							  {
+						  ?>
                           
-                        
+                          <a href="../../tweets/vote/vote.php?adr=<? print urlencode($row['adr']); ?>" id="popoverData" class="btn"  data-content="In order to receive your voting reward for an address, you need to vote at least 5 comments, 3 blog posts and at least another content type. Click for voting reports." rel="popover" data-placement="top" data-original-title="Voting Status" data-trigger="hover">
+						  <? 
+						      if ($this->votedAll($row['adr'])==true) 
+							      print "<img src='../../tweets/vote/GIF/p10.png' width='30px'>"; 
+							  else  
+							      print "<img src='../../tweets/vote/GIF/p5.png' width='30px'>"; 
+						  ?>
+                          </a>
                           
+                          <?
+							  }
+						  ?>
                           
                           </td>
-                        <td width="21%" align="center" class="font_14" style="color:#009900"><strong>
+                          
+                          <td width="21%" align="center" class="font_14" style="color:#009900"><strong>
 						<? 
 						   if ($row['balance']=="") 
 						      print "0 MSK"; 
 							else
 							  print round($row['balance'], 8)." MSK"; 
 						?>
-                        </strong></td>
+                        </strong><p class="font_10"><? print "$".round($row['balance']*$_REQUEST['sd']['msk_price'], 2); ?></p></td>
                         <td width="25%" align="center" class="simple_maro_12">
                         
                        
@@ -220,7 +233,7 @@ class CMyAdr
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="6" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="5" background="../../template/template/GIF/lp.png">&nbsp;</td>
                         </tr>
                   
                   <?
@@ -240,6 +253,12 @@ class CMyAdr
             </table>
             
             <br><br>
+            
+            <script>
+            $(document).ready(function(){
+            $('[rel="popover"]').popover(); 
+            });
+            </script>
         
         <?
 	}
@@ -386,6 +405,65 @@ class CMyAdr
 		}
 	}
 	
-	
+	function votedAll($adr)
+	{
+		// Comments
+		$query="SELECT COUNT(*) AS total 
+	     	      FROM votes 
+				 WHERE target_type='ID_COM' 
+				   AND adr='".$adr."'
+				   AND block>".($_REQUEST['sd']['last_block']-1440); 
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $votes_com=$row['total'];
+		if ($votes_com=="") $votes_com=0;
+		
+		// Img 1
+		if ($votes_com>=5)
+		  $com=true;
+		else
+		  $com=false;
+		  
+		// Other content
+		$query="SELECT COUNT(*) AS total 
+	     	      FROM votes 
+				 WHERE target_type='ID_POST' 
+				   AND adr='".$adr."'
+				   AND block>".($_REQUEST['sd']['last_block']-1440);
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $votes_posts=$row['total']; 
+		if ($votes_posts=="") $votes_posts=0;
+		
+		// Img 2
+		if ($votes_posts>=3)
+		  $post=true;
+		else
+		  $post=false;
+		  
+		  // Other content
+		$query="SELECT COUNT(*) AS total 
+	     	      FROM votes 
+				 WHERE target_type<>'ID_POST' 
+				   AND target_type<>'ID_COM' 
+				   AND adr='".$adr."'
+				   AND block>".($_REQUEST['sd']['last_block']-1440);
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $votes_other=$row['total']; 
+		if ($votes_other=="") $votes_other=0;
+		
+		// Img 3
+		if ($votes_other>=1)
+		  $other=true;
+		else
+		  $other=false;
+		  
+	    // All voted ?
+		if ($com==true && $post==true && $other==true)
+		   return true;
+		else
+		   return false;
+	}
 }
 ?>

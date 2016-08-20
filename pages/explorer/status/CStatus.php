@@ -29,7 +29,7 @@
 		   $query="SELECT * FROM web_sys_data";
 		   $result=$this->kern->execute($query);	
 	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
-	  
+	
 		   ?>
               
               <br><br>

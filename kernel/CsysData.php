@@ -35,7 +35,8 @@ class CSysData
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);	 
 		
 		$_REQUEST['sd']['last_block']=$row['last_block']; 		
-		
+		$_REQUEST['sd']['net_dif']=$row['net_dif']; 		
+		$_REQUEST['sd']['delegate']=$row['delegate']; 		
 		$_REQUEST['sd']['blocks_per_minute']=3;	 	
 		$_REQUEST['sd']['blocks_per_hour']=$_REQUEST['sd']['blocks_per_minute']*60;	 	 	
 		$_REQUEST['sd']['blocks_per_day']=$_REQUEST['sd']['blocks_per_hour']*24;
@@ -48,29 +49,26 @@ class CSysData
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		
 		// In circulation
-		$in_circ=100000000-$row['balance'];
+		$in_circ=21000000-$row['balance'];
 		
-	    // Interest
-		$_REQUEST['sd']['interest_h']=round(50000000/$in_circ/365/24, 4);         
-		$_REQUEST['sd']['interest_y']=round(50000000/$in_circ, 4);      
-		
-		// Votes in 24 hours
-		$query="SELECT SUM(power) AS total 
-		          FROM votes 
-				 WHERE block>".($_REQUEST['sd']['last_block']-1440)." 
-				   AND target_type='ID_POST'";   
+	    // Net stat
+		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC); 
-		$_REQUEST['sd']['votes']=$row['total']; 
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$_REQUEST['sd']['mining_threads']=$row['mining_threads'];
+		$_REQUEST['sd']['last_ping']=$row['last_ping'];
+		$_REQUEST['sd']['status']=$row['status'];
 		
-		// Comments
-		$query="SELECT SUM(power) AS total 
-		          FROM votes 
-				 WHERE block>".($_REQUEST['sd']['last_block']-1440)." 
-				   AND target_type='ID_COM'";   
-		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC); 
-		$_REQUEST['sd']['com_votes']=$row['total']; 
+		
+		// Offline ?
+		if ($_REQUEST['sd']['status']=="ID_OFFLINE" ||
+            (time()-$_REQUEST['sd']['last_ping'])>10)
+			{
+			   if (strpos($_SERVER['REQUEST_URI'], "pages")>0)
+                  $db->redirect("../../maintainance/maintainance/index.php");
+			   else
+			      $db->redirect("./pages/maintainance/maintainance/index.php");
+			}
 	}
 }
 ?>

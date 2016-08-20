@@ -145,10 +145,11 @@ $(function (e)
 	
 	 
 	 if ($_REQUEST['act']=="new_tweet") 
-	    $home->newTweet($_REQUEST['dd_tweet_net_fee'], 
+	    $tweets->newTweet($_REQUEST['dd_tweet_net_fee'], 
 			            $_REQUEST['dd_tweet_net_fee'], 
 						$_REQUEST['txt_tweet_title'], 
 						$_REQUEST['txt_tweet_mes'], 
+						$_REQUEST['dd_days'], 
 						0, 
 						$pic);
 							     	 

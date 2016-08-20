@@ -1,17 +1,19 @@
 <?
-   session_start();
-   
+    session_start();
+    
    include "../../../kernel/db.php";
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
-   include "CVote.php";
+   include "../CExplorer.php";
+   include "CDelegates.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
-   $vote=new CVote($db, $template);
+   $explorer=new CExplorer($db, $template);
+   $delegates=new CDelegates($db, $template);
 ?>
 
 <!doctype html>
@@ -47,7 +49,7 @@
 <body>
 
 <?
-   $template->showTopBar("adr");
+   $template->showTopBar(7);
 ?>
  
 
@@ -64,19 +66,29 @@
  
  <?
      // Location
-     $template->showLocation("../adr/index.php", "Addresses", 
-	                         "", "Voting Rewards");
-							 
-    // Votes
-	$vote->showPanel($_REQUEST['adr']);
+     $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Delegates");
 	 
-	// Votes
-	$vote->showVotes($_REQUEST['adr']);
-	
-	// Older votes
-	$vote->showVotes($_REQUEST['adr'], "all");
+	 				   
+	$template->showHelp("Below are listed the elected delegates. The consensus algorithm implemented by MaskNetwork is called Delegated Proof of Work (DPOW). Under DPOW, stakeholders (any address holding at least 1 MSK), can elect any number of witnesses (an address) to generate blocks. Each address is allowed one vote per MaskCoin owned. The top 100 witnesses by total number of votes are selected as delegates and are allowed to generate new blocks. Their POW difficulty decreases  / increases depending on the number of votes they have received.");
+     
+	 // Modal
+	 $delegates->showVoteModal();
+	 
+	 // Action
+	 if ($_REQUEST['act']=="vote")
+	   $delegates->vote($_REQUEST['dd_vote_fee_adr'], 
+	                    $_REQUEST['dd_vote_adr'], 
+						$_REQUEST['txt_vote_delegate'],
+						$_REQUEST['txt_vote_type']);
+	 
+	 // Buttons
+	 $delegates->showAddBut();
+	 
+	 // Delegates
+	 $delegates->showDelegates();
+	 
  ?>
-
+ 
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
  <div class="col-md-1">&nbsp;</div>

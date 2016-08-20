@@ -68,13 +68,13 @@
    <td width="78%" align="center" valign="top"><table width="90%" border="0" cellpadding="0" cellspacing="0">
      <tbody>
        <tr>
-         <td height="40" align="left" valign="top" class="font_18"><strong>Addresses</strong></td>
+         <td height="40" align="left" valign="top" class="font_18"><strong>Send Coins</strong></td>
        </tr>
        <tr>
          <td align="left" class="font_14"><hr></td>
        </tr>
        <tr>
-         <td align="left" class="font_16">Addresses table contains data about network addresses (balance, last interest, block ...</td>
+         <td align="left" class="font_16">This call will send MaskCoins / Other Assets from one of your addresses to any another address. You can also include a comment and / or an escrower. The receiver pays a fee of 0.1%. The sender will pay the network transport fee (minimum 0.0001 MSK)</td>
        </tr>
        <tr>
          <td align="center">&nbsp;</td>
@@ -83,57 +83,65 @@
          <td align="left"><table width="100%" border="0" cellpadding="0" cellspacing="0">
            <tbody>
              <tr>
-               <td width="22%" align="center"><strong class="font_14">adr</strong>
+               <td align="center"><strong class="font_14">net_fee_adr</strong>
                  <p class="font_10">String</p></td>
-               <td width="78%" class="font_14">Address ID. It's a string identifier between 108 and 212 characters long that represents a possible destination for a MaskNetwork payment.</td>
+               <td class="font_14">Network fee address. The address that will pay the network trasnport fee. The network transport fee is minimum 0.0001 MSK. It's paid by sender for any packet that traverse the network, no matter the payload type.</td>
+             </tr>
+             <tr>
+               <td colspan="2" align="center"><hr></td>
+               </tr>
+             <tr>
+               <td width="22%" align="center"><strong class="font_14">from_adr</strong>
+                 <p class="font_10">String</p></td>
+               <td width="78%" class="font_14">Source address. You need to specify one of your addresses. It can be an address name.</td>
              </tr>
              <tr>
                <td colspan="2" align="center"><hr></td>
              </tr>
              <tr>
-               <td align="center"><strong class="font_14">balance</strong>
+               <td align="center"><strong class="font_14">to_adr</strong>
                  <p class="font_10">string</p></td>
-               <td class="font_14">Address balance in MSK.</td>
+               <td class="font_14">Destination address. It can be an address name.</td>
              </tr>
              <tr>
                <td colspan="2" align="center"><hr></td>
              </tr>
              <tr>
-               <td align="center"><strong class="font_14">created</strong>
-                 <p class="font_10">long</p></td>
-               <td class="font_14">The block number at which the address was created.</td>
+               <td align="center"><strong class="font_14">amount</strong>
+                 <p class="font_10">double</p></td>
+               <td class="font_14">Amount that will be send. If you send MSK, the minimum amount is 0.0001 MSK. </td>
              </tr>
              <tr>
                <td colspan="2" align="center"><hr></td>
              </tr>
              <tr>
-               <td align="center"><strong class="font_14">sealed</strong>
-                 <p class="font_10">long</p></td>
-               <td class="font_14">The block number at which the seal attribute expires. It's zero for unsealed addresses. For sealed addresses, some restrictions apply. For example, if a application's address is sealed, that application can not be modified or uninstalled by the owner.</td>
+               <td align="center"><strong class="font_14">amount_asset</strong>
+                 <p class="font_10">double</p></td>
+               <td class="font_14">In case you send an asset, you need to use this field to specify the amount. For assets the minimum amount is 0.00000001</td>
              </tr>
              <tr>
                <td colspan="2" align="center"><hr></td>
              </tr>
              <tr>
-               <td align="center"><strong class="font_14">last_interest</strong>
-                 <p class="font_10">long</p></td>
-               <td class="font_14">The block number at which the the last interest was paid for this address.</td>
-             </tr>
-             <tr>
-               <td colspan="2" align="center"><hr></td>
-             </tr>
-             <tr>
-               <td align="center"><strong class="font_14">block</strong>
-                 <p class="font_10">long</p></td>
-               <td class="font_14">The block number at which the last change was made to this table row.</td>
-             </tr>
-             <tr>
-               <td colspan="2" align="center"><hr></td>
-             </tr>
-             <tr>
-               <td align="center"><strong class="font_14">rowhash</strong>
+               <td align="center"><strong class="font_14">cur</strong>
                  <p class="font_10">string</p></td>
-               <td align="left" class="font_14">Rowhash is a sha256 hash of all / certain table columns. It uniquely identifies a table row. The columns used in calculating the rowhash are different for each table.</td>
+               <td class="font_14">Currency. In case you send MaskCoins, specify MSK. In case you send an asset you need tp pass the asset symbol (6 characters).</td>
+             </tr>
+             <tr>
+               <td colspan="2" align="center"><hr></td>
+             </tr>
+             <tr>
+               <td align="center"><strong class="font_14">mes</strong>
+                 <p class="font_10">string</p></td>
+               <td class="font_14">Optional. A short message. The message is encrypted and only the receiver can decrypt it. Keep in mind that if the transaction sends coins to an application, the message will not be encrypted.</td>
+             </tr>
+             <tr>
+               <td colspan="2" align="center"><hr></td>
+             </tr>
+             <tr>
+               <td align="center"><strong class="font_14">escrower</strong>
+                 <p class="font_10">string</p></td>
+               <td align="left" class="font_14">Optional. You can specify an escrower. It can be an address name.</td>
              </tr>
              <tr>
                <td colspan="2" align="center"><hr></td>
@@ -151,19 +159,13 @@
          <td align="left"><hr></td>
        </tr>
        <tr>
-         <td align="left" class="font_14" height="40px">Get all addresses created at block 1000</td>
+         <td align="left" class="font_14" height="40px">Sends 100 MSK from address name maria to address name john with the message thank you</td>
        </tr>
        <tr>
-         <td align="center" class="font_16" bgcolor="#f0f0f0" height="70px"><strong>http://localhost/wallet/pages/api/public.php?table=adr&amp;col=created&amp;type=exact&amp;val=1000&amp;min=0&amp;max=0</strong></td>
+         <td align="center" class="font_16" bgcolor="#f0f0f0" height="70px"><strong>http://localhost/wallet/pages/api/api.php?req=ID_SEND_COINS&amp;from_adr=maria&amp; toadr=john&amp;amount=100&amp;cur=MSK&amp;mes=Thank you</strong></td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>
-       </tr>
-       <tr>
-         <td height="40" align="left"><span class="font_14">Get all addresses having the balance minimum 100 MSK</span></td>
-       </tr>
-       <tr>
-         <td align="center" bgcolor="#f0f0f0" class="font_16"><strong>http://localhost/wallet/pages/api/public.php?table=adr&amp;col=balance&amp;type=range&amp;min=100&amp;max=10000</strong></td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>

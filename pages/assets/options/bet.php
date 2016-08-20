@@ -76,7 +76,7 @@
 	 {
 	    case "buy_bet" : $bets->buyOption($_REQUEST['dd_buy_bet_adr'], 
 		                                 $_REQUEST['dd_buy_bet_adr'], 
-						                 $_REQUEST['uid'],
+						                 $_REQUEST['betID'],
 						                 $_REQUEST['txt_buy_bet_amount']);
 						 break;
 						 

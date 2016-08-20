@@ -14,7 +14,7 @@
 		  $query="SELECT * 
 		          FROM agents
 				 WHERE aID='".$appID."' 
-				   AND price>0";
+				   AND app_store>0"; 
 				   	   
 	      $result=$this->kern->execute($query);
 		
@@ -154,8 +154,15 @@
                   <td align="center" class="font_12">
                   
                  <table cellspacing="2px" width="100px">
-                 <tr><td bgcolor="#ECFFEE" height="50px" align="center"><span class="font_16" style="color:#005500"><strong>0.001</strong></span><span class="font_12"> MSK</span><p class="font_10">daily</p></td></tr>
-                 <tr><td><a class="btn btn-danger btn-sm" style="width:100px" href="javascript:void(0)" onClick="$('#rent_modal').modal(); $('#rent_appID').val('<? print $appID; ?>')">Rent</a></td></tr>
+                 <tr><td bgcolor="#ECFFEE" height="50px" align="center"><span class="font_16" style="color:#005500">
+                 <?
+				     if ($row['sale_price']>0)
+					    print "<strong>".$row['sale_price']."</strong></span><span class=\"font_12\"> MSK</span><p class=\"font_10\">daily</p>";
+				     else
+					    print "free";
+				 ?>
+                 </td></tr>
+                 <tr><td><a class="btn btn-danger btn-sm" style="width:100px" href="javascript:void(0)" onClick="$('#rent_modal').modal(); $('#rent_appID').val('<? print $appID; ?>')"><? if ($row['sale_price']>0) print "Rent"; else print "Install"; ?></a></td></tr>
                  </table>
                   
                   </td>
@@ -270,11 +277,11 @@
            </td></tr>
            
            <tr><td align="center" class="font_12" height="30px" bgcolor="#e1ffe7" style="color:#005500">
-           <? print "<strong>".$price."</strong> MSK / day"; ?>
+           <? if ($price>0) print "<strong>".$price."</strong> MSK / day"; else print "free"; ?>
            </td></tr>
            
            <tr><td align="left" class="font_12" height="50px" valign="bottom">
-           <a class="btn btn-sm btn-primary" style="width:100%" href="app.php?ID=<? print $appID; ?>">Rent</a>
+           <a class="btn btn-sm btn-primary" style="width:100%" href="app.php?ID=<? print $appID; ?>"><? if ($price>0) print "Rent"; else print "Install"; ?></a>
            </td></tr>
            
            </table>
@@ -295,13 +302,13 @@
 				 WHERE status='ID_ONLINE' 
 				   AND (name LIKE '".$search."' OR description LIKE '%".$search."%') 
 				   AND categ='".$categ."' 
-				   AND price>0"; 
+				   AND app_store>0"; 
 		else
 		$query="SELECT * 
 		          FROM agents 
 				 WHERE status='ID_ONLINE' 
 				   AND (name LIKE '".$search."' OR description LIKE '%".$search."%') 
-				   AND price>0";
+				   AND app_store>0";
 				   
 		$result=$this->kern->execute($query);	
 	    

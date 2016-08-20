@@ -367,7 +367,7 @@ class CTemplate
 	
 	function showTestnetModal()
 	{
-		$this->showModalHeader("testnet_modal", "Node running over testnet", "act", "");
+		$this->showModalHeader("testnet_modal", "Beta stage release", "act", "");
 		?>
         
            <table width="700" border="0" cellspacing="0" cellpadding="0">
@@ -393,7 +393,7 @@ class CTemplate
              </tr>
              <tr>
                <td align="left" valign="top" style="font-size:16px">&nbsp;</td>
-               <td height="25" align="left" valign="top" style="font-size:16px">This node is running over MaskNetwork testnet. The testnet is an alternative Maskcoin blockchain to be used for testing. Testnet MaskCoins are separate and distinct from actual Maskcoins, and are never supposed to have any value. This allows application developers or bitcoin testers to experiment, without having to use real Maskcoins or worrying about breaking the main network chain.</td>
+               <td height="25" align="left" valign="top" style="font-size:16px">MaskNetwork is a beta stage software. Beta phase generally begins when the software is feature complete but likely to contain a number of known or unknown bugs. Software in the beta phase will generally have many more bugs in it than completed software, as well as speed/performance issues and may still cause crashes or data loss. In case you have found a bug or other problem, please submit it to bugs@masknetwork.com</td>
              </tr>
              <tr>
                <td align="left">&nbsp;</td>
@@ -496,9 +496,7 @@ class CTemplate
 		?>
         
               <br>
-              <table><tr>
-                <td><a href="http://www.cryptotalk.net"><img src="../../template/template/GIF/forums.png" class="img img-responsive img-rounded" width="100%"></a></td></tr></table>
-              <br>
+              
               <table width="180" border="0" cellspacing="0" cellpadding="0">
                
                   <tr>
@@ -736,6 +734,8 @@ class CTemplate
 	
 	function showErr($mes, $width=600)
 	{
+		if (!isset($_REQUEST['key']))
+		{
 		?>
             
            <table width="90%" id="tab_alert">
@@ -756,6 +756,8 @@ class CTemplate
 		   </script>
         
         <?
+		}
+		else print "{\"result\" : \"error\", \"reason\" : \"".$mes."\"}";
 	}
 	
 	function showConfirmModal($question="Are you sure you want to delete this item ?", 
@@ -1393,15 +1395,7 @@ class CTemplate
             
             <li <? if ($sel=="mes") print "class='active'"; ?>><a href="<? print $path; ?>mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
             
-            <li class='dropdown open; <? if ($sel=="trade") print "active"; ?>'>
-            <a href="<? print $path; ?>assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <li><a href="<? print $path; ?>assets/user/index.php">User Issued Assets</a></li>
-            <li><a href="<? print $path; ?>assets/assets_mkts/index.php">Assets Markets</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="<? print $path; ?>assets/feeds/index.php">Data Feeds</a></li>
-            <li><a href="<? print $path; ?>assets/options/index.php">Binary Options</a></li>
-            </ul></li>     
+            <li <? if ($sel=="trade") print "class='active'"; ?>><a href="<? print $path; ?>assets/user/index.php">Assets</a></li>
            
            
             <li class='dropdown open; <? if ($sel=="app") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
@@ -1420,7 +1414,7 @@ class CTemplate
              <a href="<? print $path; ?>explorer/packets/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
              <ul class="dropdown-menu">
              <li><a href="<? print $path; ?>explorer/packets/index.php">Blockchain Explorer</a></li>
-             <li><a href="<? print $path; ?>explorer/peers/index.php">Peers</a></li>
+             <li><a href="<? print $path; ?>explorer/delegates/index.php">Delegates</a></li>
              <li><a href="<? print $path; ?>explorer/status/index.php">Status</a></li>
              </ul></li>
           
@@ -1441,7 +1435,7 @@ class CTemplate
                      <a href="<? print $path; ?>admin/users/index.php" class="dropdown-toggle" data-toggle="dropdown" style="color:#D6FFDA">Admin<b class="caret"></b></a>
                      <ul class="dropdown-menu">
                      <li><a href="<? print $path; ?>admin/users/index.php">Users</a></li>
-                     <li><a href="<? print $path; ?>admin/mining/index.php">Mining</a></li>
+                     <li><a href="<? print $path; ?>admin/mining/index.php">CPU Mining</a></li>
                      <li><a href="<? print $path; ?>admin/peers/index.php">Peers</a></li>
                      <li><a href="<? print $path; ?>admin/settings/index.php">Settings</a></li>
                      </ul></li>
@@ -1478,15 +1472,7 @@ class CTemplate
             <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
             
-            <li class='dropdown open; <? if ($sel=="trade") print "active"; ?>'>
-            <a href="<? print $path; ?>assets/assets/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <li><a href="<? print $path; ?>assets/user/index.php">User Issued Assets</a></li>
-            <li><a href="<? print $path; ?>assets/assets_mkts/index.php">Assets Markets</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="<? print $path; ?>assets/feeds/index.php">Data Feeds</a></li>
-            <li><a href="<? print $path; ?>assets/options/index.php">Binary Options</a></li>
-            </ul></li>     
+             <li <? if ($sel=="trade") print "class='active'"; ?>><a href="<? print $path; ?>assets/user/index.php">Assets</a></li>    
            
            
             <li class='dropdown open; <? if ($sel=="app") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
@@ -1501,7 +1487,7 @@ class CTemplate
              <a href="<? print $path; ?>shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
              <ul class="dropdown-menu">
              <li><a href="<? print $path; ?>explorer/packets/index.php">Blockchain Explorer</a></li>
-             <li><a href="<? print $path; ?>explorer/peers/index.php">Peers</a></li>
+             <li><a href="<? print $path; ?>explorer/peers/index.php">Delegates</a></li>
              <li><a href="<? print $path; ?>explorer/status/index.php">Status</a></li>
              </ul></li>
           
@@ -1538,28 +1524,31 @@ class CTemplate
 		?>
         
             <div class="row">
-            <table class="table-responsive" width="100%">
-            <tr bgcolor="#cad1d7">
-            <td height="65px" width="8%" align="center"><a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-danger">Testnet</span></a></td>
-            <td height="50px" width="84%" align="right" id="td_balance">
-            <table>
+            <table width="100%">
             <tr>
-            <td>
-            <span class="font_20" id="balance_msk"><strong><? print explode(".", $_REQUEST['ud']['balance'])[0]; ?> </strong></span>
-            <span class="font_16"><? print ".".explode(".", $_REQUEST['ud']['balance'])[1]; ?> MSK&nbsp;&nbsp;</span>
+            <td width="10%" bgcolor="#cad1d7" height="60px">
+            
+            <table width="250px">
+            <tr>
+            <td width="30px">&nbsp;</td>
+            <td><strong><? print "$ ".$_REQUEST['sd']['msk_price']." <span class='font_12'>/ MSK</span>"; ?></strong></td>
+            <td><a class="btn btn-success btn-sm" href="http://www.maskexchange.com" target="_blank">Buy</a></td>
+            <td><a class="btn btn-danger btn-sm" href="http://www.maskexchange.com" target="_blank">Sell</a></td>
+            </tr>
+            </table>
+            
+            </td>
+            <td width="60%" align="center" bgcolor="#cad1d7"><a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-danger">Beta Release</span></a></td></td>
+            <td width="20%" bgcolor="#cad1d7"><span class="font_20" id="balance_msk"><strong><? print explode(".", $_REQUEST['ud']['balance'])[0]; ?> </strong></span>
+            <span class="font_16"><? if (strpos($_REQUEST['ud']['balance'], ".")) print "."; print explode(".", $_REQUEST['ud']['balance'])[1]; ?> MSK&nbsp;&nbsp;~<? print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['msk_price'], 2); ?></span></td>
+            
+            <td bgcolor="#cad1d7"><a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
+            <span class="glyphicon glyphicon-send">&nbsp;</span>Send Coins</a></td>
+            <td width="20%" bgcolor="#cad1d7">&nbsp;</td>
+            </tr>
+            </table>
+            
            
-            </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
-            <span class="glyphicon glyphicon-send">&nbsp;</span>Send Coins</a>
-            </td>
-            </tr>
-            </table>
-            </td>
-            <td height="60px" width="8%">&nbsp;</td>
-            </tr>
-            </table>
-            </div>
         
         <?
 		}

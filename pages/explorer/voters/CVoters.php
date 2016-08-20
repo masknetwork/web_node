@@ -144,6 +144,17 @@ class CVoters
 			case "30" : $blocks=43200; break;
 		}
 		
+		// Voters reward
+		$total_reward=$this->kern->getReward("ID_VOTER")*$_REQUEST['sd']['msk_price'];
+		
+		// Total votes 24 hours
+		$query="SELECT SUM(power) AS total 
+   		          FROM votes 
+				 WHERE block>".($_REQUEST['sd']['last_block']-1440);
+		$result=$this->kern->execute($query);	
+		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$total_power=$row['total'];
+		
 		$query="SELECT * 
 		          FROM votes 
 				 WHERE target_type='".$target_type."' 
@@ -152,7 +163,8 @@ class CVoters
 				   AND block>".($_REQUEST['sd']['last_block']-$blocks)." 
 			  ORDER BY power DESC";
 	    $result=$this->kern->execute($query);	
-	    
+	   
+		
 		if (mysql_num_rows($result)==0) 
 		{
 			print "<div class='font_14' style='color:#990000'><br>No results found</div>";
@@ -165,8 +177,9 @@ class CVoters
         <table style="width:90%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-responsive table-hover table-striped">
         <thead  class="font_14">
         <th align="center" width="5%">#</th>
-        <th align="left" width="50%">Address</th>
+        <th align="left" width="40%">Address</th>
         <th align="center" width="15%">Power</th>
+        <th align="center" width="15%">Reward</th>
         <th align="center" width="30%">Time</th>
         </thead>
         <tbody>
@@ -175,15 +188,24 @@ class CVoters
 		    $a=0;
 		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{
+				$p=$row['power']*100/$total_power;
+				$reward=round($p/100*$total_reward, 2);
+				
 				$a++;
 		?>
         
                 <tr>
                 <td width="8%" align="center" class="font_14"><? print $a; ?></td>
-                <td width="60%" align="left" class="font_14"><? print $this->template->formatAdr($row['adr']); ?></td>
+                
+                <td width="30%" align="left" class="font_14"><? print $this->template->formatAdr($row['adr']); ?></td>
+                
                 <td width="12%" align="center" class="font_14" style="color:<? if ($row['type']=="ID_UP") print "#009900"; else print "#990000"; ?>">
-				<strong><? if ($type=="ID_UP") print "+".$row['power']; else print "-".$row['power']; ?></strong></td>
-                <td width="20%" align="left" class="font_14"><? print "~".$this->kern->timeFromBlock($row['block'])." ago"; ?></td>
+				<? if ($type=="ID_UP") print "+".$row['power']; else print "-".$row['power']; ?></td>
+                
+                <td width="12%" align="center" class="font_14" style="color:<? if ($reward>0) print "#009900"; else print "#999999"; ?>">
+				<strong><? print "$".$reward; ?></strong></td>
+                
+                <td width="25%" align="left" class="font_14"><? print "~".$this->kern->timeFromBlock($row['block'])." ago"; ?></td>
                 </tr>
         
         <?

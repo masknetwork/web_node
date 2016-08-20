@@ -12,12 +12,17 @@ class CTweets
 	                  $adr,
 					  $title, 
 					  $mes, 
+					  $days=30,
 					  $retweet_tweet_id=0, 
 					  $pic="")
 	{
 		// Decode
 		$title=base64_decode($title); 
 		$mes=base64_decode($mes); 
+		
+		// Format
+		$title=$this->kern->toString($title);
+		$mes=$this->kern->toString($mes);
 		
 		// Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
@@ -65,13 +70,13 @@ class CTweets
 		// Message
 		if ($retweet_tweet_id==0)
 		{
-		   if ($this->kern->isDesc($mes, 10000))
+		   if ($this->kern->isDesc($mes, 10000)==false)
 		   {
 			  $this->template->showErr("Invalid message", 550);
 			  return false;
 		   }
 		   
-		   if ($this->kern->isTitle($title))
+		   if ($this->kern->isTitle($title)==false)
 		   {
 			  $this->template->showErr("Invalid title", 550);
 			  return false;
@@ -89,6 +94,13 @@ class CTweets
 		   }
 		}
 		
+		
+		// Days
+		if ($days<30)
+		{
+			$this->template->showErr("Invalid days", 550);
+			return false;
+		}
 		
 		try
 	    {
@@ -108,6 +120,7 @@ class CTweets
 							   par_2='".base64_encode($mes)."',
 							   par_3='".$retweet_tweet_id."',
 							   par_4='".base64_encode($pic)."',
+							   days='".$days."',
 							   status='ID_PENDING', 
 							   tstamp='".time()."'"; 
 	       $this->kern->execute($query);
@@ -414,16 +427,14 @@ class CTweets
 						   OR tw.adr IN (SELECT follows 
 						                   FROM tweets_follow
 										  WHERE adr='".$adr."')) 
-						  
-			         ORDER BY tw.ID DESC 
+					ORDER BY tw.ID DESC 
 			            LIMIT ".$start.", ".$end; 
 		   else
 		        $query="SELECT *
 		                 FROM tweets AS tw 
 						 LEFT JOIN votes_stats AS vs ON vs.targetID=tw.tweetID
 				        WHERE tw.adr='".$adr."' 
-						 
-			         ORDER BY tw.ID DESC 
+					ORDER BY tw.ID DESC 
 			            LIMIT ".$start.", ".$end; 
 		}
 	
@@ -444,6 +455,7 @@ class CTweets
          <?
 		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{
+				
 				// Retweet ?
 				if ($row['retweet_tweet_ID']>0)
 				{
@@ -508,16 +520,16 @@ class CTweets
 					    if ($row['retweet_tweet_ID']>0)
 					    {
 							if (strlen($retweet_row['mes'])>250)
-					          print substr(base64_decode($retweet_row['mes']), 0, 250)."...";
+					          print $this->kern->txtExplode(substr(base64_decode($retweet_row['mes']), 0, 250))."...";
 					       else
-					         print base64_decode($retweet_row['mes']);
+					         print $this->kern->txtExplode(base64_decode($retweet_row['mes']));
 					    }
 					    else
 					    {
 					       if (strlen($mes)>250)
-					          print substr($mes, 0, 250)."...";
+					          print $this->kern->txtExplode(substr($mes, 0, 250))."...";
 					       else
-					          print $mes;
+					          print $this->kern->txtExplode($mes);
 					    }
 					 ?>
                      </p></td>
@@ -558,7 +570,7 @@ class CTweets
 						 $downvotes_24=$row['downvotes_24'];
 						 
 						 // Comments
-						 $comments=$row['comments'];
+						 $comments=$row['comments']; 
 					  }
 				   ?>
                    
@@ -957,9 +969,8 @@ class CTweets
 		?>
            
            <br><br>
-<form id="form_new_tweet_modal" name="form_new_tweet_modal" action="new.php?act=new_tweet" method="post">
+           <form id="form_new_tweet_modal" name="form_new_tweet_modal" action="new.php?act=new_tweet" method="post">
            <input id="fileupload" type="file" name="files[]" data-url="server/php/" multiple style="display:none">
-           
            <input type="hidden" id="tweet_adr" name="tweet_adr" value="">
            <input type="hidden" id="h_img_0" name="h_img_0" value="">
            <input type="hidden" id="h_img_1" name="h_img_1" value="">
@@ -1001,7 +1012,7 @@ class CTweets
            </table></td>
            <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
              <tr>
-               <td width="391" height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
+               <td width="391" height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
              </tr>
              <tr>
                <td height="25" align="left" valign="top" style="font-size:16px">
@@ -1014,7 +1025,7 @@ class CTweets
                <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" valign="top" style="font-size:16px"><strong>Title</strong></td>
+               <td height="25" valign="top" class="font_14"><strong>Title</strong></td>
              </tr>
              <tr>
                <td height="25" valign="top" style="font-size:16px"><input type="text" class="form-control" name="txt_tweet_title" id="txt_tweet_title" value=""></td>
@@ -1023,7 +1034,7 @@ class CTweets
                <td height="25" valign="top" style="font-size:16px">&nbsp;</td>
              </tr>
              <tr>
-               <td height="25" valign="top" style="font-size:16px"><strong>Post</strong></td>
+               <td height="25" valign="top" class="font_14"><strong>Post</strong></td>
              </tr>
              <tr>
                <td>
@@ -1032,6 +1043,144 @@ class CTweets
              </tr>
              <tr>
                <td height="0" align="left">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="0" align="left"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td class="font_14"><strong>Category</strong></td>
+                     <td>&nbsp;</td>
+                     <td class="font_14"><strong>Language</strong></td>
+                   </tr>
+                   <tr>
+                     <td width="48%">
+                     <select name="dd_tweet_categ" id="dd_tweet_categ" class="form-control">
+                     <option value="ID_ADULTS">Adults Only</option>
+                     <option value="ID_ART">Art</option>
+                     <option value="ID_AUTOMOTIVE">Automotive</option>
+                     <option value="ID_BEAUTY">Beauty</option>
+                     <option value="ID_BUSINESS">Business</option>
+                     <option value="ID_COMEDY">Comedy</option>
+                     <option value="ID_CRYPTO" selected>Cryptography</option>
+                     <option value="ID_EDUCATION">Education</option>
+                     <option value="ID_ENTERTAINMENT">Entertainment</option>
+                     <option value="ID_FAMILY">Family</option>
+                     <option value="ID_FASHION">Fashion</option>
+                     <option value="ID_FOOD">Food</option>
+                     <option value="ID_GAMING">Gaming</option>
+                     <option value="ID_HEALTH">Health</option>
+                     <option value="ID_HOWTO">How To</option>
+                     <option value="ID_JOURNALS">Journals</option>
+                     <option value="ID_LIFESTYLE">Lifestyle</option>
+                     <option value="ID_MASKNETWORK">MaskNetwork Related</option>
+                     <option value="ID_MOVIES">Movies</option>
+                     <option value="ID_MUSIC">Music</option>
+                     <option value="ID_NEWS">News</option>
+                     <option value="ID_PETS">Pets & Animals</option>
+                     <option value="ID_PHOTOGRAPHY">Photography</option>
+                     <option value="ID_POLITICS">Politics</option>
+                     <option value="ID_SCIENCE">Science</option>
+                     <option value="ID_SHOPPING">Shoppng</option>
+                     <option value="ID_SPORTS">Sports</option>
+                     <option value="ID_TECH">Technology</option>
+                     <option value="ID_TRAVEL">Travel</option>
+                     </select>
+                     </td>
+                     <td width="4%">&nbsp;</td>
+                     <td width="48%">
+                     <select name="dd_tweet_categ" id="dd_tweet_categ" class="form-control">
+                     <option value="ma">Mandarin</option>
+                     <option value="es">Spanish</option>
+                     <option value="en" selected>English</option>
+                     <option value="hi">Hindi</option>
+                     <option value="ar">Arabic</option>
+                     <option value="pt">Portuguese</option>
+                     <option value="be">Bengali</option>
+                     <option value="ru">Russian</option>
+                     <option value="ja">Japanese</option>
+                     <option value="pu">Punjabi</option>
+                     <option value="ge">German</option>
+                     <option value="ja">Javanese</option>
+                     <option value="wu">Wu</option>
+                     <option value="ma">Malaysian</option>
+                     <option value="id">Indonesian</option>
+                     <option value="te">Telugu</option>
+                     <option value="vi">Vietnamese</option>
+                     <option value="ko">Korean</option>
+                     <option value="fr">French</option>
+                     <option value="ma">Marathi</option>
+                     <option value="ta">Tamil</option>
+                     <option value="ur">Urdu</option>
+                     <option value="tr">Turkish</option>
+                     <option value="it">Italian</option>
+                     <option value="yu">Yue</option>
+                     <option value="th">Thai</option>
+                     <option value="gu">Gujarati</option>
+                     <option value="ji">Jin</option>
+                     <option value="sm">Southern Min</option>
+                     <option value="pe">Persian</option>
+                     <option value="po">Polish</option>
+                     <option value="pa">Pashto</option>
+                     <option value="af">Kannada</option>
+                     <option value="af">Xiang</option>
+                     <option value="af">Malayalam</option>
+                     <option value="af">Sundanese</option>
+                     <option value="af">Hausa</option>
+                     <option value="af">Odia</option>
+                     <option value="af">Burmese</option>
+                     <option value="af">Hakka</option>
+                     <option value="af">Ukrainian</option>
+                     <option value="af">Bhojpuri</option>
+                     <option value="af">Filipino</option>
+                     <option value="af">Yoruba</option>
+                     <option value="af">Yoruba</option>
+                     <option value="af">Maithili</option>
+                     <option value="af">Uzbek</option>
+                     <option value="af">Sindhi</option>
+                     <option value="af">Amharic</option>
+                     <option value="af">Fula</option>
+                     <option value="af">Romanian</option>
+                     <option value="af">Oromo</option>
+                     <option value="af">Igbo</option>
+                     <option value="af">Azerbaijani</option>
+                     <option value="af">Awadhi</option>
+                     <option value="af">Dutch</option>
+                     <option value="af">Hungarian</option>
+                     <option value="af">Greek</option>
+                     <option value="af">Czech</option>
+                     <option value="af">Swedish</option>
+                     </select>
+                     </td>
+                   </tr>
+                 </tbody>
+               </table></td>
+             </tr>
+             <tr>
+               <td height="30" align="right" valign="top">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="30" align="center" valign="top" bgcolor="#fafafa">
+               <table width="95%" border="0" cellpadding="00" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td width="80%" class="font_14"><strong>Days</strong><p class="font_12">Usually blog posts are removed from blockchain after 30 days. You can increase this perriod up to 5 years. The fee is 0.0001 MSK / day</p></td>
+                     <td>&nbsp;</td>
+                     <td width="20%" align="center">
+                     <select class="form-control" id="dd_days" name="dd_days">
+                     <option value="30">1 Month</option>
+                     <option value="90">3 Months</option>
+                     <option value="180">6 Months</option>
+                     <option value="365">1 Year</option>
+                     <option value="730">2 Years</option>
+                     <option value="1825">5 Years</option>
+                     </select>
+                     </td>
+                   </tr>
+                 </tbody>
+               </table></td>
+             </tr>
+             <tr>
+               <td height="30" align="right" valign="top">&nbsp;</td>
              </tr>
              <tr>
                <td height="30" align="right" valign="top">
@@ -1783,7 +1932,7 @@ class CTweets
              <td><hr></td>
            </tr>
            <tr>
-             <td class="font_16"><? print nl2br($this->template->makeLinks(base64_decode($row['mes']))); ?></td>
+             <td class="font_16"><? print nl2br($this->template->makeLinks($this->kern->bb_parse(base64_decode($row['mes'])))); ?></td>
            </tr>
            <tr>
              <td class="font_14">&nbsp;</td>

@@ -247,8 +247,8 @@ class CWrite
 		
 		
 		// Net fee adr
-		if ($this->kern->adrExist($adr)==false || 
-		    $this->kern->isMine($adr)==false)
+		if ($this->kern->adrExist($net_fee_adr)==false || 
+		    $this->kern->isMine($net_fee_adr)==false)
 		{
 			$this->template->showErr("Invalid net fee address");
 			return false;
@@ -258,7 +258,7 @@ class CWrite
 		if ($this->kern->adrExist($adr)==false || 
 		    $this->kern->isMine($adr)==false)
 		{
-			$this->template->showErr("Invalid address");
+			$this->template->showErr("Invalid deployment address or address is empty.");
 			return false;
 		}
 		
@@ -982,7 +982,7 @@ class CWrite
             <td align="right">
             <a style="width:90px" class="btn btn-danger btn-sm" href="javascript:void(0)" onClick="
             $.post('write.php?act=save_code', 
-                   { appID : <? print $appID; ?>, code : <? print $editor; ?>.getValue() }, 
+                   { appID : <? print $appID; ?>, code : btoa(<? print $editor; ?>.getValue()) }, 
                    function() 
                    { 
                       $('#progress').css('width', '0%');

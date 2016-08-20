@@ -14,7 +14,9 @@
    $sd=new CSysData($db);
    $tweets=new CTweets($db, $template);
    $home=new CHome($db, $template);
-?>
+   
+  
+   ?>
 
 <!doctype html>
 <html>
