@@ -142,15 +142,13 @@ class CAdrOptions
                         <td height="50" align="center">
 						<?
 						     $query="SELECT * 
-							           FROM adr 
-									  WHERE adr='".$adr."'"; 
+							           FROM adr_attr 
+									  WHERE adr='".$adr."' 
+									    AND attr='ID_RES_REC'"; 
 							 $result=$this->kern->execute($query);	
 	                         
-							 $row = mysql_fetch_array($result, MYSQL_ASSOC);
-							 
-							 
-							 if ($row['sealed']<$_REQUEST['sd']['last_block']) 
-							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal(); \" class=\"btn btn-primary\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Seal</a>";
+							 if (mysql_num_rows($result)==0) 
+							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal(); \" class=\"btn btn-primary\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Restrict</a>";
 						     else
 							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal();\" class=\"btn btn-warning\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Renew</a>";
 								
@@ -163,13 +161,14 @@ class CAdrOptions
                     <tr>
                       <td align="left" class="inset_gri_16"><table width="100%" border="0" cellspacing="1" cellpadding="0">
                         <tr>
-                          <td width="68%"><span class="font_16"><strong>Seal Address</strong></span> <span class="font_14">( 0.0001 MSK / day )</span><a href="javascript:$('#modal_profile').modal()" class="blue_16"></a></td>
+                          <td width="68%"><span class="font_16"><strong>Restrict Recipients</strong></span> <span class="font_14">( 0.0001 MSK / day )</span><a href="javascript:$('#modal_profile').modal()" class="blue_16"></a></td>
                           <td width="32%" height="30">&nbsp;</td>
                         </tr>
                       </table></td>
                     </tr>
                     <tr>
-                      <td align="left" class="font_14">You can seal an address for a specified number of days. A sealed address has some restrictions applied. The most important is that applications installed on sealed addresses can nor be chenged or uninstalled. Once you seal an address, you loose any control over the installed application.</td>
+                      <td align="left" class="font_14">If you enable this option, your address will only be able to send funds to certain predefined addresses. Any other transfer will be rejected by network. This is one of the best ways to protect your funds, especially if you have an account on a web node that you do not manage. 
+Note that this option can not be canceled once it has been activated and will expire after the specified number of days.</td>
                     </tr>
                   </table></td>
                 </tr>
@@ -242,7 +241,7 @@ class CAdrOptions
                     <tr>
                       <td align="left" class="inset_gri_16"><table width="100%" border="0" cellspacing="1" cellpadding="0">
                         <tr>
-                          <td width="78%" height="30"><span class="font_16"><strong>Reveal Private Key</strong></span> <span class="font_14">( 0.0001 MSK / message )</span><a href="javascript:$('#modal_profile').modal()" class="blue_16"></a><a href="javascript:$('#modal_froze').modal()" class="blue_16"></a><a href="javascript:$('#modal_seal').modal()" class="blue_16"></a><a href="javascript:$('#modal_otp').modal()" class="blue_16"></a><a href="javascript:$('#modal_aditional').modal()" class="blue_16"></a><a href="javascript:$('#modal_autoresp').modal()" class="blue_16"></a></td>
+                          <td width="78%" height="30"><span class="font_16"><strong>Reveal Private Key</strong></span> <span class="font_14">( free )</span><a href="javascript:$('#modal_profile').modal()" class="blue_16"></a><a href="javascript:$('#modal_froze').modal()" class="blue_16"></a><a href="javascript:$('#modal_seal').modal()" class="blue_16"></a><a href="javascript:$('#modal_otp').modal()" class="blue_16"></a><a href="javascript:$('#modal_aditional').modal()" class="blue_16"></a><a href="javascript:$('#modal_autoresp').modal()" class="blue_16"></a></td>
                           <td width="22%">&nbsp;</td>
                         </tr>
                       </table></td>

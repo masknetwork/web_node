@@ -270,5 +270,58 @@ class CSettings
         <?
 		$this->template->showModalFooter("Update");
 	}
+	
+	function showNodeSettings()
+	{
+		?>
+        
+        <table width="90%" border="0" cellpadding="0" cellspacing="0">
+   <tbody>
+     <tr>
+       <td width="82%" align="left" class="font_16">Wallet Status<p class="font_10">Change wallet status from online to offline. If you set the wallet as offline, users will be redirected to a default maintainance page</p></td>
+       <td width="18%" align="center">
+       <select class="form-control" id="dd_status" name="dd_status">
+       <option value="">Online</option>
+       <option value="">Offline</option>
+       </select>
+       </td>
+     </tr>
+     <tr>
+       <td colspan="2" align="left"><hr></td>
+       </tr>
+     <tr>
+       <td align="left" class="font_16">Change root password<p class="font_10">Change the root password. You should change the password from time to time and eventually restrict the root login to whitelisted IPs.</p></td>
+       <td align="center"><a href="javascript:void(0)" onClick="$('#modal_change_pass').modal()" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Change</a></td>
+     </tr>
+     <tr>
+       <td colspan="2" align="left"><hr></td>
+       </tr>
+     <tr>
+       <td align="left" class="font_16">Restrict root login by IP<p class="font_10">Restrict the root access to wallet by IP. You can set up to 10 whitelisted IPs.</p></td>
+       <td align="center"><a href="javascript:void(0)" onClick="$('#modal_restrict').modal()" class="btn btn-success"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Restrict</a></td>
+     </tr>
+     <tr>
+       <td colspan="2" align="left"><hr></td>
+       </tr>
+     <tr>
+       <td align="left" class="font_16">Set new accounts reward<p class="font_10">Set a reward in PLC for newly created accounts. You have to define a payment address and an ammount.</p></td>
+       <td align="center"><a href="javascript:void(0)" onClick="$('#modal_reward').modal()" class="btn btn-success" style="width:100px"><span class="glyphicon glyphicon-gift"></span>&nbsp;&nbsp;Setup</a></td>
+     </tr>
+     <tr>
+       <td colspan="2" align="left"><hr></td>
+       </tr>
+     <tr>
+       <td align="left">&nbsp;</td>
+       <td align="center">&nbsp;</td>
+     </tr>
+     <tr>
+       <td align="left">&nbsp;</td>
+       <td align="center">&nbsp;</td>
+     </tr>
+   </tbody>
+ </table>
+        
+        <?
+	}
 }
 ?>

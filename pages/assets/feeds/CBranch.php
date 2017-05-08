@@ -202,17 +202,7 @@ class CBranch
 			 
 		   ?>
            
-                       <div style="height:10px">&nbsp;</div>
-                       <div class="btn-group">
-                       <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button">
-                       <span class="glyphicon glyphicon-plus"></span>
-                       <span class="caret"></span></button>
-                       <ul role="menu" class="dropdown-menu">
-                       <li><a href="../../assets/options/issued.php?act=show_modal&feed=<? print $feed; ?>&branch=<? print $branch; ?>">Launch Binary Option</a></li>
-                       <li><a href="#">Start a Speculative Market</a></li>
-                       <li><a href="#">Issue a Market Pegged Asset</a></li>
-                       </ul>
-                       </div>
+                      
                        
            <?
 			  }

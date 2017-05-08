@@ -35,7 +35,17 @@ class CVoters
               <div class="panel panel-default">
               <div class="panel-heading font_14" align="center">Pending Payment</div>
               <div class="panel-body" style="color:#009900" align="center">
-              <span class="font_20"><? print "$".$this->kern->split($row['pay'])[0]; ?></span><span class="font_12" style="color:#5CB859"><? print ".".$this->kern->split($row['pay'])[1]; ?></span>
+              <span class="font_20">
+			  
+			  <? 
+			      $pay=round($row['pay']*$_REQUEST['sd']['MSK_price'], 2);
+			      print "$".$this->kern->split($pay, 2)[0]; 
+			  ?>
+              
+              </span><span class="font_12" style="color:#5CB859">
+			  <? print ".".$this->kern->split($pay, 2)[1]; ?>
+              
+              </span>
               </div>
               </div>
               </td>
@@ -57,8 +67,23 @@ class CVoters
 			 <?
 			    switch ($target_type)
 				{
-					case "ID_POST" : print "Blog"; break;
+					// Post
+					case "ID_POST" : print "Blog Post"; break;
+					
+					// Comment
 					case "ID_COM" : print "Comment"; break;
+					
+					// Asset
+					case "ID_ASSET" : print "Asset"; break;
+					
+					// Data Feed
+					case "ID_FEED" : print "Data Feed"; break;
+					
+					// Binary option
+					case "ID_OPTION" : print "Binary Option"; break;
+					
+					// MArgin market
+					case "ID_MARKET" : print "Margin Market"; break;
 				}
 			 ?>
            
@@ -72,47 +97,27 @@ class CVoters
            <tr>
              <td align="right">Upvotes 24 Hours</td>
              <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['upvotes_24']; ?></strong></td>
+             <td height="30" align="left"><strong><? if ($row['upvotes_24']=="") print "0"; else print $row['upvotes_24']; ?></strong></td>
            </tr>
            <tr>
              <td align="right">Upvotes Power 24 Hours</td>
              <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['upvotes_power_24']." MSK"; ?></strong></td>
-           </tr>
-           <tr>
-             <td align="right">Upvotes Total</td>
-             <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['upvotes_total']; ?></strong></td>
-            </tr>
-           <tr>
-             <td align="right">Upvotes Power Total</td>
-             <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['upvotes_power_total']." MSK"; ?></strong></td>
+             <td height="30" align="left"><strong><? if ($row['upvotes_power_24']=="") print "0 MSK"; else print $row['upupvotes_power_24votes_24']." MSK"; ?></strong></td>
            </tr>
            <tr>
              <td align="right">Downvotes 24 Hours</td>
              <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['downvotes_24']; ?></strong></td>
+             <td height="30" align="left"><strong><? if ($row['downvotes_24']=="") print "0"; else print $row['downvotes_24']; ?></strong></td>
            </tr>
            <tr>
              <td align="right">Downvotes Power 24 Hours</td>
              <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['downvotes_power_total']." MSK"; ?></strong></td>
+             <td height="30" align="left"><strong><? if ($row['downvotes_power_total']=="") print "0 MSK"; else print $row['downvotes_power_total']." MSK"; ?></strong></td>
            </tr>
            <tr>
-             <td align="right">Downvotes Total</td>
+             <td align="right">Pending Payment </td>
              <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['downvotes_total']; ?></strong></td>
-           </tr>
-           <tr>
-             <td align="right">Downvotes Power Total</td>
-             <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print $row['downvotes_power_total']." MSK"; ?></strong></td>
-           </tr>
-           <tr>
-             <td align="right">Payment Amount</td>
-             <td>&nbsp;</td>
-             <td height="30" align="left"><strong><? print round($row['pay']/$_REQUEST['sd']['msk_price'], 4)." MSK ($".round($row['pay'],2).")"; ?></strong></td>
+             <td height="30" align="left"><strong><? print round($row['pay'], 4)." MSK ($".round($row['pay']*$_REQUEST['sd']['MSK_price'], 2).")"; ?></strong></td>
            </tr>
            <tr>
              <td align="right">Payment Block</td>
@@ -145,7 +150,7 @@ class CVoters
 		}
 		
 		// Voters reward
-		$total_reward=$this->kern->getReward("ID_VOTER")*$_REQUEST['sd']['msk_price'];
+		$total_reward=$this->kern->getReward("ID_VOTER")*$_REQUEST['sd']['MSK_price'];
 		
 		// Total votes 24 hours
 		$query="SELECT SUM(power) AS total 
@@ -157,11 +162,11 @@ class CVoters
 		
 		$query="SELECT * 
 		          FROM votes 
-				 WHERE target_type='".$target_type."' 
-				   AND targetID='".$targetID."' 
-				   AND type='".$type."' 
-				   AND block>".($_REQUEST['sd']['last_block']-$blocks)." 
-			  ORDER BY power DESC";
+				  JOIN votes_power AS vp ON vp.voteID=votes.ID
+				 WHERE votes.target_type='".$target_type."' 
+				   AND votes.targetID='".$targetID."' 
+				   AND votes.type='".$type."' 
+				ORDER BY vp.vote_power DESC";
 	    $result=$this->kern->execute($query);	
 	   
 		
@@ -177,9 +182,9 @@ class CVoters
         <table style="width:90%" border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-responsive table-hover table-striped">
         <thead  class="font_14">
         <th align="center" width="5%">#</th>
-        <th align="left" width="40%">Address</th>
+        <th align="left" width="30%">Address</th>
         <th align="center" width="15%">Power</th>
-        <th align="center" width="15%">Reward</th>
+        <th align="center" width="25%">Reward</th>
         <th align="center" width="30%">Time</th>
         </thead>
         <tbody>
@@ -188,10 +193,7 @@ class CVoters
 		    $a=0;
 		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{
-				$p=$row['power']*100/$total_power;
-				$reward=round($p/100*$total_reward, 2);
 				
-				$a++;
 		?>
         
                 <tr>
@@ -200,10 +202,10 @@ class CVoters
                 <td width="30%" align="left" class="font_14"><? print $this->template->formatAdr($row['adr']); ?></td>
                 
                 <td width="12%" align="center" class="font_14" style="color:<? if ($row['type']=="ID_UP") print "#009900"; else print "#990000"; ?>">
-				<? if ($type=="ID_UP") print "+".$row['power']; else print "-".$row['power']; ?></td>
+				<? if ($type=="ID_UP") print "+".$row['vote_power']; else print "-".$row['vote_power']; ?></td>
                 
                 <td width="12%" align="center" class="font_14" style="color:<? if ($reward>0) print "#009900"; else print "#999999"; ?>">
-				<strong><? print "$".$reward; ?></strong></td>
+				<strong><? print $row['vote_pay']." MSK ($".round($row['vote_pay']*$_REQUEST['sd']['MSK_price'], 2).")"; ?></strong></td>
                 
                 <td width="25%" align="left" class="font_14"><? print "~".$this->kern->timeFromBlock($row['block'])." ago"; ?></td>
                 </tr>
@@ -214,6 +216,78 @@ class CVoters
         
         </tbody>
         </table>
+        
+        <?
+	}
+	
+	function showRewards($target_type, $targetID)
+	{
+		$query="SELECT * 
+		          FROM rewards
+				 WHERE target_type='".$target_type."' 
+				   AND targetID='".$targetID."' 
+				   AND reward='ID_CONTENT'
+			  ORDER BY ID DESC 
+			     LIMIT 0,100"; 
+		$result=$this->kern->execute($query);	
+		
+		?>
+        
+        <br>
+        <table class="table table-responsive table-hover table-striped" style="width:90%">
+        <thead class="font_14">
+        <td width="55%"><strong>Address</strong></td>
+        <td align="center" width="15%"><strong>Content</strong></td>
+        <td align="center" width="15%"><strong>Reward</strong></td>
+        <td align="center" width="15%"><strong>Block</strong></td>
+        </thead>
+        
+        <?
+		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			{
+		?>
+        
+               <tr class="font_14">
+               <td><? print $this->template->formatAdr($row['adr']); ?></td>
+               <td style="color:#999999" align="center">
+               
+			   <?
+			      switch ($target_type)
+				       {
+					       // Blog post
+					       case "ID_POST" : print "Blog Post"; break;
+					   
+					       // Comment
+					       case "ID_COM" : print "Comment"; break;
+					   
+					       // Data feed
+					       case "ID_FEED" : print "Data Feed"; break;
+					   
+					       // Asset
+					       case "ID_ASSET" : print "Asset"; break;
+					   
+					       // Binary option
+					       case "ID_BET" : print "Binary Option"; break;
+					   
+					       // Margin market
+					       case "ID_MKT" : print "Margin Markets"; break;
+					}
+				?>
+               
+               <br><span class="font_10" style="color:#999999"><? print "ID : ".$row['targetID']; ?></span>
+               </td>
+               
+               <td align="center"><strong style="color:#009900"><? print "$".round($row['amount']*$_REQUEST['sd']['MSK_price'], 2); ?></strong><br><span style="color:#999999; font-size:10px"><? print $row['amount']." MSK"; ?></span></td>
+             
+               <td align="center" style="color:#999999"><? print $row['block']; ?><br><span style="font-size:10px">~<? print $this->kern->timeFromBlock($row['block']); ?></span></td>
+               </tr>
+        
+        <?
+			}
+		?>
+        
+        </table>
+        <br><br>
         
         <?
 	}

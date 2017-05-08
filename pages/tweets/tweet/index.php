@@ -25,6 +25,7 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script src="../../../utils.js"></script>
 
 <link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
 <link rel="stylesheet" href="../../../gallery.css">
@@ -41,23 +42,6 @@
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
 
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_12 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-.font_101 {font-size:18px;  }
-.font_141 {font-size:22px;  }
-</style>
 
 <script>
 $(document).ready(
@@ -66,15 +50,14 @@ $(function (e)
 {
 	var i=0;
 	
-	$("body").tooltip({ selector: '[data-toggle=tooltip]' });
-	
     $('#fileupload').fileupload({
-        dataType: 'json',
-		url: './server/php/index.php',
+        url: './server/php/index.php',
+		dataType : 'json',
+		autoUpload:true,
 		
 		add: function(e, data) 
 		{ 
-		   data.files.forEach(function(file) 
+		    data.files.forEach(function(file) 
 		   { 
 		      if (file.name.indexOf('.jpg')<0 && 
 			      file.name.indexOf('.jpeg')<0) 
@@ -94,6 +77,7 @@ $(function (e)
         
 		done: function (e, data) 
 		{
+			
 			 $.each(data.result.files, function (index, file) 
 			 {
 				$('#img_'+i).attr('src', '../../../crop.php?src=./pages/tweets/home/server/php/files/'+file.name+'&w=50&h=50');
@@ -104,60 +88,85 @@ $(function (e)
 			
 			$('#row_drop').css('display', 'none');
 			$('#row_progress').css('display', 'none');
+        },
+		
+		fail: function(e, data) 
+		{
+			   console.log(data);
+              alert(data.errorThrown+", "+data.textStatus);
         }
+		
+		
     });
 }));
 </script>
 
 </head>
 
+
 <body>
 
 <?
-   $template->showTopBar(8);
+   $template->showBalanceBar();
 ?>
- 
 
-<div class="container-fluid">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("community");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	
  
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1 col-sm-0">&nbsp;</div>
- <div class="col-md-8 col-sm-12" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
-     // Modals
-	 $template->showVoteModal("ID_POST", $_REQUEST['ID']);
-	 $mes->showComposeModal();
+ <br>
+ <table width="90%" border="0" cellspacing="0" cellpadding="0">
+   <tbody>
+     <tr>
+       <td width="75%" height="1000" align="center" valign="top">
+         
+         
+         <?
+              // Modals
+	          $template->showVoteModal("ID_POST", $_REQUEST['ID']);
+			  
+			  // Compose modal
+	          $mes->showComposeModal();
 	 
-     // Location
-     $template->showLocation("../tweets/home/index.php", "Posts", "", "Post");
+              // Location
+              $template->showLocation("../tweets/home/index.php", "Posts", "", "Post");
+	          
+			   // Menu
+	           $template->showNav(5,
+	                   "../../tweets/home/index.php", "Home", "",
+					   "../../tweets/tweets/index.php?adr=all&time=24", "Top 24 Hours", "",
+					   "../../tweets/tweets/index.php?adr=all&time=7", "Top 7 Days", "",
+					   "../../tweets/tweets/index.php?adr=all&time=30", "Top 30 Days", "",
+					   "../../tweets/tweets/index.php?adr=all&time=0", "Last Tweets", ""); 
+					   
+	          // Target
+	          $sel=1;
+         	  if ($_REQUEST['target']=="upvoters") $sel=2;
+	          if ($_REQUEST['target']=="downvoters") $sel=3;
 	 
-	 // Target
-	 $sel=1;
-	 if ($_REQUEST['target']=="upvoters") $sel=2;
-	 if ($_REQUEST['target']=="downvoters") $sel=3;
-	 
-	 // Menu
-	 if ($sel>1)
-	 $template->showNav($sel,
-	                   "index.php?ID=".$_REQUEST['ID'], "Post", "",
-	                   "index.php?ID=".$_REQUEST['ID']."&target=upvoters&target_type=".$_REQUEST['target_type'], "Upvoters", "",
-					   "index.php?ID=".$_REQUEST['ID']."&target=downvoters&target_type=".$_REQUEST['target_type'], "Downvoters", ""); 
+	          // Menu
+	          if ($sel>1)
+	          $template->showNav($sel,
+	                             "index.php?ID=".$_REQUEST['ID'], "Post", "",
+	                             "index.php?ID=".$_REQUEST['ID']."&target=upvoters&target_type=".$_REQUEST['target_type'], "Upvoters", "",
+	  			                 "index.php?ID=".$_REQUEST['ID']."&target=downvoters&target_type=".$_REQUEST['target_type'], "Downvoters", ""); 
 	
 					    
-	
+	          print "<br><br>";
 	 
 	 // New comment
 	 $tweets->showNewCommentModal();
- ?>
  
- <br>
- <?
 	      switch ($_REQUEST['act'])
 		  {
 		     case "new_comment" : $tweet->newComment($_REQUEST['dd_comm_net_fee'], 
@@ -215,17 +224,39 @@ $(function (e)
 			   $tweets->showComments("ID_POST", $_REQUEST['ID']);
 		   }
 	   ?>
+         
+       </td>
+     </tr>
+   </tbody>
+</table>
  
  
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
  
- </div>
- <div class="col-md-2 col-sm-0" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1 col-sm-0">&nbsp;</div>
- </div>
-</div>
+
+ 
  
  <?
     $template->showBottomMenu();
  ?>
+ 
 </body>
 </html>
+
+
+
+
+
+
+
+

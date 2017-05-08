@@ -20,7 +20,7 @@
 		 }
 		 else
 		 {
-			 $user="wallet";
+			 $user="root";
 			 $pass="dicatrenu";
 			 $db="wallet";
 			 $ho="localhost";
@@ -35,9 +35,10 @@
 		 
 		 foreach($_REQUEST as $key => $value)
 		 {
-		    if (!strpos($_REQUEST[$key], "'")===false) 
-			die ("Invalid characters");
-		 }
+			 $_REQUEST[$key]=str_replace("'", "", $_REQUEST[$key]);
+			 $_REQUEST[$key]=str_replace("\"", "", $_REQUEST[$key]);
+			 $_REQUEST[$key]=str_replace("\\", "", $_REQUEST[$key]);		
+		}
 	}
 	
 	 function new_con($host, $db, $user, $pass)
@@ -58,12 +59,11 @@
 	
 	function hasAttr($adr, $attr)
 	{
-		$adr=$this->adrFromDomain($adr);
-		
+		// Load
 		$query="SELECT * 
-		          FROM adr_options 
+		          FROM adr_attr 
 				 WHERE adr='".$adr."' 
-				   AND op_type='".$attr."'"; 
+				   AND attr='".$attr."'"; 
 		$result=$this->execute($query);	
 		
 		if (mysql_num_rows($result)>0)
@@ -114,20 +114,7 @@
 	  }
 	
 	
-	 function feeAdrValid($adr)
-	 {
-		// Is contract ?
-		$query="SELECT * FROM agents WHERE adr='".$adr."'"; 
-		$result=$this->execute($query);	
-		if (mysql_num_rows($result)>0) return false;
-		
-		// Has attributes
-		$query="SELECT * FROM adr_options WHERE adr='".$adr."'"; 
-		$result=$this->execute($query);	
-		if (mysql_num_rows($result)>0) return false;
-		
-		return true;
-	 }
+	
 	
 	  function adrExist($adr)
 	{
@@ -329,11 +316,13 @@
             switch ($tag) {			    
                 case 'b': $replacement = "<strong>$innertext</strong>"; break;
                 case 'i': $replacement = "<em>$innertext</em>"; break;
+				case 'u': $replacement = "<u>$innertext</u>"; break;
                 case 'size': $replacement = "<span style=\"font-size: $param;\">$innertext</a>"; break;
                 case 'color': $replacement = "<span style=\"color: $param;\">$innertext</a>"; break;
                 case 'center': $replacement = "<div class=\"centered\">$innertext</div>"; break;
-                case 'quote': $replacement = "<blockquote>$innertext</blockquote>" . $param? "<cite>$param</cite>" : ''; break;
-                case 'url': $replacement = '<a target="blank" class="marox12" href="' . ($param? $param : $innertext) . "\">$innertext</a>"; break;
+                case 'q': $replacement = "<blockquote cite='' class='font_14'>$innertext</blockquote>"; break;
+				case 'video' : $replacement="<embed width='600' height='400' src='https://www.youtube.com/v/$innertext'>"; break;
+                case 'url': $replacement = "<a target='blank' href='" . ($param? $param : $innertext) . "'>$innertext</a>"; break;
                 case 'img':
                     list($width, $height) = preg_split('`[Xx]`', $param);
                     $replacement = "<img style=\"max-width:550px;\" border=\"0\" src=\"$innertext\" " . (is_numeric($width)? "width=\"$width\" " : '') . (is_numeric($height)? "height=\"$height\" " : '') . '/>';
@@ -618,17 +607,17 @@ $('#back').css("cursor", "pointer");
 		if ($asset=="MSK")
 		{
 		   $query="SELECT * 
-		          FROM adr 
-				 WHERE adr='".$adr."'"; 
+		            FROM adr 
+				    WHERE adr='".$adr."'"; 
 		   $result=$this->execute($query);	
 		
 	       if (mysql_num_rows($result)>0) 
 		   {
 			  $row = mysql_fetch_array($result, MYSQL_ASSOC);
-			  return $row['balance'];
+			  $balance=$row['balance'];
 		   }
 		   else
-		      return 0;
+		      $balance= 0;
 		}
 		else
 		{
@@ -641,12 +630,31 @@ $('#back').css("cursor", "pointer");
 	      if (mysql_num_rows($result)>0) 
 		   {
 			  $row = mysql_fetch_array($result, MYSQL_ASSOC);
-			  return $row['qty'];
+			  $balance=$row['qty'];
 		   }
 		   else
-		      return 0;
+		      $balance=0;
 		}
-	}
+		
+		// Trans pool
+		$query="SELECT sum(amount) AS total 
+		          FROM trans_pool 
+				 WHERE src='".$adr."' 
+				   AND cur='".$asset."'"; 
+		$result=$this->execute($query);	
+		
+		if (mysql_num_rows($result)>0)
+		{
+			// Load data
+			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			
+			// New balance
+			$balance=$balance-abs($row['total']);
+		}
+		
+		// Return
+		return $balance;
+	}	
 	
 	function getMyBalance($asset="MSK")
 	{
@@ -783,6 +791,15 @@ $('#back').css("cursor", "pointer");
 	
 	function assetExist($asset)
 	{
+		// Length
+		if (strlen($asset)!=6)
+		   return false;
+		
+		// Preg match
+		if (preg_match("/^[A-Z]{6}$/", $asset)!=1)
+		   return false;
+		
+		// Load
 		$query="SELECT * 
 		          FROM assets 
 				 WHERE symbol='".$asset."'";
@@ -917,20 +934,14 @@ $('#back').css("cursor", "pointer");
 	
 	function isString($var)
 	{
-		for ($a=0; $a<=strlen($var)-1; $a++)
-		{
-		   $code=ord($var[$a]);
-		   if ($code<32 || $code>126)
-		   {
-			  if (ord($var[$a])!=10)
-		      {
-				  print $code;
-			      return false;
-			  }
-		   }
-		}
-		
-		return true;
+		for ($a=0; $a<=strlen($var); $a++)
+		  if ((ord($var[$a])<32 || ord($var[$a])>126) && ord($var[$a])!=10 && ord($var[$a])!=0)
+		  {
+			  print ord($var[$a]);
+		    return false;
+		  }
+		  
+	    return true;
 	}
 	
 	function toString($var)
@@ -968,17 +979,21 @@ $('#back').css("cursor", "pointer");
 		   return true;
 	}
 	
-	function canSpend($adr)
+	
+	
+	function voted($adr)
 	{
-		// Contract ?
 		$query="SELECT * 
-		          FROM agents
-				 WHERE adr='".$adr."'";
-		$result=$this->execute($query);	
-	    if (mysql_num_rows($result)>0) return false;
+		          FROM votes 
+				 WHERE adr='".$adr."' 
+				   AND block>".($_REQUEST['sd']['last_block']-1440);
+				   
+	    $result=$this->execute($query);	
 		
-		// Passed
-		return true;
+	    if (mysql_num_rows($result)>0) 
+		   return true;
+		else
+		   return false;
 	}
 	
 	function isLink($link)
@@ -1064,6 +1079,75 @@ $('#back').css("cursor", "pointer");
 		   return flase;
 		else
 		   return true;
+	}
+	
+	function noescape($str)
+	{
+	    $str=str_replace("<", "", $str);
+		return $str;	
+	}
+	
+	function isSpecMktAdr($adr)
+	{
+		$query="SELECT * 
+		          FROM feeds_spec_mkts 
+				 WHERE adr='".$adr."'"; 
+		$result=$this->execute($query);	
+		
+		if (mysql_num_rows($result)>0)
+		   return true;
+		else 
+		   return false;
+	}
+	
+	function canSpend($adr)
+	{
+		if ($this->isSpecMktAdr($adr)) 
+		   return false;
+		else
+		   return true;
+	}
+	
+	function standardCheck($template, $net_fee_adr, $adr)
+	{
+		// Net fee valid
+		if ($this->adrValid($net_fee_adr)==false)
+		{
+			$template->showErr("Invalid network fee address / trust address");
+			return false;
+		}
+		
+		// Valid adr
+		if ($this->adrValid($adr)==false)
+		{
+			$template->showErr("Invalid address");
+			return false;
+		}
+		
+		// Mine fee address  / address ?
+		if ($this->isMine($net_fee_adr)==false || 
+		   $this->isMine($adr)==false)
+		{
+			$template->showErr("Invalid entry data");
+			return false;
+		}
+		
+		// Net fee exist ?
+		if ($this->adrExist($net_fee_adr)==false)
+		{
+			$template->showErr("Invalid net fee address");
+			return false;
+		}
+		
+		// Can spend ?
+		if ($this->canSpend($net_fee_adr)==false)
+		{
+			$template->showErr("Network fee address can't spend funds");
+			return false;
+		}
+		
+		// Return
+		return true;
 	}
 }
 ?>

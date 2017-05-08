@@ -90,7 +90,7 @@
 				  $trans->sendCoins($_REQUEST['dd_net_fee'], 
 			                        $_REQUEST['dd_from'], 
 								    $_REQUEST['txt_to'], 
-								    $_REQUEST['txt_msk'], 
+								    $_REQUEST['txt_MSK'], 
 								    "MSK", 
 								    $_REQUEST['txt_mes'], 
 								    $_REQUEST['txt_escrower']);

@@ -158,43 +158,32 @@ class CMyAdr
                   <?
 				     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 					 {
+						 $balance=$this->kern->getBalance($row['adr'], "MSK");
 				  ?>
                   
                         <tr>
                           <td width="9%" align="left">
                           <img src="<? if ($row['pic']!="") print base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png"; ?>" width="50" height="50" alt="" class="img-circle"  />
                           </td>
-                          <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="$('#qr_img').attr('src', '../../../qr/qr.php?qr=<? print $row['adr']; ?>'); $('#txt_plain').val('<? print $row['adr']; ?>'); $('#modal_qr').modal();" class="font_10" style="color:#999999">full address</a><? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
+                          <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
                          
                           <td width="10%" align="center">
                           <?
-						      if ($row['balance']>=1)
-							  {
-						  ?>
-                          
-                          <a href="../../tweets/vote/vote.php?adr=<? print urlencode($row['adr']); ?>" id="popoverData" class="btn"  data-content="In order to receive your voting reward for an address, you need to vote at least 5 comments, 3 blog posts and at least another content type. Click for voting reports." rel="popover" data-placement="top" data-original-title="Voting Status" data-trigger="hover">
-						  <? 
-						      if ($this->votedAll($row['adr'])==true) 
-							      print "<img src='../../tweets/vote/GIF/p10.png' width='30px'>"; 
-							  else  
-							      print "<img src='../../tweets/vote/GIF/p5.png' width='30px'>"; 
-						  ?>
-                          </a>
-                          
-                          <?
-							  }
-						  ?>
-                          
+						     // Restricted recipients ?
+							 if ($this->kern->hasAttr($row['adr'], "ID_RES_REC")==true)
+							  print "<span class='glyphicon glyphicon-random' style='color:#999999' data-toggle='tooltip' data-placement='top' title='Restricted recipients'></span>";
+							?>
                           </td>
                           
-                          <td width="21%" align="center" class="font_14" style="color:#009900"><strong>
+                          <td width="21%" align="center" class="font_14" style="color:<? if ($balance==0) print "#999999"; else print "#009900" ?>"><strong>
 						<? 
-						   if ($row['balance']=="") 
+						   
+						   if ($balance=="") 
 						      print "0 MSK"; 
 							else
-							  print round($row['balance'], 8)." MSK"; 
+							  print round($balance, 8)." MSK"; 
 						?>
-                        </strong><p class="font_10"><? print "$".round($row['balance']*$_REQUEST['sd']['msk_price'], 2); ?></p></td>
+                        </strong><p class="font_10"><? print "$".round($row['balance']*$_REQUEST['sd']['MSK_price'], 2); ?></p></td>
                         <td width="25%" align="center" class="simple_maro_12">
                         
                        
@@ -205,21 +194,7 @@ class CMyAdr
                               <td>
                               
 							  <?
-							      $query="SELECT * 
-								            FROM agents 
-										   WHERE adr='".$row['adr']."'";
-								  $res=$this->kern->execute($query);	
-	                               
-								  if (mysql_num_rows($res)>0)   
-								  {
-									  // Load data
-									  $r = mysql_fetch_array($res, MYSQL_ASSOC);
-									  
-									  // Display
-                                      print "<a class=\"btn btn-sm btn-danger\" href='../../app/directory/app.php?ID=".$r['aID']."' style='width:75px'><span class='glyphicon glyphicon-cog'></span>&nbsp;&nbsp;App</a></td>";
-								  }
-								  else
-								      print "<a class=\"btn btn-sm btn-warning\" href='../options/index.php?ID=".$row['ID']."'>Options</a></td>";
+							     print "<a class=\"btn btn-sm btn-warning\" href='../options/index.php?ID=".$row['ID']."'>Options</a></td>";
                               ?>
                               
                               <td>&nbsp;</td>
@@ -233,7 +208,7 @@ class CMyAdr
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="5" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="5"><hr></td>
                         </tr>
                   
                   <?

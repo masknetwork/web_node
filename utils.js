@@ -8,6 +8,7 @@
 			   $('#'+target).keyup(
 			   function(event) 
 			   {
+				   
 				   if ($('#'+target).val()!="")
 				   {
 					 $('#'+target).val(Math.round($('#'+target).val()));

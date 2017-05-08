@@ -21,18 +21,8 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
-
-<link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
-<link rel="stylesheet" href="../../../gallery.css">
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
-
-<script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
-<script src="../../../gallery.min.js"></script>
-
-<script src="../../../jupload/js/vendor/jquery.ui.widget.js"></script>
-<script src="../../../jupload/js/jquery.iframe-transport.js"></script>
-<script src="../../../jupload/js/jquery.fileupload.js"></script>
-
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
@@ -46,35 +36,32 @@
     height: 70px;
     animation: spin 2s linear infinite;
 }
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 </style>
-
 </head>
 
 <body>
 
 <?
-   $template->showTopBar("admin");
+   $template->showBalanceBar();
 ?>
- 
 
-<div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1 col-sm-0">&nbsp;</div>
- <div class="col-md-8 col-sm-12" align="center" style="height:100%; background-color:#ffffff">
- 
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("mining");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	 <?
     // Action
 	if ($_REQUEST['act']=="start") 
 	   $mining->startMiners($_REQUEST['txt_delegate'], $_REQUEST['dd_cores']);
@@ -98,20 +85,28 @@
 	$mining->showLastBlocks();
  ?>
  
-<br>
  
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
  
 
-       
-       
- </div>
- <div class="col-md-2 col-sm-0" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1 col-sm-0">&nbsp;</div>
- </div>
- </div>
+ 
  
  <?
     $template->showBottomMenu();
  ?>
+ 
 </body>
 </html>
+
+
+

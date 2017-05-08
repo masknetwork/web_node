@@ -92,7 +92,7 @@
                         <td background="../../template/template/GIF/lp.png">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td class="simple_gri_inchis_12">Masknetwork iti permite sa postezi anunturi de vanzare pentru orice tip de produs fizic, digital sau servicii. Nu ai nevoie de un site web sau un magazin virtual. Odata postat un anunt, el va fi distribuit in toata reteaua si vei incepe sa primesti comenzi din toata lumea. Deoarece o adresa MaskNetwork reprezinta de fapt o cheie publica, vei putea comunica usor si securizat cu orice client si orice potential cumparator te va putea contacta pentru mai multe detali.</td>
+                        <td class="simple_gri_inchis_12">MaskNetwork iti permite sa postezi anunturi de vanzare pentru orice tip de produs fizic, digital sau servicii. Nu ai nevoie de un site web sau un magazin virtual. Odata postat un anunt, el va fi distribuit in toata reteaua si vei incepe sa primesti comenzi din toata lumea. Deoarece o adresa MaskNetwork reprezinta de fapt o cheie publica, vei putea comunica usor si securizat cu orice client si orice potential cumparator te va putea contacta pentru mai multe detali.</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>

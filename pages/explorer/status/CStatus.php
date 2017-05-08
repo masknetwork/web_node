@@ -116,7 +116,7 @@
 	   
 	 function showStopBut()
 	 {
-		 if ($_REQUEST['ud']['user']!="root") return false;
+		 if ($_REQUEST['ud']['user']!="root" || $_REQUEST['sd']['status']=="ID_OFFLINE") return false;
 		 ?>
          
              <br>

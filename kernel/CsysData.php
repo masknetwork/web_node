@@ -10,7 +10,7 @@ class CSysData
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		
 		$_REQUEST['sd']['status']=$row['status'];
-		$_REQUEST['sd']['msk_price']=$row['msk_price'];
+		$_REQUEST['sd']['MSK_price']=$row['MSK_price'];
 		
 		$query="SELECT * FROM status";
 		$result=$this->kern->execute($query);
@@ -61,14 +61,14 @@ class CSysData
 		
 		
 		// Offline ?
-		if ($_REQUEST['sd']['status']=="ID_OFFLINE" ||
+		/*if ($_REQUEST['sd']['status']=="ID_OFFLINE" ||
             (time()-$_REQUEST['sd']['last_ping'])>10)
 			{
 			   if (strpos($_SERVER['REQUEST_URI'], "pages")>0)
                   $db->redirect("../../maintainance/maintainance/index.php");
 			   else
 			      $db->redirect("./pages/maintainance/maintainance/index.php");
-			}
+			}*/
 	}
 }
 ?>

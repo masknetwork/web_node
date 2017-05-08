@@ -81,9 +81,6 @@
 			   // Help
 			   $template->showHelp();
 			   
-			   // Show Assets
-			   $issued_assets->showIssuedAssets();
-			   
 			   // Issue modal
 			   $issued_assets->showIssueAssetModal();
 		       
@@ -92,6 +89,9 @@
 	      	   
 			   // Edit modal
 			   $issued_assets->showEditModal();
+			   
+			   // Show Assets
+			   $issued_assets->showIssuedAssets();
 			?>
             
             </td>

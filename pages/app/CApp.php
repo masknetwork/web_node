@@ -209,8 +209,11 @@ class CApp
 		}
 		
 		// Address balance
-		if ($type=="ID_STORE")
+		if ($target=="ID_STORE")
 		{
+		   // From domain
+		   $pay_adr=$this->kern->adrFromDomain($pay_adr);
+		   
 		   // Payment address
 		   if ($this->kern->isAdr($pay_adr)==false)
 		   {

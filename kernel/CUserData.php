@@ -31,6 +31,7 @@ class CUserData
 		$_REQUEST['ud']['unread_esc']=$row['unread_esc'];
 		$_REQUEST['ud']['pending_adr']=$row['pending_adr'];
 		$_REQUEST['ud']['api_key']=$row['api_key'];
+		$_REQUEST['ud']['ref_adr']=$row['ref_adr']; 
 		
 		// Balance
 		$query="SELECT sum(adr.balance) AS total 
@@ -46,14 +47,13 @@ class CUserData
 		          FROM trans_pool AS tp
 				  JOIN my_adr ON my_adr.adr=tp.src 
 				 WHERE my_adr.userID='".$_REQUEST['ud']['ID']."' 
-				   AND tp.amount<0
 				   AND cur='MSK'"; 
 		$result=$this->kern->execute($query);
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
-		$balance_pending=round($row['total'], 8);
+		$balance_pending=round(abs($row['total']), 8);
 		
 		// Balance
-		$_REQUEST['ud']['balance']=$balance+$balance_pending;
+		$_REQUEST['ud']['balance']=$balance-$balance_pending;
 		
 		// Update unsigned escrowed transactions
 		$query="SELECT COUNT(*) AS total 

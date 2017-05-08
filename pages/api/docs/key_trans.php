@@ -159,10 +159,10 @@
          <td align="left"><hr></td>
        </tr>
        <tr>
-         <td align="left" class="font_14" height="40px">Sends 100 MSK from address name maria to address name john with the message thank you</td>
+         <td align="left" class="font_14" height="40px">Sends 100 MSK from address name maria to address name john with the message &quot;thank you&quot;</td>
        </tr>
        <tr>
-         <td align="center" class="font_16" bgcolor="#f0f0f0" height="70px"><strong>http://localhost/wallet/pages/api/api.php?req=ID_SEND_COINS&amp;from_adr=maria&amp; toadr=john&amp;amount=100&amp;cur=MSK&amp;mes=Thank you</strong></td>
+         <td align="center" class="font_16" bgcolor="#f0f0f0" height="70px"><strong>http://localhost/wallet/pages/api/api.php?act=ID_SEND_COINS&amp;net_fee_adr=maria&amp; from_adr=maria&amp;to_adr=john&amp;amount=100&amp;cur=MSK&amp;mes=Thank you</strong></td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>

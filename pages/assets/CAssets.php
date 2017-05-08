@@ -98,10 +98,10 @@ class CAssets
         <?
 	}
 	
+	
 	function showSelector($target="ID_CRYPTO")
 	{
 		?>
-        
        
         <div class="btn-group" style="width:90%" align="center">
         

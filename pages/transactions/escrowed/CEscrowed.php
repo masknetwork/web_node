@@ -60,8 +60,8 @@
 							    op='ID_ESCROWED_SIGN', 
 								fee_adr='".$net_fee_adr."', 
 								par_1='".$row['trans_hash']."',
-								par_2='".$signer."',
-								par_3='".$type."', 
+								par_2='".$type."',
+								target_adr='".$signer."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
@@ -92,8 +92,14 @@
 				    OR rec_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
 					OR escrower IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."'))
 			  ORDER BY ID DESC LIMIT 0,30";
+			  
 		$result=$this->kern->execute($query);	
-	 
+	    
+		if (mysql_num_rows($result)==0)
+		{
+			print "<span class='font_12' style='color:#990000'>No escrowed transactions found</span>";
+			return false;
+		}
 	  
 		?>
         
@@ -129,7 +135,6 @@
 						  ?>
                           
                           <table width="80" border="0" cellspacing="0" cellpadding="0">
-                          <tbody>
                             <tr>
                               
                               <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RELEASE'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-primary btn-sm" title="Release Funds to Seller" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-ok"></span></a></td>
@@ -137,7 +142,6 @@
                               <td align="center"><a href="javascript:void(0)" onclick="$('#sign_modal').modal(); $('#esc_act').val('ID_RETURN'); $('#transID').val('<? print $row['ID']; ?>')" class="btn btn-danger btn-sm" title="Return Funds to Buyer" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-remove"></span></a></td>
                               
                             </tr>
-                          </tbody>
                         </table>
                         
                         <?
@@ -157,14 +161,10 @@
 						 }
 					?>
                             
-                    </tbody>
+                    
                   </table>
                   
-                  
-                 
-            </table>
-
-        
+           
         <?
 	}
 	

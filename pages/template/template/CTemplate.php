@@ -6,35 +6,91 @@ class CTemplate
 	   $this->kern=$db;	
 	}
 	
+	function showAffiliates()
+	{
+		return; 
+		if ($_REQUEST['ud']['ID']>0)
+		{
+			if ($_REQUEST['ud']['ref_adr']==0)
+			{
+		?>
+        
+                 <table width="200" border="0" cellspacing="0" cellpadding="0">
+                 <tbody>
+                 <tr>
+                 <td height="250" align="center" valign="top" background="../../template/template/GIF/affiliates.png">
+                 <table width="200" border="0" cellspacing="0" cellpadding="0">
+                 <tbody>
+                 <tr>
+                 <td height="100" align="center">&nbsp;</td>
+                 </tr>
+                 <tr>
+                 <td height="100" align="center" valign="top"><p class="font_12" style="color:#ffffff; width:90%">Join the first decentralized affiliate program online and win huge amounts of coins by reffering others to MaskNetwork. </p></td>
+                  </tr>
+                  <tr>
+                  <td align="center"><a href="#" class="btn btn-danger btn-sm" style="width:90%">Start Now</a></td>
+                  </tr></tbody></table></td></tr></tbody></table>
+        
+        <?
+			}
+			else
+			{
+				?>
+                
+                <br>
+            <div class="panel panel-default">
+            <div class="panel-body">
+  
+            <table width="100%">
+            <tr><td colspan="3" class="font_12">Every day you are rewarded up to 0.0005 MSK for each 1 MSK owned by your affiliates.</td></tr>
+            <tr><td colspan="3"><hr></td></tr>
+            <tr><td align="center" colspan="3"><img src="../../template/template/GIF/s1.png" width="150px"></td></tr>
+            <tr><td colspan="3"><hr></td></tr>
+            <tr><td align="center" colspan="3">2</td></tr>
+            <tr><td colspan="3"><hr></td></tr>
+            <tr><td class="font_30" align="center" colspan="3">0.0003<span class="font_10">&nbsp;MSK</span></td></tr>
+            <tr><td colspan="3"><hr></td></tr>
+            <tr>
+            <td colspan="3">
+            <a href="../ref/stats/index.php" class="btn btn-primary btn-sm" style="width:100%"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Manage</a>
+            </td></tr>
+            </table>
+             
+            </div>
+            </div>
+                
+                <?
+			}
+		}
+	}
+	
 	function showProfile()
 	{
 		if ($_REQUEST['ud']['ID']>0)
 		{
 		?>
             
-            <br>
-            <div class="panel panel-default">
-            <div class="panel-body">
-  
-            <table width="100%">
+           
+            
+            <table width="70%">
+            <tr><td>&nbsp;&nbsp;</td></tr>
             <tr><td colspan="2"><img src="../../template/template/GIF/empty_profile.png" class="img img-rounded img-responsive" width="100%"></td></tr>
             <tr><td>&nbsp;</td></tr>
-            <tr><td bgcolor="#fafafa" width="75%" class="font_14" align="center"><? print $_REQUEST['ud']['user']; ?></td>
+            <tr><td bgcolor="#676b7a" width="75%" class="font_16" align="center" style="color:#FFFFFF; text-shadow: 1px 1px #000000"><? print $_REQUEST['ud']['user']; ?></td>
             <td>
             
            <div class="btn-group">
            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
            <span class="glyphicon glyphicon-cog"></span>
-          </button>
-          <ul class="dropdown-menu">
-          <li><a href="../../../index.php?act=logout">Logout</a></li>
-          <li><a href="../../profile/profile/index.php">Profile</a></li>
-          </ul>
-          </div></td></tr>
-          </table>
+           </button>
+           <ul class="dropdown-menu">
+           <li><a href="../../../index.php?act=logout">Logout</a></li>
+           <li><a href="../../profile/profile/index.php">Profile</a></li>
+           </ul>
+           </div></td></tr>
+           </table>
              
-            </div>
-            </div>
+          
            
         
         <?
@@ -49,7 +105,7 @@ class CTemplate
 			  LEFT JOIN domains AS dom ON dom.adr=ma.adr
 			      WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
 				    AND ma.adr NOT IN (SELECT adr 
-				                         FROM agents 
+				                         FROM feeds_spec_mkts 
 										WHERE adr IN (SELECT adr 
 										                FROM adr 
 													   WHERE userID='".$_REQUEST['ud']['ID']."'))
@@ -93,11 +149,6 @@ class CTemplate
 			  LEFT JOIN adr ON ma.adr=adr.adr
 			  LEFT JOIN domains AS dom ON dom.adr=ma.adr
 			      WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
-				    AND ma.adr NOT IN (SELECT adr 
-				                         FROM agents 
-										WHERE adr IN (SELECT adr 
-										                FROM adr 
-													   WHERE userID='".$_REQUEST['ud']['ID']."'))
 			   ORDER BY balance DESC"; 
 		 $result=$this->kern->execute($query);	
 	  
@@ -182,7 +233,7 @@ class CTemplate
                   </tr>
                   <tr>
                     <td height="50" align="center" bgcolor="#e6ffed">
-                    <span class="simple_green_22" id="txt_code" name="txt_code"><? print "$".$_REQUEST['sd']['msk_price']; ?></span></td>
+                    <span class="simple_green_22" id="txt_code" name="txt_code"><? print "$".$_REQUEST['sd']['MSK_price']; ?></span></td>
                   </tr>
             </table>
         
@@ -264,6 +315,19 @@ class CTemplate
            </table></td>
            <td width="400" align="center"><table width="90%" border="0" cellspacing="0" cellpadding="5">
              <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+			   <?
+			      $this->showMyAdrDD("dd_net_fee_send");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
                <td height="25" align="left" valign="top" style="font-size:16px"><strong>From Address</strong></td>
              </tr>
              <tr>
@@ -293,22 +357,22 @@ class CTemplate
                <td height="50" align="left">
                
                
-               <table width="300px" border="0" cellspacing="0" cellpadding="0" style="display:block" id="tab_msk" name="tab_msk">
+               <table width="300px" border="0" cellspacing="0" cellpadding="0" style="display:block" id="tab_MSK" name="tab_MSK">
                  <tr>
                    <td class="font_16"><strong>Amount</strong></td>
                    <td>&nbsp;</td>
-                   <td align="right" class="font_12"><a hef="javascript:void(0)" onclick="$('#tab_assets').css('display', 'block'); $('#tab_msk').css('display', 'none');" style="color:#ff2a00">send assets</a>&nbsp;&nbsp;</td>
+                   <td align="right" class="font_12"><a hef="javascript:void(0)" onclick="$('#tab_assets').css('display', 'block'); $('#tab_MSK').css('display', 'none');" style="color:#ff2a00">send assets</a>&nbsp;&nbsp;</td>
                  </tr>
                  <tr>
                    <td ><div class="input-group">
                      <div class="input-group-addon">MSK</div>
-                     <input type="number" step="0.00001" class="form-control" id="txt_msk" name="txt_msk"  style="width:80px" placeholder="0" onKeyUp="var  usd=$(this).val()*<? print $_REQUEST['sd']['msk_price']; ?>; var fee=$(this).val()/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; usd=Math.round(usd*100)/100; $('#trans_net_fee_panel_val').text(fee); $('#txt_usd').val(usd)"/>
+                     <input type="number" step="0.00001" class="form-control" id="txt_MSK" name="txt_MSK"  style="width:80px" placeholder="0" onKeyUp="var  usd=$(this).val()*<? print $_REQUEST['sd']['MSK_price']; ?>; var fee=$(this).val()/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; usd=Math.round(usd*100)/100; $('#trans_net_fee_panel_val').text(fee); $('#txt_usd').val(usd)"/>
                      </div>
                    </td>
                    <td width="10px">&nbsp;</td>
                    <td><div class="input-group">
                      <div class="input-group-addon">USD</div>
-                     <input type="number" step="0.01" class="form-control" id="txt_usd" name="txt_usd"  style="width:80px" placeholder="0" onKeyUp="var  msk=$('#txt_usd').val()/<? print $_REQUEST['sd']['msk_price']; ?>; var fee=msk/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; $('#trans_net_fee_panel_val').text(fee); $('#txt_msk').val(msk);"/>
+                     <input type="number" step="0.01" class="form-control" id="txt_usd" name="txt_usd"  style="width:80px" placeholder="0" onKeyUp="var  MSK=$('#txt_usd').val()/<? print $_REQUEST['sd']['MSK_price']; ?>; var fee=MSK/10000; if (fee<0.0001) fee=0.0001; fee=Math.round(fee*10000)/10000; $('#trans_net_fee_panel_val').text(fee); $('#txt_MSK').val(MSK);"/>
                    </div></td>
                   
                  </tr>
@@ -365,16 +429,34 @@ class CTemplate
 		
 	}
 	
-	function showTestnetModal()
+	function showStatusModal()
 	{
-		$this->showModalHeader("testnet_modal", "Beta stage release", "act", "");
+		switch ($_REQUEST['sd']['status'])
+		{
+			// Online
+			case "ID_ONLINE" : $img="node_online.png"; 
+			                  $expl="This node is up and running and in sync with the network."; 
+			break;
+			
+			// Offline
+			case "ID_OFFLINE" : $img="node_offline.png"; 
+			                    $expl="This node is offline and not conected to the network. Your requets will not be processed. Get in touch with node operator for more details."; 
+			break;
+			
+			// Sync
+			case "ID_SYNC" : $img="node_sync.png"; 
+			                 $expl="This node is up and running but is not in sync with the network. The syncronization process can last up to 2-3 hours depending on the web node hardware."; 
+			break;
+		}
+		
+		$this->showModalHeader("testnet_modal", "Web node status", "act", "");
 		?>
         
            <table width="700" border="0" cellspacing="0" cellpadding="0">
           <tr>
            <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
              <tr>
-               <td align="center"><img src="../../template/template/GIF/testnet.png" width="180" height="181" alt=""/></td>
+               <td align="center"><img src="../../template/template/GIF/<? print $img; ?>" width="180" height="181" alt=""/></td>
              </tr>
              <tr>
                <td align="center">&nbsp;</td>
@@ -393,7 +475,7 @@ class CTemplate
              </tr>
              <tr>
                <td align="left" valign="top" style="font-size:16px">&nbsp;</td>
-               <td height="25" align="left" valign="top" style="font-size:16px">MaskNetwork is a beta stage software. Beta phase generally begins when the software is feature complete but likely to contain a number of known or unknown bugs. Software in the beta phase will generally have many more bugs in it than completed software, as well as speed/performance issues and may still cause crashes or data loss. In case you have found a bug or other problem, please submit it to bugs@masknetwork.com</td>
+               <td height="25" align="left" valign="top" style="font-size:16px"><? print $expl; ?></td>
              </tr>
              <tr>
                <td align="left">&nbsp;</td>
@@ -436,7 +518,7 @@ class CTemplate
                             <tr>
                               <td colspan="2" align="center" valign="top" class="inset_maro_11">
 							  <?
-							     print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['msk_price'], 2);  
+							     print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['MSK_price'], 2);  
 							  ?>
                               </td>
                               </tr>
@@ -486,11 +568,399 @@ class CTemplate
 	}
 	
 	
+	function showLeftMenu($sel)
+	{
+		switch ($sel)
+		{
+			// Overview
+			case "overview" : $sel=1; break; 
+			
+			// Adr
+			case "adr" : $sel=2; break; 
+			
+			// Portofolio
+			case "portofolio" : $sel=3; break; 
+			
+			// Community
+			case "community" : $sel=4; break; 
+			
+			// Assets
+			case "assets" : $sel=5; break; 
+			
+			// Bets
+			case "bets" : $sel=6; break; 
+			
+			// Margin markets
+			case "margin" : $sel=7; break; 
+			
+			// Messages 
+			case "mes" : $sel=8; break; 
+			
+			// Feeds
+			case "feeds" : $sel=9; break; 
+			
+			// Explorer
+			case "explorer" : $sel=10; break; 
+			
+			// Settings
+			case "settings" : $sel=11; break; 
+			
+			// Help
+			case "help" : $sel=12; break;
+			
+			// Mining
+			case "mining" : $sel=13; break;
+			
+			// Peers
+			case "peers" : $sel=14; break;
+			
+			// Node settings
+			case "node_settings" : $sel=15; break;
+			
+			// Sync status
+			case "sync" : $sel=16; break; 
+		}
+		
+		?>
+		
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+          
+          <?
+		      if ($_REQUEST['ud']['ID']>0)
+			  {
+		  ?>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==1) print "#676B7A"; ?>" <? if ($sel!=1) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==1) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-home" style="color: <? if ($sel==1) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==1) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../transactions/all/index.php">Overview</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==1) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==2) print "#676B7A"; ?>" <? if ($sel!=2) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==2) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-folder-open" style="color: <? if ($sel==2) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==2) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../adr/adr/index.php">Addresses</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==2) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          
+          
+           <tr>
+            <td bgcolor="<? if ($sel==3) print "#676B7A"; ?>" <? if ($sel!=3) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==3) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-briefcase" style="color: <? if ($sel==3) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==3) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../portofolio/assets/index.php">Portofolio</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==3) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <?
+			  }
+		  ?>
+         
+          <tr>
+            <td bgcolor="<? if ($sel==4) print "#676B7A"; ?>" <? if ($sel!=4) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==4) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-globe" style="color: <? if ($sel==4) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==4) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../tweets/home/index.php">Community</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==4) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          
+            <tr>
+            <td bgcolor="<? if ($sel==5) print "#676B7A"; ?>" <? if ($sel!=5) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==5) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-file" style="color: <? if ($sel==5) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==5) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../assets/user/index.php">Assets</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==5) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+           <tr>
+            <td bgcolor="<? if ($sel==6) print "#676B7A"; ?>" <? if ($sel!=6) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==6) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-sort" style="color: <? if ($sel==6) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==6) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../assets/options/index.php">Binary Options</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==6) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==7) print "#676B7A"; ?>" <? if ($sel!=7) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==7) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-signal" style="color: <? if ($sel==7) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==7) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../assets/margin_mkts/index.php">Margin Markets</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==7) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+           
+         <tr><td><hr></td></tr>
+         
+         <?
+		      if ($_REQUEST['ud']['ID']>0)
+			  {
+		  ?>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==8) print "#676B7A"; ?>" <? if ($sel!=8) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==8) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-envelope" style="color: <? if ($sel==8) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==8) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../mes/inbox/index.php">Messages</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==8) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <?
+			  }
+		  ?>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==9) print "#676B7A"; ?>" <? if ($sel!=9) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==9) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-film" style="color: <? if ($sel==9) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==9) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../assets/feeds/index.php">Data Feeds</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==9) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+         <tr>
+            <td bgcolor="<? if ($sel==10) print "#676B7A"; ?>" <? if ($sel!=10) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==10) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-search" style="color: <? if ($sel==10) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==10) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../explorer/packets/index.php">Explorer</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==10) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <?
+		      if ($_REQUEST['ud']['ID']>0)
+			  {
+		  ?>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==11) print "#676B7A"; ?>" <? if ($sel!=11) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==11) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-cog" style="color: <? if ($sel==11) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==11) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../profile/profile/index.php">Settings</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==11) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <?
+			  }
+		  ?>
+          
+         <tr>
+            <td bgcolor="<? if ($sel==12) print "#676B7A"; ?>" <? if ($sel!=12) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==12) print "#1abc9c"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-book" style="color: <? if ($sel==12) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==12) print "#ffffff; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../help/help/index.php">Help</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==12) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffffff; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <tr>
+            <td height="0" bgcolor="#4c505d"><hr></td>
+          </tr>
+          
+		  <?
+		       if ($_REQUEST['ud']['user']=="root")
+			   {
+		  ?>
+          
+          
+            <tr>
+            <td bgcolor="<? if ($sel==13) print "#676B7A"; ?>" <? if ($sel!=13) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==13) print "#c6003d"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-tasks" style="color: <? if ($sel==13) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==13) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../admin/mining/index.php">Mining</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==13) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffecf2; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          
+           <tr>
+            <td bgcolor="<? if ($sel==14) print "#676B7A"; ?>" <? if ($sel!=14) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==14) print "#c6003d"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-link" style="color: <? if ($sel==14) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==14) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../admin/peers/index.php">Peers</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==14) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffecf2; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==15) print "#676B7A"; ?>" <? if ($sel!=15) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==15) print "#c6003d"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-wrench" style="color: <? if ($sel==15) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==15) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../admin/settings/index.php">Node Settings</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==15) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffecf2; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          <tr>
+            <td bgcolor="<? if ($sel==16) print "#676B7A"; ?>" <? if ($sel!=16) print "onMouseOver=\"$(this).attr('bgcolor', '#525765')\" onMouseOut=\"$(this).attr('bgcolor', '')\" "; ?>>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td bgcolor="<? if ($sel==16) print "#c6003d"; ?>">&nbsp;&nbsp;&nbsp;</td>
+                  <td width="50" align="center"><span class="glyphicon glyphicon-refresh" style="color: <? if ($sel==16) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>;"></span></td>
+                  <td width="231" height="50" class="font_16" onMouseOut=""><a style="display:block; width:100%; color:<? if ($sel==16) print "#ffecf2; text-shadow: 1px 1px #000000;"; else print "#c5c7d0"; ?>" href="../../admin/sync/index.php">Sync Status</a></td>
+                  <td width="45" align="left">
+                  <? if ($sel==16) print "<span class='glyphicon glyphicon-chevron-right' style='color:#ffecf2; text-shadow: 1px 1px #000000;'></span>"; ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          
+          
+          <?
+			   }
+		  ?>
+          
+          <tr>
+            <td height="0" bgcolor="#4c505d">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+        
+		<?
+	}
+	
 	function showAds()
 	{
 		// Profile panel
 		$this->showProfile();
-		
+        
+		// Modal
 		$this->showAdsModal();
 	
 		?>
@@ -500,7 +970,7 @@ class CTemplate
               <table width="180" border="0" cellspacing="0" cellpadding="0">
                
                   <tr>
-                    <td align="left"><strong>Advertising</strong></td>
+                    <td align="left" style="color:#c5c7d0"><strong>Advertising</strong></td>
                   </tr>
                   <tr>
                     <td align="left"><hr></td>
@@ -519,9 +989,9 @@ class CTemplate
                     
                          <tr>
                          <td align="left">
-                         <a href="<? print base64_decode($row['link']); ?>" style="font-size:14px"><strong><? print base64_decode($row['title']); ?></strong></a>
-                         <br><span style="font-size:12px"><? print base64_decode($row['message']); ?></span> 
-                         <br><span class="font_10" style="color:#999999"><? print $row['mkt_bid']." MSK / hour"; ?></span>
+                         <a href="<? print base64_decode($row['link']); ?>" style="font-size:14px; color:#dddddd; text-shadow:1px 1px 1px #333333"><strong><? print $this->kern->noescape(base64_decode($row['title'])); ?></strong></a>
+                         <br><span style="font-size:12px; color:#bbbbbb"><? print $this->kern->noescape(base64_decode($row['message'])); ?></span> 
+                         <br><span class="font_10" style="color:#999999"><? print $row['mkt_bid']." MSK / hour, expire ~ ".$this->kern->timeFromBlock($row['expire']); ?></span>
                          </td></tr><tr>
                          <td align="left"><hr></td>
                          </tr>
@@ -569,139 +1039,109 @@ class CTemplate
 		else
 		   $path="../../";
 		   
-		if ($_REQUEST['ud']['ID']>0)
-		{
-		   	
+		
 		?>
         
-           <table width="100%" align="center" style="background-color:#4d5d6d;">
+           <table width="100%" align="center" style="background-color:#383b45;">
            <tr><td><br>
            <table width="1000" border="0" cellpadding="0" cellspacing="0" class="font_12" align="center">
            <tbody>
            <tr>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Transactions</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Messages</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Portofolio</strong></td>
+           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Community</strong></td>
            <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Trade</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Applications</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Blogs</strong></td>
            <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Explorer</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Help</strong></td>
+           <td width="150" align="center" style="color:#e2f7ff" class="font_14"><span class="font_14" style="color:#e2f7ff"><strong>Other</strong></span></td>
            </tr>
            <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."transactions/all/index.php"; ?>" class="font_12" style="color:#cde4ec">My Transactions</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."mes/inbox/index.php"; ?>" class="font_12" style="color:#cde4ec">Inbox</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/all/index.php"; ?>" class="font_12" style="color:#cde4ec">Coins</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."mes/inbox/index.php"; ?>" class="font_12" style="color:#cde4ec">Top Articles</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."assets/user/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/directory/index.php"; ?>" class="font_12" style="color:#cde4ec">Directory</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/home/new.php"; ?>" class="font_12" style="color:#cde4ec">Write</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Packets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."help/help/index.php"; ?>" class="font_12" style="color:#cde4ec">Wallet</a></td>
+           <td width="150" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Help</a></td>
            </tr>
            <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Escrowed</a> </td>
-           <td width="150" height="30" align="center"><a href="<? print $path."mes/sent/index.php"; ?>" class="font_12" style="color:#cde4ec">Outbox</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a> </td>
+           <td width="150" height="30" align="center"><a href="<? print $path."mes/sent/index.php"; ?>" class="font_12" style="color:#cde4ec">Last Articles</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."assets/assets_mkts/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets Markets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/market/index.php"; ?>" class="font_12" style="color:#cde4ec">App Market</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Top 24 Hours</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."explorer/blocks/index.php"; ?>" class="font_12" style="color:#cde4ec">Blocks</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/reference/index.php"; ?>" class="font_12" style="color:#cde4ec">Applications</a></td>
+           <td width="150" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Messages</a></td>
            </tr>
            <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
            <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/mine/index.php"; ?>" class="font_12" style="color:#cde4ec">My Applications</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=7"; ?>" class="font_12" style="color:#cde4ec">Top 7 Days</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."explorer/adr/index.php"; ?>" class="font_12" style="color:#cde4ec">Addressess</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."api/docs/index.php"; ?>" class="font_12" style="color:#cde4ec">API</a></td>
+           <td width="150" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Settings</a></td>
+           </tr>
+           <tr>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Margin Markets</a></td>
+           <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Margin Markets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/status/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Rewards</a></td>
+           <td width="150" align="center">&nbsp;</td>
            </tr>
            <tr>
            <td width="150" height="30" align="center">&nbsp;</td>
            <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/write/index.php"; ?>" class="font_12" style="color:#cde4ec">Write Applications</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=30"; ?>" class="font_12" style="color:#cde4ec">Top 30 Days</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."explorer/status/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">System Status</a></td>
            <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
+           <td width="150" align="center">&nbsp;</td>
            </tr>
            <tr>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
+             <td height="30" align="center">&nbsp;</td>
+             <td height="30" align="center">&nbsp;</td>
+             <td height="30" align="center">&nbsp;</td>
+             <td height="30" align="center">&nbsp;</td>
+             <td align="center">&nbsp;</td>
            </tr>
            </tbody>
            </table>
            </td></tr></table>
+           
+                      <!-- begin olark code -->
+<script data-cfasync="false" type='text/javascript'>/*<![CDATA[*/window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){
+f[z]=function(){
+(a.s=a.s||[]).push(arguments)};var a=f[z]._={
+},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){
+f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={
+0:+new Date};a.P=function(u){
+a.p[u]=new Date-a.p[0]};function s(){
+a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){
+hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){
+return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){
+b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{
+b.contentWindow[g].open()}catch(w){
+c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{
+var t=b.contentWindow[g];t.write(p());t.close()}catch(x){
+b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({
+loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
+/* custom configuration goes here (www.olark.com/documentation) */
+olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://www.olark.com/site/2174-513-10-8410/contact" title="Contact us" target="_blank">Questions? Feedback?</a> powered by <a href="http://www.olark.com?welcome" title="Olark live chat software">Olark live chat software</a></noscript>
+<!-- end olark code -->
           
-           <?
-		}
-		else
-		{
-			?>
-            
-            <table width="100%" align="center" style="background-color:#4d5d6d;">
-           <tr><td><br>
-           <table width="1000" border="0" cellpadding="0" cellspacing="0" class="font_12" align="center">
-           <tbody>
-           <tr>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Trade</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Applications</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Blogs</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Explorer</strong></td>
-           <td width="150" height="30" align="center" style="color:#e2f7ff" class="font_14"><strong>Help</strong></td>
-           </tr>
-           <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/user/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/directory/index.php"; ?>" class="font_12" style="color:#cde4ec">Directory</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/home/new.php"; ?>" class="font_12" style="color:#cde4ec">Write</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Packets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."help/help/index.php"; ?>" class="font_12" style="color:#cde4ec">Wallet</a></td>
-           </tr>
-           <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/assets_mkts/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets Markets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/market/index.php"; ?>" class="font_12" style="color:#cde4ec">App Market</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Top 24 Hours</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."explorer/blocks/index.php"; ?>" class="font_12" style="color:#cde4ec">Blocks</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/reference/index.php"; ?>" class="font_12" style="color:#cde4ec">Applications</a></td>
-           </tr>
-           <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/mine/index.php"; ?>" class="font_12" style="color:#cde4ec">My Applications</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=7"; ?>" class="font_12" style="color:#cde4ec">Top 7 Days</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."explorer/adr/index.php"; ?>" class="font_12" style="color:#cde4ec">Addressess</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."api/docs/index.php"; ?>" class="font_12" style="color:#cde4ec">API</a></td>
-           </tr>
-           <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."app/write/index.php"; ?>" class="font_12" style="color:#cde4ec">Write Applications</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php?adr=all&time=30"; ?>" class="font_12" style="color:#cde4ec">Top 30 Days</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."explorer/status/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">System Status</a></td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           </tr>
-           <tr>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center">&nbsp;</td>
-           </tr>
-           </tbody>
-           </table>
-           </td></tr></table>
-            
-            <?
-		}
-		   ?>
+          
+		
            
  
-           <div class="row" style="background-color:#334456" align="center">
+           <div class="row" style="background-color:#272a31" align="center">
            <div class="col-md-2"></div>
-           <div class="col-md-8"><a href="https://github.com/masknetwork" class="font_10" style="color:#e1e6eb">Code distributed under MIT licence. Contributions welcome. Click for source code.</a>&nbsp;<? if ($_REQUEST['ud']['user']=="vchris") print "<a href=\"../../transactions/all/index.php?act=send_block\" class=\"font_10\">send block</a></div>"; ?></div>
+           <div class="col-md-8"><a href="https://github.com/MaskNetwork" class="font_10" style="color:#e1e6eb">Code distributed under MIT licence. Contributions welcome. Click for source code.</a>&nbsp;<? if ($_REQUEST['ud']['user']=="vchris") print "<a href=\"../../transactions/all/index.php?act=send_block\" class=\"font_10\">send block</a></div>"; ?></div>
            <div class="col-md-2"></div>
            </div>
+           
+           <script>
+           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+           m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+           })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-83132442-1', 'auto');
+          ga('send', 'pageview');
+          </script>
+          
+
+
         <?
 	}
 	
@@ -1278,9 +1718,9 @@ class CTemplate
 		if (mysql_num_rows($result)>0)
 		{
 	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		   return $row['domain'];
+		   return $row['domain']."<a href=\"javascript:void(0)\" onclick=\"$('#qr_img').attr('src', '../../../qr/qr.php?qr=".$adr."'); $('#txt_plain').val('".$adr."'); $('#modal_qr').modal();\" class='font_10' style='color:#999999'>&nbsp;&nbsp;full address</a>";
 		}
-		else return "...".substr($adr, 40, 20)."...";
+		else return "...".substr($adr, 40, 20)."...<a href=\"javascript:void(0)\" onclick=\"$('#qr_img').attr('src', '../../../qr/qr.php?qr=".$adr."'); $('#txt_plain').val('".$adr."'); $('#modal_qr').modal();\" class=\"font_10\" style=\"color:#999999\">&nbsp;&nbsp;full address</a>";
 	}
 	
 	function showSwitch($id, $pos="off")
@@ -1384,7 +1824,7 @@ class CTemplate
             
             
             <li <? if ($sel=="trans") print "class='active'"; ?>>
-            <a href="<? print $path; ?>transactions/all/index.php?act=clear">Transactions
+            <a href="<? print $path; ?>transactions/all/index.php?act=clear">Overview
 			<? 
 			    $unread=$_REQUEST['ud']['unread_trans']+$_REQUEST['ud']['unread_esc']+$_REQUEST['ud']['unread_multisig'];
 			    if ($unread>0) $this->showBadge($unread); 
@@ -1395,20 +1835,20 @@ class CTemplate
             
             <li <? if ($sel=="mes") print "class='active'"; ?>><a href="<? print $path; ?>mes/inbox/index.php">Messages <? if ($_REQUEST['ud']['unread_mes']>0) $this->showBadge($_REQUEST['ud']['unread_mes']); ?></a></li>
             
-            <li <? if ($sel=="trade") print "class='active'"; ?>><a href="<? print $path; ?>assets/user/index.php">Assets</a></li>
-           
-           
-            <li class='dropdown open; <? if ($sel=="app") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
+            <li class='dropdown open; <? if ($sel=="trade") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <li><a href="<? print $path; ?>app/directory/index.php">Applications Directory</a></li>
-            <li><a href="<? print $path; ?>app/market/index.php">Applications Market</a></li>
-            <li><a href="<? print $path; ?>app/mine/index.php">My Applications</a></li>
+            <li><a href="<? print $path; ?>assets/user/index.php">Portofolio</a></li>
+            <li><a href="<? print $path; ?>assets/assets_mkts/index.php">Assets</a></li>
+            <li><a href="<? print $path; ?>assets/options/index.php">Binary Options</a></li>
+            <li><a href="<? print $path; ?>assets/margin_mkts/index.php">Margin Markets</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="<? print $path; ?>app/write/index.php">Write Applications</a></li>
-            <li><a href="<? print $path; ?>app/reference/index.php">Language Reference</a></li>
+            <li><a href="<? print $path; ?>assets/feeds/index.php">Data Feeds</a></li>
             </ul></li>
+           
+           
+             <li <? if ($sel=="community") print "class='active'"; ?>><a href="<? print $path; ?>tweets/home/index.php">Community</a></li>
             
-             <li <? if ($sel=="blogs") print "class='active'"; ?>><a href="<? print $path; ?>tweets/home/index.php">Blogs <? if ($comments>0) $this->showBadge($comments); ?></a></li>
+            
             
              <li class='dropdown open; <? if ($sel=="explorer") print "active"; ?>'>
              <a href="<? print $path; ?>explorer/packets/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
@@ -1421,8 +1861,8 @@ class CTemplate
               <li class='dropdown open; <? if ($sel=="help") print "active"; ?>'>
               <a href="<? print $path; ?>shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Help<b class="caret"></b></a>
               <ul class="dropdown-menu">
-              <li><a href="<? print $path; ?>help/help/index.php">Wallet</a></li>
-              <li><a href="<? print $path; ?>app/reference/index.php">Applications</a></li>
+              <li><a href="<? print $path; ?>help/help/index.php">FAQ</a></li>
+              <li><a href="<? print $path; ?>app/reference/index.php">Guides</a></li>
               <li><a href="<? print $path; ?>api/docs/index.php">API</a></li>
               </ul></li>
               
@@ -1438,7 +1878,11 @@ class CTemplate
                      <li><a href="<? print $path; ?>admin/mining/index.php">CPU Mining</a></li>
                      <li><a href="<? print $path; ?>admin/peers/index.php">Peers</a></li>
                      <li><a href="<? print $path; ?>admin/settings/index.php">Settings</a></li>
-                     </ul></li>
+                     <?
+					     if ($_REQUEST['sd']['status']=="ID_SYNC")
+                         print "<li><a href='".$path."admin/sync/index.php'>Sync Status</a></li>";
+                     ?>
+					 </ul></li>
             
               <?
 				  }
@@ -1472,7 +1916,15 @@ class CTemplate
             <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
             
-             <li <? if ($sel=="trade") print "class='active'"; ?>><a href="<? print $path; ?>assets/user/index.php">Assets</a></li>    
+             <li class='dropdown open; <? if ($sel=="trade") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Trade<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <li><a href="<? print $path; ?>assets/user/index.php">Assets</a></li>
+            <li><a href="<? print $path; ?>assets/assets_mkts/index.php">Assets Markets</a></li>
+            <li><a href="<? print $path; ?>assets/options/index.php">Binary Options</a></li>
+            <li><a href="<? print $path; ?>assets/margin_mkts/index.php">Speculative Markets</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="<? print $path; ?>assets/feeds/index.php">Data Feeds</a></li>
+            </ul></li>
            
            
             <li class='dropdown open; <? if ($sel=="app") print "active"; ?>'><a href="<? print $path; ?>app/directory/index.php" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
@@ -1481,7 +1933,6 @@ class CTemplate
             <li><a href="<? print $path; ?>app/market/index.php">Applications Market</a></li>
             </ul></li>
             
-             <li <? if ($sel=="blogs") print "class='active'"; ?>><a href="<? print $path; ?>tweets/home/index.php">Blogs <? if ($comments>0) $this->showBadge($comments); ?></a></li>
             
              <li class='dropdown open; <? if ($sel=="explorer") print "active"; ?>'>
              <a href="<? print $path; ?>shop/goods/index.php" class="dropdown-toggle" data-toggle="dropdown">Explorer<b class="caret"></b></a>
@@ -1515,43 +1966,143 @@ class CTemplate
 	
 	function showBalanceBar()
 	{
-		// Testnet
-		$this->showTestnetModal();
+		// Send
+		$this->showSendModal();
 		
-		if ($_SESSION['userID']>0)
-		{
-				$this->showSendModal();
+		// Modal
+		$this->showStatusModal();
+		
+		// Update system status
+	    $query="SELECT * FROM web_sys_data";
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		
+		if ($_REQUEST['sd']['status']!="ID_SYNC")
+		{       
+		   if (time()-$row['last_ping']>5) 
+		   {
+			   $query="UPDATE web_sys_data SET status='ID_OFFLINE'";
+			   $this->kern->execute($query);	
+			   $_REQUEST['sd']['status']="ID_OFFLINE";
+		   }
+		   else
+		   {
+			   $query="UPDATE web_sys_data SET status='ID_ONLINE'";
+			   $this->kern->execute($query);	
+			   $_REQUEST['sd']['status']="ID_ONLINE";
+		   }
+		}
+		
 		?>
         
-            <div class="row">
+           
             <table width="100%">
-            <tr>
-            <td width="10%" bgcolor="#cad1d7" height="60px">
+            <tr bgcolor="#383b45">
             
-            <table width="250px">
+            <td width="25%" height="90px" style="color:#ffffff" class="font_26">
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="../../../index.php">Wallet</a>&nbsp;&nbsp; 
+            <span class="font_14">
+            <a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span style="color:#ffffff;" class="label 
+			
+			<? 
+			    switch ($_REQUEST['sd']['status']) 
+				{
+					case "ID_ONLINE" : print "label-success"; break; 
+					case "ID_OFFLINE" : print "label-danger"; break; 
+					case "ID_SYNC" : print "label-warning"; break; 
+				}
+		    
+		?>
+        ">
+        
+        <?
+			 
+			    switch ($_REQUEST['sd']['status']) 
+				{
+					case "ID_ONLINE" : print "Online"; break; 
+					case "ID_OFFLINE" : print "Offline"; break; 
+					case "ID_SYNC" : print "Syncronizing"; break; 
+				}
+			?>
+            
+            </span></a>
+            </span>
+            </td>
+            
+            <td height="60px" align="center">
+            <form id="" name="" method="post" action="../../explorer/search/main.php?act=search">
+            <input class="form-control" id="txt_main_search" name="txt_main_search" style="width:350px" placeholder="Search addresses, profiles, markets...">
+            </form>
+            </td>
+            
+            <td width="25%" height="60px">
+            
+            <?
+			   if ($_REQUEST['ud']['ID']>0)
+			   {
+			?>
+            
+                   <table width="90%">
+                   <tr><td>
+                   <span class="font_20" id="balance_MSK" style="color:#ffffff"><strong>
+			       <? 
+			          print explode(".", $_REQUEST['ud']['balance'])[0]; 
+			       ?> 
+                   </strong></span>
+            
+                   <span class="font_16"  style="color:#ffffff">
+			       <? 
+			            if (strpos($_REQUEST['ud']['balance'], ".")) 
+				           print "."; 
+				
+				        print explode(".", $_REQUEST['ud']['balance'])[1]; ?> MSK&nbsp;&nbsp;<br><span style="color:#c5c7d0">~<? print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['MSK_price'], 2); 
+			      ?>
+                  </span></span>
+                  </td>
+            
+                  <td align="left">
+                  <a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
+                  <span class="glyphicon glyphicon-send">&nbsp;</span>Send Coins</a>
+                  </td>
+                  </tr>
+                  </table>
+            
+            <?
+			   }
+			?>
+            
+            </td>
+            </tr>
+            </table>
+            
+        
+        <?
+	}
+	
+	function test()
+	{
+		?>
+        
+        
+         <table width="250px">
             <tr>
             <td width="30px">&nbsp;</td>
-            <td><strong><? print "$ ".$_REQUEST['sd']['msk_price']." <span class='font_12'>/ MSK</span>"; ?></strong></td>
-            <td><a class="btn btn-success btn-sm" href="http://www.maskexchange.com" target="_blank">Buy</a></td>
-            <td><a class="btn btn-danger btn-sm" href="http://www.maskexchange.com" target="_blank">Sell</a></td>
+           
             </tr>
             </table>
             
             </td>
-            <td width="60%" align="center" bgcolor="#cad1d7"><a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-danger">Beta Release</span></a></td></td>
-            <td width="20%" bgcolor="#cad1d7"><span class="font_20" id="balance_msk"><strong><? print explode(".", $_REQUEST['ud']['balance'])[0]; ?> </strong></span>
-            <span class="font_16"><? if (strpos($_REQUEST['ud']['balance'], ".")) print "."; print explode(".", $_REQUEST['ud']['balance'])[1]; ?> MSK&nbsp;&nbsp;~<? print "$".round($_REQUEST['ud']['balance']*$_REQUEST['sd']['msk_price'], 2); ?></span></td>
+            <td width="55%" align="center">
+            <a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-warning">Testnet node</span></a></td></td>
             
-            <td bgcolor="#cad1d7"><a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
+            <td width="25%"></td>
+            
+            <td><a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
             <span class="glyphicon glyphicon-send">&nbsp;</span>Send Coins</a></td>
-            <td width="20%" bgcolor="#cad1d7">&nbsp;</td>
+            <td width="20%">&nbsp;</td>
             </tr>
             </table>
-            
-           
-        
         <?
-		}
 	}
 	
 	function showLocation($link_1="", $txt_1="", $link_2="", $txt_2="")
@@ -2188,26 +2739,28 @@ ws.onError=function(e)
 	
 	function makeLinks($mes)
 	{
+		return $mes;
 		$m="";
 		$v=explode(" ", $mes);
 		for ($a=0; $a<=sizeof($v)-1; $a++)
 		{
-			if (substr($v[$a], 0, 4)=="http")
-			  $m=$m." <a href='".$v[$a]."' target='_blank' class='font_14'>".substr($v[$a], 0, 10)."...</a>";
-			else if (substr($v[$a], 0, 1)=="#")
-			  $m=$m." <a href='../search/index.php?term=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
-			else if (substr($v[$a], 0, 1)=="$")
-			  $m=$m." <a href='../../assets/user/asset.php?symbol=".substr($v[$a], 1, 100)."'  class='font_14'>".$v[$a]."</a>";
-			else if (substr($v[$a], 0, 1)=="@")
-			  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
-			else 
-			   $m=$m." ".$v[$a];
+			//if (substr($v[$a], 0, 4)=="http")
+			//  $m=$m." <a href='".str_replace(",", "", $v[$a])."' target='_blank' class='font_14'>".substr($v[$a], 0, 20)."...</a>";
+			
+			//else if (substr($v[$a], 0, 1)=="#")
+			//  $m=$m." <a href='../search/index.php?term=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			//else if (substr($v[$a], 0, 1)=="$")
+			//  $m=$m." <a href='../../assets/user/asset.php?symbol=".substr($v[$a], 1, 100)."'  class='font_14'>".$v[$a]."</a>";
+			//else if (substr($v[$a], 0, 1)=="@")
+			//  $m=$m." <a href='../adr/index.php?adr=".urlencode($v[$a])."'  class='font_14'>".$v[$a]."</a>";
+			//else 
+			//   $m=$m." ".$v[$a];
 		}
 		
 		return $m;
 	}
 	
-	function renew($net_fee_adr, $table, $days, $rowhash)
+	function renew($net_fee_adr, $table, $days, $ID)
 	{
 		// Fee address is security options free
 	    if ($this->kern->adrValid($net_fee_adr)==false)
@@ -2271,12 +2824,6 @@ ws.onError=function(e)
 				WHERE rowhash='".$rowhash."'"; 
 	   $result=$this->kern->execute($query);	
 	   
-	   // No data
-	   if (mysql_num_rows($result)==0)
-	   {
-		   $this->showErr("Invalid rowhash", 550);
-		   return false;
-	   }
 	   
 	   // Owner valid
 	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -2331,6 +2878,8 @@ ws.onError=function(e)
 	
 	function showVotePanel($target_type, $targetID)
 	{
+		if (!isset($_REQUEST['ud']['ID'])) return false;
+
 		$this->showVoteModal($target_type, $targetID);
 		
 		$query="SELECT * 
@@ -2412,7 +2961,10 @@ ws.onError=function(e)
                <td align="center"><? $this->showNetFeePanel("0.0001", "trans"); ?></td>
              </tr>
            </table></td>
-           <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
+           <td width="400" align="center" valign="top">
+           
+           
+           <table width="90%" border="0" cellspacing="0" cellpadding="5">
              <tr>
                <td width="391" height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
              </tr>
@@ -2464,7 +3016,10 @@ ws.onError=function(e)
                </td>
              </tr>
              
-           </table></td>
+           </table>
+           
+           
+           </td>
          </tr>
      </table>
      
@@ -2629,7 +3184,8 @@ ws.onError=function(e)
 		          FROM votes 
 				 WHERE adr='".$adr."' 
 				   AND target_type='".$target_type."' 
-				   AND targetID='".$targetID."'";
+				   AND targetID='".$targetID."' 
+				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
 	    
 		if (mysql_num_rows($result)>0)
@@ -2638,9 +3194,9 @@ ws.onError=function(e)
 			return false;
 		}
 		
-		if ($this->kern->getBalance($adr)<1)
+		if ($this->kern->getBalance($adr)<0.01)
 		{
-			$this->showErr("Minimum balance for voting is 1 MSK", 550);
+			$this->showErr("Minimum balance for voting is 0.01 MSK", 550);
 			return false;
 		}
 		

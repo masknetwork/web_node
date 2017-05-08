@@ -31,7 +31,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -75,7 +75,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("Any user can post exchange offers. You can trade Maskcoins or any other network asset locally or globally for cash or online paayments of your choise. With no central authority, there are no rules. You choose your own spread, trade currency or payment methods. You can setup a fixed price or a price based on a data feed and include external contact details such as email or telephone for those who want to contact you. ");
+	 $template->showHelp("Any user can post exchange offers. You can trade MaskCoins or any other network asset locally or globally for cash or online paayments of your choise. With no central authority, there are no rules. You choose your own spread, trade currency or payment methods. You can setup a fixed price or a price based on a data feed and include external contact details such as email or telephone for those who want to contact you. ");
 	
 	// Button
 	$ex->showNewOfferBut();

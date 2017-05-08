@@ -58,25 +58,7 @@ class CSignup
             echo "Invalid email";
         }
 		
-		// IP
-		if ($_SERVER['HTTP_CF_CONNECTING_IP']=="")
-		  $IP=$_SERVER['REMOTE_ADDR'];
-		else
-		  $IP=$_SERVER['HTTP_CF_CONNECTING_IP'];
-		  
-		if ($IP!="89.38.169.57")
-		{
-		   $query="SELECT * 
-		             FROM web_users
-				    WHERE IP='".$IP."'";
-	       $result=$this->kern->execute($query);
 		
-		   if (mysql_num_rows($result)>0)
-	   	   {
-			  $this->template->showErr("One account per IP allowed.", 510);
-			  return false;
-		   }
-		}
 		
 		try
 	    {
@@ -95,8 +77,17 @@ class CSignup
 		   // UserID
 		   $userID=mysql_insert_id();
 		   
-		   // Creates adress
-		   $query="INSERT INTO web_ops 
+		  
+			// set session
+			$_SESSION['userID']=$userID;
+		    
+			// Commit
+	 	    $this->kern->commit();
+            
+			sleep(1);
+			
+			 // Creates adress
+		     $query="INSERT INTO web_ops 
 			                SET user='".$user."', 
 							    op='ID_NEW_ACCOUNT', 
 								par_1='secp224r1', 
@@ -105,13 +96,6 @@ class CSignup
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	        $this->kern->execute($query); 
-			
-			// set session
-			$_SESSION['userID']=$userID;
-		    
-			// Commit
-	 	    $this->kern->commit();
-
 	
 			// Redirect
 			print "<script>window.location='../../transactions/all/index.php'</script>";
@@ -134,6 +118,9 @@ class CSignup
 	{
 		?>
            
+           <div class="panel panel-default" style="width:600px">
+           <div class="panel-body">
+   
            <form method="post" action="index.php?act=signup">
            <table width="90%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f5f5f5">
             <tbody>
@@ -176,6 +163,9 @@ class CSignup
             </tbody>
             </table>
             </form>
+            
+            </div>
+            </div>
       
         <?
 	}

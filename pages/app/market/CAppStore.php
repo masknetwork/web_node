@@ -84,6 +84,19 @@
 			  $this->template->showErr("An application is already installed on this address");
 			  return false;
 		  }
+		  
+		  // Can spend
+		  if ($this->kern->voted($adr)==true)
+		  {
+			  $this->template->showErr("Your address voted in the last 24 hours.");
+			  return false;
+		  }
+		  
+		   if ($this->kern->canSpend($adr)==false)
+		  {
+			  $this->template->showErr("This address can't spend funds");
+			  return false;
+		  }
 		
 		try
 	    {
@@ -146,7 +159,7 @@
             <tr>
             <td width="16%" valign="top"><img src="<? if ($row['pic']!="") print "../../../crop.php?src=".base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png\""; ?>" class="img-responsive img-rounded"></td>
             <td width="3%">&nbsp;</td>
-            <td width="71%" valign="top"><span class="font_20"><strong><? print base64_decode($row['name']); ?></strong></span><p class="font_14"><? print base64_decode($row['description']); ?></p></td>
+            <td width="71%" valign="top"><span class="font_20"><strong><? print $this->kern->noescape(base64_decode($row['name'])); ?></strong></span><p class="font_14"><? print $this->kern->noescape(base64_decode($row['description'])); ?></p></td>
              <td width="3%">&nbsp;</td>
             <td width="11%" align="center" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
               <tbody>
@@ -269,11 +282,11 @@
            </td></tr>
            
            <tr><td align="left" class="font_14" height="30px"><strong>
-           <? print ucfirst(base64_decode($name)); ?>
+           <? print $this->kern->noescape(ucfirst(base64_decode($name))); ?>
            </strong></td></tr>
            
            <tr><td align="left" class="font_12" height="100px" valign="top">
-           <? print substr(base64_decode($desc), 0, 75)."..."; ?>
+           <? print $this->kern->noescape(substr(base64_decode($desc), 0, 75))."..."; ?>
            </td></tr>
            
            <tr><td align="center" class="font_12" height="30px" bgcolor="#e1ffe7" style="color:#005500">
@@ -572,7 +585,7 @@
 		$p=$used*100/$total; 
 		
 		// Amount
-		$pay=round($p/100*$this->kern->getReward("ID_APP")*$_REQUEST['sd']['msk_price'], 2); 
+		$pay=round($p/100*$this->kern->getReward("ID_APP")*$_REQUEST['sd']['MSK_price'], 2); 
 		
 		// Number of installs
 		$query="SELECT COUNT(*) AS total 

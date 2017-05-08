@@ -30,7 +30,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -99,7 +99,7 @@
          <td align="left" class="font_14">&nbsp;</td>
        </tr>
        <tr>
-         <td align="left" class="font_14">All calls to the trading API are sent via HTTP POST to <strong>https://www.mskwallet.com/pages/api/api.php</strong> and must contain the following parameters</td>
+         <td align="left" class="font_14">All calls to the trading API are sent via HTTP POST to <strong>https://www.MSKwallet.com/pages/api/api.php</strong> and must contain the following parameters</td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>
@@ -108,7 +108,7 @@
          <td align="left"><table width="100%" border="0" cellpadding="0" cellspacing="0">
            <tbody>
              <tr>
-               <td width="18%" align="center" class="font_14"><strong>req</strong>
+               <td width="18%" align="center" class="font_14"><strong>act</strong>
                  <p class="font_10">required</p></td>
                <td width="2%">&nbsp;</td>
                <td width="80%" class="font_14">The request type. For example ID_SEND_TRANS will initiate a transaction.</td>
@@ -141,7 +141,7 @@
          <td height="40" align="left" class="font_14">Sends 10 MSK to address john from address maria.</td>
        </tr>
        <tr>
-         <td height="50" align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.mskwallet.org/pages/api/key.php?req=ID_SEND_TRANS&amp;key=3ED2-A3CA-2669-328E-1050&amp; src=maria&amp;dest=john&amp;amount=10&amp;cur=MSK</strong></td>
+         <td height="50" align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.MSKwallet.org/pages/api/key.php?act=ID_SEND_COINS&amp;key=3ED2-A3CA-2669-328E-1050&amp;net_fee_adr=maria&amp; from_adr=maria&amp;to_adr=john&amp;amount=10&amp;cur=MSK</strong></td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>

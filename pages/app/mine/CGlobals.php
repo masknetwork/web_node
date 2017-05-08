@@ -87,6 +87,7 @@ class CGlobals
 			// Value 
 			$val=base64_decode($_REQUEST[$ID]);
 			
+			
 			// Long
 			if ($var->data_type=="long" && 
 			   $this->kern->isNumber($val)==false) 
@@ -118,7 +119,7 @@ class CGlobals
 	        // String
 			if ($var->data_type=="string")
 			{
-			   if (strlen($val)<$min || strlen($val)>$max)
+				if (strlen($val)<$min || strlen($val)>$max)
 			   {
                    $this->template->showErr("Invalid length for variable ".$var->name.". Expecting beween ".$min." and ".$max);
 				   return false;

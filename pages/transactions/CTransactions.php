@@ -13,17 +13,19 @@ class CTransactions
 		// Request data modal
 		$this->showReqDataModal();
 		
-		if ($_REQUEST['act']=="clear")
-		{
-		  $query="UPDATE web_users 
+		// Set unread to zero
+		$query="UPDATE web_users 
 		           SET unread_trans=0 
 				 WHERE ID='".$_REQUEST['ud']['ID']."'";
-		  $this->kern->execute($query);
-		}
+		$this->kern->execute($query);
 		
-		$query="SELECT mt.*, blocks.confirmations
+		// Load transactions
+		$query="SELECT mt.*, 
+		               blocks.confirmations, 
+					   assets.title
 		          FROM my_trans AS mt
 		     LEFT JOIN blocks ON blocks.hash=mt.block_hash
+			 LEFT JOIN assets ON assets.symbol=mt.cur
 				 WHERE mt.userID='".$_REQUEST['ud']['ID']."'
 				ORDER BY ID DESC 
 			     LIMIT 0,20"; 
@@ -55,10 +57,11 @@ class CTransactions
                           <?
 						      $confirms=$row['confirmations'];
 							  
+							  if ($confirms=="")
+					             $confirms=0;
+								 
 						      if ($confirms==0)
 					             print "<span class='label label-danger'>".$confirms."</span>";
-							  if ($confirms=="")
-					             print "<span class='label label-danger'>0</span>";
 							  else if ($confirms<=10)
 					             print "<span class='label label-info'>".$confirms."</span>";
 						      else if ($confirms>10 && $confirms<25)
@@ -76,16 +79,17 @@ class CTransactions
 							     print "color:#990000"; 
 							  else 
 							     print "color:#009900"; 
-						  ?>"><strong><? print $row['amount']." ".strtolower($row['cur']); ?></strong>
+						  ?>"><strong><? print round($row['amount'], 8)." ".strtoupper($row['cur']); ?></strong>
                           <p class="font_12">
 						  <? 
 						      if ($row['cur']=="MSK")
 							  {
 								  if ($row['amount']<0)
-								    print "-$".abs(round($row['amount']*$_REQUEST['sd']['msk_price'], 4));
+								    print "-$".abs(round($row['amount']*$_REQUEST['sd']['MSK_price'], 4));
 								  else
-								     print "+$".round($row['amount']*$_REQUEST['sd']['msk_price'], 4);
+								     print "+$".round($row['amount']*$_REQUEST['sd']['MSK_price'], 4);
 							  }
+							  else print base64_decode($row['title']);
 					      ?>
                           </p>
                           </td>
@@ -274,6 +278,12 @@ class CTransactions
 					   $mes, 
 					   $escrower)
 	{
+		// Plus sign
+		$net_fee_adr=str_replace(" ", "+", $net_fee_adr);
+		$from_adr=str_replace(" ", "+", $from_adr);
+		$to_adr=str_replace(" ", "+", $to_adr);
+		$escrower=str_replace(" ", "+", $escrower);
+		
 		// Ammount
 		if ($amount_asset>0) $amount=$amount_asset;
 		
@@ -310,6 +320,29 @@ class CTransactions
 			return false;
 		}
 		
+		// Restrcited ?
+		if ($this->kern->hasAttr($from_adr, "ID_RES_REC")==true)
+		{
+			// Load data
+			$query="SELECT * 
+			          FROM adr_attr 
+					 WHERE adr='".$from_adr."' 
+					   AND attr='ID_RES_REC'";
+		    
+			$result=$this->kern->execute($query);	
+	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			
+			// On the list ?
+			if ($row['s1']!=$to_adr && 
+			    $row['s2']!=$to_adr && 
+			    $row['s3']!=$to_adr)  
+	        {
+			   $this->template->showErr("Source address can't send funds to the specified recipient");
+			   return false;
+		    }   
+		}
+		
+		
 		// Sender and recipient the same ?
 		if ($from_adr==$to_adr)
 		{
@@ -318,16 +351,19 @@ class CTransactions
 		}
 		
 		// Sender and fee address can spend ?
-		if ($this->kern->canSpend($from_adr)==false)
+		if ($this->kern->canSpend($from_adr)==false || 
+		    $this->kern->canSpend($net_fee_adr)==false)
 		{
 			$this->template->showErr("Sender address can't spend funds");
 			return false;
 		}
 		
-		// Fee address can spend ?
-		if ($this->kern->canSpend($net_fee_adr)==false)
+		
+		// My addresses ?
+		if ($this->kern->isMine($net_fee_adr)==false || 
+		    $this->kern->isMine($from_adr)==false)
 		{
-			$this->template->showErr("Net fee address can't spend funds");
+			$this->template->showErr("Invaid owner");
 			return false;
 		}
 		
@@ -372,11 +408,26 @@ class CTransactions
 					 WHERE owner='".$from_adr."' 
 					   AND symbol='".$moneda."' 
 					   AND qty>".$amount;
-					   
+			$result=$this->kern->execute($query);
+			
 			if (mysql_num_rows($result)==0)
 			{
 				$this->template->showErr("Insuficient assets to execute this operation");
 			    return false;
+			}
+			
+			// Recipient trust  asset ?
+			$query="SELECT * 
+			          FROM adr_attr 
+					 WHERE adr='".$to_adr."' 
+					   AND attr='ID_TRUST_ASSET' 
+					   AND s1='".$moneda."'"; 
+			$result=$this->kern->execute($query);
+			
+			if (mysql_num_rows($result)==0)
+			{
+				//$this->template->showErr("Recipient doesn't trust this asset");
+			    //return false;
 			}
 		}
 		
@@ -418,6 +469,7 @@ class CTransactions
 								par_5='".$mes."', 
 								par_6='".$escrower."',
 								par_7='".$sign."',
+								target_adr='".$from_adr."',
 								status='ID_PENDING', 
 								tstamp='".time()."'";
 	       $this->kern->execute($query);
@@ -429,7 +481,7 @@ class CTransactions
 		   $this->kern->commit();
 		   
 		   // Confirm
-		   if (!$_REQUEST['key'])
+		   if (!isset($_REQUEST['key']))
 		   { 
 		      $this->template->showOk("Your request has been succesfully recorded", 550);
 		   }

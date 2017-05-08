@@ -19,14 +19,14 @@
 	
 	switch ($_REQUEST['act'])
 	{
-		case "ID_SEND_COINS" : $trans->sendCoins($_REQUEST['net_fee_adr'], 
-	                                            $_REQUEST['from_adr'], 
-					                            $_REQUEST['to_adr'], 
+		case "ID_SEND_COINS" : $trans->sendCoins(urldecode($_REQUEST['net_fee_adr']), 
+	                                            urldecode($_REQUEST['from_adr']), 
+					                            urldecode($_REQUEST['to_adr']), 
 					                            $_REQUEST['amount'], 
 					                            $_REQUEST['amount_asset'], 
 					                            $_REQUEST['cur'], 
-					                            $_REQUEST['mes'], 
-					                            $_REQUEST['escrower']); 
+					                            urldecode($_REQUEST['mes']), 
+					                            urldecode($_REQUEST['escrower'])); 
 							break; 
 	}
 	

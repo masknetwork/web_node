@@ -7,6 +7,8 @@ class CSpecMkts
 		$this->template=$template;
 	}
 	
+	
+					 
 	function updateTrade($net_fee_adr, $tradeID, $sl, $tp)
 	{
 		// Address owner
@@ -158,96 +160,7 @@ class CSpecMkts
 	   }
 	}
 	
-	function closeTrade($net_fee_adr, $tradeID, $percent)
-	{
-		// Address owner
-		if ($this->kern->isMine($net_fee_adr)==false)
-		{
-			 $this->template->showErr("Invalid entry data");
-			 return false;
-		}
-		
-		 // Net Fee Address 
-		 if ($this->kern->adrExist($net_fee_adr)==false)
-		 {
-			$this->template->showErr("Invalid network fee address");
-			return false;
-		 }
-		 
-		 // Balance
-		 if ($this->kern->getBalance($net_fee_adr)<0.0001)
-		 {
-			 $this->template->showErr("Insufficient funds");
-			 return false;
-		 }
-		 
-		 // Trade ID exist ?
-		 $query="SELECT * 
-		           FROM feeds_spec_mkts_pos 
-				  WHERE posID='".$tradeID."' 
-				    AND status<>'ID_CLOSED'";
-		 $result=$this->kern->execute($query);	
-	     
-		 if (mysql_num_rows($result)==0)
-		 {
-			 $this->template->showErr("Invalid position ID");
-			 return false;
-		 }
-		 
-		 // Load data
-		 $pos_row = mysql_fetch_array($result, MYSQL_ASSOC);
-	     
-		 // My position
-		 if ($this->kern->isMine($pos_row['adr'])==false)
-		 {
-			 $this->template->showErr("Invalid position ID");
-			 return false;
-		 }
-		 
-		 // Percent
-		 if ($percent<1 || $percent>100)
-		 {
-			 $this->template->showErr("Invalid percent");
-			 return false; 
-		 }
-		 
-		  try
-	      {
-		   // Begin
-		   $this->kern->begin();
-
-           // Action
-           $this->kern->newAct("Closes a speculative position");
-			  
-		   // Insert to stack
-		   $query="INSERT INTO web_ops 
-			               SET user='".$_REQUEST['ud']['user']."', 
-							    op='ID_CLOSE_SPEC_POS', 
-								fee_adr='".$net_fee_adr."', 
-								target_adr='".$pos_row['adr']."',
-								par_1='".$tradeID."',
-								par_2='".$percent."',
-								status='ID_PENDING', 
-								tstamp='".time()."'"; 
-	       $this->kern->execute($query);
-		
-		   // Commit
-		   $this->kern->commit();
-		   
-		   // Confirm
-		   $this->template->showOk("Your request has been succesfully recorded");
-	   }
-	   catch (Exception $ex)
-	   {
-	      // Rollback
-		  $this->kern->rollback();
-
-		  // Mesaj
-		  $this->template->showErr("Unexpected error.");
-
-		  return false;
-	   }
-	}
+	
 	
 	function newTrade($net_fee_adr, 
 					  $adr, 
@@ -258,8 +171,15 @@ class CSpecMkts
 					  $sl, 
 					  $tp, 
 					  $leverage, 
-					  $qty)
+					  $qty,
+					  $days)
 	{
+		// Check addresses
+		if (!$this->kern->canSpend($net_fee_adr))
+		{
+			$this->template->showErr("Network fee address or address can't spend funds");
+			return false;
+		}
 		
 		// Address owner
 		if ($this->kern->isMine($net_fee_adr)==false || 
@@ -306,6 +226,9 @@ class CSpecMkts
 		 
 		 // Market data
 		 $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 
+		 // Open
+		 $open=$mkt_row['last_price'];
 		 
 		 // Tip
 		 if ($tip!="ID_BUY" && $tip!="ID_SELL")
@@ -384,22 +307,25 @@ class CSpecMkts
 		 }
 		 
 		 // Calculate free colaterall
-		 $query="SELECT SUM(pl) AS total 
-		           FROM feeds_spec_mkts_pos 
-				  WHERE mktID='".$mktID."' 
-				    AND (status='ID_MARKET' OR 
-					     status='ID_PENDING')";
+		 $query="SELECT SUM(margin) AS total 
+		           FROM feeds_spec_mkts_pos AS fsmp 
+				   JOIN feeds_spec_mkts AS fsm ON fsmp.mktID=fsm.mktID 
+				  WHERE fsm.adr='".$mkt_row['adr']."' 
+				    AND fsmp.status='ID_MARKET'"; 
 		 $result=$this->kern->execute($query);	
 	     $row = mysql_fetch_array($result, MYSQL_ASSOC);
-	     $free_colateral=$mkt_row['mkt_adr_balance']-$row['total'];
+	     
+		 
+		 // Address balance
+		 $balance=$this->kern->getBalance($mkt_row['adr'], $mkt_row['cur']); 
 		 
 		 // Maximum margin
-		 $max_margin=$free_colateral*$mkt_row['max_margin']/100;
+		 $max_total_margin=$mkt_row['max_total_margin']*$balance/100; 
 		 
 		 // Check margin
-		 if ($margin>$max_margin)
+		 if (($row['total']+$margin)>$max_total_margin)
 		 {
-			 $this->template->showErr("Invalid margin. Maximum allowed margin is ".$max_margin);
+			 $this->template->showErr("Invalid margin. Maximum allowed margin is ".($max_total_margin-$row['total']));
 			 return false; 
 		 }
 		 
@@ -410,6 +336,12 @@ class CSpecMkts
 		    $margin<0.0001)
 		$margin=0.0001;
 		
+		 // Days
+		 if ($days<1)
+		 {
+			 $this->template->showErr("Minimum days is 1");
+			 return false; 
+		 }
 		 
 		 try
 	     {
@@ -427,12 +359,13 @@ class CSpecMkts
 								target_adr='".$adr."',
 								par_1='".$mktID."',
 								par_2='".$tip."',
-								par_3='".$ex_type."',
-								par_4='".$open."',
-								par_5='".$sl."',
-								par_6='".$tp."',
-								par_7='".$leverage."',
-								par_8='".$qty."',
+								par_3='".$open."',
+								par_4='".$sl."',
+								par_5='".$tp."',
+								par_6='".$leverage."',
+								par_7='".$qty."',
+								par_8='".$ex_type."',
+								days='".$days."',
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
@@ -458,28 +391,15 @@ class CSpecMkts
 	
 	function newMarket($net_fee_adr, 
 	                   $mkt_adr, 
-					   $feed_1, 
-					   $branch_1, 
-					   $feed_2, 
-					   $branch_2, 
-					   $feed_3, 
-					   $branch_3, 
+					   $feed, 
+					   $branch, 
 					   $cur, 
-					   $min_hold,
-					   $max_hold, 
-					   $min_leverage,
 					   $max_leverage,
-					   $spread,
-					   $real_symbol,
-					   $decimals,
-					   $pos_type,
-					   $long_int,
-					   $short_int,
-					   $interest_interval,
+					   $spread, 
+					   $days,
+					   $max_total_margin,
 					   $title,
-					   $desc,
-					   $max_margin,
-					   $days)
+					   $desc)
 	{
 		// Address owner
 		if ($this->kern->isMine($net_fee_adr)==false || 
@@ -508,30 +428,10 @@ class CSpecMkts
 		 
 		
 		// Feed 1
-		if ($this->feedExist($feed_1, $branch_1)==false)
+		if ($this->feedExist($feed, $branch)==false)
 		{
 			 $this->template->showErr("Invalid feed 1");
 			 return false;
-		}
-		
-		// Feed 2
-		if ($feed_2!="")
-		{
-		  if ($this->feedExist($feed_2, $branch_2)==false)
-		  {
-			 $this->template->showErr("Invalid feed 2");
-			 return false;
-		  }
-		}
-		
-		// Feed 3
-		if ($feed_3!="")
-		{
-		  if ($this->feedExist($feed_3, $branch_3)==false)
-		  {
-			 $this->template->showErr("Invalid feed 3");
-			 return false;
-		  }
 		}
 		
 		// Load branch data
@@ -573,27 +473,6 @@ class CSpecMkts
 		   }
 		}
 		
-		// Mininum hold
-		if ($min_hold<1)
-		{
-			 $this->template->showErr("Minimum hold period is 1 block");
-			 return false;
-		}
-		
-		// Maximum hold
-		if ($max_hold<10)
-		{
-			 $this->template->showErr("Maximum hold period is 10 blocks");
-			 return false;
-		}
-		
-	    // Minimum leverage
-		if ($min_leverage<1)
-		{
-			 $this->template->showErr("Minimum leverage is 1");
-			 return false;
-		}
-		
 		// Maximum leverage
 		if ($max_leverage>1000)
 		{
@@ -602,61 +481,12 @@ class CSpecMkts
 		}
 		
 		// Spread
-		$tick=1;
-		for ($a=1; $a<=$decimals; $a++) $tick=$tick/10;
-		
-		if ($spread<0 || $spread<$tick)
+		if ($spread<0.00000001)
 		{
 			 $this->template->showErr("Invalid spread");
 			 return false;
 		}
 		
-		// Real symbol
-		if (strlen($real_symbol)>10)
-		{
-			 $this->template->showErr("Invalid real symbol");
-			 return false;
-		}
-		
-		// Decimals
-		if ($decimals>8 || $decimals<0)
-		{
-			 $this->template->showErr("Invalid decimals");
-			 return false;
-		}
-		
-		// Position type
-		if ($pos_type!="ID_LONG_SHORT" && 
-		   $pos_type!="ID_LONG_ONLY" && 
-		   $pos_type!="ID_SHORT_ONLY")
-		{
-			$this->template->showErr("Invalid position type");
-			return false;
-		}
-		
-		// Long positions interest
-		if ($long_int<-10000 || $long_int>10000)
-		{
-			$this->template->showErr("Invalid long positions interest (-10000 - 10000)");
-			return false;
-		}
-		
-		// Short positions interest
-		if ($short_int<-10000 || $short_int>10000)
-		{
-			$this->template->showErr("Invalid short positions interest (-10000 - 10000)");
-			return false;
-		}
-		
-		// Interest interval
-		if ($interest_interval)
-					 
-	    // Collateral
-		if ($this->kern->getBalance($mkt_adr, $cur)<$collateral)
-		{
-			$this->template->showErr("Insufficient funds for collateral");
-			return false;
-		}
 		
 		 // Name
 		 if (strlen($title)<5 || strlen($title)>50)
@@ -672,31 +502,10 @@ class CSpecMkts
 			 return false;
 		 }
 		 
-		 // Fee address not a market address
-		 if ($this->kern->isMarketAdr($fee_adr)==true)
+		 // Max total margin
+		 if ($max_total_margin>25 || $max_total_margin<0.0001)
 		 {
-			 $this->template->showErr("Market fee address is used in another market.");
-			 return false;
-		 }
-		
-		 // Market fee
-		 if ($mkt_fee<0 || $mkt_fee>10)
-		 {
-			 $this->template->showErr("Invalid market fee");
-			 return false;
-		 }
-		 
-		 // Decimals
-		 if ($decimals<0 || $decimals>8)
-		 {
-			 $this->template->showErr("Invalid decimals");
-			 return false;
-		 }
-		 
-         // Max position size
-		 if ($max_margin>10 || $max_margin<0.1)
-		 {
-			  $this->template->showErr("Invalid maximum position size (0.1 - 10)");
+			  $this->template->showErr("Invalid total maximum margin (0.0001% - 25%)");
 			  return false;
 		 }
 		 
@@ -707,29 +516,17 @@ class CSpecMkts
 			  return false;
 		 }
 		
-		 // Interest interval
-		 if ($interest_interval!="ID_HOURLY" && 
-		     $interest_interval!="ID_DAILY" && 
-			 $interest_interval!="ID_WEEKLY" && 
-			 $interest_interval!="ID_MONTHLY" && 
-			 $interest_interval!="ID_MONTH_3" && 
-			 $interest_interval!="ID_MONTH_6" && 
-			 $interest_interval!="ID_YEARLY")
-		 {
-			 $this->template->showErr("Invalid interest interval");
-			 return false;
-		 }
+		 // Another market exist with other currency ?
+		 $query="SELECT * 
+		           FROM feeds_spec_mkts 
+				  WHERE adr='".$mkt_adr."' 
+				    AND cur<>'".$cur."'";
+		 $result=$this->kern->execute($query);	
 		 
-		 // Calculates interest interval
-		 switch ($interest_interval)
+		 if (mysql_num_rows($result)>0)
 		 {
-			 case "ID_HOURLY" : $interest_interval=60; break;
-			 case "ID_DAILY" : $interest_interval=1440; break;
-			 case "ID_WEEKLY" : $interest_interval=10080; break;
-			 case "ID_MONTHLY" : $interest_interval=302400; break;
-			 case "ID_MONTH_3" : $interest_interval=907200; break;
-			 case "ID_MONTH_6" : $interest_interval=1814400; break;
-			 case "ID_YEARLY" : $interest_interval=3628800; break;
+			  $this->template->showErr("Another market using another currency is attached to this address.");
+			  return false;
 		 }
 		 
 		 try
@@ -746,27 +543,14 @@ class CSpecMkts
 							    op='ID_NEW_SPEC_MARKET', 
 								fee_adr='".$net_fee_adr."', 
 								target_adr='".$mkt_adr."',
-								par_1='".$feed_1."',
-								par_2='".$branch_1."',
-								par_3='".$feed_2."',
-								par_4='".$branch_2."',
-								par_5='".$feed_3."',
-								par_6='".$branch_3."',
-								par_7='".$cur."',
-								par_8='".$min_hold."',
-								par_9='".$max_hold."',
-								par_10='".$min_leverage."',
-								par_11='".$max_leverage."',
-								par_12='".$spread."',
-								par_13='".$real_symbol."',
-								par_14='".$decimals."',
-								par_15='".$pos_type."',
-								par_16='".$long_int."',
-								par_17='".$short_int."',
-								par_18='".$interest_interval."',
-								par_19='".$title."',
-								par_20='".$desc."',
-								par_21='".$max_margin."',
+								par_1='".$feed."',
+								par_2='".$branch."',
+								par_3='".$cur."',
+								par_4='".$max_leverage."',
+								par_5='".$max_total_margin."',
+								par_6='".$spread."',
+								par_7='".base64_encode($title)."',
+								par_8='".base64_encode($desc)."',
 								days='".$days."',
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
@@ -793,242 +577,17 @@ class CSpecMkts
 	
 	
 	
-	function showNewMarketPanel()
-	{
-		?>
-        
-        <form id="form_new_mkt" name="form_new_mkt" action="my_mkts.php?act=new_mkt" method="post">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0">
-          <tbody>
-             <tr>
-               <td width="25%" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
-                 <tbody>
-                   <tr>
-                     <td align="center"><img src="GIF/new.png" width="150" class="img img-responsiv img-circle" /></td>
-                   </tr>
-                   <tr>
-                     <td>&nbsp;</td>
-                   </tr>
-                   <tr>
-                     <td>&nbsp;</td>
-                   </tr>
-                 </tbody>
-               </table></td>
-               <td><table width="90%" border="0" cellspacing="0" cellpadding="0">
-                 <tr>
-                   <td height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
-                 </tr>
-                 <tr>
-                   <td align="left"><? $this->template->showMyAdrDD("dd_new_mkt_net_fee_adr", "100%"); ?></td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td height="30" align="left" valign="top" class="font_14"><strong>Market Address</strong></td>
-                 </tr>
-                 <tr>
-                   <td align="left"><? $this->template->showMyAdrDD("dd_new_mkt_adr", "100%"); ?></td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                       <td width="33%" height="30" align="left" valign="top" class="font_14"><strong>Feed Symbol</strong></td>
-                       <td width="2%" align="left" valign="top" class="font_14">&nbsp;</td>
-                       <td width="33%" align="left" valign="top" class="font_14"><strong>Feed Branch</strong></td>
-                        <td width="33%" align="left" valign="top" class="font_14"><strong>Currency</strong></td>
-                     </tr>
-                     <tr>
-                       <td><input class="form-control" id="txt_new_mkt_feed_1" name="txt_new_mkt_feed_1" placeholder="XXXXXX" style="width:90%"/></td>
-                       <td align="center">-&nbsp;&nbsp;&nbsp;</td>
-                       <td><input class="form-control" id="txt_new_mkt_branch_1" name="txt_new_mkt_branch_1" placeholder="XXXXXX" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_cur" name="txt_new_mkt_cur" placeholder="MSK" style="width:90%"/></td>
-                     </tr>
-                   </table></td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                       <td width="22%" height="30" align="left" valign="top" class="font_14"><strong>Feed Symbol 2</strong></td>
-                       <td width="1%" align="left" valign="top" class="font_14">&nbsp;</td>
-                       <td width="27%" align="left" valign="top" class="font_14"><strong>Feed Branch 2</strong></td>
-                       <td width="28%" align="left" valign="top" class="font_14"><strong>Feed Symbol 3</strong>                       </td>
-                       <td width="1%" align="left" valign="top" class="font_14">&nbsp;</td>
-                       <td width="21%" align="left" valign="top" class="font_14"><strong>Feed Branch 3</strong></td>
-                     </tr>
-                     <tr>
-                       <td><input class="form-control" id="txt_new_mkt_feed_2" name="txt_new_mkt_feed2" placeholder="XXXXXX" style="width:90%"/></td>
-                       <td align="center">-&nbsp;&nbsp;</td>
-                       <td><input class="form-control" id="txt_new_mkt_branch_2" name="txt_new_mkt_branch2" placeholder="XXXXXX" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_feed_3" name="txt_new_mkt_feed_3" placeholder="XXXXXX" style="width:90%"/></td>
-                       <td align="center">-&nbsp;&nbsp;</td>
-                       <td><input class="form-control" id="txt_new_mkt_branch_3" name="txt_new_mkt_branch_3" placeholder="XXXXXX" style="width:90%"/></td>
-                     </tr>
-                   </table></td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                       <td width="25%" height="30" align="left" valign="top" class="font_14"><strong>Min Hold Time</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Max Hold Time</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Min Leverage</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Max Leverage</strong></td>
-                     </tr>
-                     <tr>
-                       <td><input class="form-control" id="txt_new_mkt_min_hold" name="txt_new_mkt_min_hold" placeholder="1" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_max_hold" name="txt_new_mkt_max_hold" placeholder="10000" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_min_leverage" name="txt_new_mkt_min_leverage" placeholder="1" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_max_leverage" name="txt_new_mkt_max_leverage" placeholder="100" style="width:90%"/></td>
-                     </tr>
-                   </table>
-                   </td>
-                 </tr>
-                  <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                       <td width="25%" height="30" align="left" valign="top" class="font_14"><strong>Spread</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Real World Symbol</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Decimals</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Days</strong></td>
-                     </tr>
-                     <tr>
-                       <td><input class="form-control" id="txt_new_mkt_spread" name="txt_new_mkt_spread" placeholder="0.0001" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_real_symbol" name="txt_new_mkt_real_symbol" placeholder="AAPL" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_decimals" name="txt_new_mkt_decimals" placeholder="5" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_days" name="txt_new_mkt_days" placeholder="1000" style="width:90%"/></td>
-                     </tr>
-                   </table>
-                   </td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                       <td width="50%" height="30" align="left" valign="top" class="font_14"><strong>Accepted Positions</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Long Interest (%)</strong></td>
-                       <td width="25%" align="left" valign="top" class="font_14"><strong>Short Interest (%)</strong></td>
-                     </tr>
-                     <tr>
-                       <td>
-                       <select id="dd_new_mkt_pos_types" name="dd_new_mkt_pos_types" class="form-control" style="width:90%">
-                       <option value="ID_LONG_SHORT">Long and short positions</option>
-                       <option value="ID_LONG_ONLY">Long positions only</option>
-                       <option value="ID_SHORT_ONLY">Short positions only</option>
-                       </select>
-                       </td>
-                       <td><input class="form-control" id="txt_new_mkt_long_int" name="txt_new_mkt_long_int" placeholder="1" style="width:90%"/></td>
-                       <td><input class="form-control" id="txt_new_mkt_short_int" name="txt_new_mkt_short_int" placeholder="1" style="width:90%"/></td>
-                     </tr>
-                   </table>
-                   </td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                     <tr>
-                       <td width="75%" height="30" align="left" valign="top" class="font_14"><strong>Interest Interval</strong></td>
-                       <td width="25%" align="left" valign="top"><strong class="font_14">Max Margin (%)</strong><span class="font_12"></span></td>
-                     </tr>
-                     <tr>
-                       <td>
-                       <select id="dd_new_mkt_int_interval" name="dd_new_mkt_int_interval" class="form-control" style="width:90%">
-                       <option value="ID_HOURLY">Hourly</option>
-                       <option value="ID_DAILY">Daily</option>
-                       <option value="ID_WEEKLY">Weekly</option>
-                       <option value="ID_MONTHLY">Monthly</option>
-                       <option value="ID_MONTH_3">Every 3 Months</option>
-                       <option value="ID_MONTH_6">Every 6 Months</option>
-                       <option value="ID_YEARLY">Yearly</option>
-                       </select>
-                       </td>
-                       <td><input class="form-control" id="txt_new_mkt_max_margin" name="txt_new_mkt_max_margin" placeholder="1" style="width:90%"/></td>
-                     </tr>
-                   </table>
-                   </td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td height="30" align="left" valign="top" class="font_14"><strong>Market Name</strong></td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <input class="form-control" id="txt_new_mkt_title" name="txt_new_mkt_title" placeholder="Name (5-30 characters)" style="width:100%"/></td>
-                 </tr>
-                 <tr>
-                   <td align="left">&nbsp;</td>
-                 </tr>
-                 <tr>
-                   <td height="30" align="left" valign="top" class="font_14"><strong>Short Description</strong></td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   <textarea rows="5" id="txt_new_mkt_desc" name="txt_new_mkt_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:100%"></textarea></td>
-                 </tr>
-                 <tr>
-                   <td align="left">
-                   
-                 
-                   </td>
-                 </tr>
-                 <tr>
-                   <td align="left"></td>
-                 </tr>
-                 <tr>
-                   <td align="left"><hr></td>
-                 </tr>
-                 <tr>
-                   <td height="30" align="right" class="font_14"><a hef="javascript:void(0)" onClick="$('#form_new_mkt').submit()" class="btn btn-primary">Submit</a></td>
-                 </tr>
-               </table></td>
-             </tr>
-           </tbody>
-         </table>
-         </form>
-         <br><br>
-        
-         <script>
-		   $('#form_new_mkt').submit(
-		   function() 
-		   { 
-		      $('#txt_new_mkt_title').val(btoa($('#txt_new_mkt_title').val())); 
-		      $('#txt_new_mkt_desc').val(btoa($('#txt_new_mkt_desc').val())); 
-		   });
-		</script>
-        
-        <?
-		
-	}
+	
 	
 	function showNewMktBut()
 	{
+		$this->showNewMktModal();
+		
 		?>
         
 		 <table width="90%">
          <tr><td align="right">
-         <a href="my_mkts.php?act=show_new_mkt_panel" class="btn btn-primary">
+         <a href="#" onClick="javascript:$('#new_mkt_modal').modal()" class="btn btn-primary">
          <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;New Market
          </a>
          </td></tr>
@@ -1058,15 +617,14 @@ class CSpecMkts
 		if ($mine==false)
 		$query="SELECT fsm.*, adr.balance AS mkt_adr_balance, fb.type
 		          FROM feeds_spec_mkts AS fsm 
-				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed_1 AND fb.symbol=fsm.branch_1)
+				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed AND fb.symbol=fsm.branch)
 				  JOIN adr ON adr.adr=fsm.adr
-				 WHERE cur='".$cur."' AND fb.type='".$type."'"; 
+				 WHERE fb.type='".$type."'"; 
 		else
 	    $query="SELECT fsm.*, adr.balance AS mkt_adr_balance
 		          FROM feeds_spec_mkts AS fsm 
 				  JOIN adr ON adr.adr=fsm.adr
-				 WHERE cur='".$cur."' 
-				   AND fsm.adr IN (SELECT adr 
+				 WHERE fsm.adr IN (SELECT adr 
 				                     FROM my_adr 
 									WHERE userID='".$_REQUEST['ud']['ID']."') 
 				   AND fsm.type='".$type."'";
@@ -1125,19 +683,24 @@ class CSpecMkts
 	
 	function showPanel($mktID)
 	{
+		// QR modal
+		$this->template->showQRModal();
+		
 		$query="SELECT fsm.*, 
-		               fb_1.val AS price_1, 
-					   fb_2.val AS price_2, 
-					   fb_3.val AS price_3
-		          FROM feeds_spec_mkts AS fsm
-				  LEFT JOIN feeds_branches AS fb_1 ON (fb_1.feed_symbol=fsm.feed_1 AND 
-				                                       fb_1.symbol=fsm.branch_1)
-				  LEFT JOIN feeds_branches AS fb_2 ON (fb_2.feed_symbol=fsm.feed_2 AND 
-				                                       fb_2.symbol=fsm.branch_2)
-				  LEFT JOIN feeds_branches AS fb_3 ON (fb_3.feed_symbol=fsm.feed_3 AND 
-				                                       fb_3.symbol=fsm.branch_3)
-				 WHERE mktID='".$mktID."'";
+		               fb.val AS price
+				  FROM feeds_spec_mkts AS fsm
+				  LEFT JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed AND 
+				                                     fb.symbol=fsm.branch)
+				 WHERE mktID='".$mktID."'"; 
 		$result=$this->kern->execute($query);	
+		
+		if (mysql_num_rows($result)==0)
+		{
+			$this->template->showErr("Market not found");
+			return false;
+		}
+		
+		// Load data
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
@@ -1166,69 +729,21 @@ class CSpecMkts
             <table class="table-responsive" width="95%">
             
             <tr>
-            <td width="30%" class="font_12" align="center">Market ID&nbsp;&nbsp;&nbsp;&nbsp;
+            <td width="33%" class="font_12" align="center">Market ID&nbsp;&nbsp;&nbsp;&nbsp;
 			<strong><? print $row['mktID']; ?></strong></td>
             <td width="40%" align="center"><span class="font_12">Address</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="font_12" href="#">
-			<strong><? print $this->template->formatAdr($row['adr']); ?></strong></a></td>
-             <td width="30%" align="center"><span class="font_12">Hold Time</span>&nbsp;&nbsp;&nbsp;&nbsp;<font class="font_12">
-             <strong>
-			 <? 
-			    print $this->getTime($row['min_hold'])." - ".$this->getTime($row['max_hold']); 
-			?>
-            </strong></font></td>
-            </tr>
-            <tr><td colspan="3"><hr></td></tr>
-            
-            <tr>
-            <td width="33%" class="font_12" align="center">Expires&nbsp;&nbsp;&nbsp;&nbsp;
-			<strong>~ <? print $this->getTime($row['expire']-$_REQUEST['sd']['last_block']); ?></strong>
+			<strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>
             </td>
-             <td width="33%" align="center"><span class="font_12">Min Leverage&nbsp;&nbsp;&nbsp;&nbsp;
-			 <strong><? print "x".$row['min_leverage']; ?></strong></span>&nbsp;&nbsp;</td>
-            <td width="33%" class="font_12" align="center">Max Leverage&nbsp;&nbsp;&nbsp;&nbsp; 
-			<strong><? print "x".$row['max_leverage']; ?></strong>&nbsp;&nbsp;</td>
+             <td width="33%" align="center"><span class="font_12">Expires&nbsp;&nbsp;&nbsp;&nbsp; <strong>~ <? print $this->getTime($row['expire']-$_REQUEST['sd']['last_block']); ?></strong></span></td>
             </tr>
             <tr><td colspan="3"><hr></td></tr>
             
             <tr>
-            <td width="33%" align="center"><span class="font_12">Position Types&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong>
-            <?
-			   switch ($row['pos_type'])
-			   {
-				   case "ID_LONG_SHORT" : print "Long and Short"; break;
-				   case "ID_LONG_ONLY" : print "Only Long Positions"; break;
-				   case "ID_SHORT_ONLY" : print "Only Short Positions"; break;
-				}
-			?>
-            </strong>
-            </span></td>
-            <td width="33%" class="font_12" align="center">Maximum Margin&nbsp;&nbsp;&nbsp;&nbsp; 
-			<strong><? print round($row['max_margin'], 8)."%"; ?></strong></td>
-            <td width="33%" class="font_12" align="center">Decimals&nbsp;&nbsp;&nbsp;&nbsp; 
-			<strong><? print $row['decimals']; ?></strong></td>
+            <td width="33%" class="font_12" align="center">Max Leverage&nbsp;&nbsp;&nbsp;&nbsp; <strong><? print "x".$row['max_leverage']; ?></strong>&nbsp;&nbsp;</td>
+             <td width="40%" align="center"><span class="font_12">Maximum Total Margin&nbsp;&nbsp;&nbsp;&nbsp; <strong><? print round($row['max_total_margin'], 8)."%"; ?></strong></span></td>
+            <td width="33%" class="font_12" align="center">Data Feed&nbsp;&nbsp;&nbsp;&nbsp; <a href="../../assets/feeds/branch.php?feed=<? print $row['feed']; ?>&symbol=<? print $row['branch'] ?>" class="font_12"><strong><? print $row['feed']." / ".$row['branch']; ?></strong></a></td>
             </tr>
-            
             <tr><td colspan="3"><hr></td></tr>
-            <tr>
-            <td width="33%" class="font_12" align="center">Feed  1&nbsp;&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_1']; ?>&symbol=<? print $row['branch_1'] ?>" class="font_12"><strong><? print $row['feed_1']." / ".$row['branch_1']; ?></strong></a></td>
-            <td width="33%" class="font_12" align="center">Feed 1 Price &nbsp;&nbsp;&nbsp;&nbsp; 
-			<span class="font_12"><strong><? print round($row['price_1'], $row['decimals']); ?></strong></span></td>
-            <td width="33%" class="font_12" align="center">Feed 2&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_2']; ?>&symbol=<? print $row['branch_2'] ?>" class="font_12"><strong><? if ($row['feed_2']!="") print $row['feed_2']." / ".$row['branch_2']; else print "none"; ?></strong></a></td>
-            </tr>
-            
-            <tr><td colspan="3"><hr></td></tr>
-            <tr>
-            <td width="33%" class="font_12" align="center">Feed Price 2&nbsp;&nbsp;&nbsp;&nbsp; 
-			<span href="" class="font_12"><strong>
-			<? if ($row['feed_symbol_2']=="") print "0"; else print round($row['price_2'], $row['decimals']); ?></strong></span></td>
-            <td width="33%" class="font_12" align="center">Feed 3&nbsp;&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_3']; ?>&symbol=<? print $row['branch_3'] ?>" class="font_12"><strong><? if ($row['feed_3']!="") print $row['feed_3']." / ".$row['branch_3']; else print "none"; ?></strong></a></td>
-            <td width="33%" class="font_12" align="center">Feed 3 Price&nbsp;&nbsp;&nbsp; 
-			<span class="font_12"><strong><? if ($row['feed_3']=="") print "0"; else print round($row['price_3'], $row['decimals']); ?></strong></span></td>
-            </tr>
             
            
             </table>
@@ -1250,11 +765,20 @@ class CSpecMkts
 	function showReport($mktID)
 	{
 		// Last value
-		$query="SELECT fsm.*, adr.balance AS mkt_adr_balance 
+		$query="SELECT fsm.*, adr.balance AS mkt_adr_balance, fb.val
 		          FROM feeds_spec_mkts AS fsm 
 				  JOIN adr ON adr.adr=fsm.adr
+				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed AND 
+				                                fb.symbol=fsm.branch)
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);
+		
+		if (mysql_num_rows($result)==0)
+		{
+			$this->template->showErr("Market not found");
+			return false;
+		}
+		
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		
 		?>
@@ -1265,7 +789,7 @@ class CSpecMkts
             <table>
             <tr>
             <td width="25%" valign="top" align="center"><span class="font_10">Last Price</span><br><span class="font_20">
-			<? print round($row['last_price'], $row['decimals']); ?></span></td>
+			<? print round($row['last_price'], 8); ?></span></td>
             <td style="border-left: solid 1px #aaaaaa;">&nbsp;</td>
             <td width="25%" valign="top" align="center"><span class="font_10">Currency</span><br><span class="font_20">
 			<? print $row['cur']; ?></span></td>
@@ -1290,10 +814,10 @@ class CSpecMkts
 		if (!isset($_REQUEST['ud']['ID'])) return false;
 		
 		// Load data
-		$query="SELECT*
+		$query="SELECT *
 		          FROM feeds_spec_mkts AS fsm
-				  JOIN feeds_branches AS feed_1 ON (feed_1.feed_symbol=fsm.feed_1 
-				                                    AND feed_1.symbol=fsm.branch_1)
+				  JOIN feeds_branches AS feed ON (feed.feed_symbol=fsm.feed
+				                                    AND feed.symbol=fsm.branch)
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -1308,7 +832,6 @@ class CSpecMkts
         <td width="10%">
         
         <?
-	
 		   if ($row['mkt_status']=="online")
 		   {
 		?>
@@ -1437,8 +960,8 @@ class CSpecMkts
                   <tr>
                     <td height="60" align="center" bgcolor="#fafafa"  style="#009900" id="td_price">
                     <strong>
-					<span class="font_30" ><? print explode(".", round($row['last_price'], $row['decimals']))[0]; ?></span>
-                    <span class="font_20" ><? print ".".explode(".", round($row['last_price'], $row['decimals']))[1]." ".$row['cur']; ?></span>
+					<span class="font_30" ><? print explode(".", round($row['last_price'], 8))[0]; ?></span>
+                    <span class="font_20" ><? print ".".explode(".", round($row['last_price'], 8))[1]." ".$row['cur']; ?></span>
                     </strong>
                     </td>
                   </tr>
@@ -1512,7 +1035,7 @@ class CSpecMkts
               </tr>
               <tr>
                 <td height="35" align="left" class="simple_gri_14">
-                <input class="form-control" placeholder="0.00" id="txt_new_pos_open" name="txt_new_pos_open" style="width:150px" value="<? print round($row['last_price'], 6); ?>"  onchange="javascript:recalculate()" disabled/></td>
+                <input class="form-control" placeholder="0.00" id="txt_new_pos_open" name="txt_new_pos_open" style="width:150px" value="<? print round($row['last_price'], 8); ?>"  onchange="javascript:recalculate()" disabled/></td>
                 <td align="left" class="simple_gri_14">
                 <input name="txt_new_pos_qty" class="form-control" id="txt_new_pos_qty" placeholder="0.00" style="width:150px" value="1" onchange="javascript:recalculate()"/>
                 </td>
@@ -1534,6 +1057,14 @@ class CSpecMkts
               </tr>
               <tr>
                 <td height="0" align="left" class="simple_gri_14">&nbsp;</td>
+                <td height="0" align="left">&nbsp;</td>
+              </tr>
+              <tr>
+                <td height="0" align="left" class="font_14"><strong>Expire ( days )</strong></td>
+                <td height="0" align="left">&nbsp;</td>
+              </tr>
+              <tr>
+                <td height="0" align="left" class="simple_gri_14"><input class="form-control" placeholder="10" id="txt_new_pos_days" name="txt_new_pos_days" style="width:150px" onchange="javascript:recalculate()"/></td>
                 <td height="0" align="left">&nbsp;</td>
               </tr>
             </table>
@@ -1671,226 +1202,25 @@ class CSpecMkts
 		$this->template->showModalFooter();
 	}
 	
-	function showCloseModal()
-	{
-		$this->template->showModalHeader("close_modal", "Close Trade", "act", "close_trade", "close_posID", 0);
-		?>
-            
-            <input name="h_close_margin" id="h_close_margin" value="0" type="hidden">
-            <input name="h_close_cur" id="h_close_cur" value="0" type="hidden">
-            
-            <table width="550" border="0" cellspacing="0" cellpadding="5">
-          <tr>
-            <td width="31%" align="center" valign="top">
-            <table width="90%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td align="center"><img src="GIF/close.png" width="180" height="181" alt=""/></td>
-              </tr>
-              <tr>
-                <td align="center">&nbsp;</td>
-              </tr>
-              <tr>
-                <td align="center" >
-                <table width="90%" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td height="30" align="center" bgcolor="#f0f0f0" class="simple_gri_14">You will receive</td>
-                  </tr>
-                  <tr>
-                    <td height="50" align="center" bgcolor="#fafafa" style="color:#b83c30">
-                    <strong>
-                    <span class="font_28" id="s_close_receive_1">0</span>
-                    <span class="font_14" id="s_close_receive_2">.00</span>
-                    </strong>
-                    </td>
-                  </tr>
-                </table></td>
-              </tr>
-            </table></td>
-            <td width="69%" align="right" valign="top">
-            
-            
-            <table width="95%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td width="100%" height="30" align="center" valign="top" class="font_14"><table width="340" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td height="30" align="center" bgcolor="#f0f0f0" class="simple_gri_14" id="td_price_header">Last Price</td>
-                  </tr>
-                  <tr>
-                    <td height="60" align="center" bgcolor="#fafafa"  style="#009900">
-                    <strong>
-					<span id="td_close_last_price" class="font_30">0.0000</span>
-                  
-                    </strong>
-                    </td>
-                  </tr>
-                </table></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">
-				<? $this->template->showMyAdrDD("dd_close_net_fee", "350"); ?>
-                </td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14"><strong>Percent</strong></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">
-                <select id="dd_close_percent" name="dd_close_percent" class="form-control" style="width:150px" onchange="javascript:percent_change()">
-                  <option selected value="5">5%</option>
-                  <option value="10">10%</option>
-                  <option value="25">25%</option>
-                  <option value="50">50%</option>
-                  <option value="75">75%</option>
-                  <option value="100">100%</option>
-                </select></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-            </table>
-            
-            </td>
-          </tr>
-        </table>
-        
-        <script>
-	 	  function percent_change()
-		  {
-			  var receive=(parseFloat($('#dd_close_percent').val())*parseFloat($('#h_close_margin').val()))/100; 
-			  receive=Math.round(receive*10000)/10000;
-			  $('#s_close_receive_1').text(receive.toString().split(".")[0]);
-			  $('#s_close_receive_2').text("."+receive.toString().split(".")[1]+" "+$('#h_close_cur').val());
-		  }
-		</script>
-        
-        <?
-		$this->template->showModalFooter();
-	}
-	
-	
-	function showChangeModal()
-	{
-		$this->template->showModalHeader("change_modal", "Change Trade", "act", "change_trade", "change_posID", 0);
-		?>
-          
-          <input id="h_change_posID" name="h_change_posID" value="" type="hidden">
-          <table width="550" border="0" cellspacing="0" cellpadding="5">
-          <tr>
-            <td width="31%" align="center" valign="top">
-            <table width="90%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td align="center"><img src="GIF/change.png" width="180" height="181" alt=""/></td>
-              </tr>
-              <tr>
-                <td align="center">&nbsp;</td>
-              </tr>
-              <tr>
-                <td align="center" >&nbsp;</td>
-              </tr>
-            </table></td>
-            <td width="69%" align="right" valign="top">
-            
-            
-            <table width="95%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td width="100%" height="30" align="center" valign="top" class="font_14"><table width="340" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td height="30" align="center" bgcolor="#f0f0f0" class="simple_gri_14" id="td_price_header">Last Price</td>
-                  </tr>
-                  <tr>
-                    <td height="60" align="center" bgcolor="#fafafa"  style="#009900">
-                    <strong>
-					<span id="td_change_last_price" class="font_30">0.0000</span>
-                  
-                    </strong>
-                    </td>
-                  </tr>
-                </table></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">
-				<? $this->template->showMyAdrDD("dd_change_net_fee", "350"); ?>
-                </td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14"><table width="100%" border="0" cellpadding="0" cellspacing="0">
-                  <tbody>
-                    <tr>
-                      <td align="left"><strong>Stop Loss</strong></td>
-                      <td align="left"><strong>Take Profit</strong></td>
-                    </tr>
-                    <tr>
-                      <td><span class="simple_gri_14">
-                        <input name="txt_change_sl" class="form-control" id="txt_change_sl" placeholder="0" style="width:150px" onchange="javascript:recalculate()"/>
-                      </span></td>
-                      <td><span class="simple_gri_14">
-                      <input name="txt_change_tp" class="form-control" id="txt_change_tp" placeholder="100" style="width:150px"/>
-                      </span></td>
-                    </tr>
-                  </tbody>
-                </table></td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="font_14">&nbsp;</td>
-              </tr>
-            </table>
-            
-            </td>
-          </tr>
-        </table>
-        
-       
-        
-        <?
-		$this->template->showModalFooter();
-	}
-	
-	
-	
 	
 	function showPositions($mktID=0, $status="ID_MARKET", $target="all", $display=true)
 	{
-		// Close Modal
-		$this->showCloseModal();
-		
-		// Change modal
-		$this->showChangeModal();
-		
 		if ($target=="all")
 		{
 			if ($mktID>0)
-		    $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
+		    $query="SELECT fsmp.*, fsm.cur, fsb.rl_symbol, fsm.last_price
 		              FROM feeds_spec_mkts_pos AS fsmp 
 				      JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+					  JOIN feeds_branches AS fsb ON (fsb.feed_symbol=fsm.feed AND fsb.symbol=fsm.branch)
 				     WHERE fsm.mktID='".$mktID."' 
 				       AND fsmp.status='".$status."'
 			      ORDER BY fsmp.pl DESC 
 			         LIMIT 0,25";
 			else
-			 $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
+			 $query="SELECT fsmp.*, fsm.cur, fsb.rl_symbol, fsm.last_price
 		              FROM feeds_spec_mkts_pos AS fsmp 
 				      JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+					  JOIN feeds_branches AS fsb ON (fsb.feed_symbol=fsm.feed AND fsb.symbol=fsm.branch)
 				     WHERE fsmp.status='".$status."'
 			      ORDER BY fsmp.pl DESC 
 			         LIMIT 0,25";
@@ -1899,20 +1229,22 @@ class CSpecMkts
 		if ($target=="mine")
 		{
 			if ($mktID>0)
-		        $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
+		        $query="SELECT fsmp.*, fsm.cur, fsb.rl_symbol, fsm.last_price
 		                  FROM feeds_spec_mkts_pos AS fsmp 
 				          JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+						  JOIN feeds_branches AS fsb ON (fsb.feed_symbol=fsm.feed AND fsb.symbol=fsm.branch)
 				         WHERE fsm.mktID='".$mktID."' 
 				           AND fsmp.status='".$status."' 
 				           AND fsmp.adr IN (SELECT adr 
 				                              FROM my_adr 
-							                 WHERE userID='".$_REQUEST['ud']['ID']."'
+							                 WHERE userID='".$_REQUEST['ud']['ID']."')
 				      ORDER BY fsmp.ID DESC 
 					     LIMIT 0,25";
 		   else
-		       $query="SELECT fsmp.*, fsm.cur, fsm.real_symbol, fsm.last_price
+		       $query="SELECT fsmp.*, fsm.cur, fsb.rl_symbol, fsm.last_price
 		                 FROM feeds_spec_mkts_pos AS fsmp 
 				         JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+						 JOIN feeds_branches AS fsb ON (fsb.feed_symbol=fsm.feed AND fsb.symbol=fsm.branch)
 				        WHERE fsmp.status='".$status."' 
 				          AND fsmp.adr IN (SELECT adr 
 				                             FROM my_adr 
@@ -1920,6 +1252,7 @@ class CSpecMkts
 					 ORDER BY fsmp.ID DESC 
 					    LIMIT 0,25";
 		}
+		
 		
 		$result=$this->kern->execute($query);	
 	    
@@ -2201,14 +1534,18 @@ class CSpecMkts
 	
 	function showTradeStory($tradeID)
 	{
+		// QR modal
+		$this->template->showQRModal();
+		
 		$query="SELECT fsmp.*, 
 		               fsm.cur, 
-					   fsm.feed_1, 
-					   fsm.branch_1, 
-					   fsm.real_symbol, 
+					   fsm.feed, 
+					   fsm.branch, 
+					   fb.rl_symbol, 
 					   fsm.last_price
 		          FROM feeds_spec_mkts_pos AS fsmp 
 				  JOIN feeds_spec_mkts AS fsm ON fsm.mktID=fsmp.mktID
+				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed AND fb.symbol=fsm.branch)
 				 WHERE fsmp.posID='".$tradeID."'"; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -2283,12 +1620,19 @@ class CSpecMkts
            
            
            <?
-		       $this->showChart($row['feed_1'], 
-			                   $row['branch_1'], 
-							   $row['block'], 
-							   $row['last_block'], 
+		       if ($row['block_end']==0)
+		       $this->showChart($row['feed'], 
+			                   $row['branch'], 
+							   $row['block_start'], 
+							   $_REQUEST['sd']['last_block'], 
 							   $row['open']);
-							   
+			   
+			   else
+			   $this->showChart($row['feed'], 
+			                   $row['branch'], 
+							   $row['block_start'], 
+							   $row['block_end'], 
+							   $row['open']);		   
 		   ?>
            
            <table class="table-responsive" width="95%">
@@ -2345,10 +1689,8 @@ class CSpecMkts
 			?>
             </strong>
             </td>
-            <td width="33%" class="font_12" align="center">Start Block &nbsp;&nbsp;&nbsp;&nbsp; 
-			<span class="font_12"><strong><? print $row['block']; ?></strong></span></td>
-            <td width="33%" class="font_12" align="center">Last Price&nbsp;&nbsp;&nbsp; 
-			<strong><? print round($row['last_price'], 8); ?></strong></td>
+            <td width="33%" class="font_12" align="center">&nbsp;</td>
+            <td width="33%" class="font_12" align="center">&nbsp;</td>
             </tr>
             
          
@@ -2358,7 +1700,7 @@ class CSpecMkts
         
         <?
 		 
-		$this->template->showStreaming("get_pos", $row['posID']);
+		
 	}
 	
 	function showMktChart($mktID)
@@ -2369,11 +1711,148 @@ class CSpecMkts
 		$result=$this->kern->execute($query);	
 		$row = mysql_fetch_array($result, MYSQL_ASSOC);
 		
-		$this->showChart($row['feed_1'], 
-		                 $row['branch_1'], 
+		$this->showChart($row['feed'], 
+		                 $row['branch'], 
 						 $_REQUEST['sd']['last_block']-50000, 
 						 $_REQUEST['sd']['last_block']);
 	}
 	
-}
+	function showNewMktModal()
+	{
+		$this->template->showModalHeader("new_mkt_modal", "New Speculative Market", "act", "new_mkt");
+		  
+		?>
+              
+              
+           
+              <table width="550" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+           <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td align="center"><img src="../../tweets/GIF/like.png" width="180" name="vote_img" id="vote_img"/></td>
+             </tr>
+             <tr><td>&nbsp;</td></tr>
+             <tr>
+               <td align="center"><? $this->template->showNetFeePanel("0.0001", "trans"); ?></td>
+             </tr>
+           </table></td>
+           <td width="30" align="right" valign="top">
+           
+           
+           <table width="330" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td width="391" height="30" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               <?
+			      $this->template->showMyAdrDD("dd_new_mkt_net_fee_adr");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+			   <?
+			      $this->template->showAllMyAdrDD("dd_new_mkt_adr");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               
+               <table width="330" border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="33%" height="30" align="left" valign="top" class="font_14"><strong>Feed Symbol</strong></td>
+                   <td width="33%" align="left" valign="top" class="font_14"><strong>Feed Branch</strong></td>
+                   <td width="33%" align="left" valign="top" class="font_14"><strong>Currency</strong></td>
+                 </tr>
+                 <tr>
+                   <td><input class="form-control" id="txt_new_mkt_feed" name="txt_new_mkt_feed" placeholder="XXXXXX" style="width:100px"/></td>
+                   <td align="left"><input class="form-control" id="txt_new_mkt_branch" name="txt_new_mkt_branch" placeholder="XXXXXX" style="width:100px"/></td>
+                   <td><input class="form-control" id="txt_new_mkt_cur" name="txt_new_mkt_cur" placeholder="MSK" style="width:100px"/></td>
+                 </tr>
+               </table>
+               
+              
+                      
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><table width="330" border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="33%" height="30" align="left" valign="top" class="font_14"><strong>Max Leverage</strong></td>
+                   <td width="33%" align="left" valign="top" class="font_14"><strong>Spread</strong></td>
+                   <td width="33%" align="left" valign="top" class="font_14"><strong>Days</strong></td>
+                 </tr>
+                 <tr>
+                   <td><input class="form-control" id="txt_new_mkt_max_leverage" name="txt_new_mkt_max_leverage" placeholder="100" style="width:100px"/></td>
+                   <td align="left"><input class="form-control" id="txt_new_mkt_spread" name="txt_new_mkt_spread" placeholder="0.01" style="width:100px"/></td>
+                   <td><input class="form-control" id="txt_new_mkt_days" name="txt_new_mkt_days" placeholder="100" style="width:100px"/></td>
+                 </tr>
+               </table></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><table width="330" border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                   <td width="33%" height="30" align="left" valign="top" class="font_14"><strong>Max Total Margin (%)</strong></td>
+                 </tr>
+                 <tr>
+                   <td align="left"><input class="form-control" id="txt_new_mkt_max_total_margin" name="txt_new_mkt_max_total_margin" placeholder="10" style="width:100px"/></td>
+                 </tr>
+               </table></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><span class="font_14"><strong>Name</strong></span></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               <input class="form-control" id="txt_new_mkt_title" name="txt_new_mkt_title" placeholder="Name (5-30 characters)" style="width:100%"/></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><span class="font_14"><strong>Short Description</strong></span></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+               <textarea rows="5" id="txt_new_mkt_desc" name="txt_new_mkt_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:100%"></textarea></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"></td>
+             </tr>
+             
+           </table>
+           
+           
+           </td>
+         </tr>
+     </table>
+         
+     
+       
+       
+        <?
+		
+		$this->template->showModalFooter("Create");
+	}
+	}
 ?>

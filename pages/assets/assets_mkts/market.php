@@ -31,7 +31,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -113,6 +113,9 @@
 		 case "buyers" : $sel=2; break;
 		 case "trades" : $sel=3; break;
 	 }
+	
+	 // Trade buts
+	 $reg_mkt->showButs();
 	 
 	 // Menu
 	 $template->showNav($sel,

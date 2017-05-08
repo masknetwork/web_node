@@ -30,7 +30,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -66,6 +66,9 @@
      // Location
      $template->showLocation("../../assets/assets/index.php", "Speculative Markets", "", "Markets");
 	 
+	 // Modal
+	 $mkts->showNewMktModal();
+	 
 	  // Menu
 	 if ($_REQUEST['ud']['ID']>0)
 	 $template->showNav(3,
@@ -84,28 +87,15 @@
 	 else if ($_REQUEST['act']=="new_mkt")
 	    $mkts->newMarket($_REQUEST['dd_new_mkt_net_fee_adr'], 
 	                     $_REQUEST['dd_new_mkt_adr'], 
-					     $_REQUEST['txt_new_mkt_feed_1'], 
-					     $_REQUEST['txt_new_mkt_branch_1'], 
-						 $_REQUEST['txt_new_mkt_feed_2'], 
-					     $_REQUEST['txt_new_mkt_branch_2'], 
-						 $_REQUEST['txt_new_mkt_feed_3'], 
-					     $_REQUEST['txt_new_mkt_branch_3'], 
-					     $_REQUEST['txt_new_mkt_cur'], 
-					     $_REQUEST['txt_new_mkt_min_hold'],
-					     $_REQUEST['txt_new_mkt_max_hold'], 
-					     $_REQUEST['txt_new_mkt_min_leverage'],
-						 $_REQUEST['txt_new_mkt_max_leverage'],
-					     $_REQUEST['txt_new_mkt_spread'],
-					     $_REQUEST['txt_new_mkt_real_symbol'],
-					     $_REQUEST['txt_new_mkt_decimals'],
-					     $_REQUEST['dd_new_mkt_pos_types'],
-					     $_REQUEST['txt_new_mkt_long_int'],
-					     $_REQUEST['txt_new_mkt_short_int'],
-					     $_REQUEST['dd_new_mkt_int_interval'],
+					     $_REQUEST['txt_new_mkt_feed'], 
+					     $_REQUEST['txt_new_mkt_branch'], 
+						 $_REQUEST['txt_new_mkt_cur'], 
+					     $_REQUEST['txt_new_mkt_max_leverage'],
+					     $_REQUEST['txt_new_mkt_spread'], 
+					     $_REQUEST['txt_new_mkt_days'],
+						 $_REQUEST['txt_new_mkt_max_total_margin'],
 					     $_REQUEST['txt_new_mkt_title'],
-					     $_REQUEST['txt_new_mkt_desc'],
-						 $_REQUEST['txt_new_mkt_max_margin'],
-					     $_REQUEST['txt_new_mkt_days']);
+					     $_REQUEST['txt_new_mkt_desc']);
 	
 	 else
 	    $mkts->showNewMktBut();

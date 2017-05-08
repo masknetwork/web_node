@@ -378,7 +378,12 @@ class CTweets
 		return $m;
 	}
 	
-	function showTweets($adr="", $all=false, $time="24", $term="", $start=0, $end=20)
+	function showTweets($adr="", 
+	                    $all=false, 
+						$time="24", 
+						$term="", 
+						$start=0, 
+						$end=20)
 	{
 		// QR modal
 		$this->template->showQRModal();
@@ -407,15 +412,35 @@ class CTweets
 			$adr=$row['adr']; 
 		}
 		
+		
 		if ($adr=="all")
 		{
+		   if ($time==24)
 		   $query="SELECT tw.*, vs.*
 		             FROM tweets AS tw 
 					 LEFT JOIN votes_stats AS vs ON vs.targetID=tw.tweetID
-			        WHERE FROM_BASE64(tw.mes) LIKE '%".$term."%'
-					  AND tw.block>".$start_block."
+			        WHERE tw.mes LIKE '%".$term."%'
+					  AND tw.block>".$start_block." 
 				 ORDER BY (vs.upvotes_power_24-vs.downvotes_power_24) DESC 
 			        LIMIT ".$start.", ".$end; 
+		  
+		  else if ($time==24 || $time==30)
+		  $query="SELECT tw.*, vs.*
+		             FROM tweets AS tw 
+					 LEFT JOIN votes_stats AS vs ON vs.targetID=tw.tweetID
+			        WHERE tw.mes LIKE '%".$term."%'
+					  AND tw.block>".$start_block."
+				 ORDER BY vs.upvotes_power_total DESC 
+			        LIMIT ".$start.", ".$end; 
+		  
+		  else
+		  $query="SELECT tw.*, vs.*
+		             FROM tweets AS tw 
+					 LEFT JOIN votes_stats AS vs ON vs.targetID=tw.tweetID
+			        WHERE tw.mes LIKE '%".$term."%' 
+				ORDER BY tw.ID DESC 
+			        LIMIT ".$start.", ".$end; 
+					
 		}
 		else
 		{
@@ -437,7 +462,7 @@ class CTweets
 					ORDER BY tw.ID DESC 
 			            LIMIT ".$start.", ".$end; 
 		}
-	
+        
 		$result=$this->kern->execute($query); 
 		 
 		 // No results
@@ -455,7 +480,9 @@ class CTweets
          <?
 		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 			{
-				
+				if (($row['upvotes_power_24']-$row['downvotes_power_24'])>-10)
+				{
+					
 				// Retweet ?
 				if ($row['retweet_tweet_ID']>0)
 				{
@@ -475,19 +502,20 @@ class CTweets
                    <td width="17%" align="center">
                    <img src="
 				   <? 
+				  
 				       if ($row['retweet_tweet_ID']>0)
 					   {
 						   if ($retweet_row['pic']=="") 
 					         print "../../template/template/GIF/mask.jpg"; 
 					      else 
-					         print "../../../crop.php?src=".base64_decode($retweet_row['pic'])."&w=100&h=100";
+					         print "../../../crop.php?src=".str_replace("www.www", "www", base64_decode($retweet_row['pic']))."&w=100&h=100";
 					   }
 					   else
 					   {
 				          if ($row['pic']=="") 
 					         print "../../template/template/GIF/mask.jpg"; 
 					      else 
-					         print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; 
+					         print "../../../crop.php?src=".str_replace("www.www", "www", base64_decode($row['pic']))."&w=100&h=100"; 
 					   }
 						  
 				    ?>" width="100" height="100" alt="" class="img img-responsive img-rounded"/></td>
@@ -496,20 +524,20 @@ class CTweets
                    <a href="../tweet/index.php?ID=<? if ($row['retweet_tweet_ID']>0) print $retweet_row['tweetID']; else print $row['tweetID']; ?>" class="<? if ($adr=="all") print "font_16"; else print "font_14"; ?>">
 				   <? 
 				      $title=base64_decode($row['title']); 
-					  
+					 
 					  if ($row['retweet_tweet_ID']>0)
 					  {
 						   if (strlen($retweet_row['title'])>50)
-					        print substr(base64_decode($retweet_row['title']), 0, 50)."...";
+					        print substr($this->kern->noescape(base64_decode($retweet_row['title'])), 0, 50)."...";
 					     else
-					        print base64_decode($retweet_row['title']);
+					        print $this->kern->noescape(base64_decode($retweet_row['title']));
 					  }
 					  else
 					  {
 					     if (strlen($title)>50)
-					        print substr($title, 0, 50)."...";
+					        print substr($this->kern->noescape($title), 0, 50)."...";
 					     else
-					        print $title;
+					        print $this->kern->noescape($title);
 					  }
 				   ?>
                    </a></strong>
@@ -520,9 +548,9 @@ class CTweets
 					    if ($row['retweet_tweet_ID']>0)
 					    {
 							if (strlen($retweet_row['mes'])>250)
-					          print $this->kern->txtExplode(substr(base64_decode($retweet_row['mes']), 0, 250))."...";
+					          print $this->kern->txtExplode(substr($this->kern->noescape(base64_decode($retweet_row['mes']), 0, 250)))."...";
 					       else
-					         print $this->kern->txtExplode(base64_decode($retweet_row['mes']));
+					         print $this->kern->txtExplode($this->kern->noescape(base64_decode($retweet_row['mes'])));
 					    }
 					    else
 					    {
@@ -541,7 +569,7 @@ class CTweets
 				      if ($row['retweet_tweet_ID']>0)
 					  {
 						  // Payment
-					     $pay=$retweet_row['pay']; 
+					     $pay=round($retweet_row['pay']*$_REQUEST['sd']['MSK_price'], 2); 
 					  
 					     // Negative ?
 					     if ($pay<0) $pay=0.00;
@@ -558,16 +586,18 @@ class CTweets
 					  else
 					  {
 				         // Payment
-					     $pay=$row['pay']; 
+					     $pay=round($row['pay']*$_REQUEST['sd']['MSK_price'], 2);
 					  
 					     // Negative ?
 					     if ($pay<0) $pay=0.00;
 						 
 						 // Upvotes 24
 						 $upvotes_24=$row['upvotes_24'];
+						 if ($upvotes_24=="") $upvotes_24=0;
 						 
 						 // Downvotes 24
 						 $downvotes_24=$row['downvotes_24'];
+						 if ($downvotes_24=="") $downvotes_24=0;
 						 
 						 // Comments
 						 $comments=$row['comments']; 
@@ -595,11 +625,11 @@ class CTweets
                          </td>
                          
                          <td width="50" align="center" style="color:<? if ($downvotes_24==0) print "#999999"; else print "#990000"; ?>">
-                         <span class="glyphicon glyphicon-thumbs-down <? if ($adr=="all") print "font_14"; else print "font_12"; ?>"></span>&nbsp;&nbsp;<span class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>"><? print $downvotes_24; ?></span>
+                         <span class="glyphicon glyphicon-thumbs-down <? if ($adr=="all") print "font_16"; else print "font_14"; ?>"></span>&nbsp;&nbsp;<span class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>"><? print $downvotes_24; ?></span>
                          </td>
                          
                          <td width="50" align="center" class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>" style="color:<? if ($comments==0) print "#999999"; else print "#304971"; ?>">
-                         <span class="glyphicon glyphicon-bullhorn <? if ($adr=="all") print "font_14"; else print "font_12"; ?>"></span>&nbsp;&nbsp;<span class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>"><? print $comments; ?></span>
+                         <span class="glyphicon glyphicon-bullhorn <? if ($adr=="all") print "font_16"; else print "font_16"; ?>"></span>&nbsp;&nbsp;<span class="<? if ($adr=="all") print "font_14"; else print "font_12"; ?>"><? print $comments; ?></span>
                          </td>
                          </tr>
                      </tbody>
@@ -616,6 +646,7 @@ class CTweets
            
            <?
 	}
+			}
 		   ?>
            
          </tbody>
@@ -953,8 +984,8 @@ class CTweets
 		   $('#form_new_comment_modal').submit(
 		   function() 
 		   {
-		      $('#txt_com_mes').val(btoa($('#txt_com_mes').val())); 
-		   });
+			  $('#txt_com_mes').val(btoa(unescape(encodeURIComponent($('#txt_com_mes').val())))); 
+			});
 		</script>
        
         <?
@@ -1072,7 +1103,7 @@ class CTweets
                      <option value="ID_HOWTO">How To</option>
                      <option value="ID_JOURNALS">Journals</option>
                      <option value="ID_LIFESTYLE">Lifestyle</option>
-                     <option value="ID_MASKNETWORK">MaskNetwork Related</option>
+                     <option value="ID_MaskNetwork">MaskNetwork Related</option>
                      <option value="ID_MOVIES">Movies</option>
                      <option value="ID_MUSIC">Music</option>
                      <option value="ID_NEWS">News</option>
@@ -1180,6 +1211,47 @@ class CTweets
                </table></td>
              </tr>
              <tr>
+               <td height="30" align="right" valign="top">&nbsp;</td>
+             </tr>
+              <tr>
+               <td height="30" align="center" bgcolor="#fafafa">
+               <table width="90%" border="0" cellpadding="0" cellspacing="0">
+                 <tbody>
+                   <tr>
+                     <td width="50%" class="font_10">&nbsp;</td>
+                     <td width="50%" class="font_10">&nbsp;</td>
+                   </tr>
+                   <tr>
+                     <td colspan="2" class="font_10">The wallet uses bbcode to format blog posts. BBCode or Bulletin Board Code is a lightweight markup language used to format posts in many message boards. Below are listed the basic formatting rules</td>
+                   </tr>
+                   <tr>
+                     <td>&nbsp;</td>
+                     <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                     <td class="font_10"><strong>Bold Text</strong> - [b]your text[/b]</td>
+                     <td class="font_10">Sized Text- [size=10px]your text[/b]</td>
+                   </tr>
+                   <tr>
+                     <td><span class="font_10"><em>Italic Text </em>- [i]your text[/i]</span></td>
+                     <td class="font_10"><a href="#" class="font_10">Link</a> - [url=your link]link description[/url]</td>
+                   </tr>
+                   <tr>
+                     <td><span class="font_10"><u>Underlined Text</u> - [u]your text[/u]</span></td>
+                     <td class="font_10">Image - [img]image url[/img]</td>
+                   </tr>
+                   <tr>
+                     <td><span class="font_10">Quote - [q]your text[/q]</span></td>
+                     <td class="font_10">YouTube Video - [video]youtube video ID (ex H9smxMX4z3c)[/video]</td>
+                   </tr>
+                   <tr>
+                     <td>&nbsp;</td>
+                     <td>&nbsp;</td>
+                   </tr>
+                 </tbody>
+               </table></td>
+             </tr>
+              <tr>
                <td height="30" align="right" valign="top">&nbsp;</td>
              </tr>
              <tr>
@@ -1815,7 +1887,7 @@ class CTweets
           <td width="22%" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
           <tbody>
            <tr>
-             <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/mask.jpg"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=100&h=100"; ?>" width="200" height="201" class="img img-responsive img-rounded" /></td>
+             <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/mask.jpg"; else print "../../../crop.php?src=".str_replace("www.www", "www", base64_decode($row['pic']))."&w=100&h=100"; ?>" width="200" height="201" class="img img-responsive img-rounded" /></td>
            </tr>
            <tr>
              <td>&nbsp;</td>
@@ -1903,7 +1975,7 @@ class CTweets
                 <tr>
                   <td align="center"><div class="panel panel-default">
                     <div class="panel-heading font_14">Income Today</div>
-                    <div class="panel-body font_20"> <strong style="color:<? if ($row['pay']==0) print "#aaaaaa"; else print "#009900"; ?>"><? print "$".$this->kern->split($row['pay'])[0]; ?></strong><strong style="color:<? if ($row['pay']==0) print "#aaaaaa"; else print "#5FBE54"; ?>" class="font_12"><? print ".".$this->kern->split($row['pay'])[1]; ?></strong></div>
+                    <div class="panel-body font_20"> <strong style="color:<? if ($row['pay']==0) print "#aaaaaa"; else print "#009900"; ?>"><? print "$".$this->kern->split(round($row['pay']*$_REQUEST['sd']['MSK_price'], 2))[0]; ?></strong><strong style="color:<? if ($row['pay']==0) print "#aaaaaa"; else print "#5FBE54"; ?>" class="font_12"><? print ".".$this->kern->split(round($row['pay']*$_REQUEST['sd']['MSK_price'], 2))[1]; ?></strong></div>
                   </div></td>
                 </tr>
                 <tr>
@@ -1926,13 +1998,13 @@ class CTweets
        <td width="78%" align="right" valign="top"><table width="95%" border="0" cellpadding="0" cellspacing="0">
          <tbody>
            <tr>
-             <td><span class="font_22"><? print base64_decode($row['title']); ?></span><p class="font_12"><? print "Posted by ".$this->template->formatAdr($row['adr'])." ~".$this->kern->timeFromBlock($row['block'])." ago"; ?></p></td>
+             <td><span class="font_22"><? print $this->kern->noescape(base64_decode($row['title'])); ?></span><p class="font_12"><? print "Posted by ".$this->template->formatAdr($row['adr'])." ~".$this->kern->timeFromBlock($row['block'])." ago"; ?></p></td>
            </tr>
            <tr>
              <td><hr></td>
            </tr>
            <tr>
-             <td class="font_16"><? print nl2br($this->template->makeLinks($this->kern->bb_parse(base64_decode($row['mes'])))); ?></td>
+             <td class="font_16"><? print nl2br($this->template->makeLinks($this->kern->bb_parse($this->kern->noescape(base64_decode($row['mes']))))); ?></td>
            </tr>
            <tr>
              <td class="font_14">&nbsp;</td>
@@ -1962,7 +2034,7 @@ class CTweets
 			 LEFT JOIN votes_stats AS vs ON (vs.target_type='ID_COM' AND vs.targetID=com.comID)
 				 WHERE com.parent_type='".$target_type."' 
 				   AND com.parentID='".$targetID."' 
-			  ORDER BY (vs.upvotes_power_total-vs.downvotes_power_total) DESC"; 
+			  ORDER BY (vs.upvotes_power_24-vs.downvotes_power_24) DESC"; 
 		$result=$this->kern->execute($query);	
 	  
 	  
@@ -1975,6 +2047,8 @@ class CTweets
         <?
 		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 		   {
+			   if (($row['upvotes_power_24']-$row['downvotes_power_24'])>-10)
+			   {
 		?>
         
                <tr>
@@ -1986,24 +2060,35 @@ class CTweets
                <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_profile.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=80&h=80"; ?>"  class="img img-responsive img-rounded"/></td>
                </tr>
              <tr>
-               <td align="center" class="font_14" height="40">
+              
                
-               <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                 <tbody>
-                   <tr>
-                     <td><a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="$('#vote_modal').modal(); $('#vote_type').val('up'); $('#vote_img').attr('src', '../../tweets/GIF/like.png'); $('#vote_target_type').val('ID_COM'); $('#vote_targetID').val('<? print $row['comID']; ?>');"><span class="glyphicon glyphicon-thumbs-up"></span></a></td>
-                     <td>&nbsp;</td>
-                     <td><a href="javascript:void(0)" onclick="$('#vote_modal').modal(); $('#vote_type').val('down'); $('#vote_img').attr('src', '../../tweets/GIF/down.png'); $('#vote_target_type').val('ID_COM'); $('#vote_targetID').val('<? print $row['comID']; ?>');" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-thumbs-down"></span></a></td>
-                   </tr>
-                 </tbody>
-               </table>
-            
-               </td>
+               <?
+			       if ($_REQUEST['ud']['ID']>0)
+				   {
+			   ?>
+                      <td align="center" class="font_14" height="40">
+                      <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                      <tbody>
+                      <tr>
+                      <td><a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="$('#vote_modal').modal(); $('#vote_type').val('up'); $('#vote_img').attr('src', '../../tweets/GIF/like.png'); $('#vote_target_type').val('ID_COM'); $('#vote_targetID').val('<? print $row['comID']; ?>');"><span class="glyphicon glyphicon-thumbs-up"></span></a></td>
+                      <td>&nbsp;</td>
+                      <td><a href="javascript:void(0)" onclick="$('#vote_modal').modal(); $('#vote_type').val('down'); $('#vote_img').attr('src', '../../tweets/GIF/down.png'); $('#vote_target_type').val('ID_COM'); $('#vote_targetID').val('<? print $row['comID']; ?>');" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-thumbs-down"></span></a></td>
+                      </tr>
+                      </tbody>
+                      </table>
+                       </td>
+               
+               <?
+				   }
+				 
+			   ?>
+               
+              
                </tr>
              <tr>
               
               <td height="0" align="center" bgcolor="<? if ($row['pay']>0) print "#e7ffef"; else print "#fafafa"; ?>" class="font_14">
-               <strong><span style="color:<? if ($row['pay']==0) print "#999999"; else print "#009900"; ?>"><? print "$".$this->kern->split($row['pay'])[0]; ?></span><span style="color:<? if ($row['pay']==0) print "#afafaf"; else print "#52B65D"; ?>" class="font_12"><? print ".".$this->kern->split($row['pay'])[1]; ?></span></strong></td>
+               <strong><span style="color:<? if ($row['pay']==0) print "#999999"; else print "#009900"; ?>"><? print "$".$this->kern->split($row['pay']*$_REQUEST['sd']['MSK_price'])[0]; ?></span><span style="color:<? if ($row['pay']==0) print "#afafaf"; else print "#52B65D"; ?>" class="font_12"><? print ".".$this->kern->split($row['pay']*$_REQUEST['sd']['MSK_price'])[1]; ?></span></strong></td>
              </tr>
              </tbody>
          </table></td>
@@ -2011,7 +2096,7 @@ class CTweets
          <tbody>
            <tr>
              <td align="left"><a class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;&nbsp;<span class="font_10" style="color:#999999"><? print "~".$this->kern->timeFromBlock($row['block'])." ago"; ?></span>
-               <p class="font_14"><? print  nl2br($this->template->makeLinks(base64_decode($row['mes']))); ?></p></td>
+               <p class="font_14"><? print  nl2br($this->template->makeLinks($this->kern->noescape(base64_decode($row['mes'])))); ?></p></td>
            </tr>
            <tr>
              <td align="right">
@@ -2045,6 +2130,7 @@ class CTweets
 		  print "<tr><td colspan='3'><hr></td></tr>";
 		else
 		  print "<tr><td colspan='3'>&nbsp;</td></tr>";  
+		   }
 		   }
 	 ?>
    

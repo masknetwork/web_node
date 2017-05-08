@@ -379,7 +379,7 @@ class CMes
                         <td height="30" align="right" bgcolor="#f0f0f0" class="font_14">Subject</td>
                         <td align="left" bgcolor="#f0f0f0" class="font_14">&nbsp;&nbsp;<strong>
                         <? 
-						    print base64_decode($row['subject']); 
+						    print $this->kern->noEscape(base64_decode($row['subject'])); 
 					    ?>
                         </strong></td>
                       </tr>
@@ -387,7 +387,7 @@ class CMes
                         <td height="10" colspan="2" align="left" valign="top" class="font_14">&nbsp;</td>
                       </tr>
                       <tr>
-                        <td height="100" colspan="2" align="left" valign="top" class="font_16"><? print base64_decode($row['mes']); ?></td>
+                        <td height="100" colspan="2" align="left" valign="top" class="font_16"><? print $this->kern->noEscape(base64_decode($row['mes'])); ?></td>
                       </tr>
                       <tr>
                         <td colspan="2" background="../../template/template/GIF/lp.png">&nbsp;</td>

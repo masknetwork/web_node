@@ -53,28 +53,13 @@
                   <td class="font_30" style="color:#ffffff">Maintainance in progress...</td>
                 </tr>
                 <tr>
-                  <td class="font_16" style="color:#ebecff">Don't worry. Your coins are safe with us. Every website has to perform <strong>maintenance</strong> at some point or another. Whether it&rsquo;s just to upgrade a portion of the site or because of some problem with the site, it&rsquo;s an inevitable fact of website ownership. In the meantime, check other web nodes. Our node could be offline from time to time, but MaskNetwork is never down.</td>
+                  <td class="font_16" style="color:#ebecff">Don't worry. Your coins are safe with us. Every website has to perform <strong>maintenance</strong> at some point or another. Whether it&rsquo;s just to upgrade a portion of the site or because of some problem with the site, it&rsquo;s an inevitable fact of website ownership. </td>
                 </tr>
                 <tr>
                   <td><hr style="color:#ffffff"></td>
                 </tr>
                 <tr>
-                  <td><table width="100%" border="0" cellpadding="0" cellspacing="0">
-                    <tbody>
-                      <tr>
-                        <td align="center"><a href="#" class="font_16" style="color:#ffffff">www.maskwallet.com</a></td>
-                        <td align="center"><a href="#" class="font_16" style="color:#ffffff">www.hiddenwallet.org</a></td>
-                      </tr>
-                      <tr>
-                        <td align="center"><a href="#" class="font_16" style="color:#ffffff">www.maskplace.net</a></td>
-                        <td align="center"><a href="#" class="font_16" style="color:#ffffff">www.maskcentral.info</a></td>
-                      </tr>
-                      <tr>
-                        <td align="center"><a href="#" class="font_16" style="color:#ffffff">www.coincenter.info</a></td>
-                        <td align="center"><a href="#" class="font_16" style="color:#ffffff">www.hiddenmarket.info</a></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
+                  <td>&nbsp;</td>
                 </tr>
                 <tr>
                   <td>&nbsp;</td>

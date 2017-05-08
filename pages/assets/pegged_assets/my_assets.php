@@ -31,7 +31,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -76,7 +76,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("Below are listed market pegged assets that you own. The wallet will updated at regular intervals assets's price, so that you can see in real time what is the profit or loss for each asset. Market pegged assets can be transferred to other addresses just like Maskcoins or other assets. Keep in mind that some assets are setup to pay interest. You can exchange anytime an asset to the associated market at the last available price.");
+	 $template->showHelp("Below are listed market pegged assets that you own. The wallet will updated at regular intervals assets's price, so that you can see in real time what is the profit or loss for each asset. Market pegged assets can be transferred to other addresses just like MaskCoins or other assets. Keep in mind that some assets are setup to pay interest. You can exchange anytime an asset to the associated market at the last available price.");
 	 
 	// Show my assets
 	$assets->showMyAssets();

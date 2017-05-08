@@ -22,7 +22,7 @@ class CGlobals
 		          FROM agents_globals AS ag 
 				  JOIN agents_mine AS am ON am.ID=ag.appID 
 				 WHERE am.adr IN (SELECT adr 
-				                    FROM adr 
+				                    FROM my_adr 
 								   WHERE userID='".$_REQUEST['ud']['ID']."')";
 		$result=$this->kern->execute($query);
 			
@@ -227,6 +227,9 @@ class CGlobals
 			   return false;
 		     }
 		}
+		
+		// Replace
+		$val=str_replace("\"", "'", $val);
 		
 		try
 	    {

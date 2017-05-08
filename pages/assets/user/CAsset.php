@@ -7,7 +7,86 @@ class CAsset
 		$this->template=$template;
 	}
 	
-	
+	function trust($net_fee_adr, $trust_adr, $asset)
+	{
+		// Standard checks
+		if ($this->kern->standardCheck($this->template, $net_fee_adr, $trust_adr)==false)
+		   return false;
+		
+		// Network fee
+		if ($this->kern->getBalance($net_fee_adr, "MSK")<0.0365)
+		{
+			$this->template->showErr("Insufficient funds to execute transaction");
+			return false;
+		}
+		
+		// Asset exist ?
+		if ($this->kern->assetExist($asset)==false)
+		{
+			$this->template->showErr("Asset doesn't exist");
+			return false;
+		}
+		
+		// Already trusted ?
+		$query="SELECT * 
+		          FROM adr_attr 
+				 WHERE adr='".$trust_adr."' 
+				   AND attr='ID_TRUST_ASSET' 
+				   AND s1='".$asset."'";
+		$result=$this->kern->execute($query);	
+		
+		if (mysql_num_rows($result)>0)
+		{
+			$this->template->showErr("You already trust this asset");
+			return false;
+		}
+		
+		try
+	    {
+		   // Begin
+		   $this->kern->begin();
+
+           // Action
+           $this->kern->newAct("Trust an asset - ".$asset);
+		   
+		   // Insert to stack
+		   $query="INSERT INTO web_ops 
+			                SET user='".$_REQUEST['ud']['user']."', 
+							    op='ID_ADD_ATTR', 
+								fee_adr='".$net_fee_adr."', 
+								target_adr='".$trust_adr."',
+								par_1='ID_TRUST_ASSET',
+								par_2='".$asset."',
+								par_3='',
+								par_4='',
+								par_5='0',
+								par_6='0',
+								par_7='0',
+								par_8='0',
+								par_9='0',
+								par_10='0',
+								days='365',
+								status='ID_PENDING', 
+								tstamp='".time()."'";  
+	       $this->kern->execute($query);
+		
+		   // Commit
+		   $this->kern->commit();
+		   
+		   // Confirm
+		   $this->template->showOk("Your request has been succesfully recorded", 550);
+	   }
+	   catch (Exception $ex)
+	   {
+	      // Rollback
+		  $this->kern->rollback();
+
+		  // Mesaj
+		  $this->template->showErr("Unexpected error.");
+
+		  return false;
+	   }
+	}
 	
 	function showAssetPage($symbol)
 	{
@@ -18,6 +97,69 @@ class CAsset
 		$this->showOwners($symbol);
 		$this->showTrans($symbol);
 		$this->showMarkets($symbol);
+	}
+	
+	function showTrustModal()
+	{
+		$this->template->showModalHeader("trust_modal", "Trust Asset", "act", "trust_asset");
+		?>
+        
+           <table width="700" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+           <td width="130" align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td align="center"><img src="./GIF/trust.png" width="200" /></td>
+             </tr>
+             <tr><td>&nbsp;</td></tr>
+             <tr>
+               <td align="center"><? $this->template->showNetFeePanel("0.0365", "trans"); ?></td>
+             </tr>
+             <tr>
+               <td align="center">&nbsp;</td>
+             </tr>
+            
+           </table></td>
+           <td width="400" align="center" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Network Fee Address</strong></td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">
+			   <?
+			      $this->template->showMyAdrDD("dd_net_fee_trust");
+			   ?>
+               </td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px">&nbsp;</td>
+             </tr>
+             <tr>
+               <td height="25" align="left" valign="top" style="font-size:16px"><strong>Trust with address</strong></td>
+             </tr>
+             <tr>
+               <td width="391" align="left">
+               
+			   <?
+			      $this->template->showMyAdrDD("dd_trust_adr");
+			   ?>
+               
+               </td>
+             </tr>
+             <tr>
+               <td align="left">&nbsp;</td>
+             </tr>
+           </table></td>
+         </tr>
+     </table>
+     
+    
+       
+        <?
+		$this->template->showModalFooter("Send");
+		
 	}
 	
 	function showPanel($symbol)
@@ -39,24 +181,23 @@ class CAsset
 		?>
         
             <br>
+            <table width="90%">
+            <tr><td align="right">
+            <a href="javascript:void(0)" onClick="$('#trust_modal').modal()" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;&nbsp;Trust Asset</a></td></tr>
+            </table>
+            <br>
+            
             <div class="panel panel-default" style="width:90%">
             <div class="panel-body">
             <table width="100%">
             <tr>
-            <td width="14%"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=150&h=150"; ?>"  class="img-circle img-responsive"/></td>
+            <td width="23%" valign="top"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=150&h=150"; ?>"  class="img-circle img-responsive"/></td>
             <td width="1%">&nbsp;</td>
-            <td width="71%" valign="top"><span class="font_16"><strong><? print base64_decode($row['title']); ?></strong></span>
-            <p class="font_14"><? print base64_decode($row['description']); ?></p></td>
-            <td width="14%" valign="top">
-            
-            <?
-			   $this->template->showVotePanel("ID_ASSET", $row['assetID']);
-			?>
-            
-            </td>
+            <td width="76%" valign="top"><span class="font_16"><strong><? print $this->kern->noescape(base64_decode($row['title'])); ?></strong></span>
+            <p class="font_14"><? print $this->kern->noescape(base64_decode($row['description'])); ?></p></td>
             </tr>
-            <tr><td colspan="4"><hr></td></tr>
-            <tr><td colspan="4">
+            <tr><td colspan="3"><hr></td></tr>
+            <tr><td colspan="3">
     
             <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table-responsive">
              <tr>
@@ -73,30 +214,10 @@ class CAsset
             <tr><td colspan="5"><hr></td></tr>
             <tr>
             <td width="30%" align="center"><span class="font_12">Fee</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a class="font_12" href="#"><? print $this->template->formatAdr($row['trans_fee_adr']); ?></a></strong></td>
-            <td width="40%" class="font_12" align="center">Can Issue More&nbsp;&nbsp;&nbsp;&nbsp;<strong><? if ($row['can_increase']=="Y") print "YES"; else print "NO"; ?></strong></td>
+            <td width="40%" class="font_12" align="center">Can Issue More&nbsp;&nbsp;&nbsp;YES<strong></strong></td>
             <td width="30%" class="font_12" align="center">Owners&nbsp;&nbsp;&nbsp;&nbsp;<strong><? print $owners; ?></strong></td>
             </tr>
             <tr><td colspan="5"><hr></td></tr>
-            <tr>
-              <td width="30%" align="center"><span class="font_12">Interest</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong class="font_12">
-			  <? print $row['interest']."%"; ?>
-              </strong></td>
-            <td width="40%" class="font_12" align="center">Interest Interval&nbsp;&nbsp;&nbsp;&nbsp;<strong>
-			<?
-			   switch ($row['interest_interval'])
-			   {
-				   case 60 : print "Every Hour"; break;
-				   case 1440 : print "Every Day"; break;
-				   case 10080 : print "Every Week"; break;
-				   case 43200 : print "Every Month"; break;
-				   case 129600 : print "Every 3 Months"; break;
-				   case 259200 : print "Every 6 Months"; break;
-				   case 518400 : print "Every Year"; break;
-			   }
-			?>
-            </strong></td>
-            <td width="30%" class="font_12" align="center">&nbsp;</strong></td>
-            </tr>
             </table>
             
             <table>

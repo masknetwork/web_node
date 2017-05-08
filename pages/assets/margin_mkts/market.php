@@ -26,45 +26,27 @@
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-
-
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_12 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-</style>
-
 </head>
 
 <body>
 
 <?
-   $template->showTopBar(4);
+   $template->showBalanceBar();
 ?>
- 
 
- <div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1">&nbsp;</div>
- <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("margin");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	  <?
      // Location
      $template->showLocation("../../assets/assets/index.php", "Speculative Markets", "", "Markets");
 	 
@@ -79,46 +61,76 @@
 	 
 	 // Modal
 	 $mkts->showNewTransModal($_REQUEST['ID']);
+	
 	 
 	 // New trade ?
-	 if ($_REQUEST['act']=="new_trade") $mkts->newTrade($_REQUEST['dd_new_pos_net_fee_adr'], 
-	                                                   $_REQUEST['dd_new_pos_adr'], 
-													   $_REQUEST['ID'], 
-													   $_REQUEST['h_type'], 
-													   $_REQUEST['dd_new_pos_exec'],
-													   $_REQUEST['txt_new_pos_open'], 
-													   $_REQUEST['txt_new_pos_sl'], 
-													   $_REQUEST['txt_new_pos_tp'],
-													   $_REQUEST['txt_new_pos_leverage'],
-													   $_REQUEST['txt_new_pos_qty']);  
+	 if ($_REQUEST['act']=="new_trade") 
+	    $mkts->newTrade($_REQUEST['dd_new_pos_net_fee_adr'], 
+	                    $_REQUEST['dd_new_pos_adr'], 
+						$_REQUEST['ID'], 
+						$_REQUEST['h_type'], 
+						$_REQUEST['dd_new_pos_exec'],
+						$_REQUEST['txt_new_pos_open'], 
+						$_REQUEST['txt_new_pos_sl'], 
+						$_REQUEST['txt_new_pos_tp'],
+						$_REQUEST['txt_new_pos_leverage'],
+						$_REQUEST['txt_new_pos_qty'],
+						$_REQUEST['txt_new_pos_days']);  
 	 
 	 // Chart
 	 $mkts->showMktChart($_REQUEST['ID']);
 	 				   
 	 if ($_REQUEST['ud']['ID']>0)
 	 {
+		   // Pos
 		   if (!isset($_REQUEST['target']) || $_REQUEST['target']=="pos")
 		      $sel=1;
-		   else 
+		   
+		   // My pos
+		   else if ($_REQUEST['target']=="my_pos")
 		      $sel=2;
-			  
-	       $template->showNav($sel,
-	                          "market.php?target=pos&ID=".$_REQUEST['ID'], "Positions", "",
+		   
+		   // Admin
+		   else if ($_REQUEST['target']=="admin")
+		      $sel=3; 
+		   
+		   // My  market ?
+		   $template->showNav($sel,
 	                          "market.php?target=my_pos&ID=".$_REQUEST['ID'], "My Positions", "");
-							  
+		 
+		   
+		   // No interval
+		   if (!isset($_REQUEST['dd_interval']))
+		     $_REQUEST['interval']="24";
+		   	
+		   // Show	  
 		   if ($sel==1)
 		      $mkts->showPositions($_REQUEST['ID']);
-		   else
-		      $mkts->showPositions($_REQUEST['ID'], "mine");
+		   
+		   if ($sel==2)
+		      $mkts->showPositions($_REQUEST['ID'], "ID_MARKET", "mine");
+		   
+		   if ($sel==3)
+		      $mkts->showAdmin($_REQUEST['dd_interval']);
 	 }
 	 else $mkts->showPositions($_REQUEST['ID']);
  ?>
- <br><br><br>
- </div>
- <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1">&nbsp;</div>
- </div>
- </div>
+ 
+ <br><br><br><br><br>
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
@@ -126,3 +138,6 @@
  
 </body>
 </html>
+
+
+

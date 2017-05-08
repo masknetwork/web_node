@@ -47,6 +47,7 @@
    $pkey=new CReveal($db, $template);
 ?>
 
+
 <!doctype html>
 <html>
 <head>
@@ -54,129 +55,32 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
-<script src="../../../utils.js"></script>
-
-<link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
-<link rel="stylesheet" href="../../../gallery.css">
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
-
-<script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
-<script src="../../../gallery.min.js"></script>
-
-<script src="../../../jupload/js/vendor/jquery.ui.widget.js"></script>
-<script src="../../../jupload/js/jquery.iframe-transport.js"></script>
-<script src="../../../jupload/js/jquery.fileupload.js"></script>
-
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_12 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-</style>
-
-<script>
-$(document).ready(
-
-$(function (e) 
-{
-	var i=0;
-	
-    $('#fileupload').fileupload({
-        url: './server/php/index.php',
-		dataType : 'json',
-		autoUpload:true,
-		
-		add: function(e, data) 
-		{ 
-		    data.files.forEach(function(file) 
-		   { 
-		      if (file.name.indexOf('.jpg')<0 && 
-			      file.name.indexOf('.jpeg')<0) 
-			  return false;  
-		   });
-		   
-		   data.submit();
-		},
-		
-		progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10); 
-            $('#progress .progress-bar').css(
-                'width',
-                progress + '%'
-            );
-        },
-        
-		done: function (e, data) 
-		{
-			 $('#progress .progress-bar').css(
-                'width',
-                '0%'
-            );
-			
-			 $.each(data.result.files, function (index, file) 
-			 {
-				if (i==0) 
-				{
-					$('#pic_back').attr('src', '../../../crop.php?src=./pages/tweets/home/server/php/files/'+file.name+'&w=350&h=100');
-				    $('#h_pic_back').val(file.name);
-				}
-				
-				if (i==1) 
-				{
-					$('#pic').attr('src', '../../../crop.php?src=./pages/tweets/home/server/php/files/'+file.name+'&w=100&h=100');
-				    $('#h_pic').val(file.name);
-				}
-				
-				i++;
-            });
-		
-        },
-		
-		fail: function(e, data) 
-		{
-			   console.log(data);
-              alert(data.errorThrown+", "+data.textStatus);
-        }
-		
-		
-    });
-}));
-</script>
-
 </head>
 
 <body>
 
 <?
-   $template->showTopBar(2);
+   $template->showBalanceBar();
 ?>
- 
 
- <div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1">&nbsp;</div>
- <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("adr");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	 <?
      // Location
      $template->showLocation("../adr/index.php", "My Addresses", 
 	                         "", "Address Options");
@@ -280,18 +184,31 @@ $(function (e)
 									
 					case "seal_adr" : $seal->sealAdr($_REQUEST['dd_net_fee_adr_seal'], 
 					                                $adr, 
-											        $_REQUEST['txt_days_seal']); 
+											        $_REQUEST['txt_rec_1'],
+													$_REQUEST['txt_rec_2'],
+													$_REQUEST['txt_rec_3'],
+													$_REQUEST['txt_days']); 
 					                  break;
 			   }
 			   
 			   if ($_REQUEST['act']!="reveal") $adr_options->showOptions($_REQUEST['ID']);
  ?>
  
- </div>
- <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1">&nbsp;</div>
- </div>
- </div>
+ 
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
@@ -299,3 +216,7 @@ $(function (e)
  
 </body>
 </html>
+
+
+
+

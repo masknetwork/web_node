@@ -13,28 +13,26 @@ class COptions
 					   $amount)
 	{
 		// Net Fee Address 
-		if ($this->kern->adrExist($net_fee_adr)==false)
+		if ($this->kern->adrValid($net_fee_adr)==false || 
+		    $this->kern->adrExist($net_fee_adr)==false || 
+			$this->kern->canSpend($net_fee_adr)==false || 
+			$this->kern->isMine($net_fee_adr)==false)
 		{
-			$this->template->showErr("Invalid network fee address");
+			$this->template->showErr("Invalid network fee address or network fee address can't spend funds");
+			return false;
+		}
+		
+		// Net Fee Address 
+		if ($this->kern->adrValid($bet_adr)==false || 
+		    $this->kern->adrExist($bet_adr)==false || 
+			$this->kern->canSpend($bet_adr)==false ||
+			$this->kern->isMine($bet_adr)==false)
+		{
+			$this->template->showErr("Invalid bet address or network fee address can't spend funds");
 			return false;
 		}
 	   
-	     // Bet address
-		 if ($this->kern->adrValid($bet_adr)==false)
-		 {
-			$this->template->showErr("Invalid bet address");
-			return false;
-		 }
-		 
-		 // My addresses ?
-		 if ($this->kern->isMine($net_fee_adr)==false ||
-		    $this->kern->isMine($bet_adr)==false)
-		{
-			 $this->template->showErr("Invalid entry data");
-		     return false;
-	    }
-		  
-		 // Network fee
+	     // Network fee
 		 if ($this->kern->getBalance($net_fee_adr)<0.0001)
 	     {
 		    $this->template->showErr("Insufficient funds to execute the transaction");
@@ -73,6 +71,13 @@ class COptions
 		 if ($left_budget<$amount)
 		 {
 			 $this->template->showErr("Maximum accepted investment is ".$left_budget." ".$bet_row['cur']);
+		     return false;
+		 }
+		 
+		 // Amount
+		 if ($amount<0.0001)
+		 {
+			 $this->template->showErr("Minimum accepted investment is 0.0001 ".$bet_row['cur']);
 		     return false;
 		 }
 		 
@@ -129,45 +134,45 @@ class COptions
 					   $expire_per, 
 					   $accept,
 					   $accept_per, 
-					   $feed_1, 
-					   $feed_branch_1,
-					   $feed_2, 
-					   $feed_branch_2,
-					   $feed_3, 
-					   $feed_branch_3)
+					   $feed, 
+					   $feed_branch)
 	{
 		// Decode
 		$name=base64_decode($name);
 		$desc=base64_decode($desc);
 		 
 		// Net Fee Address 
-		if ($this->kern->adrExist($net_fee_adr)==false)
+		if ($this->kern->adrValid($net_fee_adr)==false || 
+		    $this->kern->adrValid($bet_adr)==false || 
+			$this->kern->adrExist($net_fee_adr)==false || 
+			$this->kern->adrExist($bet_adr)==false)
 		{
-			$this->template->showErr("Invalid network fee address");
+			$this->template->showErr("Invalid entry data");
 			return false;
 		}
-	   
-	     // Bet address
-		 if ($this->kern->adrValid($bet_adr)==false)
-		 {
-			$this->template->showErr("Invalid bet address");
+	    
+		// Can spend
+		if ($this->kern->canSpend($net_fee_adr)==false || 
+			$this->kern->canSpend($bet_adr)==false)
+		{
+			$this->template->showErr("Address can't spend funds");
 			return false;
-		 }
-		 
+		}
+	     
 		 // Name
-		 if (strlen($name)<5 || strlen($name)>150)
+		 if ($this->kern->isTitle($name))
 		 {
-			 $this->template->showErr("Invalid name length (5-150 characters)");
+			 $this->template->showErr("Invalid name");
 			 return false;
 		 }
 		 
 		 // Description
-		 if (strlen($desc)>500)
+		 if ($this->kern->isDesc($desc))
 		 {
-			 $this->template->showErr("Invalid name length (5-500 characters)");
+			 $this->template->showErr("Invalid description");
 			 return false;
 		 }
-		 
+		
 		 // Type 
 		 if ($type!="ID_TOUCH" && 
 		     $type!="ID_NOT_TOUCH" && 
@@ -182,7 +187,7 @@ class COptions
 		 }
 		 
 		// Level 1
-		if ($this->kern->isNumber($lev_1, "decimal", 8)==false)
+		if ($this->kern->isNumber($lev_1)==false)
 		{
 			$this->template->showErr("Invalid level 1");
 			return false;
@@ -191,7 +196,7 @@ class COptions
 		// Level 2
 		if ($type=="ID_BETWEEN")
 		{
-		  if ($this->kern->isNumber($lev_2, "decimal", 8)==false)
+		  if ($this->kern->isNumber($lev_2)==false)
 		  {
 			  $this->template->showErr("Invalid level 2");
 			  return false;
@@ -203,8 +208,8 @@ class COptions
 		{
 			$query="SELECT * 
 			         FROM feeds_branches 
-					WHERE feed_symbol='".$feed_1."' 
-					  AND symbol='".$feed_branch_1."'";
+					WHERE feed_symbol='".$feed."' 
+					  AND symbol='".$feed_branch."'";
 		    $result=$this->kern->execute($query);	
 	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
 			
@@ -266,21 +271,21 @@ class COptions
 		// Expire 
 		switch ($expire_per)
 		{
-			case "ID_MINUTES" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_minute']*$expire; break;
-			case "ID_HOURS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_hour']*$expire; break;
-			case "ID_DAYS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_day']*$expire; break;
-			case "ID_MONTHS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_month']*$expire; break;
-			case "ID_YEARS" : $expire_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_year']*$expire; break;
+			case "ID_MINUTES" : $expire_block=$_REQUEST['sd']['last_block']+$expire; break;
+			case "ID_HOURS" : $expire_block=$_REQUEST['sd']['last_block']+$expire*60; break;
+			case "ID_DAYS" : $expire_block=$_REQUEST['sd']['last_block']+$expire*1440; break;
+			case "ID_MONTHS" : $expire_block=$_REQUEST['sd']['last_block']+$expire*43200; break;
+			case "ID_YEARS" : $expire_block=$_REQUEST['sd']['last_block']+$expire*525600; break;
 		}
 		
 		// Accept bets 
 		switch ($accept_per)
 		{
-			case "ID_MINUTES" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_minute']*$accept; break;
-			case "ID_HOURS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_hour']*$accept; break;
-			case "ID_DAYS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_day']*$accept; break;
-			case "ID_MONTHS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_month']*$accept; break;
-			case "ID_YEARS" : $accept_block=$_REQUEST['sd']['last_block']+$_REQUEST['sd']['blocks_per_year']*$accept; break;
+			case "ID_MINUTES" : $accept_block=$_REQUEST['sd']['last_block']+$accept; break;
+			case "ID_HOURS" : $accept_block=$_REQUEST['sd']['last_block']+$accept*60; break;
+			case "ID_DAYS" : $accept_block=$_REQUEST['sd']['last_block']+$accept*1440; break;
+			case "ID_MONTHS" : $accept_block=$_REQUEST['sd']['last_block']+$accept*43200; break;
+			case "ID_YEARS" : $accept_block=$_REQUEST['sd']['last_block']+$accept*525600; break;
 		}
 	    
 		
@@ -291,46 +296,17 @@ class COptions
 			return false;
 		}
 		
-		 // Feed 1
-		 $feed_1=strtoupper($feed_1);
-		 $feed_branch_1=strtoupper($feed_branch_1);
-		 
-		 // Feed 2
-		 $feed_2=strtoupper($feed_2);
-		 $feed_branch_2=strtoupper($feed_branch_2);
-		 
-		 // Feed 3
-		 $feed_3=strtoupper($feed_3);
-		 $feed_branch_3=strtoupper($feed_branch_3);
-		 
-		 // Feed 1
-		 if ($this->kern->branchExist($feed_1, $feed_branch_1)==false) 
+		 // Feed
+		 $feed=strtoupper($feed);
+		 $feed_branch=strtoupper($feed_branch);
+		
+		 // Feed
+		 if ($this->kern->branchExist($feed, $feed_branch)==false) 
 		 {
-			 $this->template->showErr("Invalid feed branch symbol 1");
+			 $this->template->showErr("Invalid feed branch symbol");
 		     return false;
 		 }
-		 
-		 // Feed 2
-		 if ($feed_2!="")
-		 {
-		    if ($this->kern->branchExist($feed_2, $feed_branch_2)==false) 
-		    {
-			    $this->template->showErr("Invalid feed branch symbol 2");
-		        return false;
-		    }
-		 }
-		 
-		 // Feed 3
-		 if ($feed_2!="")
-		 {
-		    if ($this->kern->branchExist($feed_3, $feed_branch_3)==false) 
-		    {
-			    $this->template->showErr("Invalid feed branch symbol 3");
-		        return false;
-		    }
-		 }
 		
-		 
 		 // Net fee
 		 if ($cur!="MSK")
 		    $fee=round($mkt_days*0.0001, 4);
@@ -368,13 +344,8 @@ class COptions
 								par_8='".base64_encode($desc)."',
 								par_9='".$expire_block."',
 								par_10='".$accept_block."',
-								par_11='".$feed_1."',
-								par_12='".$feed_branch_1."',
-								par_13='".$feed_2."',
-								par_14='".$feed_branch_2."',
-								par_15='".$feed_3."',
-								par_16='".$feed_branch_3."',
-								par_17='".$_REQUEST['sd']['last_block']."',
+								par_11='".$feed."',
+								par_12='".$feed_branch."',
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);
@@ -399,13 +370,12 @@ class COptions
 	
 	function showNewBetModal()
 	{
+		$this->template->showModalHeader("modal_new_bet", "New Bet", "act", "new_bet");
 		?>
-           
-           <br><br>
-           <form id="form_new_bet" name="form_new_bet" method="post" action="issued.php?act=new_bet">
+        
           <table width="90%" border="0" cellspacing="0" cellpadding="0">
           <tr>
-            <td width="20%" align="center" valign="top"><table width="180" border="0" cellspacing="0" cellpadding="0">
+            <td width="172" align="center" valign="top"><table width="180" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="center"><img src="GIF/new.png" width="140"  alt="" class="img-circle"/></td>
               </tr>
@@ -413,55 +383,42 @@ class COptions
                 <td align="center">&nbsp;</td>
               </tr>
               <tr>
-                <td align="center"><? $this->template->showNetFeePanel(); ?></td>
+                <td align="center"><? $this->template->showNetFeePanel("0.0001", "feeds"); ?></td>
               </tr>
             </table></td>
-            <td width="50%" align="right" valign="top">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <td width="450" align="right" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td height="30" align="left" valign="top"><strong class="font_14">Bet  Address</strong></td>
               </tr>
               <tr>
-                <td align="left"><? $this->template->showMyAdrDD("dd_bet_adr", "100%"); ?></td>
+                <td align="left"><? $this->template->showMyAdrDD("dd_bet_adr", "200px"); ?></td>
               </tr>
               <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
-             
-              <tr>
-                <td align="left">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td width="10%" height="30" colspan="3" align="left" valign="top" class="font_14"><strong>Data Feed 1</strong><strong></strong></td>
-                    <td width="3%" align="left" valign="top" class="font_14">&nbsp;</td>
-                    <td width="10%" colspan="3" align="left" valign="top" class="font_14"><strong>Data Feed 2</strong>                    </td>
-                    <td width="3%" align="left" valign="top" class="font_14">&nbsp;</td>
-                    <td width="10%" colspan="3" align="left" valign="top" class="font_14"><strong>Data Feed 3</strong></td>
-                  </tr>
-                  <tr>
-                    <td width="10%"><input class="form-control" id="txt_bet_feed_1" name="txt_bet_feed_1" placeholder="XXXXXX" <? if ($_REQUEST['feed']!="") print "value='".$_REQUEST['feed']."'"; ?>/></td>
-                    <td width="1%">&nbsp;-&nbsp;</td>
-                    <td width="10%"><input class="form-control" id="txt_bet_branch_1" name="txt_bet_branch_1" placeholder="XXXXXX" <? if ($_REQUEST['branch']!="") print "value='".$_REQUEST['branch']."'"; ?>/></td>
-                    <td>&nbsp;</td>
-                    <td width="10%"><input class="form-control" id="txt_bet_feed_2" name="txt_bet_feed_2" placeholder="XXXXXX" /></td>
-                    <td width="1%">&nbsp;-&nbsp;</td>
-                    <td width="10%"><input class="form-control" id="txt_bet_branch_2" name="txt_bet_branch_2" placeholder="XXXXXX" /></td>
-                    <td>&nbsp;</td>
-                    <td width="10%"><input class="form-control" id="txt_bet_feed_3" name="txt_bet_feed_3" placeholder="XXXXXX" /></td>
-                    <td width="1%">&nbsp;-&nbsp;</td>
-                    <td width="10%"><input class="form-control" id="txt_bet_branch_3" name="txt_bet_branch_3" placeholder="XXXXXX" /></td>
-                  </tr>
-                </table>
-                </td>
-              </tr>
-              
-               <tr>
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
                 <td align="left">
                 
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td height="30" colspan="3" align="left" valign="top" class="font_14"><strong>Data Feed  / Branch</strong></td>
+                    <td width="68%" align="left" valign="top" class="font_14">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td width="20%"><input class="form-control" id="txt_bet_feed" name="txt_bet_feed" placeholder="XXXXXX" style="width:100px"/></td>
+                    <td width="1%">&nbsp;-&nbsp;</td>
+                    <td width="11%"><input class="form-control" id="txt_bet_branch" name="txt_bet_branch" placeholder="XXXXXX" style="width:100px"/></td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </table>
+                
+                </td>
+              </tr>
+              <tr>
+                <td align="left">&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td width="30%" height="30" align="left" valign="top" class="font_14"><strong>Type</strong></td>
                     <td width="5%">&nbsp;</td>
@@ -473,13 +430,13 @@ class COptions
                     <td>
                     
                     <select id="dd_bet_type" name="dd_bet_type" class="form-control" onchange="type_changed()">
-                    <option value="ID_TOUCH">Touch Level</option>
-                    <option value="ID_NOT_TOUCH">Don't Touch Level</option>
-                    <option value="ID_CLOSE_BELOW">Close Below Level</option>
-                    <option value="ID_CLOSE_ABOVE">Close Above Level</option>
-                    <option value="ID_CLOSE_BETWEEN">Between Levels</option>
-                    <option value="ID_NOT_CLOSE_BETWEEN">Not Between Levels</option>
-                    <option value="ID_CLOSE_EXACT_VALUE">Exact Value</option>
+                      <option value="ID_TOUCH">Touch Level</option>
+                      <option value="ID_NOT_TOUCH">Don't Touch Level</option>
+                      <option value="ID_CLOSE_BELOW">Close Below Level</option>
+                      <option value="ID_CLOSE_ABOVE">Close Above Level</option>
+                      <option value="ID_CLOSE_BETWEEN">Between Levels</option>
+                      <option value="ID_NOT_CLOSE_BETWEEN">Not Between Levels</option>
+                      <option value="ID_CLOSE_EXACT_VALUE">Exact Value</option>
                     </select>
                     
                     </td>
@@ -488,34 +445,28 @@ class COptions
                     <td width="5%">&nbsp;</td>
                     <td><input class="form-control" id="txt_bet_lev_2" name="txt_bet_lev_2" placeholder="0" disabled="disabled"/></td>
                   </tr>
-                </table>
-                
-                </td>
+                </table></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td align="left">
-                
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <td align="left"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td width="31%" height="30" align="left" valign="top" class="font_14"><strong>Budget</strong></td>
-                    <td width="5%">&nbsp;</td>
-                    <td width="36%" align="left" valign="top" class="font_14"><strong>Currency</strong></td>
-                    <td width="5%">&nbsp;</td>
+                    <td width="28%" height="30" align="left" valign="top" class="font_14"><strong>Budget</strong></td>
+                    <td width="4%">&nbsp;</td>
+                    <td width="32%" align="left" valign="top" class="font_14"><strong>Currency</strong></td>
+                    <td width="3%">&nbsp;</td>
                     <td width="33%" align="left" valign="top" class="font_14"><strong>Profit Ratio (%)</strong></td>
                   </tr>
                   <tr>
                     <td><input name="txt_bet_budget" class="form-control" id="txt_bet_budget" placeholder="0"  /></td>
-                    <td width="5%">&nbsp;</td>
+                    <td width="4%">&nbsp;</td>
                     <td><input name="txt_bet_cur" class="form-control" id="txt_bet_cur" placeholder="XXXXXX"  value="MSK"/></td>
-                    <td width="5%">&nbsp;</td>
+                    <td width="3%">&nbsp;</td>
                     <td><input class="form-control" id="txt_bet_profit" name="txt_bet_profit" placeholder="10" type="number" /></td>
                   </tr>
-                </table>
-                
-                </td>
+                </table></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
@@ -533,74 +484,82 @@ class COptions
                 <td height="30" align="left" valign="top" class="font_14"><strong>Short Description</strong></td>
               </tr>
               <tr>
-                <td align="left">
-                <textarea rows="3" id="txt_bet_desc" name="txt_bet_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:100%"></textarea>
-                </td>
+                <td align="left"><textarea rows="3" id="txt_bet_desc" name="txt_bet_desc" class="form-control" placeholder="Short Description ( 0-250 characters )" style="width:100%"></textarea></td>
               </tr>
               <tr>
                 <td align="left">&nbsp;</td>
               </tr>
               <tr>
-                <td height="30" align="left" valign="top">
-              
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <td height="30" align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td width="30%" height="30" align="left" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tbody>
                         <tr>
                           <td><strong class="font_14">Bet Expire </strong></td>
-                          <td width="5%">&nbsp;</td>
-                          <td><strong class="font_14">Positions can be placed in the next</strong></td>
                         </tr>
                         <tr>
                           <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
                               <td width="10%"><input class="form-control" id="txt_bet_expire" name="txt_bet_expire" placeholder="1" style="width:90px" type="number" /></td>
                               <td width="3%">&nbsp;-&nbsp;</td>
-                              <td width="87%"><select id="dd_bet_expire_per" name="dd_bet_expire_per" class="form-control">
-                                <option value="ID_MINUTES">Minutes</option>
-                                <option value="ID_HOURS">Hours</option>
-                                <option value="ID_DAYS">Days</option>
-                                <option value="ID_MONTHS">Months</option>
-                                <option value="ID_YEARS">Years</option>
-                              </select></td>
-                            </tr>
-                          </table></td>
-                          <td>&nbsp;</td>
-                          <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-                            <tr>
-                              <td width="10%">
-                              <input class="form-control" id="txt_bet_accept" name="txt_bet_accept" placeholder="1" style="width:90px" type="number" /></td>
-                              <td width="3%">&nbsp;-&nbsp;</td>
                               <td width="87%">
-                              <select id="dd_bet_accept_per" name="dd_bet_accept_per" class="form-control">
+                              
+                              <select id="dd_bet_expire_per" name="dd_bet_expire_per" class="form-control">
                                 <option value="ID_MINUTES">Minutes</option>
                                 <option value="ID_HOURS">Hours</option>
                                 <option value="ID_DAYS">Days</option>
                                 <option value="ID_MONTHS">Months</option>
                                 <option value="ID_YEARS">Years</option>
-                              </select></td>
+                              </select>
+                              
+                              </td>
                             </tr>
                           </table></td>
                         </tr>
                       </tbody>
                     </table></td>
                   </tr>
-                 
+                </table></td>
+              </tr>
+              <tr>
+                <td height="30" align="left" valign="top">&nbsp;</td>
+              </tr>
+              <tr>
+                <td height="30" align="left" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tbody>
+                    <tr>
+                      <td><strong class="font_14">Positions can be placed in the next</strong></td>
+                    </tr>
+                    <tr>
+                      <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td width="10%"><input class="form-control" id="txt_bet_accept" name="txt_bet_accept" placeholder="1" style="width:90px" type="number" /></td>
+                          <td width="3%">&nbsp;-&nbsp;</td>
+                          <td width="87%">
+                          
+                          <select id="dd_bet_accept_per" name="dd_bet_accept_per" class="form-control">
+                            <option value="ID_MINUTES">Minutes</option>
+                            <option value="ID_HOURS">Hours</option>
+                            <option value="ID_DAYS">Days</option>
+                            <option value="ID_MONTHS">Months</option>
+                            <option value="ID_YEARS">Years</option>
+                          </select>
+                          
+                          </td>
+                        </tr>
+                      </table></td>
+                    </tr>
+                  </tbody>
                 </table></td>
               </tr>
             </table></td>
           </tr>
-          <tr><td colspan="2"><hr></td></tr>
-          <tr><td colspan="2" align="right"><a href="javascript:void(0)" onClick="$('#form_new_bet').submit()" class="btn btn-primary">Submit</a></td></tr>
         </table>
-        </form>
-        <br><br><br>
         
         <script>
 		function type_changed()
 		{
-		   if ($('#dd_bet_type').val()=="ID_BETWEEN")
+		   if ($('#dd_bet_type').val()=="ID_CLOSE_BETWEEN")
 		   {
 			  $('#txt_bet_lev_2').prop('disabled', false);
 			  event.preventDefault();
@@ -612,7 +571,7 @@ class COptions
 		   }
 		}
 	
-		$('#form_new_bet').submit(
+		$('#form_modal_new_bet').submit(
 		function() 
 		{ 
 		   $('#txt_bet_name').val(btoa($('#txt_bet_name').val())); 
@@ -621,7 +580,9 @@ class COptions
 		</script>
         
         <?
+		$this->template->showModalFooter("Send");
 	}
+	
 	
 	function showBuyBetModal($betID)
 	{
@@ -684,8 +645,8 @@ class COptions
 		if ($status=="ID_PENDING")
 		$query="SELECT fb.*, fbr.type 
 		          FROM feeds_bets AS fb
-		          JOIN feeds_branches AS fbr ON (fbr.feed_symbol=fb.feed_1 
-				                                 AND fbr.symbol=fb.branch_1)
+		          JOIN feeds_branches AS fbr ON (fbr.feed_symbol=fb.feed 
+				                                 AND fbr.symbol=fb.branch)
 		         WHERE (title LIKE '%".$search."%'
 				    OR fb.description LIKE '%".$search."%') 
 				   AND status='ID_PENDING'
@@ -695,8 +656,8 @@ class COptions
 	    else
 		$query="SELECT fb.*, fbr.type 
 		          FROM feeds_bets AS fb
-		          JOIN feeds_branches AS fbr ON (fbr.feed_symbol=fb.feed_1 
-				                                 AND fbr.symbol=fb.branch_1)
+		          JOIN feeds_branches AS fbr ON (fbr.feed_symbol=fb.feed 
+				                                 AND fbr.symbol=fb.branch)
 		         WHERE (title LIKE '%".$search."%'
 				    OR fb.description LIKE '%".$search."%') 
 				   AND (status='ID_WIN' OR status='ID_LOST')
@@ -847,10 +808,21 @@ class COptions
 	
 	function showMyOptionsSel($status="ID_PENDING")
 	{
+		// Bet modal
+		$this->showNewBetModal();
+		
 		?>
           
           <table width="90%">
-          <tr><td align="right">
+          <tr>
+          
+          <td>
+          <a href="javascript:void(0)" onClick="$('#modal_new_bet').modal()" class="btn btn-danger">
+          <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;New Option
+          </a>
+          </td>
+          
+          <td align="right">
           <div class="btn-group" role="group" align="right">
           <a href="<? print $_SERVER['PHP_SELF']; ?>?status=ID_PENDING" type="button" class="btn <? if ($status=="ID_PENDING") print "btn-primary"; else print "btn-default"; ?>">Pending</a>
           <a href="<? print $_SERVER['PHP_SELF']; ?>?status=ID_CLOSED" type="button" class="btn <? if ($status=="ID_PENDING") print "btn-default"; else print "btn-primary"; ?>">Closed</a> 
@@ -958,21 +930,7 @@ class COptions
 		else if ($time>=2880) return round($time/1440)." days";
 	}
 	
-	function showNewOptionBut()
-	{
-		?>
-        
-		 <table width="90%">
-         <tr><td align="right">
-         <a href="issued.php?act=show_modal" class="btn btn-primary">
-         <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;&nbsp;Write Option
-         </a>
-         </td></tr>
-         </table>
-         <br>
-         
-         <?
-	}
+	
 	
 	function showPanel($betID)
 	{
@@ -1004,13 +962,7 @@ class COptions
 				      if ($row['accept_block']<$_REQUEST['sd']['last_block']) print "<span class=\"label label-danger\" class=\"font_14\">Closed Bet</span><br>";
 				  ?>
                   </td>
-                  <td width="23%" align="center">
-                  
-                  <?
-				     $this->template->showVotePanel("ID_BET", $row['betID']);
-				  ?>
-                  
-                  </td>
+                  <td width="23%" align="center">&nbsp;</td>
                 </tr>
               </tbody>
             </table>              <p class="font_14">&nbsp;</p></td>
@@ -1076,7 +1028,7 @@ class COptions
             <tr><td colspan="3"><hr></td></tr>
             <tr>
             <td width="33%" class="font_12" align="center">Feed  1&nbsp;&nbsp;&nbsp;&nbsp; 
-			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_1']; ?>&symbol=<? print $row['branch_1']; ?>" class="font_12"><strong><? print $row['feed_1']." / ".$row['branch_1']; ?></strong></a></td>
+			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_1']; ?>&symbol=<? print $row['branch']; ?>" class="font_12"><strong><? print $row['feed']." / ".$row['branch']; ?></strong></a></td>
             <td width="33%" class="font_12" align="center">Feed 2&nbsp;&nbsp;&nbsp;&nbsp; 
 			<a href="../../assets/feeds/branch.php?feed=<? print $row['feed_2']; ?>&symbol=<? print $row['branch_2']; ?>" class="font_12"><strong><? print $row['feed_2']." / ".$row['branch_2']; ?></strong></a></td></td>
             <td width="33%" class="font_12" align="center">Feed 3&nbsp;&nbsp;&nbsp; 
@@ -1181,10 +1133,10 @@ class COptions
 	{
 		$query="SELECT fbs.*, fb.cur, fb.status 
 		          FROM feeds_bets_pos AS fbs 
-				  JOIN feeds_bets AS fb ON fb.betID=fbs.bet_betID
-				 WHERE bet_betID='".$betID."' 
+				  JOIN feeds_bets AS fb ON fb.betID=fbs.betID
+				 WHERE fbs.betID='".$betID."' 
 			  ORDER BY ID DESC 
-			     LIMIT 0,25";
+			     LIMIT 0,25"; 
 	    $result=$this->kern->execute($query);	
 	    ?>
         
@@ -1237,8 +1189,8 @@ class COptions
 		$query="SELECT MIN(val) AS minimum, 
 		               MAX(val) AS maximum
 			      FROM feeds_data
-				 WHERE feed='".$bet_row['feed_1']."' 
-				   AND feed_branch='".$bet_row['branch_1']."' 
+				 WHERE feed='".$bet_row['feed']."' 
+				   AND feed_branch='".$bet_row['branch']."' 
 				   AND block>=".$bet_row['block']." 
 				   AND block<=".$bet_row['end_block']; 
 	    $result=$this->kern->execute($query);	
@@ -1283,16 +1235,16 @@ class COptions
 				 WHERE betID='".$betID."'"; 
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
-		$feed_1=$row['feed_1'];
-		$branch_1=$row['branch_1'];
+		$feed=$row['feed'];
+		$branch=$row['branch'];
 		$start_block=$row['block'];
 		$end_block=$row['end_block'];
 		
 		// Load branch
 		 $query="SELECT COUNT(*) AS no
 		          FROM feeds_data 
-				  WHERE feed='".$feed_1."' 
-				    AND feed_branch='".$branch_1."' 
+				  WHERE feed='".$feed."' 
+				    AND feed_branch='".$branch."' 
 				    AND block>=".$start_block." 
 				    AND block<=".$end_block; 
 		$result=$this->kern->execute($query);	
@@ -1301,8 +1253,8 @@ class COptions
 		
 	   $query="SELECT AVG(val) AS val
 		          FROM feeds_data 
-				 WHERE feed='".$feed_1."' 
-				   AND feed_branch='".$branch_1."'
+				 WHERE feed='".$feed."' 
+				   AND feed_branch='".$branch."'
 				   AND block>=".$start_block." 
 				   AND block<=".$end_block." 
 			  GROUP BY round(block/".($total/25).")"; 

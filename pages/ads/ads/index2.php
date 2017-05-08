@@ -75,7 +75,7 @@
            
            
             <?
-			   $template->showHelp("Listed below are your advertisements. The ads are displayed based on the bid price. Only the top 10 advertising messages are displayed. The bid price is for one hour of display. You can increase the bid price for an advertisement but you cannot lower it. Also you cannot stop an advertisement since it has been paid and displayed. Ads are displayed in the entire MAskNetwork network including desktop nodes.");
+			   $template->showHelp("Listed below are your advertisements. The ads are displayed based on the bid price. Only the top 10 advertising messages are displayed. The bid price is for one hour of display. You can increase the bid price for an advertisement but you cannot lower it. Also you cannot stop an advertisement since it has been paid and displayed. Ads are displayed in the entire MaskNetwork network including desktop nodes.");
 			   
 			  if ($_REQUEST['act']=="renew")
 			     $ads->increaseBid($_REQUEST['dd_fee_adr'], 

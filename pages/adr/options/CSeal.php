@@ -7,7 +7,7 @@ class CSeal
 	   $this->template=$template;
    }
    
-   function sealAdr($net_fee_adr, $adr, $days)
+   function sealAdr($net_fee_adr, $adr, $rec_1, $rec_2, $rec_3, $days)
 	{
 		// Fee Address
 		if ($this->kern->adrValid($net_fee_adr)==false || 
@@ -46,7 +46,44 @@ class CSeal
 		   return false;
 	   }
 	   
+	   // From domains
+	   $rec_1=$this->kern->adrFromDomain($rec_1);
+	   $rec_2=$this->kern->adrFromDomain($rec_2);
+	   $rec_3=$this->kern->adrFromDomain($rec_3);
 	   
+	   // All blank
+	   if ($rec_1=="" && 
+	       $rec_2=="" && 
+		   $rec_3=="")
+	   {
+		   $this->template->showErr("All recipients are blank", "90%");
+		   return false;
+	   }
+	   
+	   // Recipient 1
+	   if ($rec_1!="")
+	     if (!$this->kern->adrValid($rec_1))
+	     {
+			$this->template->showErr("Invalid recipient 1", "90%");
+			return false;
+		}
+		
+	   // Recipient 2
+	   if ($rec_2!="")
+	     if (!$this->kern->adrValid($rec_2))
+	     {
+			$this->template->showErr("Invalid recipient 2", "90%");
+			return false;
+		}
+		
+	   // Recipient 3
+	   if ($rec_3!="")
+	     if (!$this->kern->adrValid($rec_3))
+	     {
+			$this->template->showErr("Invalid recipient 3", "90%");
+			return false;
+		}
+		
 		try
 	    {
 		   // Begin
@@ -58,9 +95,19 @@ class CSeal
 		   // Insert to stack
 		   $query="INSERT INTO web_ops 
 			                SET user='".$_REQUEST['ud']['user']."', 
-							    op='ID_SEAL_ADR', 
+							    op='ID_ADD_ATTR', 
 								fee_adr='".$net_fee_adr."', 
 								target_adr='".$adr."',
+								par_1='ID_RES_REC',
+								par_2='".$rec_1."',
+								par_3='".$rec_2."',
+								par_4='".$rec_3."',
+								par_5='0',
+								par_6='0',
+								par_7='0',
+								par_8='0',
+								par_9='0',
+								par_10='0',
 								days='".$days."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
@@ -106,7 +153,7 @@ class CSeal
             </table></td>
             <td width="290" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
               <tr>
-                <td height="30" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
+                <td height="30" valign="top" class="font_14"><strong>Network Fee Address</strong></td>
               </tr>
               <tr>
                 <td><? $this->template->showMyAdrDD("dd_net_fee_adr_seal"); ?></td>
@@ -115,11 +162,38 @@ class CSeal
                 <td>&nbsp;</td>
               </tr>
               <tr>
-                <td height="30" valign="top"><span class="simple_blue_14"><strong>Days</strong></span></td>
+                <td><strong class="font_14">Recipient 1</strong></td>
+              </tr>
+              <tr>
+                <td><input class="form-control" name="txt_rec_1" id="txt_rec_1" style="width:100%" placeholder="Recipient 1"/></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><strong class="font_14">Recipient 2</strong></td>
+              </tr>
+              <tr>
+                <td><input class="form-control" name="txt_rec_2" id="txt_rec_2" style="width:100%" placeholder="Recipient 2"/></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><strong class="font_14">Recipient 3</strong></td>
+              </tr>
+              <tr>
+                <td><input class="form-control" name="txt_rec_3" id="txt_rec_3" style="width:100%" placeholder="Recipient 3"/></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td height="30" valign="top"><span class="font_14"><strong>Days</strong></span></td>
               </tr>
               <tr>
                 <td>
-                <input type="number" min="10" step="1" name="txt_days_seal" class="form-control" id="txt_days_seal" style="width:100px" value="365" maxlength="6"/></td>
+                <input type="number" min="10" step="1" name="txt_days" class="form-control" id="txt_days" style="width:100px" value="365" maxlength="6"/></td>
               </tr>
             </table></td>
           </tr>

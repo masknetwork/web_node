@@ -9,9 +9,7 @@
 	  
 	 function buyDomain($net_fee_adr, $domain)
 	 {
-	    print $net_fee_adr;
-			
-		// Fee Address
+	    // Fee Address
 		if ($this->kern->adrExist($net_fee_adr)==false)
 		{
 			$this->template->showErr("Invalid network fee address");

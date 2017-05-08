@@ -113,9 +113,9 @@ class CWrite
 			// Subject
 			if ($mes_subj!="")
 			{
-				if (strlen($mes_subj)>250 || $this->kern->isString($mes_subj))
+				if (strlen($mes_subj)>250)
 				{
-					$this->template->showErr("Invalid suject");
+					$this->template->showErr("Invalid suject"); 
 			        return false;
 				}
 			}
@@ -123,7 +123,7 @@ class CWrite
 			// Message
 			if ($mes_mes!="")
 			{
-				if (strlen($mes_subj)>1000 || $this->kern->isString($mes_subj))
+				if (strlen($mes_mes)>1000)
 				{
 					$this->template->showErr("Invalid message");
 			        return false;

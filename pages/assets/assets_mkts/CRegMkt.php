@@ -10,10 +10,10 @@ class CRegMkt
 	function closeOrder($net_fee_adr, $orderID)
 	{
 		// Position exist ?
-		$query="SELECT * 
+		$query="SELECT amp.*
 		          FROM assets_mkts_pos AS amp 
 				  JOIN assets_mkts AS am ON am.mktID=amp.mktID 
-				 WHERE amp.orderID='".$orderID."'"; 
+				 WHERE amp.orderID='".$orderID."'";  
 		$result=$this->kern->execute($query);
 		
 		if (mysql_num_rows($result)==0)
@@ -313,25 +313,6 @@ class CRegMkt
 				$this->template->showErr("Insufficient funds to execute this transaction");
 			    return false;
 			}
-			
-			// Lower than the lower sell ?
-			$query="SELECT * 
-			          FROM assets_mkts_pos 
-					 WHERE mktID='".$mktID."' 
-					   AND tip='ID_SELL' 
-				  ORDER BY price ASC";
-			$result=$this->kern->execute($query);	
-			
-			if (mysql_num_rows($result)>0) 
-			{
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
-				
-				if ($price>$row['price'])
-				{
-					$this->template->showErr("Maximum price allowed is ".$row['price']);
-			        return false;
-				}
-			}
 		}
 		else
 		{
@@ -340,25 +321,6 @@ class CRegMkt
 			{
 				$this->template->showErr("Insufficient assets to execute this transaction");
 			    return false;
-			}
-			
-			// Higher than the higher buy ?
-			$query="SELECT * 
-			          FROM assets_mkts_pos 
-					 WHERE mktID='".$mktID."' 
-					   AND tip='ID_BUY' 
-				  ORDER BY price DESC";
-			$result=$this->kern->execute($query);	
-			
-			if (mysql_num_rows($result)>0) 
-			{
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
-				
-				if ($price<$row['price'])
-				{
-					$this->template->showErr("Maximum price allowed is ".$row['price']);
-			        return false;
-				}
 			}
 		}
 		
@@ -430,16 +392,9 @@ class CRegMkt
             <td width="2%">&nbsp;</td>
             <td width="72%" valign="top"><span class="font_16"><strong><? print base64_decode($row['name']); ?></strong></span>
             <p class="font_14"><? print base64_decode($row['description']); ?></p></td>
-            <td width="14%" valign="top">
-            
-            <?
-			   $this->template->showVotePanel("ID_ASSET_MKT", $row['mktID']);
-			?>
-            
-            </td>
             </tr>
-            <tr><td colspan="4"><hr></td></tr>
-            <tr><td colspan="4">
+            <tr><td colspan="3"><hr></td></tr>
+            <tr><td colspan="3">
     
             <table class="table-responsive" width="100%">
              <tr>
@@ -549,6 +504,61 @@ class CRegMkt
         
         <?
 	} 
+	
+	
+	function showButs()
+	{
+		?>
+        
+        <br><br>
+         <table width="90%">
+          <tr>
+          <td width="70%"></td>
+          <td width="15%">
+          
+          <table width="90%">
+                 <tr>
+                 <td align="right">
+                 <a href="javascript:void(0)" onclick="$('#modal_new_pos').modal(); 
+                                                      $('#tab_buy').css('display', 'none'); 
+                                                      $('#tab_sell').css('display', 'block');
+                                                      $('#img_buy').css('display', 'none'); 
+                                                      $('#img_sell').css('display', 'block');
+                                                      $('#tip').val('ID_SELL');
+                                                      $('#dd_new_pos_adr').css('display', 'none');
+                                                      $('#dd_new_pos_adr_asset').css('display', 'block');" class="btn btn-danger">
+                 <span class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;Sell Order</a>
+                 </td>
+                 </tr>
+                 </table>
+          
+          </td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <td width="15%">
+          
+          <table width="90%">
+                 <tr>
+                 <td align="right">
+                 <a href="javascript:void(0)" onclick="$('#modal_new_pos').modal(); 
+                                                      $('#tab_buy').css('display', 'block'); 
+                                                      $('#tab_sell').css('display', 'none');
+                                                      $('#img_buy').css('display', 'block'); 
+                                                      $('#img_sell').css('display', 'none');
+                                                      $('#tip').val('ID_BUY');
+                                                      $('#dd_new_pos_adr').css('display', 'block');
+                                                      $('#dd_new_pos_adr_asset').css('display', 'none');" class="btn btn-success">
+                 <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Buy Order</a>
+                 </td>
+                 </tr>
+                 </table>
+          
+          </td>
+          </tr>
+          </table>
+        
+        <?
+	}
+	
 	function showTraders($mktID, $tip, $visible=true)
 	{
 		// Order modal
@@ -566,6 +576,7 @@ class CRegMkt
 					  JOIN assets_mkts AS am ON am.mktID=amp.mktID
 				 LEFT JOIN my_adr AS ma ON ma.adr=amp.adr
 					 WHERE tip='ID_BUY' 
+					   AND am.mktID='".$mktID."'
 				  ORDER BY price DESC 
 				     LIMIT 0,25";
 		else
@@ -574,6 +585,7 @@ class CRegMkt
 					  JOIN assets_mkts AS am ON am.mktID=amp.mktID
 				 LEFT JOIN my_adr AS ma ON ma.adr=amp.adr
 					 WHERE tip='ID_SELL' 
+					   AND am.mktID='".$mktID."'
 				  ORDER BY price ASC 
 				     LIMIT 0,25";
 		
@@ -584,53 +596,6 @@ class CRegMkt
            
            <div id="div_traders_<? print $tip; ?>" name="div_sellers" style="display:<? if ($visible==true) print "block"; else print "none"; ?>">
            <br>
-           
-           <?
-		      if ($tip=="ID_SELL")
-			  {
-		   ?>
-           
-                 <table width="90%">
-                 <tr>
-                 <td align="right">
-                 <a href="javascript:void(0)" onclick="$('#modal_new_pos').modal(); 
-                                                      $('#tab_buy').css('display', 'none'); 
-                                                      $('#tab_sell').css('display', 'block');
-                                                      $('#img_buy').css('display', 'none'); 
-                                                      $('#img_sell').css('display', 'block');
-                                                      $('#tip').val('ID_SELL');
-                                                      $('#dd_new_pos_adr').css('display', 'none');
-                                                      $('#dd_new_pos_adr_asset').css('display', 'block');" class="btn btn-danger">
-                 <span class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;New Sell Order</a>
-                 </td>
-                 </tr>
-                 </table>
-           
-           <?
-			  }
-			  else
-			  {
-		   ?>
-           
-                 <table width="90%">
-                 <tr>
-                 <td align="right">
-                 <a href="javascript:void(0)" onclick="$('#modal_new_pos').modal(); 
-                                                      $('#tab_buy').css('display', 'block'); 
-                                                      $('#tab_sell').css('display', 'none');
-                                                      $('#img_buy').css('display', 'block'); 
-                                                      $('#img_sell').css('display', 'none');
-                                                      $('#tip').val('ID_BUY');
-                                                      $('#dd_new_pos_adr').css('display', 'block');
-                                                      $('#dd_new_pos_adr_asset').css('display', 'none');" class="btn btn-success">
-                 <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;New Buy Order</a>
-                 </td>
-                 </tr>
-                 </table>
-           
-           <?
-			  }
-		   ?>
           
            <table class="table-responsive" width="90%">
            <thead bgcolor="#f9f9f9">
@@ -673,7 +638,7 @@ class CRegMkt
                  <td class="font_16" width="12%">
                  
                 <?
-					if ($row['userID']==$_REQUEST['ud']['ID'])
+				    if ($row['userID']==$_REQUEST['ud']['ID'])
 					   print "<a class='btn btn-danger btn-sm' href='javascript:void(0)' onclick=\"$('#modal_close_order').modal(); $('#orderID').val('".$row['orderID']."'); \"><span class='glyphicon glyphicon-remove'></span>&nbsp;&nbsp;Remove</a>";
 				 ?>
                  </td>

@@ -1,0 +1,9 @@
+[10-Jan-2016 21:09:22 Europe/Helsinki] PHP Warning:  include(../kernel/db.php): failed to open stream: No such file or directory in /home/PlayCoinNetwork/public_html/prices/index.php on line 2
+[10-Jan-2016 21:09:22 Europe/Helsinki] PHP Warning:  include(): Failed opening '../kernel/db.php' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/PlayCoinNetwork/public_html/prices/index.php on line 2
+[10-Jan-2016 21:09:22 Europe/Helsinki] PHP Fatal error:  Class 'db' not found in /home/PlayCoinNetwork/public_html/prices/index.php on line 5
+[10-Jan-2016 21:09:49 Europe/Helsinki] PHP Warning:  include(../kernel/db.php): failed to open stream: No such file or directory in /home/PlayCoinNetwork/public_html/prices/index.php on line 2
+[10-Jan-2016 21:09:49 Europe/Helsinki] PHP Warning:  include(): Failed opening '../kernel/db.php' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/PlayCoinNetwork/public_html/prices/index.php on line 2
+[10-Jan-2016 21:09:49 Europe/Helsinki] PHP Fatal error:  Class 'db' not found in /home/PlayCoinNetwork/public_html/prices/index.php on line 5
+[10-Jan-2016 21:10:02 Europe/Helsinki] PHP Warning:  include(../kernel/db.php): failed to open stream: No such file or directory in /home/PlayCoinNetwork/public_html/prices/index.php on line 2
+[10-Jan-2016 21:10:02 Europe/Helsinki] PHP Warning:  include(): Failed opening '../kernel/db.php' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/PlayCoinNetwork/public_html/prices/index.php on line 2
+[10-Jan-2016 21:10:02 Europe/Helsinki] PHP Fatal error:  Class 'db' not found in /home/PlayCoinNetwork/public_html/prices/index.php on line 5

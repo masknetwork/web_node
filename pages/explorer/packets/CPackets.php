@@ -84,6 +84,14 @@ class CPackets
 			 case "ID_VOTE_PACKET" : return "Vote Packet"; break;
 			 case "ID_UPDATE_APP_PACKET" : return "Update Application Packet"; break;
 			 case "ID_PROFILE_PACKET" : return "Profile Packet"; break;
+			 case "ID_PUBLISH_APP_PACKET" : return "Publish Application"; break;
+			 case "ID_RENT_APP_PACKET" : return "Rent Application"; break;
+			 case "ID_NEW_ASSET_PACKET" : return "Issue Asset Packet"; break;
+			 case "ID_UPDATE_SETTINGS_PACKET" : return "Change App Settings Packet"; break;
+			 case "ID_NEW_ASSET_MKT_PACKET" : return "New Asset Market Packet"; break;
+			 case "ID_NEW_REG_ASSET_MARKET_POS_PACKET" : return "New Asset Market Order Packet"; break;
+			 case "ID_REG_ASSET_MARKET_CLOSE_POS_PACKET" : return "Close Asset Market Order Packet"; break;
+			 case "ID_NEW_SPEC_MARKET_POS_PACKET" : return "New Margin Position"; break;
 		}
 	}
 	

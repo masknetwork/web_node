@@ -23,40 +23,33 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-<script type="text/javascript">$(document).ready(function() { $("body").tooltip({ selector: '[data-toggle=tooltip]' }); });</script>
-<script src="../../../utils.js"></script>
-
-<style>
-.popover-content {
-    font-size: 12px;
-}
-</style>
-
+<script>$(document).ready(function(){ $('[data-toggle="tooltip"]').tooltip(); });</script>
 </head>
 
 <body>
 
 <?
-   $template->showTopBar("adr");
+   $template->showBalanceBar();
 ?>
- 
 
- <div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1">&nbsp;</div>
- <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("adr");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	 <?
      // Location
      $template->showLocation("../../adr/adr/index.php", "Addresses", "", "My Addresses");
 	 
@@ -93,11 +86,20 @@
  ?>
  
  
- </div>
- <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1">&nbsp;</div>
- </div>
- </div>
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
@@ -105,3 +107,6 @@
  
 </body>
 </html>
+
+
+

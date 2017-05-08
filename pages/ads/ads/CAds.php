@@ -91,6 +91,7 @@ class CAds
 								par_4='XX', 
 								days='".$hours."', 
 								bid='".$bid."', 
+								target_adr='".$net_fee_adr."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	       $this->kern->execute($query);

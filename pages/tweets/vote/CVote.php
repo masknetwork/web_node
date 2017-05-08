@@ -59,8 +59,8 @@ class CVote
 		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 		   {
 			   $p=$row['power']*100/$total_votes;
-			   $pay_msk=round($p/100*$reward, 4);
-			   $pay_usd=round($pay_msk*$_REQUEST['sd']['msk_price'], 2);
+			   $pay_MSK=round($p/100*$reward, 4);
+			   $pay_usd=round($pay_MSK*$_REQUEST['sd']['MSK_price'], 2);
 		?>
         
               <tr class="font_14">
@@ -102,7 +102,7 @@ class CVote
 				  print $row['power']; 
 			  ?>
               </strong><p class="font_10" style="color:#aaaaaa">points</p></td>
-              <td align="center" style="color:<? if ($pay_msk>0) print "#009900"; else print "#aaaaaa"; ?>"><? print $pay_msk." MSK"; ?><p class="font_10"><? print "$".$pay_usd; ?></p></td>
+              <td align="center" style="color:<? if ($pay_MSK>0) print "#009900"; else print "#aaaaaa"; ?>"><? print $pay_MSK." MSK"; ?><p class="font_10"><? print "$".$pay_usd; ?></p></td>
               <td align="center"><? print $row['block']; ?><p class="font_10"><? print "~".$this->kern->timeFromBlock($row['block']); ?></p></td>
               </tr>
         
@@ -183,7 +183,7 @@ class CVote
 		$p=$adr_votes*100/$total_votes;
 		
 		// Amount
-		$pay=round($p/100*$reward*$_REQUEST['sd']['msk_price'], 2);
+		$pay=round($p/100*$reward*$_REQUEST['sd']['MSK_price'], 2);
 		
 		// Pay block
 		$pay_block=(floor($_REQUEST['sd']['last_block']/1440)+1)*1440;
@@ -292,7 +292,7 @@ class CVote
 		// Total votes
 		$query="SELECT SUM(power) AS total 
      		      FROM votes 
-				 WHERE block>".($_REQUEST['sd']['last_block']-1024);
+				 WHERE block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
 		$total_votes=$row['total'];
@@ -305,7 +305,7 @@ class CVote
 		// My votes
 		$query="SELECT SUM(power) AS total 
      		      FROM votes 
-				 WHERE block>".($_REQUEST['sd']['last_block']-1024)." 
+				 WHERE block>".($_REQUEST['sd']['last_block']-1440)." 
 				   AND adr='".$adr."'";
 		$result=$this->kern->execute($query);	
 	    $row = mysql_fetch_array($result, MYSQL_ASSOC);

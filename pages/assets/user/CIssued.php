@@ -264,7 +264,7 @@
             
             <br><br>
             <form id="form_modal_issue" name="form_modal_issue" method="post" action="<? if ($symbol=="") print "issued.php?act=issue"; else print "issued.php?act=edit&symbol=".$symbol; ?>">
-            <table width="95%" border="0" cellspacing="0" cellpadding="0">
+            <table width="90%" border="0" cellspacing="0" cellpadding="0">
             <tr>
             <td width="10%" align="center" valign="top"><table width="180" border="0" cellspacing="0" cellpadding="0">
               <tr>

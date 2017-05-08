@@ -21,50 +21,32 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_14 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-.font_141 {font-size:20px;  }
-.font_141 {font-size:22px;  }
-</style>
-
 </head>
 
 <body>
 
 <?
-    $template->showTopBar("help");
+   $template->showBalanceBar();
 ?>
- 
 
- <div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1">&nbsp;</div>
- <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("help");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	 <?
      // Location
      $template->showLocation("../../help/help/index.php", "Help", "", "Overview");
 	 
@@ -81,24 +63,6 @@
                         <td ><hr></td>
                       </tr>
                       <tr>
-                        <td class="font_16"><strong>What is MaskNetwork ?</strong></td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">MaskNetwork is a decentralized peer-to-peer social network that rewards users for the content they create. By content we mean blog posts, comments, decentralized applications and so on. Unlike Bitcoin network that allocates 100% of new coins to miners, MaskNetwork allocates 80% of new coins to users that post captivating content, as measured by aother users votes, while 20% goes to miners.</td>
-                      </tr>
-                      <tr>
-                        <td>&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td class="font_16"><strong>Are users paid in US Dollars?</strong></td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">No. Users are paid in a cryptocurrency, called MaskCoin. MaskCoin is a decentralized cryptocurrency used inside the network for a wide range of operations like sending transactions or voting. MaskCoins currency units can be traded, bought, and sold on the open market just like all of the other digital currencies.</td>
-                      </tr>
-                      <tr>
-                        <td>&nbsp;</td>
-                      </tr>
-                      <tr>
                         <td class="font_16"><strong>What is MaskCoin ?</strong></td>
                       </tr>
                       <tr>
@@ -111,7 +75,7 @@
                         <td class="font_16"><strong>Is the number of MaskCoins limited ?</strong></td>
                       </tr>
                       <tr>
-                        <td class="font_14">Yes. There will only ever be 21 million MaskCoins produced. It has been designed as a deflationary currency, so it has a strictly limited money supply. Broadly speaking, a deflationary currency is one that increases in value over time. Goods and services priced in a deflationary currency will therefore tend to reduce in price - all other things being equal. </td>
+                        <td class="font_14">Yes. There will only ever be 100.000 MaskCoins produced. It has been designed as a deflationary currency, so it has a strictly limited money supply. Broadly speaking, a deflationary currency is one that increases in value over time. Goods and services priced in a deflationary currency will therefore tend to reduce in price - all other things being equal. </td>
                       </tr>
                       <tr>
                         <td class="font_14">&nbsp;</td>
@@ -120,16 +84,7 @@
                         <td class="font_16"><strong>What is the difference between Bitcoin and MaskCoin ?</strong></td>
                       </tr>
                       <tr>
-                        <td class="font_14">With other cryptocurrencies like Bitcoin, the actual currency units that are created each day are distributed to the people who run a special bitcoin software program on their computers that perform a process called Bitcoin Mining. The amount of computing power you have dictates how much money you get. MaskNetwork allows for currency mining as well, but it&rsquo;s not the primary way to earn money. Every day, new Steemit currency units that are distributed by the network to the people who engage with content creation. The more you engage, the more you get.</td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td class="font_16"><strong>How exactly is MaskCoin distributed ?</strong></td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">Every single day 0.013% (5% / year) of undistributed coins are moved from the default network address to content creators. For example at the time, 20 millions coins are undistributed. That means, miners and content creators will receive 2600 coins every day. People who create content like blog posts, applications or even assets are rewarded for their content. People who vote content are rewarded for helping to curate the best content available on the site. Commenters who add to the discussions are paid too.</td>
+                        <td class="font_14">With other cryptocurrencies like Bitcoin, the actual currency units that are created each day are distributed to the people who run a special bitcoin software program on their computers that perform a process called Bitcoin Mining. The amount of computing power you have dictates how much money you get. MaskNetwork allows for currency mining as well, but it&rsquo;s not the primary way to earn money. Every day, new MaskCoins currency units that are distributed by the network to the people who engage with content creation. The more you engage, the more you get.</td>
                       </tr>
                       <tr>
                         <td class="font_14">&nbsp;</td>
@@ -157,33 +112,6 @@
                       </tr>
                       <tr>
                         <td class="font_14">Every time you send a transaction or rent an address name for example, the network will charge you a small fee. The fees goes to the default netowrk address and become again undistributed coins. The fee for a lot of netowrk services is flat (0.0001 / day). For transactions the fee is 0.01%.</td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td class="font_16"><strong>Are the new coins distributed equally to miners and content creators ?</strong></td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">No. Content creators will receive 30% of the newly distrbuted coins. Miners will get 20%. People who vote content will receive 20%, while commenters and application creators receive each 15%.</td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td class="font_16"><strong>When are users paid ?</strong></td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">Users are paid every 24 hours.</td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td class="font_16"><strong>Who pays the users ?</strong></td>
-                      </tr>
-                      <tr>
-                        <td class="font_14">In short, the users are paid by the protocol. No organization / company controls the network. No one runs MaskNetwork. It is run collectively by the users who runs network nodes, and any changes to the protoco system have to be approved by the majority of users before they are implemented. Rewards distribution is an automated hard coded process. </td>
                       </tr>
                       <tr>
                         <td class="font_14">&nbsp;</td>
@@ -258,11 +186,20 @@
                   </table>
  
  
- </div>
- <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1">&nbsp;</div>
- </div>
- </div>
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
@@ -270,3 +207,7 @@
  
 </body>
 </html>
+
+
+
+

@@ -302,8 +302,12 @@
 	
 	function showMyDomains()
 	{
-		$query="SELECT my_adr.*, adr.balance, dom.domain, dom.expire, dom.sale_price, dom.rowhash
-		          FROM my_adr 
+		$query="SELECT my_adr.*, 
+		               adr.balance, 
+					   dom.domain, 
+					   dom.expire, 
+					   dom.sale_price 
+					FROM my_adr 
 				  LEFT JOIN adr ON adr.adr=my_adr.adr
 				  JOIN domains AS dom ON dom.adr=my_adr.adr
 				 WHERE my_adr.userID='".$_REQUEST['ud']['ID']."' 

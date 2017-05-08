@@ -21,9 +21,10 @@
                <table width="90%" border="0" cellspacing="0" cellpadding="0">
                <thead>
                <tr bgcolor="#fafafa" class="font_14" height="30px" style="color:#999999">
-               <th>Block</th>
-               <th>Packets</th>
-               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Received</th>
+               <td>Block</td>
+               <td align="center">Packets</td>
+               <td align="center">Reward</td>
+               <td align="center">Received</td>
                </tr>
                </thead>
                 
@@ -33,15 +34,22 @@
 				  ?>
                   
                         <tr>
-                        <td width="70%" align="left">
-                        <a href="block.php?hash=<? print $row['hash']; ?>" class="font_14"><strong><? print "Block ".$row['block']; ?></strong></a><br>
+                        <td width="60%" align="left">
+                        <a href="block.php?hash=<? print $row['hash']; ?>" class="font_14"><strong>
+						<? 
+						    print "Block ".$row['block']; 
+							if ($row['reward']==0) print "<span class='font_10' style='color:#990000'> &nbsp;&nbsp;(not on the main chain)</span>";
+					    ?>
+                        </strong></a><br>
                         <span class="font_10"><? print $row['hash']; ?></span>
                         </td>
                         <td width="10%" align="center"><strong  class="font_14"><? print $row['packets']; ?></strong></td>
+                        <td width="10%" align="center"><strong  class="font_14" <? if ($row['reward']==0) print "style='color:#990000'"; ?>>
+						<? print $row['reward']; ?></strong></td>
                         <td width="20%" align="center" class="font_14"><? print $this->kern->getAbsTime($row['tstamp']); ?></td>
                         </tr>
                         <tr>
-                        <td colspan="3" background="../../template/template/GIF/lp.png">&nbsp;</td>
+                        <td colspan="4"><hr></td>
                         </tr>
                   
                   <?

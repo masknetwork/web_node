@@ -14,8 +14,6 @@
    $sd=new CSysData($db);
    $tweets=new CTweets($db, $template);
    $home=new CHome($db, $template);
-   
-  
    ?>
 
 <!doctype html>
@@ -42,21 +40,6 @@
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
 
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_12 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-</style>
 
 <script>
 $(document).ready(
@@ -118,34 +101,36 @@ $(function (e)
 
 </head>
 
+
 <body>
 
 <?
-   $template->showTopBar("blogs");
+   $template->showBalanceBar();
 ?>
- 
 
-<div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1 col-sm-0">&nbsp;</div>
- <div class="col-md-8 col-sm-12" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("community");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	 <?
      // Location
      $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Last Blocks");
 	 
 	 // Menu
 	 $template->showNav(1,
 	                   "../../tweets/home/index.php", "Home", "",
-	                   "../../tweets/tweets/index.php?adr=all", "Top 24 Hours", "",
-					   "../../tweets/tweets/index.php?adr=all", "Top 7 Days", "",
-					   "../../tweets/tweets/index.php?adr=all", "Top 30 Days", ""); 
+					   "../../tweets/tweets/index.php?adr=all&time=24", "Top 24 Hours", "",
+					   "../../tweets/tweets/index.php?adr=all&time=7", "Top 7 Days", "",
+					   "../../tweets/tweets/index.php?adr=all&time=30", "Top 30 Days", "",
+					   "../../tweets/tweets/index.php?adr=all&time=0", "Last Tweets", ""); 
 	 
 ?>
  
@@ -183,10 +168,7 @@ $(function (e)
 						   
 		   }
 		   
-		  if ($_REQUEST['target']=="pending")
-		     $home->showPendingTweets($_REQUEST['adr']);
-		  else 
-	         $tweets->showTweets($_REQUEST['adr'], true); 
+		   $tweets->showTweets($_REQUEST['adr'], true); 
 	   ?>
        
        </td>
@@ -194,14 +176,33 @@ $(function (e)
    </tbody>
 </table>
  
- </div>
- <div class="col-md-2 col-sm-0" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1 col-sm-0">&nbsp;</div>
- </div>
- </div>
+ 
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
  ?>
+ 
 </body>
 </html>
+
+
+
+
+
+
+
+

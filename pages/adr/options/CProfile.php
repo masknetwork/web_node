@@ -211,21 +211,10 @@ class CProfile
                 </table></td>
               </tr>
              
-               <tr id="row_progress">
-               <td height="60" align="left" valign="bottom">
-               <div id="progress" class="progress" style="width:350px">
-               <div class="progress-bar progress-bar-success">&nbsp;</div>
-               </div>
-               </td>
-               </tr>
-             
-             <tr>
+              <tr>
                 <td height="130" align="left" valign="top">
-                <img src="../../../crop.php?src=./pages/adr/options/GIF/drop.png&w=350"  id="pic_back" class="img-responsive img-rounded">
-                <img src="../../../crop.php?src=./pages/adr/options/GIF/drop_pic.png&w=100" id="pic" style="position:absolute; top:65%; left:40%; border:solid; border-width:4px; border-color:#ffffff" class="img-responsive img-rounded">
-                <a href="javascript:void(0)" onclick="$('#tab_links').css('display', 'block'); $('#pic_back').css('display', 'none'); $('#pic').css('display', 'none'); $('#row_progress').css('display', 'none'); $(this).css('display', 'none');" class="font_12" style="position:absolute; top:75%; left:60%;">Use Links</a>
-                
-                <table width="100%" border="0" cellpadding="0" cellspacing="0" style="display:none;" id="tab_links">
+               
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" id="tab_links">
                   <tbody>
                     <tr>
                       <td>&nbsp;</td>
@@ -273,7 +262,7 @@ class CProfile
 		   $('#txt_desc').val(btoa($('#txt_desc').val())); 
 		});
 		
-		linkToNetFee("txt_prof_days", "profile_net_fee_panel_val", 0.0365);
+	
 		</script>
         
         <?

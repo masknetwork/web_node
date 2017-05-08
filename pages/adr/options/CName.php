@@ -16,13 +16,6 @@ class CName
 			return false;
 		}
 		
-		// My address
-	    if ($this->kern->isMine($net_fee_adr)==false || 
-		    $this->kern->isMine($adr)==false)
-		{
-			$this->template->showErr("Invalid entry data", "90%");
-			return false;
-		}
 		
 		// Fee address is security options free
 	    if ($this->kern->feeAdrValid($net_fee_adr)==false)
@@ -161,9 +154,7 @@ class CName
           </tr>
         </table>
         
-        <script>
-		   linkToNetFee("txt_days_domain", "nd_net_fee_panel_val", 0.0365);
-		</script>
+       
         
         <?
 		$this->template->showModalFooter();

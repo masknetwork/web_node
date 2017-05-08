@@ -30,7 +30,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -99,7 +99,7 @@
          <td align="left" class="font_14">&nbsp;</td>
        </tr>
        <tr>
-         <td align="left" class="font_14">All calls to the trading API are sent via HTTP POST to <strong>https://www.mskwallet.com/pages/api/public.php</strong> and must contain the following parameters</td>
+         <td align="left" class="font_14">All calls to the trading API are sent via HTTP POST to <strong>https://www.MSKwallet.com/pages/api/public.php</strong> and must contain the following parameters</td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>
@@ -171,7 +171,7 @@
          <td height="40" align="left" class="font_14">Returns the list of addresses created at block 2000.</td>
        </tr>
        <tr>
-         <td height="50" align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.mskwallet.org/pages/api/public.php?table=adr&amp;col=block&amp;type=exact&amp;val=2000</strong></td>
+         <td height="50" align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.MSKwallet.org/pages/api/public.php?table=adr&amp;col=block&amp;type=exact&amp;val=2000</strong></td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>
@@ -180,7 +180,7 @@
          <td height="40" align="left" valign="top"><span class="font_14">Returns the list of addresses having the balance over 100</span></td>
        </tr>
        <tr>
-         <td align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.mskwallet.org/pages/api/public.php?table=adr&amp;col=block&amp;type=range&amp;min=100&amp;max=10000</strong></td>
+         <td align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.MSKwallet.org/pages/api/public.php?table=adr&amp;col=block&amp;type=range&amp;min=100&amp;max=10000</strong></td>
        </tr>
        <tr>
          <td align="left">&nbsp;</td>
@@ -189,7 +189,7 @@
          <td height="40" align="left" valign="top"><span class="font_14">Returns the owners of an asset (BITUSD).</span></td>
        </tr>
        <tr>
-         <td align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.mskwallet.org/pages/api/public.php?table=assets_owners&amp;col=symbol&amp;type=exact&amp;val=BITUSD</strong></td>
+         <td align="center" bgcolor="#fafafa" class="font_14"><strong>https://www.MSKwallet.org/pages/api/public.php?table=assets_owners&amp;col=symbol&amp;type=exact&amp;val=BITUSD</strong></td>
        </tr>
        <tr>
          <td height="50" align="left">&nbsp;</td>

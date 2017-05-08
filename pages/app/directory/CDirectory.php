@@ -54,16 +54,9 @@ class CDirectory
             <tr>
             <td width="16%" valign="top"><img src="<? if ($row['pic']!="") print "../../../crop.php?src=".base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png\""; ?>" class="img-responsive img-rounded"></td>
             <td width="3%">&nbsp;</td>
-            <td width="71%" valign="top"><span class="font_20"><strong><? print base64_decode($row['name']); ?></strong></span><p class="font_14"><? print base64_decode($row['description']); ?></p></td>
+            <td width="71%" valign="top"><span class="font_20"><strong><? print $this->kern->noescape(base64_decode($row['name'])); ?></strong></span><p class="font_14"><? print $this->kern->noescape(base64_decode($row['description'])); ?></p></td>
              <td width="3%">&nbsp;</td>
-            <td width="11%" align="center" valign="top">
-            
-            <?
-			   $this->template->showVotePanel("ID_APP", $appID);
-			?>
-            
-            
-            </td>
+            <td width="11%" align="center" valign="top">&nbsp;</td>
             </tr>
             <tr><td colspan="5"><hr></td></tr>
             <tr><td colspan="5">
@@ -304,11 +297,11 @@ class CDirectory
            </td></tr>
            
            <tr><td align="left" class="font_14"><strong>
-           <? print ucfirst(base64_decode($name)); ?>
+           <? print $this->kern->noescape(ucfirst(base64_decode($name))); ?>
            </strong></td></tr>
            
            <tr><td align="left" class="font_12" height="80px" valign="top">
-           <? print substr(base64_decode($desc), 0, 75)."..."; ?>
+           <? print $this->kern->noescape(substr(base64_decode($desc), 0, 75))."..."; ?>
            </td></tr>
            
            <tr><td align="left" class="font_12" height="50px" valign="bottom">

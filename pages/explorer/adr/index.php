@@ -23,66 +23,64 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_12 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-</style>
-
 </head>
 
 <body>
 
 <?
-   $template->showTopBar("explorer");
+   $template->showBalanceBar();
 ?>
- 
 
- <div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1">&nbsp;</div>
- <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
-     // Location
-     $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Addresses");
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("explorer");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	<?
+        // Location
+        $template->showLocation("../../explorer/packets/index.php", "Explorer", "", "Addresses");
 	 
-	 // Menu
-	 $template->showNav(3,
+	    // Menu
+	    $template->showNav(3,
 	                   "../packets/index.php", "Packets", "",
 	                   "../blocks/index.php", "Blocks", "", 
-					   "../adr/index.php", "Addresses");
+					   "../adr/index.php", "Addresses", "",
+					   "../delegates/index.php", "Delegates", "",
+					   "../rewards/index.php", "Rewards", "",
+					   "../status/index.php", "Status", "");
 	
-	$template->showHelp("Below are listed top network addresses by MSk balance. An address is like a bank account number anonymous in the real world. It is a string of characters that you can send to anyone to receive coins, assets or messages. Like a bank account, you can send messages or coins to an address.");
+	   $template->showHelp("Below are listed top network addresses by MSK balance. An address is like a bank account number anonymous in the real world. It is a string of characters that you can send to anyone to receive coins, assets or messages. Like a bank account, you can send messages or coins to an address.");
 	 
-	 $adr->showAdr();
+	   $adr->showAdr();
  ?>
- </div>
- <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1">&nbsp;</div>
- </div>
- </div>
+ 
+ 
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
@@ -90,3 +88,4 @@
  
 </body>
 </html>
+

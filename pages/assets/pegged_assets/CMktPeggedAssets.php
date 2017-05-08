@@ -995,7 +995,7 @@ class CMktPeggedAssets
                 <tr>
                 <td><a href="asset.php?symbol=<? print $row['symbol']; ?>" class='btn btn-warning btn-sm' style="color:#000000; width:75px">Trade</a></td>
                 <td>&nbsp;</td>
-                <td><a href="javascript:void(0)" onclick="$('#send_coins_modal').modal(); $('#tab_msk').css('display', 'none'); $('#tab_assets').css('display', 'block'); $('#txt_cur').val('<? print $row['symbol']; ?>'); $('#dd_from').val('<? print $row['owner']; ?>');" class='btn btn-inverse btn-sm' style=" width:75px">Transfer</a></td>
+                <td><a href="javascript:void(0)" onclick="$('#send_coins_modal').modal(); $('#tab_MSK').css('display', 'none'); $('#tab_assets').css('display', 'block'); $('#txt_cur').val('<? print $row['symbol']; ?>'); $('#dd_from').val('<? print $row['owner']; ?>');" class='btn btn-inverse btn-sm' style=" width:75px">Transfer</a></td>
                 </tr>
                 </table>
                 </td>

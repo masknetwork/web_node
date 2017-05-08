@@ -31,7 +31,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -75,7 +75,7 @@
 	 
 	 
 	 // Help
-	 $template->showHelp("An asset exchanger is a user that buys / sells MaskCoins or assets for real money. Exchangers are free to use any payment method they want and trade any available asset. They could buy or sell Maskcoins for PayPal or local bank transfer, for example. Exchangers make money from the spread (the small difference between the bid and ask price of a security or asset). Keep in mind that the spread is imposed by exchangers. Always get in touch by messaging or other external communication method with an exchanger before making any payment. If you don't fully trust an exchanger, you can use the built in escrowing mechanism. ");
+	 $template->showHelp("An asset exchanger is a user that buys / sells MaskCoins or assets for real money. Exchangers are free to use any payment method they want and trade any available asset. They could buy or sell MaskCoins for PayPal or local bank transfer, for example. Exchangers make money from the spread (the small difference between the bid and ask price of a security or asset). Keep in mind that the spread is imposed by exchangers. Always get in touch by messaging or other external communication method with an exchanger before making any payment. If you don't fully trust an exchanger, you can use the built in escrowing mechanism. ");
 	 
 	// Exchangers
 	$ex->showExchangers();

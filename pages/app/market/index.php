@@ -30,7 +30,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -97,6 +97,7 @@
  ?>
  </td>
  </table>
+ 
  
  </div>
  <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>

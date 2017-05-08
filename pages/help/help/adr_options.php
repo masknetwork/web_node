@@ -14,6 +14,7 @@
    $help=new CHelp();
 ?>
 
+
 <!doctype html>
 <html>
 <head>
@@ -21,48 +22,32 @@
 <title><? print $_REQUEST['sd']['website_name']; ?></title>
 <script src="../../../flat/js/vendor/jquery.min.js"></script>
 <script src="../../../flat/js/flat-ui.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet"./ href="../../../flat/css/vendor/bootstrap/css/bootstrap.min.css">
 <link href="../../../flat/css/flat-ui.css" rel="stylesheet">
 <link href="../../../style.css" rel="stylesheet">
 <link rel="shortcut icon" href="../../../flat/img/favicon.ico">
-
-<style>
-@media only screen and (max-width: 1000px)
-{
-   .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
-   #but_send { font-size:30px; }
-   #td_balance { height:100px; }
-   #div_ads { display:none; }
-   .txt_help { font-size:20px;  }
-   .font_14 { font-size:20px;  }
-   .font_10 { font-size:18px;  }
-   .font_14 { font-size:22px;  }
-}
-
-</style>
-
 </head>
 
 <body>
 
 <?
-   $template->showTopBar(7);
+   $template->showBalanceBar();
 ?>
- 
 
- <div class="container-fluid">
- 
- <?
-    $template->showBalanceBar();
- ?>
-
-
- <div class="row">
- <div class="col-md-1">&nbsp;</div>
- <div class="col-md-8" align="center" style="height:100%; background-color:#ffffff">
- 
- <?
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="15%" align="left" bgcolor="#4c505d" valign="top">
+      
+      <?
+	     $template->showLeftMenu("help");
+	  ?>
+      
+      </td>
+      <td width="55%" align="center" valign="top">
+	  
+	<?
      // Location
      $template->showLocation("../../help/help/index.php", "Help", "", "Address Options");
 	 
@@ -79,102 +64,7 @@
        <td><hr></td>
      </tr>
      <tr>
-       <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-         <tbody>
-           <tr>
-             <td width="51%" height="30" align="left"><a href="#cap_interest" class="font_14">Daily Interest</a></td>
-             <td width="49%" height="30"><a href="#cap_multi" class="font_14">Multisignatures</a></td>
-           </tr>
-           <tr>
-             <td height="30" align="left"><a href="#cap_rent_name" class="font_14">Rent an address name</a></td>
-             <td height="30"><a href="#cap_otp" class="font_14">One Time Password</a></td>
-           </tr>
-           <tr>
-             <td height="30" align="left"><a href="#cap_share" class="font_14">Share an address</a></td>
-             <td height="30"><a href="#cap_ipn" class="font_14">Instant Payment Notification</a></td>
-           </tr>
-           <tr>
-             <td height="30" align="left"><a href="#cap_profile" class="font_14">Setting up a profile</a></td>
-             <td height="30"><a href="#cap_request" class="font_14">Request Additional Data</a></td>
-           </tr>
-           <tr>
-             <td height="30" align="left"><a href="#cap_froze" class="font_14">How to froze and address</a></td>
-             <td height="30"><a href="#cap_autoresp" class="font_14">Autoresponders</a></td>
-           </tr>
-           <tr>
-             <td height="30" align="left"><a href="#cap_seal" class="font_14">How to seal and address</a></td>
-             <td height="30"><a href="#cap_pvt" class="font_14">The private key</a></td>
-           </tr>
-           <tr>
-             <td height="30" align="left"><a href="#cap_restrict" class="font_14">Restricted Recipients</a></td>
-             <td height="30">&nbsp;</td>
-           </tr>
-         </tbody>
-       </table></td>
-     </tr>
-     <tr>
        <td height="50" id="cap_interest">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_16"><strong>Interest</strong></td>
-     </tr>
-     <tr>
-       <td background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">MasckCoin is distributed mainly through interest. That means that any holder of at least 5 MSK will receive an interest daily. The interest rate is variable and depends on the amount of coins in circulation. Every day, maximum 2400 MSK are distributed to coins owners. As the amount of coins in circulation varies permanently the interest also varies but on the long-term it has the tendency to decrease.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14"> To set an address to receive interest, go to page Addresses (click Addresses, on the menu bar) and than click the Options button next to the address and choose Address Options. You will navigate in the options page. </td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">Click the Setup button next to Receive Daily Interest and the following menu will appear.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/interest.png" class="img-responsive" /></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Receive the interest to this address</strong></span> <span class="font_14">- As the name suggests, you need to specify an address where you will receive the daily interest. The address can be even the address that requires the interest.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">Click Activate and that is all. Every 24 hours, the wallet will make a request for interest for your address. </td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td height="120" bgcolor="#f0f0f0" class="font_14"><table width="95%" border="0" cellspacing="0" cellpadding="0">
-         <tbody>
-           <tr>
-             <td width="16%" align="center"><p><img src="GIF/idea.png" width="75" height="75" alt=""/></p></td>
-             <td width="84%" valign="middle" class="font_14">Warning!!! After receiving interest for 24 hours you cannot send money from that address. To stop automatic receipt of interest, clear the field Deliver interest to this address. To avoid blocking the interest, we recommend using a different address to receive interest in it.</td>
-           </tr>
-         </tbody>
-       </table></td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_rent_name">&nbsp;</td>
      </tr>
      <tr>
        <td class="font_16"><strong>Rent Adress Names</strong></td>
@@ -184,7 +74,7 @@
      </tr>
      <tr>
        <td class="font_14">MaskNetwork addresses are strings of at least 64 characters, impossible to remember and hard to
-         convey otherwise than in a digital format. To facilitate transmission among users the address names were introduced. The names of addresses are exactly what the domains are for web sites. Instead of navigating to an IP such as 90.21.18.32, you can navigate directly to www.masknetwork.com</td>
+         convey otherwise than in a digital format. To facilitate transmission among users the address names were introduced. The names of addresses are exactly what the domains are for web sites. Instead of navigating to an IP such as 90.21.18.32, you can navigate directly to www.MaskNetwork.com</td>
      </tr>
      <tr>
        <td>&nbsp;</td>
@@ -242,54 +132,6 @@
      </tr>
      <tr>
        <td height="50" id="cap_share">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_16"><strong>Adress Sharing</strong></td>
-     </tr>
-     <tr>
-       <td background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">With this option, you send the private key of an address to another person (address). The recipient will be able to spend coins and will have the same rights on the address as you. We recommend using this option carefully. It is very useful when you want to use your address on multiple web wallets or when you want to give full access to the address to a trustworthy person who may use another web wallet than you.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To send address data go to the Address page (click on Addresses on the menu bar) and than click the Options button next to the address and choose Address Options. You will navigate in the options page. </span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to Share Address option and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/share.png" class="img-responsive" /></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Recipient Address</strong></span> <span class="font_14">- –The address to which you want to convey the control of this address. Be very careful when you write the name to avoid transmitting the private key to a wrong address.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">Click the Send button. The Wallet will send the encrypted data in the network. The recipient will be notified and will have the option to import the new address in the local wallet.</td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_profile">&nbsp;</td>
      </tr>
      <tr>
        <td class="font_16"><strong>Setting a profile</strong></td>
@@ -352,54 +194,6 @@
        <td height="50" id="cap_froze">&nbsp;</td>
      </tr>
      <tr>
-       <td id="td_frozen"><strong class="font_16">How to froze and address</strong></td>
-     </tr>
-     <tr>
-       <td background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">By activating this option, you will not be able to send money from this address for a period of time. We recommend using this option with caution, because once activated it can no longer be canceled. It is a useful option if you no longer want to use the address for a while and you want to be carefree. Although sending funds is frozen, you can receive the related interest to a different address. </td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To freeze an address go to the Addresses page (click on the Addresses in the menu bar) and than click the Options button next to the address and choose Address Options. You will navigate in the options page. </span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to Freeze Address option and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/froze.png" class="img-responsive"/></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Days</strong></span> <span class="font_14">- As this is a rented service you must specify for how long you want to rent the service. The minimum is 10 days. There is no maximum. The fee is fixed of 0.0001 MSK / day.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">Click the Activate button. After acknowledgment of request (1 minute), you will not be able to send funds from the address for a certain period.</td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_seal">&nbsp;</td>
-     </tr>
-     <tr>
        <td id="td_sealed"><strong class="font_16">How to seal an address</strong></td>
      </tr>
      <tr>
@@ -448,181 +242,7 @@
        <td><span class="font_14"><strong>Days</strong></span> <span class="font_14">- As this is a rented service you must specify for how long you want to rent the service. The minimum is 10 days. There is no maximum. The fee is fixed of 0.0001 MSK / day.</span></td>
      </tr>
      <tr>
-       <td height="50" id="cap_restrict">&nbsp;</td>
-     </tr>
-     <tr>
-       <td id="td_restricted"><strong class="font_16">Restricted Recipients</strong></td>
-     </tr>
-     <tr>
-       <td background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">An address with restricted recipients can send funds only to certain specific addresses, which usually belong to the same person / organization. It is a very useful option especially if you own accounts in multiple online wallets. An attacker can only send funds to the other addresses owned by you, which in turn could be protected by other ways. </td>
-     </tr>
-     <tr>
        <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To restrict the recipients of an address, go to page Addresses (click on Addresses from the menu bar) and than click the Options button next to the address and choose Address Options. You will navigate in the options page.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to Restrict Recipients options and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/restrict.png" class="img-responsive"/></td>
-     </tr>
-     <tr>
-       <td height="0">&nbsp;</td>
-     </tr>
-     <tr>
-       <td height="0"><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td height="0">&nbsp;</td>
-     </tr>
-     <tr>
-       <td height="0"><span class="font_14"><strong>Recipients</strong></span> <span class="font_14">- You can specify up to five recipients. Only the first recipient is required. </span></td>
-     </tr>
-     <tr>
-       <td height="0">&nbsp;</td>
-     </tr>
-     <tr>
-       <td height="0"><span class="font_14"><strong>Days</strong></span> <span class="font_14">- As this is a rented service you must specify for how long you want to rent the service. The minimum is 10 days. There is no maximum. The fee is fixed of 0.0001 MSK / day.</span></td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_multi">&nbsp;</td>
-     </tr>
-     <tr>
-       <td id="td_multisig"><strong class="font_16">Multisignatures</strong></td>
-     </tr>
-     <tr>
-       <td  background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">An address protected by this option needs the approval of other addresses to be able to send funds. It is one of the most common security options. A potential attacker will not be able to spend funds without approval and other specified addresses.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">You can also specify a minimum number of signatures for a transaction to be executed. For example you can ask for the signature of 3 additional addressed but you can specify that only 2 of 3 signatures are required for a transaction to be approved by the network.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To restrict the recipients of an address, go to page Addresses (click on Addresses from the menu bar) and than click the Options button next to the address and choose Address Options. You will navigate in the options page. </span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to Multiple Signatures option and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/multisig.png" class="img-responsive"/></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Signers</strong></span> <span class="font_14">- You can specify up to co-signatories. You must specify at least 1 co-signatory.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Minimum</strong></span> <span class="font_14">- The minimum number of signatures for a transaction to be approved by the network.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Days</strong></span> <span class="font_14">- As this is a rented service you must specify for how long you want to rent this service. The minimum is 10 days. There is no maximum. The fee is fixed of 0.0001 MSK / day.</span></td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_otp">&nbsp;</td>
-     </tr>
-     <tr>
-       <td id="td_otp"><strong class="font_16">One Time Password</strong></td>
-     </tr>
-     <tr>
-       <td  background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">By activating this option, before each transaction you will need to enter a password that changes with every transaction. If an attacker takes control of the address, he/she cannot spend money because he/she will need this password. </td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">You can also specify an address where funds may be transferred without the need for this password. This option is very useful if you lose the last password generated by the system.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">The operating mechanism is relatively simple. Before any transaction the wallet will request the last generated password. After sending the funds, the wallet will display the following password, you will need to remember. The Wallet sends to the network an encrypted form (hash256) of the new password. The network will approve a new transaction only if accompanied by the proper password. The network does not know the password but only the encrypted form but can easily check if the supplied password is correct or not.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To activate this option for an address, go to page Addresses (click on Addresses on the menu bar) and click the Options button next to the address and choose Address Options. You will navigate in the options page.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to the Unique Password option and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/otp.png" class="img-responsive"/></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Emergency address</strong></span> <span class="font_14">- Optional. Emergency address. If you forget or lose the password generated you can recover the funds by sending them to the emergency address.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Days</strong></span> <span class="font_14">- As this is a rented service you must specify for how long you want the rental of this service. The minimum is 10 days. There is no maximum. The fee is fixed 0.0001 MSK / day.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Next Password</strong></span> <span class="font_14">- The password you will need to enter at the next transaction from this address.</span></td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_ipn">&nbsp;</td>
      </tr>
      <tr>
        <td id="td_ipn"><strong class="font_16">Instant Payment Notification</strong></td>
@@ -677,111 +297,6 @@
        <td><span class="font_14"><strong>Web Password </strong></span> <span class="font_14">- A password you specified which will be included in the data sent to the web site. It is optional but we recommend specifying a password in order to verify that the request was sent by the web wallet and not by an attacker.</span></td>
      </tr>
      <tr>
-       <td height="50" id="cap_request">&nbsp;</td>
-     </tr>
-     <tr>
-       <td id="td_additional"><strong class="font_16">Requesting Additional Data</strong></td>
-     </tr>
-     <tr>
-       <td  background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">You can request additional data from those who send funds to the address. Because you can specify the data format, there are no restrictions on the type of data required. After enabling this option, anyone who wants to send you funds will have to fill out a small form.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To activate this option for an address, go to page Addresses (click on Addresses on the menu bar) and click the Options button next to the address and choose Address Options. You will navigate in the options page. </span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to Additional Data option and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/request_data.png" class="img-responsive"/></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Short Message</strong></span> <span class="font_14">- A brief message in which you can explain for example why you need additional data.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Field Name</strong></span> <span class="font_14">- The name of the required field, such as "Email" or "Phone number"</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Min Length</strong></span> <span class="font_14">- The minimum length of the field. For a Bitcoin address, for example, you should specify a minimum length of 33 characters.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Max Length</strong></span> <span class="font_14">- The maximum length of the field. For a postal code, for example, you should specify a maximum length of 10 characters.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Days</strong></span> <span class="font_14">- As this is a rented service you must specify for how long you want to rent the address. The minimum is 10 days. There is no maximum. The fee is fixed of 0.0001 MSK / day.</span></td>
-     </tr>
-     <tr>
-       <td height="50" id="cap_autoresp">&nbsp;</td>
-     </tr>
-     <tr>
-       <td><strong class="font_16">Autoresponders</strong></td>
-     </tr>
-     <tr>
-       <td  background="../../template/template/GIF/lp.png">&nbsp;</td>
-     </tr>
-     <tr>
-       <td class="font_14">You can set the wallet to send automated messages after each payment / message received, to the address that initiated the payment or sent the message. It is a very useful option especially for traders that could send automated confirmation of the receipt of the funds.</td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">To activate this option for an address, go to page Addresses (click on Addresses on the menu bar) and click the Options button next to the address and choose Address Options. You will navigate in the options page. </span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14">Click the Setup button next to Automated Responses option and the following menu will appear.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td align="center"><img src="GIF/autoresp.png" class="img-responsive"/></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td><span class="font_14"><strong>Network Fee Address</strong></span> <span class="font_14">- Any service as renting an address name or setting additional options must be paid. In this field you specify where the coins will be taken for the payment of this service.</span></td>
-     </tr>
-     <tr>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
        <td><span class="font_14"><strong>Short Message</strong></span> <span class="font_14">- The message you want to send automatically.</span></td>
      </tr>
      <tr>
@@ -813,12 +328,22 @@
      </tr>
    </tbody>
  </table>
- <br>
- </div>
- <div class="col-md-2" id="div_ads"><? $template->showAds(); ?></div>
- <div class="col-md-1">&nbsp;</div>
- </div>
- </div>
+ 
+ 
+ </td>
+      <td width="15%" align="center" valign="top" bgcolor="#4c505d">
+      
+      <?
+	     $template->showAds();
+	  ?>
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+ 
  
  <?
     $template->showBottomMenu();
@@ -826,3 +351,7 @@
  
 </body>
 </html>
+
+
+
+

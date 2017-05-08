@@ -138,14 +138,14 @@ class CAPI
          <table width="100%">
          
          <tr><td>
-         <a href="index.php" class="font_14"><? if ($sel==1) print "<strong>Overview</strong>"; else print "Overview"; ?></a>
+         <a href="key_api.php" class="font_14"><? if ($sel==1) print "<strong>Overview</strong>"; else print "Overview"; ?></a>
          </td><td colspan="2"><? if ($sel==1) print "<img src=\"../../app/reference/GIF/arrow.png\">"; ?></td></tr>
          <tr><td><hr></td></tr>
          
          <tr><td>
          <a href="key_trans.php" class="font_14"><? if ($sel==2) print "<strong>Transactions</strong>"; else print "Transactions"; ?></a>
          </td><td colspan="2"><? if ($sel==2) print "<img src=\"../../app/reference/GIF/arrow.png\">"; ?></td></tr>
-         <tr><td><hr></td></tr>
+         
          
          
         

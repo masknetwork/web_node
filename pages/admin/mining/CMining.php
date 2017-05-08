@@ -76,7 +76,7 @@ class CMining
        <h3 class="panel-title font_14">Revenue 24 Hours</h3>
        </div>
        <div class="panel-body font_22" style="color:#009900">
-       <? print "$".round($blocks*$reward*$_REQUEST['sd']['msk_price']); ?><p class="font_10"><? print $reward." MSK / block"; ?></p>
+       <? print "$".round($blocks*$reward*$_REQUEST['sd']['MSK_price']); ?><p class="font_10"><? print $reward." MSK / block"; ?></p>
        </div>
        </div>
        
@@ -261,13 +261,6 @@ class CMining
 			return false;
 		}
 		
-		// Delegate valid
-		if ($this->kern->isMine($delegate)==false || 
-		    $this->kern->isDelegate($delegate)==false)
-		{
-			$this->template->showErr("Invalid delegate");
-			return false;
-		}
 		
 		try
 	    {

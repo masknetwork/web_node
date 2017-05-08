@@ -34,7 +34,7 @@
 @media only screen and (max-width: 1000px)
 {
    .balance_usd { font-size: 40px; }
-   .balance_msk { font-size: 40px; }
+   .balance_MSK { font-size: 40px; }
    #but_send { font-size:30px; }
    #td_balance { height:100px; }
    #div_ads { display:none; }
@@ -79,10 +79,9 @@
      $template->showLocation("../../app/mine/index.php", "My Applications", "", "Global Variables");
 	 
 	 // Menu
-	 $template->showNav(3,
+	 $template->showNav(2,
 	                    "edit.php?ID=".$_REQUEST['ID'], "Source Code", "",
-	                    "storage.php?ID=".$_REQUEST['ID'], "Storage", "",
-						"globals.php?ID=".$_REQUEST['ID'], "Globals", "");
+	                    "globals.php?ID=".$_REQUEST['ID'], "Globals", "");
 	 print "<br>";
 	 
 	 switch ($_REQUEST['act'])
