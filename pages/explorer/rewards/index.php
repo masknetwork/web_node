@@ -41,17 +41,13 @@
 
         var data = google.visualization.arrayToDataTable([
           ['Task', 'Hours per Day'],
-          ['Miners (<? print round($u*0.3); ?> MSK / day)',     6],
-          ['Miners Voters (<? print round($u*0.1); ?> MSK / day)',      2],
-          ['Blog Posts (<? print round($u*0.1); ?> MSK / day)',  2],
-          ['Blog Posts Voters (<? print round($u*0.1); ?> MSK / day)', 2],
-          ['Comments (<? print round($u*0.05); ?> MSK / day)',    1],
-		  ['Comments Voters (<? print round($u*0.05); ?> MSK / day)',    1],
-		  ['Data Feeds (<? print round($u*0.05); ?> MSK / day)',    1],
-		  ['Assets (<? print round($u*0.05); ?> MSK / day)',    1],
-		  ['Binary Options (<? print round($u*0.05); ?> MSK / day)',    1],
-		  ['Binary Options Voters (<? print round($u*0.05); ?> MSK / day)',    1],
-		  ['Margin Markets (<? print round($u*0.1); ?> MSK / day)',    2]
+          ['Miners (25% to voters)',     3],
+          ['Blog Posts (50% to voters)',  2],
+          ['Comments (50% to voters)',    1],
+		  ['Data Feeds',    0.5],
+		  ['Assets',    0.5],
+		  ['Binary Options (50% to voters)',    1.5],
+		  ['Margin Markets',    1.5]
         ]);
 
         var options = {

@@ -7,7 +7,5 @@
    $sd=new CSysData($db);
    $crons=new CCrons($db);
    
-   //print $db->getReward("ID_COM");
    $crons->runCrons();
-   $crons->checkBalances();
 ?>

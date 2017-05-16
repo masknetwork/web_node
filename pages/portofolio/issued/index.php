@@ -11,7 +11,12 @@
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
-   $issued=new CIssued($b, $template);
+   $issued=new CIssued($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
 ?>
 
 <!doctype html>
@@ -64,8 +69,9 @@
 	// Issued
     $issued->showSelector(); 
 	
-	
- ?>
+	// Issued
+	$issued->showIssuedAssets();
+?>
  
  
  </td>

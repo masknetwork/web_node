@@ -14,6 +14,11 @@
    $sd=new CSysData($db);
    $tweets=new CTweets($db, $template);
    $home=new CHome($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
 ?>
 
 <!doctype html>

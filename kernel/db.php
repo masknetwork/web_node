@@ -117,9 +117,11 @@
 	
 	
 	  function adrExist($adr)
-	{
-		
-		if ($this->adrValid($adr)==false) return false;
+	  {
+		// Valid adr ?
+		if ($this->adrValid($adr)==false) 
+		   return false;
+
 		
 		if (strlen($adr)>30)
 		{
@@ -142,22 +144,19 @@
 	
 	function adrValid($adr)
 	{
-		if (strlen($adr)!=108 && 
-		    strlen($adr)!=124 && 
-		    strlen($adr)!=160 && 
-		    strlen($adr)!=212) 
-	       return false;
-					
+		if (strlen($adr)!=120)
+		   return false;
+		
+		
 		   for ($a=0; $a<=strlen($adr)-1; $a++)
 	  	   {
 			   if (ord($adr[$a])!=47 && 
-			    ord($adr[$a])!=43 && 
-			    ord($adr[$a])!=61 && 
-				$this->isLetter(ord($adr[$a]))==false && 
-				$this->isFigure(ord($adr[$a]))==false) 
-			 return false;
-		   }
-		
+			       ord($adr[$a])!=43 && 
+			       ord($adr[$a])!=61 && 
+				   $this->isLetter(ord($adr[$a]))==false && 
+				   $this->isFigure(ord($adr[$a]))==false) 
+				return false;
+			}
 		
 		return true;
 	}
@@ -938,7 +937,7 @@ $('#back').css("cursor", "pointer");
 		  if ((ord($var[$a])<32 || ord($var[$a])>126) && ord($var[$a])!=10 && ord($var[$a])!=0)
 		  {
 			  print ord($var[$a]);
-		    return false;
+		      return false;
 		  }
 		  
 	    return true;
@@ -966,10 +965,7 @@ $('#back').css("cursor", "pointer");
 	function isAdr($var)
 	{
 		// Length
-		if (strlen($var)!=108 && 
-		    strlen($var)!=124 && 
-		    strlen($var)!=160 && 
-		    strlen($var)!=212) 
+		if (strlen($var)!=120) 
 	       return false;
 	   
 		// Characters	
@@ -1084,6 +1080,17 @@ $('#back').css("cursor", "pointer");
 	function noescape($str)
 	{
 	    $str=str_replace("<", "", $str);
+		$str=str_replace("www.www", "www", $str);
+		$str=str_replace("//www.0", "//0", $str);
+		$str=str_replace("//www.1", "//1", $str);
+		$str=str_replace("//www.2", "//2", $str);
+		$str=str_replace("//www.3", "//3", $str);
+		$str=str_replace("//www.4", "//4", $str);
+		$str=str_replace("//www.5", "//5", $str);
+		$str=str_replace("//www.6", "//6", $str);
+		$str=str_replace("//www.7", "//7", $str);
+		$str=str_replace("//www.8", "//8", $str);
+		$str=str_replace("//www.9", "//9", $str);
 		return $str;	
 	}
 	
@@ -1102,13 +1109,14 @@ $('#back').css("cursor", "pointer");
 	
 	function canSpend($adr)
 	{
-		if ($this->isSpecMktAdr($adr)) 
+		if ($this->isSpecMktAdr($adr) || 
+		    $this->hasAttr($adr, "ID_RES_REC")) 
 		   return false;
 		else
 		   return true;
 	}
 	
-	function standardCheck($template, $net_fee_adr, $adr)
+	function standardCheck($template, $net_fee_adr, $adr, $fee)
 	{
 		// Net fee valid
 		if ($this->adrValid($net_fee_adr)==false)
@@ -1143,6 +1151,13 @@ $('#back').css("cursor", "pointer");
 		if ($this->canSpend($net_fee_adr)==false)
 		{
 			$template->showErr("Network fee address can't spend funds");
+			return false;
+		}
+		
+		// Net fee has funds ?
+		if ($this->getBalance($net_fee_adr, "MSK")<$fee)
+		{
+			$template->showErr("Insufficient funds to execute transaction");
 			return false;
 		}
 		

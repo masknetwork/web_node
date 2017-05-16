@@ -60,7 +60,7 @@ class CRewards
 					       case "ID_BET" : print "Binary Option"; break;
 					   
 					       // Margin market
-					       case "ID_MKT" : print "Margin Markets"; break;
+					       case "ID_MARGIN_MKT" : print "Margin Markets"; break;
 					}
 				   }
 			   ?>

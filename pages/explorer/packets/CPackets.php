@@ -92,6 +92,7 @@ class CPackets
 			 case "ID_NEW_REG_ASSET_MARKET_POS_PACKET" : return "New Asset Market Order Packet"; break;
 			 case "ID_REG_ASSET_MARKET_CLOSE_POS_PACKET" : return "Close Asset Market Order Packet"; break;
 			 case "ID_NEW_SPEC_MARKET_POS_PACKET" : return "New Margin Position"; break;
+			 case "ID_NEW_FEED_SPEC_MARKET_PACKET" : return "New Margin Market"; break;
 		}
 	}
 	

@@ -287,9 +287,6 @@ class CTransactions
 		// Ammount
 		if ($amount_asset>0) $amount=$amount_asset;
 		
-		// Network fee address name ?
-		$net_fee_adr=$this->kern->adrFromDomain($net_fee_adr);
-			
 	    // Source a name ?
 		$from_adr=$this->kern->adrFromDomain($from_adr);
 			

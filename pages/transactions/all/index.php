@@ -12,6 +12,11 @@
    $ud=new CUserData($db);
    $sd=new CSysData($db);
    $trans=new CTransactions($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
  ?>
 
 <!doctype html>
@@ -52,13 +57,11 @@
 	 
 	     // Menu
 	     $template->showNav(1,
-	                   "../all/index.php", "All", $_REQUEST['ud']['unread_trans'],
-	                   "../escrowed/index.php", "Escrowed", $_REQUEST['ud']['unread_esc']);
+	                        "../all/index.php", "All", $_REQUEST['ud']['unread_trans'],
+	                        "../escrowed/index.php", "Escrowed", $_REQUEST['ud']['unread_esc']);
 	 
 	     // Help
          $template->showHelp("Below the last transactions executed are displayed. A transaction is confirmed in the network in about 2 minutes. Then, the transaction is final and it cannot be reversed. The transactions can have attached data such as a message or other information.");
-	 
-	  
 	   
 	     // Simpel send
 		 if ($_REQUEST['act']=="send_coins")

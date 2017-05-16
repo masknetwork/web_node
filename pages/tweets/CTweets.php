@@ -472,6 +472,7 @@ class CTweets
 			 return false;
 		 }
 		 
+		
 		 ?>
          
          <table width="<? if ($adr=="all") print "100%"; else print "90%"; ?>" border="0" cellpadding="0" cellspacing="0">
@@ -508,14 +509,14 @@ class CTweets
 						   if ($retweet_row['pic']=="") 
 					         print "../../template/template/GIF/mask.jpg"; 
 					      else 
-					         print "../../../crop.php?src=".str_replace("www.www", "www", base64_decode($retweet_row['pic']))."&w=100&h=100";
+					         print "../../../crop.php?src=".$this->kern->noescape(base64_decode($retweet_row['pic']))."&w=100&h=100";
 					   }
 					   else
 					   {
 				          if ($row['pic']=="") 
 					         print "../../template/template/GIF/mask.jpg"; 
 					      else 
-					         print "../../../crop.php?src=".str_replace("www.www", "www", base64_decode($row['pic']))."&w=100&h=100"; 
+					         print "../../../crop.php?src=".$this->kern->noescape(base64_decode($row['pic']))."&w=100&h=100"; 
 					   }
 						  
 				    ?>" width="100" height="100" alt="" class="img img-responsive img-rounded"/></td>
@@ -1452,7 +1453,7 @@ class CTweets
             
             <img src="<? if ($row['pic_back']=="") print "../../template/template/GIF/default_top_img.png"; else print "../../../crop.php?src=".base64_decode($row['pic_back'])."&w=100&h=40" ?>" width="150" class="img-responsive" >
             
-            <img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=60&h=60" ?>" width="50px" style="position:absolute; left:10%; top:50%; border:solid; border-width:2px; border-color:#ffffff;" class="img-responsive img-rounded">
+            <img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_pic.png"; else print "../../../crop.php?src=".$this->kern->noescape(base64_decode($row['pic']))."&w=60&h=60" ?>" width="50px" style="position:absolute; left:10%; top:50%; border:solid; border-width:2px; border-color:#ffffff;" class="img-responsive img-rounded">
             
             </td></tr>
             <tr><td></td></tr>
@@ -1887,7 +1888,7 @@ class CTweets
           <td width="22%" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
           <tbody>
            <tr>
-             <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/mask.jpg"; else print "../../../crop.php?src=".str_replace("www.www", "www", base64_decode($row['pic']))."&w=100&h=100"; ?>" width="200" height="201" class="img img-responsive img-rounded" /></td>
+             <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/mask.jpg"; else print "../../../crop.php?src=".$this->kern->noescape(base64_decode($row['pic']))."&w=100&h=100"; ?>" width="200" height="201" class="img img-responsive img-rounded" /></td>
            </tr>
            <tr>
              <td>&nbsp;</td>
@@ -2057,7 +2058,7 @@ class CTweets
                <table width="100%" border="0" cellpadding="0" cellspacing="0">
            <tbody>
              <tr>
-               <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_profile.png"; else print "../../../crop.php?src=".base64_decode($row['pic'])."&w=80&h=80"; ?>"  class="img img-responsive img-rounded"/></td>
+               <td align="center"><img src="<? if ($row['pic']=="") print "../../template/template/GIF/empty_profile.png"; else print "../../../crop.php?src=".$this->kern->noescape(base64_decode($row['pic']))."&w=80&h=80"; ?>"  class="img img-responsive img-rounded"/></td>
                </tr>
              <tr>
               

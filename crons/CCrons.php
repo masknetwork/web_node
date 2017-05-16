@@ -191,6 +191,16 @@ class CCrons
 	
 	function getVotePower($adr, $target_type, $targetID, $block)
 	{
+		// Load vote
+		$query="SELECT * 
+		          FROM votes 
+				 WHERE adr='".$adr."' 
+				   AND target_type='".$target_type."' 
+				   AND targetID='".$targetID."'";
+		$result=$this->kern->execute($query);	
+	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$vote_block=$row['block'];
+		
 		// Count votes
 		$query="SELECT COUNT(*) AS total 
 		          FROM votes 
@@ -212,7 +222,10 @@ class CCrons
 			$block=$this->getCreationBlock($target_type, $targetID);
 			
 			// Percent
-			$p=0.07*($_REQUEST['sd']['last_block']-$block); 
+			$p=0.07*($vote_block-$block); 
+			
+			// Minimum 1%
+			if ($p>=99) $p=99;
 			
 			// Power
 			$power=round($power-$p*$power/100, 2);
@@ -483,8 +496,7 @@ class CCrons
 		// Votes pay
 		$this->votesPayment();
 		
-		// MSK price
-		//$this->mskPrice();
+		
 		
 		// Print
 		print "Done.";

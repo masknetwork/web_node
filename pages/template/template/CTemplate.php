@@ -99,16 +99,13 @@ class CTemplate
 	
 	function showMyAdrDD($name="txt_adr", $width=300, $selected="")
 	{
-		 $query="SELECT ma.adr, adr.balance, dom.domain 
+		 $query="SELECT ma.adr, 
+		                adr.balance, 
+						dom.domain 
 		           FROM my_adr AS ma 
 			  LEFT JOIN adr ON ma.adr=adr.adr
 			  LEFT JOIN domains AS dom ON dom.adr=ma.adr
 			      WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
-				    AND ma.adr NOT IN (SELECT adr 
-				                         FROM feeds_spec_mkts 
-										WHERE adr IN (SELECT adr 
-										                FROM adr 
-													   WHERE userID='".$_REQUEST['ud']['ID']."'))
 			   ORDER BY balance DESC"; 
 		 $result=$this->kern->execute($query);	
 	  
@@ -116,26 +113,26 @@ class CTemplate
          
 		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
 		 {
-			// Balance
-			if ($row['balance']=="")
-			   $balance=0;
-			else
-			   $balance=$row['balance'];
+			if ($this->kern->canSpend($row['adr'])==true)
+			{
+			   // Balance
+			   $balance=$this->kern->getBalance($row['adr'], "MSK");
 			   
-		    if (strlen($row['domain'])>0)
-		    {
-			    if ($selected!="" && $selected==$row['adr'])
-		           print "<option selected  value='".$row['adr']."'>".$row['domain']." (".$balance." MSK)</option>";
-		        else
-			       print "<option value='".$row['adr']."'>".$row['domain']." (".$balance." MSK)</option>";
-		    }
-		    else
-		    {
-			    if ($selected!="" && $selected==$row['adr'])
-		           print "<option selected value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
-		        else
-			       print "<option value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
-		    }
+		       if (strlen($row['domain'])>0)
+		       {
+			       if ($selected!="" && $selected==$row['adr'])
+		              print "<option selected  value='".$row['adr']."'>".$row['domain']." (".$balance." MSK)</option>";
+		           else
+			          print "<option value='".$row['adr']."'>".$row['domain']." (".$balance." MSK)</option>";
+		       }
+		       else
+		       {
+			       if ($selected!="" && $selected==$row['adr'])
+		              print "<option selected value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
+		           else
+			          print "<option value='".$row['adr']."'>...".substr($row['adr'], 40, 20)."... (".$balance." MSK)</option>";
+		       }
+			}
 		 }
 		 
          print "</select>";
@@ -449,7 +446,7 @@ class CTemplate
 			break;
 		}
 		
-		$this->showModalHeader("testnet_modal", "Web node status", "act", "");
+		$this->showModalHeader("status_modal", "Web node status", "act", "");
 		?>
         
            <table width="700" border="0" cellspacing="0" cellpadding="0">
@@ -570,6 +567,9 @@ class CTemplate
 	
 	function showLeftMenu($sel)
 	{
+		// Testnet modal
+		$this->showTestnetModal();
+		
 		switch ($sel)
 		{
 			// Overview
@@ -947,7 +947,7 @@ class CTemplate
 		  ?>
           
           <tr>
-            <td height="0" bgcolor="#4c505d">&nbsp;</td>
+            <td height="0" bgcolor="#4c505d">&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-danger">TestNet Node</span></a></td>
           </tr>
         </tbody>
       </table>
@@ -1054,38 +1054,38 @@ class CTemplate
            <td width="150" align="center" style="color:#e2f7ff" class="font_14"><span class="font_14" style="color:#e2f7ff"><strong>Other</strong></span></td>
            </tr>
            <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."transactions/all/index.php"; ?>" class="font_12" style="color:#cde4ec">Coins</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."mes/inbox/index.php"; ?>" class="font_12" style="color:#cde4ec">Top Articles</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."adr/adr/index.php"; ?>" class="font_12" style="color:#cde4ec">Coins</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php"; ?>" class="font_12" style="color:#cde4ec">Top Articles</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."assets/user/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Packets</a></td>
-           <td width="150" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Help</a></td>
+           <td width="150" align="center"><a href="<? print $path."help/help/index.php"; ?>" class="font_12" style="color:#cde4ec">Help</a></td>
            </tr>
            <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a> </td>
-           <td width="150" height="30" align="center"><a href="<? print $path."mes/sent/index.php"; ?>" class="font_12" style="color:#cde4ec">Last Articles</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/user/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets</a> </td>
+           <td width="150" height="30" align="center"><a href="<? print $path."tweets/tweets/index.php"; ?>" class="font_12" style="color:#cde4ec">Last Articles</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."assets/assets_mkts/index.php"; ?>" class="font_12" style="color:#cde4ec">Assets Markets</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."explorer/blocks/index.php"; ?>" class="font_12" style="color:#cde4ec">Blocks</a></td>
            <td width="150" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Messages</a></td>
            </tr>
            <tr>
-           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Binary Options</a></td>
            <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Bets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Binary Options</a></td>
            <td width="150" height="30" align="center"><a href="<? print $path."explorer/adr/index.php"; ?>" class="font_12" style="color:#cde4ec">Addressess</a></td>
            <td width="150" align="center"><a href="<? print $path."explorer/packets/index.php"; ?>" class="font_12" style="color:#cde4ec">Settings</a></td>
            </tr>
            <tr>
            <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Margin Markets</a></td>
            <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center"><a href="<? print $path."assets/options/index.php"; ?>" class="font_12" style="color:#cde4ec">Margin Markets</a></td>
-           <td width="150" height="30" align="center"><a href="<? print $path."explorer/status/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Rewards</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/margin_mkts/index.php"; ?>" class="font_12" style="color:#cde4ec">Margin Markets</a></td>
+           <td width="150" height="30" align="center"><a href="<? print $path."explorer/rewards/index.php?adr=all&time=24"; ?>" class="font_12" style="color:#cde4ec">Rewards</a></td>
            <td width="150" align="center">&nbsp;</td>
            </tr>
            <tr>
            <td width="150" height="30" align="center">&nbsp;</td>
            <td width="150" height="30" align="center">&nbsp;</td>
+           <td width="150" height="30" align="center"><a href="<? print $path."assets/feeds/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
            <td width="150" height="30" align="center">&nbsp;</td>
-           <td width="150" height="30" align="center"><a href="<? print $path."transactions/escrowed/index.php"; ?>" class="font_12" style="color:#cde4ec">Data Feeds</a></td>
            <td width="150" align="center">&nbsp;</td>
            </tr>
            <tr>
@@ -1467,47 +1467,32 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 	
 
 	
-	function showIncreaseBidModal($init_panel_val="0.0365", $init_val=365)
+	function showTestnetModal()
 	{
-		$this->showModalHeader("modal_increase_bid", "Increase Bid", "act", "renew", "rowhash", "", $link);
+		$this->showModalHeader("testnet_modal", "TestNet", "act", "renew", "rowhash", "", $link);
 		?>
         
-            <table width="610" border="0" cellspacing="0" cellpadding="0">
+          <table width="610" border="0" cellspacing="0" cellpadding="0">
           <tr>
-            <td width="172" align="center" valign="top"><table width="180" border="0" cellspacing="0" cellpadding="0">
+            <td width="172" align="center" valign="top"><img src="../../template/template/GIF/testnet.png" width="160" height="160" alt=""/></td>
+            <td width="438" align="center" valign="top">
+            
+            <table width="300" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td align="center"><img src="../../template/template/GIF/increase_bid.png" width="179" height="144" /></td>
+                <td height="30" align="left" valign="top" class="font_18"><strong>TestNet Node</strong></td>
               </tr>
               <tr>
-                <td align="center">&nbsp;</td>
-              </tr>
-             
-            </table></td>
-            <td width="438" align="center" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Network Fee Address</strong></td>
+                <td align="left"><hr></td>
               </tr>
               <tr>
-                <td align="left"><? $this->showMyAdrDD("dd_fee", $init_val); ?></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
-              <tr>
-                <td height="30" align="left" valign="top" class="simple_blue_14"><strong>New Bid</strong></td>
-              </tr>
-              <tr>
-                <td align="left"><input class="form-control" id="txt_new_bid" name="txt_new_bid" placeholder="Bid" style="width:100px" value="0.0001"/></td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
+                <td align="left" class="font_14">This node is running over test network. This is an alternative MaskNetwork blockchain, to be used for testing. Testnet coins are separate and distinct from actual MaskCoins, <strong>and are never supposed to have any value</strong>. This allows application developers or MaskNetwork testers to experiment, without having to use real MaskCoins or worrying about breaking the main bitcoin chain. The developers can reset the testnet anytime they want. This is not a stable network.</td>
               </tr>
             </table></td>
           </tr>
         </table>
         
         <?
-		$this->showModalFooter("Update");
+		$this->showModalFooter("", "Close");
 	}
 	
 	function showRenewModal($link="")
@@ -2002,7 +1987,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
             <td width="25%" height="90px" style="color:#ffffff" class="font_26">
             &nbsp;&nbsp;&nbsp;&nbsp;<a href="../../../index.php">Wallet</a>&nbsp;&nbsp; 
             <span class="font_14">
-            <a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span style="color:#ffffff;" class="label 
+            <a href="javascript:void(0)" onClick="$('#status_modal').modal()"><span style="color:#ffffff;" class="label 
 			
 			<? 
 			    switch ($_REQUEST['sd']['status']) 
@@ -2031,8 +2016,10 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
             
             <td height="60px" align="center">
             <form id="" name="" method="post" action="../../explorer/search/main.php?act=search">
-            <input class="form-control" id="txt_main_search" name="txt_main_search" style="width:350px" placeholder="Search addresses, profiles, markets...">
-            </form>
+            <?
+               //<input class="form-control" id="txt_main_search" name="txt_main_search" style="width:350px" placeholder="Search addresses, profiles, markets...">
+            ?>
+			</form>
             </td>
             
             <td width="25%" height="60px">
@@ -2079,31 +2066,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
         <?
 	}
 	
-	function test()
-	{
-		?>
-        
-        
-         <table width="250px">
-            <tr>
-            <td width="30px">&nbsp;</td>
-           
-            </tr>
-            </table>
-            
-            </td>
-            <td width="55%" align="center">
-            <a href="javascript:void(0)" onClick="$('#testnet_modal').modal()"><span class="label label-warning">Testnet node</span></a></td></td>
-            
-            <td width="25%"></td>
-            
-            <td><a href="#" class="btn btn-primary" id="but_send" onClick="$('#send_coins_modal').modal()">
-            <span class="glyphicon glyphicon-send">&nbsp;</span>Send Coins</a></td>
-            <td width="20%">&nbsp;</td>
-            </tr>
-            </table>
-        <?
-	}
+	
 	
 	function showLocation($link_1="", $txt_1="", $link_2="", $txt_2="")
 	{

@@ -197,7 +197,7 @@
 			}
 		 
 		    // Transaction fee address
-			if ($this->template->adrValid($trans_fee_adr)==false)
+			if ($this->kern->adrValid($trans_fee_adr)==false)
 			{
 			    $this->template->showErr("Invalid transaction fee adress");
 			    return false;

@@ -174,41 +174,9 @@ class CSpecMkts
 					  $qty,
 					  $days)
 	{
-		// Check addresses
-		if (!$this->kern->canSpend($net_fee_adr))
-		{
-			$this->template->showErr("Network fee address or address can't spend funds");
-			return false;
-		}
-		
-		// Address owner
-		if ($this->kern->isMine($net_fee_adr)==false || 
-		    $this->kern->isMine($adr)==false)
-		{
-			 $this->template->showErr("Invalid entry data");
-			 return false;
-		}
-		
-		 // Net Fee Address 
-		 if ($this->kern->adrExist($net_fee_adr)==false)
-		 {
-			$this->template->showErr("Invalid network fee address");
-			return false;
-		 }
-		 
-		 // Address 
-		 if ($this->kern->adrExist($adr)==false)
-		 {
-			$this->template->showErr("Invalid address");
-			return false;
-		 }
-		 
-		 // Balance
-		 if ($this->kern->getBalance($net_fee_adr)<0.0001)
-		 {
-			 $this->template->showErr("Insufficient funds");
-			 return false;
-		 }
+		// Standar check 
+		if ($this->kern->standardCheck($this->template, $net_fee_adr, $adr, $days*0.0001)==false)
+	        return false;
 		 
 		 // Load market data
 		 $query="SELECT fsm.*, adr.balance AS mkt_adr_balance 
@@ -228,8 +196,9 @@ class CSpecMkts
 		 $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
 		 
 		 // Open
-		 $open=$mkt_row['last_price'];
-		 
+		 if ($ex_type=="ID_MARKET")
+		     $open=$mkt_row['last_price'];
+		 	 
 		 // Tip
 		 if ($tip!="ID_BUY" && $tip!="ID_SELL")
 		 {
@@ -238,14 +207,14 @@ class CSpecMkts
 		 }
 		 
 		 // Execution type
-		 if ($ex_type!="ID_MARKET" && $ex_type!="ID_PENDING")
+		 if ($ex_type!="ID_MARKET" && $ex_type!="ID_ORDER")
 		 {
 			  $this->template->showErr("Invalid execution type");
 			  return false;
 		 }
 		 
 		 // Open line
-		 if ($ex_type=="ID_PENDING")
+		 if ($ex_type=="ID_ORDER")
 		 {
 			 if ($open<$mkt_row['last_price'])
 			    $open_line="ID_ABOVE";
@@ -367,7 +336,7 @@ class CSpecMkts
 								par_8='".$ex_type."',
 								days='".$days."',
 								status='ID_PENDING', 
-								tstamp='".time()."'"; 
+								tstamp='".time()."'";  
 	       $this->kern->execute($query);
 		
 		   // Commit
@@ -551,6 +520,8 @@ class CSpecMkts
 								par_6='".$spread."',
 								par_7='".base64_encode($title)."',
 								par_8='".base64_encode($desc)."',
+								par_9='50',
+								par_10='250',
 								days='".$days."',
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
@@ -734,7 +705,7 @@ class CSpecMkts
             <td width="40%" align="center"><span class="font_12">Address</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="font_12" href="#">
 			<strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>
             </td>
-             <td width="33%" align="center"><span class="font_12">Expires&nbsp;&nbsp;&nbsp;&nbsp; <strong>~ <? print $this->getTime($row['expire']-$_REQUEST['sd']['last_block']); ?></strong></span></td>
+             <td width="33%" align="center"><span class="font_12">Expires&nbsp;&nbsp;&nbsp;&nbsp; <strong>~ <? print $this->kern->timeFromBlock($row['expire']); ?></strong></span></td>
             </tr>
             <tr><td colspan="3"><hr></td></tr>
             
@@ -832,7 +803,7 @@ class CSpecMkts
         <td width="10%">
         
         <?
-		   if ($row['mkt_status']=="online")
+		   if ($row['mkt_status']=="ID_ONLINE")
 		   {
 		?>
         
@@ -1005,13 +976,13 @@ class CSpecMkts
                 <td height="30" align="left" valign="top">
                 <select id="dd_new_pos_exec" name="dd_new_pos_exec" class="form-control" style="width:150px" onchange="javascript:execution_change()">
                   <option selected value="ID_MARKET">Market Price</option>
-                  <option value="ID_PENDING">Specified price</option>
+                  <option value="ID_ORDER">Specified price</option>
                 </select>
                 
                 <script>
 				  function execution_change()
 				  {
-					  if ($('#dd_new_pos_exec').val()=="ID_PENDING") 
+					  if ($('#dd_new_pos_exec').val()=="ID_ORDER") 
 					  {
 						 $('#txt_new_pos_open').attr('disabled', false);
 					  }
@@ -1031,7 +1002,7 @@ class CSpecMkts
               </tr>
               <tr>
                 <td width="49%" height="30" align="left" valign="top" class="font_14"><strong>Execute at Price&nbsp;&nbsp;</strong></td>
-                <td width="51%" height="30" align="left" valign="top" class="font_14"><strong>Buy Qty</strong></td>
+                <td width="51%" height="30" align="left" valign="top" class="font_14"><strong>Trade Qty</strong></td>
               </tr>
               <tr>
                 <td height="35" align="left" class="simple_gri_14">
@@ -1644,7 +1615,7 @@ class CSpecMkts
              <td width="30%" align="center"><span class="font_12">Started</span>&nbsp;&nbsp;&nbsp;&nbsp;<font class="font_12">
              <strong>
 			 <? 
-			    print "~".$this->getTime($_REQUEST['sd']['last_block']-$row['block'])." ago"; 
+			    print "~".$this->kern->timeFromBlock($row['block_start'])." ago"; 
 			?>
             </strong></font></td>
             </tr>

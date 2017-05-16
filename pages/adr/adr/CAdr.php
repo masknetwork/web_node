@@ -9,16 +9,6 @@ class CMyAdr
 	
 	function newAdr($curve, $tag)
 	{		
-		// Check strength
-		if ($curve!="secp224r1" && 
-		    $curve!="secp256r1" && 
-			$curve!="secp384r1" && 
-			$curve!="secp521r1")
-		{
-			$this->template->showErr("Invalid address strength");
-			return false;
-		}
-		
 		// Check tag
 		if (strlen($tag)>50)
 		{
@@ -38,8 +28,7 @@ class CMyAdr
 		   $query="INSERT INTO web_ops 
 			                SET user='".$_REQUEST['ud']['user']."', 
 							    op='ID_NEW_ADR', 
-								par_1='".$curve."', 
-								par_2='".base64_encode($tag)."', 
+								par_1='".base64_encode($tag)."', 
 								status='ID_PENDING', 
 								tstamp='".time()."'"; 
 	        $this->kern->execute($query);
@@ -165,7 +154,7 @@ class CMyAdr
                           <td width="9%" align="left">
                           <img src="<? if ($row['pic']!="") print base64_decode($row['pic']); else print "../../template/template/GIF/empty_pic.png"; ?>" width="50" height="50" alt="" class="img-circle"  />
                           </td>
-                          <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a>&nbsp;&nbsp;<? if ($row['description']!="") print "<p class='font_12' style='color:#999999'>".base64_decode($row['description'])."</p>"; ?></td>
+                          <td width="40%" align="left"><a href="../options/index.php?ID=<? print $row['ID']; ?>" class="font_14"><strong><? print $this->template->formatAdr($row['adr']); ?></strong></a></td>
                          
                           <td width="10%" align="center">
                           <?
@@ -253,22 +242,6 @@ class CMyAdr
               </tr>
               </table></td>
             <td width="368" align="right" valign="top"><table width="90%" border="0" cellspacing="0" cellpadding="5">
-              <tr>
-                <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Encryption Type Type</strong></td>
-              </tr>
-              <tr>
-                <td align="left">
-                <select class="form-control" name="dd_curve" id="dd_curve">
-                <option value="secp224r1">Default (strength 224 bits)</option>
-                <option value="secp256r1">Medium (strength 256 bits)</option>
-                <option value="secp384r1">Strong (strength 384 bits)</option>
-                <option value="secp521r1">Very Strong (strength 521 bits)</option>
-                </select>
-                </td>
-              </tr>
-              <tr>
-                <td align="left">&nbsp;</td>
-              </tr>
               <tr>
                 <td height="30" align="left" valign="top" class="simple_blue_14"><strong>Address Tag</strong></td>
               </tr>

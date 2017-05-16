@@ -12,6 +12,11 @@
    $ud=new CUserData($db);
    $sd=new CSysData($db);
    $assets=new CAssets($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
 ?>
 
 <!doctype html>
@@ -56,7 +61,7 @@
 	    // Menu
 	    $template->showNav(1,
 	                      "../assets/index.php", "Assets", "",
-	                      "../bets/index.php", "Bets", "",
+	                      "../bets/index.php", "Binary Otpions", "",
 						  "../positions/index.php", "Speculative Positions", "",
 						  "../issued/index.php", "Issued", "");
 	 

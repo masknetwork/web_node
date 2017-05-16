@@ -5,11 +5,18 @@
    include "../../../kernel/CUserData.php";
    include "../../../kernel/CSysData.php";
    include "../../template/template/CTemplate.php";
+   include "COptions.php";
    
    $db=new db();
    $template=new CTemplate($db);
    $ud=new CUserData($db);
    $sd=new CSysData($db);
+   $options=new COptions($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
 ?>
 
 <!doctype html>
@@ -51,15 +58,23 @@
 	 // Menu
 	 $template->showNav(2,
 	                    "../assets/index.php", "Assets", "",
-	                    "../bets/index.php", "Bets", "",
+	                    "../bets/index.php", "Binary Options", "",
 						"../positions/index.php", "Speculative Positions", "",
 						"../issued/index.php", "Issued", "");
 	 
 	 
 	 // Help
 	 $template->showHelp("Below are the displayed the assets you own. Assets can be send to other addresses just like MaskCoins and enjoy the same protection level / features. Below are listed the assets you own. Any address can issue a new asset. If you want to issue an asset go to Issued tab and click Issue Asset.");
-			   
+     
+	 // Target
+	 if (!isset($_REQUEST['status']))
+	    $_REQUEST['status']="ID_ACTIVE";
+	  
+	 // Selector
+	 $options->showSelector($_REQUEST['status']);
 	 
+	// Show options
+	$options->showMyOptions($_REQUEST['status']); 
  ?>
  
  

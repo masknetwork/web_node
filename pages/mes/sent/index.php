@@ -13,7 +13,10 @@
    $sd=new CSysData($db);
    $mes=new CMes($db, $template);
    
-   if (!isset($_SESSION['userID'])) $this->kern->redirect("../../../index.php");
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
 ?>
 
 <!doctype html>

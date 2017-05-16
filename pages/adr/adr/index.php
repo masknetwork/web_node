@@ -14,6 +14,11 @@
    $sd=new CSysData($db);
    $adr=new CAdr($db, $template);
    $my_adr=new CMyAdr($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
 ?>
 
 <!doctype html>

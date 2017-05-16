@@ -14,6 +14,11 @@
    $sd=new CSysData($db);
    $trans=new CTransactions($db, $template);
    $esc=new CEscrowed($db, $template);
+   
+   // Not logged in ?
+   if (!isset($_REQUEST['ud']['ID']) || 
+       $_REQUEST['ud']['ID']==0)
+   $db->redirect("../../../index.php");
  ?>
 
 <!doctype html>
