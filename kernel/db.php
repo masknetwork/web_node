@@ -10,21 +10,13 @@
 		 error_reporting(E_ERROR);
          $host=$_SERVER['HTTP_HOST'];
 		
-		 if ($host=="localhost")
-		 {
-			 $ho="127.0.0.1:3306:/tmp/mysql.sock";
-			 $user="root";
-			 $pass="";
-			 $db="wallet";
-			 $_REQUEST['sd']['server']="localhost";
-		 }
-		 else
-		 {
-			 $user="root";
-			 $pass="dicatrenu";
-			 $db="wallet";
-			 $ho="localhost";
-		 }
+		// ---------------------------- DB credentials ------------------------------------
+		$user="db_user";
+		$pass="db_pass";
+		$db="db";
+		$ho="localhost";
+		// --------------------------------------------------------------------------------
+		
 		
          $this->con = mysql_connect($ho, $user, $pass)
             or die("Could not connect: " . mysql_error());
