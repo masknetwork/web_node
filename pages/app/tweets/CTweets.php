@@ -193,7 +193,7 @@ class CTweets
 				   AND adr='".$adr."'";
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("You don't follow this address", 550);
 			return false;
@@ -304,7 +304,7 @@ class CTweets
 				 WHERE adr='".$follow_adr."'";
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("You can't follow an address with no tweets", 550);
 			return false;
@@ -408,7 +408,7 @@ class CTweets
 			      ORDER BY adr.balance DESC 
 				     LIMIT ".$start.", ".$end; 
 		    $result=$this->kern->execute($query);	
-			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			$adr=$row['adr']; 
 		}
 		
@@ -466,7 +466,7 @@ class CTweets
 		$result=$this->kern->execute($query); 
 		 
 		 // No results
-		 if (mysql_num_rows($result)==0) 
+		 if (mysqli_num_rows($result)==0) 
 		 {
 			 print "<span class='font_14' style='color:#990000'>No results found</span>";
 			 return false;
@@ -478,7 +478,7 @@ class CTweets
          <tbody>
          
          <?
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			{
 				if (($row['upvotes_power_24']-$row['downvotes_power_24'])>-10)
 				{
@@ -491,7 +491,7 @@ class CTweets
 							  LEFT JOIN votes_stats AS vs ON vs.targetID=tw.tweetID
 							 WHERE tw.tweetID='".$row['retweet_tweet_ID']."'"; 
 				    $res=$this->kern->execute($query);	
-	                $retweet_row = mysql_fetch_array($res, MYSQL_ASSOC); 
+	                $retweet_row = mysqli_fetch_array($res, MYSQL_ASSOC); 
 				}
 		 ?>
          
@@ -1305,7 +1305,7 @@ class CTweets
            <?
 		      $a=0;
 			  
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 				  $a++;
 		   ?>
@@ -1373,7 +1373,7 @@ class CTweets
 			         WHERE ma.userID='".$_REQUEST['ud']['ID']."' 
 			      ORDER BY adr.balance DESC"; 
 		    $result=$this->kern->execute($query);	
-			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			$adr=$row['adr'];
 		}
 		
@@ -1386,7 +1386,7 @@ class CTweets
 		$result=$this->kern->execute($query);	
 		
 		// No records
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$tweets=0;
 			$following=0;
@@ -1399,7 +1399,7 @@ class CTweets
 		             FROM tweets 
 					WHERE adr='".$adr."'";
 		   $result=$this->kern->execute($query);	
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC); 
+		   $row = mysqli_fetch_array($result, MYSQL_ASSOC); 
 		   $tweets=$row['tweets'];
 		   if ($tweets=="") $tweets=0;
 		   
@@ -1408,7 +1408,7 @@ class CTweets
 		             FROM tweets_follow 
 					WHERE adr='".$adr."'";
 		   $result=$this->kern->execute($query);	
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		   $following=$row['total'];
 		   if ($following=="") $following=0;
 		   
@@ -1417,7 +1417,7 @@ class CTweets
 		             FROM tweets 
 					WHERE follow_adr='".$adr."'";
 		   $result=$this->kern->execute($query);	
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		   $followers=$row['total'];
 		   if ($followers=="") $followers=0;
 		}
@@ -1486,7 +1486,7 @@ class CTweets
 		    $result=$this->kern->execute($query);	
 	        
 			// Already following
-			if (mysql_num_rows($result)>0)
+			if (mysqli_num_rows($result)>0)
 			   print "<a href='javascript:void(0)' onclick=\"$('#unfollow_modal').modal();\" class='btn btn-danger' style='width:100%'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;&nbsp;Unfollow</a>";
 			else
 			   print "<a href='javascript:void(0)' onclick=\"$('#follow_modal').modal()\" class='btn btn-success' style='width:100%'><span class='glyphicon glyphicon-plus-sign'></span>&nbsp;&nbsp;Follow</a>"; 
@@ -1608,7 +1608,7 @@ class CTweets
         <table class="table-responsive" width="95%" align="right">
         
         <?
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 		?>
         
@@ -1642,7 +1642,7 @@ class CTweets
         <table class="table-responsive" width="95%" align="right">
         
         <?
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 		?>
         
@@ -1678,7 +1678,7 @@ class CTweets
             <table width="90%" border="0" cellspacing="0" cellpadding="0" class="table-responsive">
               <tbody>
                 <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                      
@@ -1813,7 +1813,7 @@ class CTweets
 		$pos=0;
 		
 		// Number of records
-		$num=mysql_num_rows($result);
+		$num=mysqli_num_rows($result);
 		
 		print "<table width='90%'>";
 		
@@ -1828,7 +1828,7 @@ class CTweets
 			
 			if ($pos<=$num) 
 			{
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				$this->showSearchTweetPanel(base64_decode($row['pic_back']), 
 				                            base64_decode($row['pic']), 
 											$row['adr'], 
@@ -1847,7 +1847,7 @@ class CTweets
 			// Display panel
 			if ($pos<=$num) 
 			{
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			    $this->showSearchTweetPanel($row['pic_back'], 
 				                            $row['pic'], 
 											$row['adr'], 
@@ -1873,7 +1873,7 @@ class CTweets
 				  LEFT JOIN votes_stats AS vs ON vs.targetID='".$ID."'
 				 WHERE tweetID='".$ID."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Modals
 		$this->showFollowModal($row['adr']);
@@ -1925,10 +1925,10 @@ class CTweets
 								AND follows='".$row['adr']."'"; 
 					 $result=$this->kern->execute($query);	
 	                 
-					 if (mysql_num_rows($result)>0)
+					 if (mysqli_num_rows($result)>0)
 					 {
 						 // Load data
-						 $row_unfollow=mysql_fetch_array($result, MYSQL_ASSOC);
+						 $row_unfollow=mysqli_fetch_array($result, MYSQL_ASSOC);
 						 
 						 // Unfollow modal
 						 $this->showUnFollowModal($row_unfollow['adr'], $row['adr']);
@@ -2045,7 +2045,7 @@ class CTweets
         <tbody>
         
         <?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   {
 			   if (($row['upvotes_power_24']-$row['downvotes_power_24'])>-10)
 			   {

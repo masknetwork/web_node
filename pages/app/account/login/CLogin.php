@@ -70,7 +70,7 @@ class CLogin
 				   AND pass='".hash("sha256", $pass)."'";
 		   $result=$this->kern->execute($query);
 		
-		   if (mysql_num_rows($result)==0)
+		   if (mysqli_num_rows($result)==0)
 		   {
 			$this->template->showerr("Invalid username or password", 460);
 			return false;
@@ -85,7 +85,7 @@ class CLogin
 		}
 		
 			// Load data
-			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			
 			// set session
 			$_SESSION['userID']=$row['ID'];

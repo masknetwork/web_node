@@ -75,7 +75,7 @@ class CStats
 						   
 			    $result=$this->kern->execute($query);	
 	           
-				if (mysql_num_rows($result)>0)
+				if (mysqli_num_rows($result)>0)
 				{
 				   // Signups
 				   $signups=$row['signups'];
@@ -118,7 +118,7 @@ class CStats
 				 WHERE adr='".$adr."' 
 				   AND userID='".$_REQUEST['ud']['ID']."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		// Adr ID
 		$adrID=$row['ID'];

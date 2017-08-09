@@ -14,7 +14,7 @@ class CAdr
 			 LEFT JOIN profiles AS pr ON pr.adr=adr.adr 
 			     WHERE adr.adr='".$adr."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         

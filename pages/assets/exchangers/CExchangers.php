@@ -110,7 +110,7 @@ class CExchangers
 		          FROM assets 
 				 WHERE symbol='".$asset."'"; 
 		   $result=$this->kern->execute($query);	
-	       if (mysql_num_rows($result)==0)
+	       if (mysqli_num_rows($result)==0)
 		   {
 			    $this->template->showErr("Invalid asset");
 		        return false;
@@ -635,7 +635,7 @@ class CExchangers
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -721,7 +721,7 @@ class CExchangers
 		          FROM exchangers 
 				 WHERE ID='".$ID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         

@@ -35,7 +35,7 @@ class CAsset
 				   AND s1='".$asset."'";
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
 			$this->template->showErr("You already trust this asset");
 			return false;
@@ -169,14 +169,14 @@ class CAsset
 		          FROM assets_owners 
 				 WHERE symbol='".$symbol."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$owners=$row['total'];
 		
 		$query="SELECT *
 		          FROM assets 
 				 WHERE symbol='".$symbol."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		?>
         
@@ -292,7 +292,7 @@ class CAsset
                    <table width="90%" class="table-responsive">
                     
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                     
@@ -334,7 +334,7 @@ class CAsset
 			     LIMIT 0,20";
 	    $result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			print "<br><p class='font_14' style='color:#990000'>No transactions found</p><br><br>";
 			return false;
@@ -346,7 +346,7 @@ class CAsset
                    <table width="90%" class="table-responsive">
                     
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                     
@@ -388,7 +388,7 @@ class CAsset
 			     LIMIT 0,20";
 	    $result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			print "<br><p class='font_14' style='color:#990000'>No markets found</p><br><br>";
 			return false;
@@ -417,7 +417,7 @@ class CAsset
                   <table width="92%" border="0" cellspacing="0" cellpadding="0">
                     
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                     

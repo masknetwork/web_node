@@ -14,7 +14,7 @@ class CBranch
 				 WHERE feed_symbol='".$feed."' 
 				   AND symbol='".$symbol."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -65,7 +65,7 @@ class CBranch
 				 WHERE feed_symbol='".$feed."' 
 				   AND symbol='".$symbol."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $last_value=$row['val'];
 		
 		// Min, max, count
@@ -77,7 +77,7 @@ class CBranch
 				   AND feed_branch='".$symbol."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		?>
             
             <br>
@@ -114,7 +114,7 @@ class CBranch
 				                 FROM my_adr 
 							    WHERE userID='".$_REQUEST['ud']['ID']."')";
 	   $result=$this->kern->execute($query);	
-	   if (mysql_num_rows($result)>0) 
+	   if (mysqli_num_rows($result)>0) 
 	      $mine=true;
 	   else
 	     $mine=false;
@@ -125,7 +125,7 @@ class CBranch
 				  WHERE feed_symbol='".$feed."' 
 				    AND symbol='".$branch."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$rl_symbol=$row['rl_symbol'];
 		
 		// Last 100 records
@@ -153,7 +153,7 @@ class CBranch
 		 
          data.addRows([
 		 <?
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  print "['', ".$row['val']."],";
 		 ?>
 		 ]);
@@ -237,7 +237,7 @@ class CBranch
             <table class="table-responsive" width="90%" align="center">
             
             <?
-			   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+			   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			   {
 			?>
             

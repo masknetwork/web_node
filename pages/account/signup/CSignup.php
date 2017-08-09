@@ -21,7 +21,7 @@ class CSignup
 		          FROM web_users 
 				 WHERE user='".$user."'";
 		$result=$this->kern->execute($query);
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
 			$this->template->showErr("User already exist", 510);
 			return false;
@@ -47,7 +47,7 @@ class CSignup
 				 WHERE email='".$email."'";
 		$result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
 			$this->template->showErr("Email is already used", 510);
 			return false;

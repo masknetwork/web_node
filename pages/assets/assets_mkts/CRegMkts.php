@@ -137,7 +137,7 @@ class CRegMkts
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            

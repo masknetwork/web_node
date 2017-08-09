@@ -100,7 +100,7 @@
 		           FROM feeds 
 				  WHERE symbol='".$symbol."'";
 		 $result=$this->kern->execute($query);	
-	     if (mysql_num_rows($result)>0)
+	     if (mysqli_num_rows($result)>0)
 		 {
 			 $this->template->showErr("Symbol already exist");
 			 return false;

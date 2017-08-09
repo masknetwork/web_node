@@ -575,7 +575,7 @@ class CAPI
 		$result=$this->kern->execute($query);
 		
 	    // Has data
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->err("No data");
 			return false;
@@ -583,7 +583,7 @@ class CAPI
 		
 		// Return data
 		$a=0;
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 			$a++;
 			
@@ -662,7 +662,7 @@ class CAPI
 		
 		print "#son=\"{\";<br>";
 		
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			print "#json=#json.\"\\\"".$row['COLUMN_NAME']."\\\" : \\\"\".#row['".$row['COLUMN_NAME']."'].\"\\\", \";<br>";
 		
 		print "#json=#json.\"}\";<br><br>";
@@ -674,7 +674,7 @@ class CAPI
 	{
 		$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'wallet' AND TABLE_NAME = '".$table."'";
 		$result=$this->kern->execute($query);
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) 
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) 
 		   print "\"".$row['COLUMN_NAME']."\", ";
 	}
 	

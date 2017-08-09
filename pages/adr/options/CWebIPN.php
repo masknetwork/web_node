@@ -48,7 +48,7 @@ class CWebIPN
 					WHERE adr='".$adr."'";
 		   $result=$this->kern->execute($query);	
 	       
-		   if (mysql_num_rows($result)>0)
+		   if (mysqli_num_rows($result)>0)
 		      $query="UPDATE ipn 
 			             SET web_link='".$web_adr."', 
 						     web_pass='".$pass."',

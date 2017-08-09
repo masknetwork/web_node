@@ -23,14 +23,14 @@ class CTweet
 				  JOIN tweets ON tweets.tweetID=tc.tweetID 
 				 WHERE tc.rowID='".$resID."'"; 
 		$result=$this->kern->execute($query);	
-	    if (mysql_num_rows($result)==0)
+	    if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid response ID", 570);
 			return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		// Target address
 		$target_adr=$row['adr'];
@@ -144,7 +144,7 @@ class CTweet
 				     WHERE tweetID='".$targetID."'";
 		    $result=$this->kern->execute($query);	
 			
-	        if (mysql_num_rows($result)==0)
+	        if (mysqli_num_rows($result)==0)
 		    {
 			    $this->template->showErr("Invalid post ID", 550);
 		  	    return false;
@@ -160,7 +160,7 @@ class CTweet
 				     WHERE comID='".$targetID."'";
 		    $result=$this->kern->execute($query);	
 			
-	        if (mysql_num_rows($result)==0)
+	        if (mysqli_num_rows($result)==0)
 		    {
 			    $this->template->showErr("Invalid comment ID", 550);
 		  	    return false;
@@ -175,7 +175,7 @@ class CTweet
 				   AND parentID='".$targetID."'";
 	     $result=$this->kern->execute($query);	
 	     
-		 if (mysql_num_rows($result)>0)
+		 if (mysqli_num_rows($result)>0)
 	     {
 			    $this->template->showErr("You have already commented this post", 550);
 		  	    return false;
@@ -246,7 +246,7 @@ class CTweet
 		
 		$query="SELECT * FROM tweets WHERE tweetID='".$ID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		if ($row['budget']>0)
 	        print "<div class='alert alert-warning font_14' role='alert' style='width:95%' align='left'><span class='glyphicon glyphicon-gift'></span>&nbsp;&nbsp;&nbsp;Incentives inside. Left budget <strong>".$row['budget']." ".$row['budget_cur']."</strong> </div>";
@@ -266,7 +266,7 @@ class CTweet
 							  LEFT JOIN profiles AS pr ON pr.adr=tw.adr 
 							 WHERE tw.tweetID='".$row['retweet_tweet_ID']."'"; 
 					 $re_result=$this->kern->execute($query);	
-					 $re_row = mysql_fetch_array($re_result, MYSQL_ASSOC);
+					 $re_row = mysqli_fetch_array($re_result, MYSQL_ASSOC);
 					
 					 
 					 ?>
@@ -683,7 +683,7 @@ class CTweet
 		          FROM tweets 
 				 WHERE tweetID='".$tweetID."'"; 
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Budget
 		$budget=$row['budget'];
@@ -708,12 +708,12 @@ class CTweet
 		$result=$this->kern->execute($query);	
 		
 		// No esults
-		if (mysql_num_rows($result)==0) return false;
+		if (mysqli_num_rows($result)==0) return false;
 		
 		// Table
 		print "<br>";
 		
-	    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			$this->showComment($row['rowID'], 
 			                   $row['tweetID'],
 							   $row['comID'],

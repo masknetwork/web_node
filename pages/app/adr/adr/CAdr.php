@@ -156,7 +156,7 @@ class CMyAdr
         
             <table width="90%" border="0" cellspacing="0" cellpadding="0" class="table-responsive">
                   <?
-				     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+				     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					 {
 						 $balance=$this->kern->getBalance($row['adr'], "MSK");
 				  ?>
@@ -389,7 +389,7 @@ class CMyAdr
 				   AND adr='".$adr."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $votes_com=$row['total'];
 		if ($votes_com=="") $votes_com=0;
 		
@@ -406,7 +406,7 @@ class CMyAdr
 				   AND adr='".$adr."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $votes_posts=$row['total']; 
 		if ($votes_posts=="") $votes_posts=0;
 		
@@ -424,7 +424,7 @@ class CMyAdr
 				   AND adr='".$adr."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $votes_other=$row['total']; 
 		if ($votes_other=="") $votes_other=0;
 		

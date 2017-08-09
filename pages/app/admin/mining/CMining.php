@@ -12,7 +12,7 @@ class CMining
 		// Cores
 		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $cores=$row['mining_threads'];
 		$hash_power=$row['cpu_1_power']+$row['cpu_2_power']+$row['cpu_3_power']+$row['cpu_4_power']+$row['cpu_5_power']+$row['cpu_6_power']+$row['cpu_7_power']+$row['cpu_8_power']+$row['cpu_9_power']+$row['cpu_11_power']+$row['cpu_11_power']+$row['cpu_12_power']+$row['cpu_13_power']+$row['cpu_14_power']+$row['cpu_15_power']+$row['cpu_16_power']+$row['cpu_17_power']+$row['cpu_18_power']+$row['cpu_19_power']+$row['cpu_20_power'];
 		
@@ -22,7 +22,7 @@ class CMining
 				 WHERE signer='".$_REQUEST['sd']['delegate']."' 
 				   AND tstamp>".(time()-86400); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $blocks=$row['total'];
 		
 		// Mining reward
@@ -92,7 +92,7 @@ class CMining
 	{
 		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		if ($row['cpu_'.$core.'_power']>0)
 		  return "<div class='loader'></div>";
 		else
@@ -103,7 +103,7 @@ class CMining
 	{
 		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		return round($row['cpu_'.$core.'_power']/1000, 2);
 	}
 	
@@ -112,7 +112,7 @@ class CMining
 		// Cores
 		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $cores=$row['mining_threads'];
 		
 		?>
@@ -248,7 +248,7 @@ class CMining
 		          FROM delegates 
 				 WHERE delegate='".$adr."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    return $row['power'];
 	}
 	
@@ -368,7 +368,7 @@ class CMining
        <table width="87%">
         
         <?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   { 
 		?>
         

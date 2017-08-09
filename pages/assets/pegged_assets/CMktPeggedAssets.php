@@ -48,14 +48,14 @@ class CMktPeggedAssets
 				    AND linked_mktID>0";
 		 $result=$this->kern->execute($query);	
 		 
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid asset");
 			 return false;
 		 }
 		 
 		 // Load data
-		 $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 
 		 // Load market data
 		 $query="SELECT * 
@@ -63,14 +63,14 @@ class CMktPeggedAssets
 				  WHERE mktID='".$row['linked_mktID']."'";
 		 $result=$this->kern->execute($query);	
 		 
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid asset");
 			 return false;
 		 }
 		 
 		 // Load market data
-		 $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 
 		 // Tip
 		 if ($tip!="ID_BUY" && $tip!="ID_SELL")
@@ -233,14 +233,14 @@ class CMktPeggedAssets
 			$result=$this->kern->execute($query);	
 	        
 			// Currency does not exist
-			if (mysql_num_rows($result)==0)
+			if (mysqli_num_rows($result)==0)
 			{
 				$this->template->showErr("Invalid currency");
 			    return false;
 			}
 			
 			// Load currency data
-			$cur_row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$cur_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			 
 			// User asset ?
 		    if ($cur_row['linked_mktID']>0)
@@ -294,7 +294,7 @@ class CMktPeggedAssets
 				 WHERE feed_symbol='".$feed_1."'
 				   AND symbol='".$branch_1."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Feed fee
 		$feed_fee_1=$row['fee']*$days;
@@ -310,7 +310,7 @@ class CMktPeggedAssets
 				    WHERE feed_symbol='".$feed_2."'
 				      AND symbol='".$branch_2."'";
 		   $result=$this->kern->execute($query);	
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		   // Feed fee
 		   $feed_fee_2=$row['fee']*$days;
@@ -327,7 +327,7 @@ class CMktPeggedAssets
 				    WHERE feed_symbol='".$feed_3."'
 				      AND symbol='".$branch_3."'";
 		   $result=$this->kern->execute($query);	
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		   // Feed fee
 		   $feed_fee_3=$row['fee']*$days;
@@ -805,7 +805,7 @@ class CMktPeggedAssets
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -873,7 +873,7 @@ class CMktPeggedAssets
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -944,7 +944,7 @@ class CMktPeggedAssets
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -1024,7 +1024,7 @@ class CMktPeggedAssets
 				  JOIN feeds_assets_mkts AS fam ON fam.adr=ass.adr
 				 WHERE symbol='".$symbol."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		
 			
@@ -1140,7 +1140,7 @@ class CMktPeggedAssets
 						   AND owner<>'".$row['adr']."' 
 						   AND symbol='".$row['symbol']."'"; 
 				$result=$this->kern->execute($query); 
-				$r = mysql_fetch_array($result, MYSQL_ASSOC);
+				$r = mysqli_fetch_array($result, MYSQL_ASSOC);
 				
 				if ($r['total']=="")
 				{
@@ -1219,7 +1219,7 @@ class CMktPeggedAssets
 				         WHERE symbol='".$symbol."' 
 				           AND owner='".$row['adr']."'";
        		    $result=$this->kern->execute($query);	
-	            $r = mysql_fetch_array($result, MYSQL_ASSOC);
+	            $r = mysqli_fetch_array($result, MYSQL_ASSOC);
 		        
 			    print "<span class='font_20'><strong>".round($r['qty'], 8)."</strong></span>&nbsp;&nbsp;&nbsp;<span class='font_12'>".$row['symbol']."</span>";  
 			?>
@@ -1245,7 +1245,7 @@ class CMktPeggedAssets
 		          FROM feeds_assets_mkts 
 				 WHERE asset_symbol='".$_REQUEST['symbol']."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $cur=$row['cur'];
 		
 		$this->template->showModalHeader("modal_trade", "Buy / Sell", "buy_modal_act", "ID_BUY");

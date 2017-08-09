@@ -23,7 +23,7 @@
           <table width="95%" border="0" cellspacing="0" cellpadding="0" class="table-responsive">
                       
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                       
@@ -174,7 +174,7 @@
 		           FROM assets 
 				  WHERE symbol='".$symbol."'";
 		 $result=$this->kern->execute($query);	
-	     if (mysql_num_rows($result)>0)
+	     if (mysqli_num_rows($result)>0)
 		 {
 			 $this->template->showErr("Symbol already exist");
 			 return false;

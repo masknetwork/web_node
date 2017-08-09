@@ -12,7 +12,7 @@ class CSync
 		// Load sync target
 		$query="SELECT * FROM net_stat";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -91,7 +91,7 @@ class CSync
         </tr>
         
         <?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   {
 		?>
         

@@ -43,14 +43,14 @@ class CGlobals
 	    $result=$this->kern->execute($query);	
 		
 		// Invalid agent
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid application ID");
 			return false;
 		}
 		
 		// Load data
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC); 
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC); 
 		
 		// Address
 		$adr=$row['adr'];
@@ -181,7 +181,7 @@ class CGlobals
 		// Load global variables
 		$query="SELECT * FROM agents WHERE aID='".$appID."'"; 
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC); 
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC); 
 		
 		// Decode
 		$globals=json_decode(base64_decode($row['globals']));

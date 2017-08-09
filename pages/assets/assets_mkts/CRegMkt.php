@@ -16,14 +16,14 @@ class CRegMkt
 				 WHERE amp.orderID='".$orderID."'";  
 		$result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid entry data");
 			return false;
 		}
 		
 		// Order data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Rights
 		if ($this->kern->isMine($row['adr'])==false)
@@ -109,21 +109,21 @@ class CRegMkt
 				  JOIN assets_mkts AS am ON am.mktID=asp.mktID
 				 WHERE asp.orderID='".$orderID."'"; 
 		$result=$this->kern->execute($query);
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid entry data");
 			return false;
 		}
 		
 		// Position data
-		$pos_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$pos_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Market data
 		$query="SELECT * 
 		          FROM assets_mkts 
 				 WHERE mktID='".$pos_row['mktID']."'";
 	    $result=$this->kern->execute($query);	
-	    $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Asset
 		$asset=$mkt_row['asset']; 
@@ -241,14 +241,14 @@ class CRegMkt
 		          FROM assets_mkts 
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
-	    if (mysql_num_rows($result)==0)
+	    if (mysqli_num_rows($result)==0)
 		{
 		   $this->template->showErr("Market doesn't exist");
 		   return false;
 		}
 		
 		// Market data
-		$mkt_row=mysql_fetch_array($result, MYSQL_ASSOC);
+		$mkt_row=mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Currency
 		$cur=$mkt_row['cur'];
@@ -379,7 +379,7 @@ class CRegMkt
 		          FROM assets_mkts 
 				 WHERE mktID='".$mktID."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		?>
         
@@ -437,7 +437,7 @@ class CRegMkt
 		         FROM assets_mkts 
 				WHERE mktID='".$mktID."'"; 
 	    $result=$this->kern->execute($query);	
-	    $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		// Owned assets
 		$query="SELECT sum(qty) AS total
@@ -447,7 +447,7 @@ class CRegMkt
 				                 FROM my_adr 
 								WHERE userID='".$_REQUEST['ud']['ID']."')";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$owned_assets=$row['total'];
 		
 		
@@ -466,7 +466,7 @@ class CRegMkt
 								WHERE userID='".$_REQUEST['ud']['ID']."')";
 								
 		  $result=$this->kern->execute($query);	
-		  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		  $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		  $owned_cur=$row['total'];
 		}
 		
@@ -476,7 +476,7 @@ class CRegMkt
 				 WHERE mktID='".$mktID."' 
 				   AND block>".($_REQUEST['sd']['last_block']-$_REQUEST['sd']['blocks_per_day']);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$trades=$row['total'];
 		  
 		?>
@@ -611,7 +611,7 @@ class CRegMkt
            
            <?
 		      $a=0;
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 				  $a++;
 		   ?>
@@ -669,14 +669,14 @@ class CRegMkt
 		          FROM assets_markets 
 				 WHERE mkt_symbol='".$mkt_symbol."'";
 	    $result=$this->kern->execute($query);	
-	    $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		// My addresses
 		$query="SELECT adr 
 		          FROM my_adr 
 				 WHERE userID='".$_REQUEST['ud']['ID']."'";
 		$result=$this->kern->execute($query);	
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) 
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) 
 		   $adr=$adr."'".$row['adr']."', ";
 		
 		// Eliminate last comma
@@ -721,7 +721,7 @@ class CRegMkt
                   <table width="92%" border="0" cellspacing="0" cellpadding="0">
                   
                   <?
-				     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+				     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					 {
 				  ?>
                   
@@ -807,7 +807,7 @@ class CRegMkt
            <br>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 				  
 		   ?>
@@ -859,14 +859,14 @@ class CRegMkt
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			 $this->template->showErr("Invalid market symbol");
 			 return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Header
 		$this->template->showModalHeader("modal_new_pos", "New Trade Position", "act", "new_position", "tip", "");
@@ -992,14 +992,14 @@ class CRegMkt
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			 $this->template->showErr("Invalid market symbol");
 			 return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Header
 		$this->template->showModalHeader("modal_new_trade", "New Trade", "act", "new_trade", "new_trade_orderID", "");

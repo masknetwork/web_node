@@ -141,14 +141,14 @@
 				WHERE domain='".$domain."'";
 	   $result=$this->kern->execute($query);	
 	   
-	   if (mysql_num_rows($result)==0)
+	   if (mysqli_num_rows($result)==0)
 	   {
 		   $this->template->showErr("Invalid domain name", 550);
 		   return false;
 	   }
 	   
 	   // Load
-	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	   
 	   // Address
 	   $adr=$row['adr'];
@@ -243,14 +243,14 @@
 	   $result=$this->kern->execute($query);	
 	   
 	   // No results ?
-	   if (mysql_num_rows($result)==0)
+	   if (mysqli_num_rows($result)==0)
 	   {
 		   $this->template->showErr("Invalid domain");
 		   return false;
 	   }
 	   
 	   // Load data
-	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	   
 	   // Address
 	   $adr=$row['adr'];
@@ -327,7 +327,7 @@
                   </tr>
                   </thead>
                   <?
-				       while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+				       while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 				       {
 				  ?>
                   
@@ -418,7 +418,7 @@
               <tbody>
                 
                 <?
-				   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+				   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 				   {
 				?>
                 
@@ -556,9 +556,9 @@
 					   AND user='".$_REQUEST['ud']['user']."'";
 					   
 			$result=$this->kern->execute($query);	
-			if (mysql_num_rows($result)==0) die ("Invalid address");
+			if (mysqli_num_rows($result)==0) die ("Invalid address");
 			
-	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	        $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			$attach_to=$row['adr'];
 		}
 		

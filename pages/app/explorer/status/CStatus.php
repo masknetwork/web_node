@@ -24,11 +24,11 @@
 	   {
 		   $query="SELECT * FROM net_stat";
 		   $result=$this->kern->execute($query);	
-	       $stat_row = mysql_fetch_array($result, MYSQL_ASSOC);
+	       $stat_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		   
 		   $query="SELECT * FROM web_sys_data";
 		   $result=$this->kern->execute($query);	
-	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	       $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	
 		   ?>
               

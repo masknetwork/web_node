@@ -7,14 +7,14 @@ class CSysData
 		
 		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		$_REQUEST['sd']['status']=$row['status'];
 		$_REQUEST['sd']['MSK_price']=$row['MSK_price'];
 		
 		$query="SELECT * FROM status";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		$_REQUEST['sd']['engine_status']=$row['engine_status'];
 		$_REQUEST['sd']['last_tables_block']=$row['last_tables_block'];
@@ -32,7 +32,7 @@ class CSysData
 		// Net stat
 		$query="SELECT * FROM net_stat";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);	 
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);	 
 		
 		$_REQUEST['sd']['last_block']=$row['last_block']; 		
 		$_REQUEST['sd']['net_dif']=$row['net_dif']; 		
@@ -46,7 +46,7 @@ class CSysData
 		// Interest rate
 	    $query="SELECT * FROM adr WHERE adr='default'";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// In circulation
 		$in_circ=21000000-$row['balance'];
@@ -54,7 +54,7 @@ class CSysData
 	    // Net stat
 		$query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$_REQUEST['sd']['mining_threads']=$row['mining_threads'];
 		$_REQUEST['sd']['last_ping']=$row['last_ping'];
 		$_REQUEST['sd']['status']=$row['status'];

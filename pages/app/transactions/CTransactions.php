@@ -37,7 +37,7 @@ class CTransactions
             <table width="90%" border="0" cellspacing="0" cellpadding="0" class="table-responsive">
               <tbody>
                 <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                      
@@ -128,7 +128,7 @@ class CTransactions
 		          FROM req_data 
 				 WHERE adr='".$to_adr."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
            
@@ -330,7 +330,7 @@ class CTransactions
 					   AND attr='ID_RES_REC'";
 		    
 			$result=$this->kern->execute($query);	
-	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	        $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			
 			// On the list ?
 			if ($row['s1']!=$to_adr && 
@@ -396,7 +396,7 @@ class CTransactions
 			          FROM assets 
 					 WHERE symbol='".$moneda."'";
 			$result=$this->kern->execute($query);	
-			if (mysql_num_rows($result)==0)
+			if (mysqli_num_rows($result)==0)
 			{
 				$this->template->showErr("Invalid currency");
 			    return false;
@@ -410,7 +410,7 @@ class CTransactions
 					   AND qty>".$amount;
 			$result=$this->kern->execute($query);
 			
-			if (mysql_num_rows($result)==0)
+			if (mysqli_num_rows($result)==0)
 			{
 				$this->template->showErr("Insuficient assets to execute this operation");
 			    return false;
@@ -424,7 +424,7 @@ class CTransactions
 					   AND s1='".$moneda."'"; 
 			$result=$this->kern->execute($query);
 			
-			if (mysql_num_rows($result)==0)
+			if (mysqli_num_rows($result)==0)
 			{
 				//$this->template->showErr("Recipient doesn't trust this asset");
 			    //return false;
@@ -493,7 +493,7 @@ class CTransactions
 			  // Load txID
 			  $query="SELECT * FROM web_ops WHERE ID='".$reqID."'";
 			  $result=$this->kern->execute($query);	
-	          $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	          $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	          
 			  // Result
 			  print "{\"result\" : \"success\", \"data\" : { \"txID\" : \"".$row['response']."\"}}";

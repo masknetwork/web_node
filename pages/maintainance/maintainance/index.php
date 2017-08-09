@@ -7,7 +7,7 @@
    
    $query="SELECT * FROM web_sys_data";
    $result=$db->execute($query);	
-   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
   
    if (($row['status']=="ID_ONLINE" || $row['status']=="ID_SYNC") && 
       (time()-$row['last_ping'])<10)

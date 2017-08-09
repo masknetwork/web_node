@@ -151,14 +151,14 @@ class CMes
 				 WHERE ID='".$mesID."'"; 
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		   $this->template->showErr("Invalid entry data", 550);
 		   return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// My message
 		if ($this->kern->isMine($row['to_adr'])==false)
@@ -318,14 +318,14 @@ class CMes
 				 WHERE ID='".$mesID."'"; 
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		   $this->template->showErr("Invalid entry data", 550);
 		   return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// My message
 		if ($this->kern->isMine($row['from_adr'])==false && 
@@ -492,7 +492,7 @@ class CMes
            <table width="90%" border="0" cellspacing="0" cellpadding="0">
              
                         <?
-						   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+						   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						   {
 						?>
                         

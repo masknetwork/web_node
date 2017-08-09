@@ -29,7 +29,7 @@
                </thead>
                 
                   <?
-				      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+				      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					  {
 				  ?>
                   
@@ -63,7 +63,7 @@
             <?
 			   $query="SELECT * FROM net_stat";
 			   $result=$this->kern->execute($query);	
-	           $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	           $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	           print "<span class='font_10'>".$row['net_dif']." (".substr($row['net_dif'], 0, 3)."-".strlen($row['net_dif']).")</span><br><br>";
 			
 	  }
@@ -80,13 +80,13 @@
 		$result=$this->kern->execute($query);	
 		
 		// No packet found
-		if (mysql_num_rows($result)==0) 
+		if (mysqli_num_rows($result)==0) 
 		{
 			print "<span class='font_14' style='color:#990000'>No records found</span>";
 		    return false;
 		}
 		
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
            
@@ -162,7 +162,7 @@
              <table width="90%" border="0" cellspacing="0" cellpadding="0">
                       
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                       

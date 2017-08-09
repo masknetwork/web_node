@@ -34,14 +34,14 @@ class CApp
 	    $result=$this->kern->execute($query);
 		
 		// No results
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		    $this->template->showErr("Invalid app ID");
 			return false;
 		}
 		
 		// Agent data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Application address
 		$adr=$row['adr'];
@@ -180,14 +180,14 @@ class CApp
 	    $result=$this->kern->execute($query);
 		
 		// No results
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		    $this->template->showErr("Invalid app ID");
 			return false;
 		}
 		
 		// Agent data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Adr
 		$adr=$row['adr'];
@@ -390,7 +390,7 @@ class CApp
 						   WHERE categID<>'ID_ALL'";
 				  $result=$this->kern->execute($query);	
 	              
-				  while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+				  while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 	                print "<option value='".$row['categID']."'>".$row['name']."</option>";
 			   ?>
                </select>
@@ -557,7 +557,7 @@ class CApp
 		          FROM agents 
 				 WHERE aID='".$appID."'";
 	    $result=$this->kern->execute($query); 
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
            

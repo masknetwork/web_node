@@ -114,7 +114,7 @@ class CTemplate
 	  
 		 print "<select name='".$name."' id='".$name."' class='form-control' style='width:".$width."px'>";
          
-		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		 while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		 {
 			// Balance
 			if ($row['balance']=="")
@@ -154,7 +154,7 @@ class CTemplate
 	  
 		 print "<select name='".$name."' id='".$name."' class='form-control' style='width:".$width."px'>";
          
-		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		 while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		 {
 			// Balance
 			if ($row['balance']=="")
@@ -195,7 +195,7 @@ class CTemplate
 	  
 		 print "<select name='".$name."' id='".$name."' class='form-control' style='width:".$width."px'>";
          
-		 while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		 while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		 {
 			// Balance
 			if ($row['qty']=="")
@@ -983,7 +983,7 @@ class CTemplate
 							   LIMIT 0,10";
 					  $result=$this->kern->execute($query);	
 	                  
-					  while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					  while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					  {
                     ?>
                     
@@ -1398,7 +1398,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 	{
 		$query="SELECT * FROM domains WHERE domain='".$domain."'";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		return $row['adr'];
 	}
 	
@@ -1414,7 +1414,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 		$query="SELECT * FROM domains WHERE domain='".$domain."'";
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		else
 		   return false;
@@ -1428,7 +1428,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 				   AND op_type='".$attr."'";
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		else
 		   return false;
@@ -1448,7 +1448,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 	{
 		$query="SELECT * FROM adr WHERE adr='$adr'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
         return $row['balance'];
 	}
 	
@@ -1715,9 +1715,9 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 		$result=$this->kern->execute($query);	
 		
 		// Has a name ?
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
-	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	       $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		   return $row['domain']."<a href=\"javascript:void(0)\" onclick=\"$('#qr_img').attr('src', '../../../qr/qr.php?qr=".$adr."'); $('#txt_plain').val('".$adr."'); $('#modal_qr').modal();\" class='font_10' style='color:#999999'>&nbsp;&nbsp;full address</a>";
 		}
 		else return "...".substr($adr, 40, 20)."...<a href=\"javascript:void(0)\" onclick=\"$('#qr_img').attr('src', '../../../qr/qr.php?qr=".$adr."'); $('#txt_plain').val('".$adr."'); $('#modal_qr').modal();\" class=\"font_10\" style=\"color:#999999\">&nbsp;&nbsp;full address</a>";
@@ -1803,7 +1803,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 												   WHERE userID='".$_REQUEST['ud']['ID']."')) 
 			       AND status='ID_PENDING'";
 		    $result=$this->kern->execute($query);	
-		    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		    $comments=$row['total'];
 			
 			?>
@@ -1975,7 +1975,7 @@ olark.identify('2174-513-10-8410');/*]]>*/</script><noscript><a href="https://ww
 		// Update system status
 	    $query="SELECT * FROM web_sys_data";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		if ($_REQUEST['sd']['status']!="ID_SYNC")
 		{       
@@ -2305,7 +2305,7 @@ ws.onError=function(e)
 				                 FROM my_adr 
 							    WHERE userID='".$_REQUEST['ud']['ID']."')";
 	   $result=$this->kern->execute($query);	
-	   if (mysql_num_rows($result)>0) 
+	   if (mysqli_num_rows($result)>0) 
 	      $mine=true;
 	   else
 	     $mine=false;
@@ -2316,7 +2316,7 @@ ws.onError=function(e)
 				  WHERE feed_symbol='".$feed."' 
 				    AND symbol='".$branch."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$rl_symbol=$row['rl_symbol'];
 		
 		// Last 100 records
@@ -2325,7 +2325,7 @@ ws.onError=function(e)
 				 WHERE feed='".$feed."' 
 				   AND feed_branch='".$branch."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$min=$row['ma']-250;
 		
 		$query="SELECT * 
@@ -2350,7 +2350,7 @@ ws.onError=function(e)
 		 
          data.addRows([
 		 <?
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  print "['', ".$row['val']."],";
 		 ?>
 		 ]);
@@ -2826,7 +2826,7 @@ ws.onError=function(e)
 	   
 	   
 	   // Owner valid
-	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	   if (!$this->kern->isMine($row['adr']))
 	   {
 		   $this->showErr("Invalid owner", 550);
@@ -2888,7 +2888,7 @@ ws.onError=function(e)
 				   AND targetID='".$targetID."'";
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$pay=0;
 			$upvotes=0;
@@ -2896,7 +2896,7 @@ ws.onError=function(e)
 		}
 		else
 		{
-	       $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	       $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		   $pay=$row['pay'];
 		   $upvotes=$row['upvotes_24'];
 		   $downvotes=$row['downvotes_24'];
@@ -3007,7 +3007,7 @@ ws.onError=function(e)
 													   WHERE userID='".$_REQUEST['ud']['ID']."'))
 			             ORDER BY balance DESC"; 
 		          $result=$this->kern->execute($query);	
-				  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				  $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 
 			      $this->getPower($row['adr']);
 			   ?>
@@ -3046,7 +3046,7 @@ ws.onError=function(e)
 				 WHERE adr='".$adr."' 
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$votes=$row['total'];
 	    
 		// Voting power
@@ -3173,7 +3173,7 @@ ws.onError=function(e)
 		// Execute
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->showErr("Invalid content ID", 550);
 			return false;
@@ -3188,7 +3188,7 @@ ws.onError=function(e)
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
 			$this->showErr("Already liked this post", 550);
 			return false;

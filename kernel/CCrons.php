@@ -13,13 +13,13 @@ class CCrons
 				 WHERE parsed=0";
 		$result=$this->kern->execute($query);	
 	    
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 			$query="SELECT * 
 			          FROM my_adr 
 					 WHERE adr='".$row['share_adr']."'";
 		    $res=$this->kern->execute($query);	
-			$row2 = mysql_fetch_array($res, MYSQL_ASSOC);
+			$row2 = mysqli_fetch_array($res, MYSQL_ASSOC);
 			
 			// Increase unread adr
 			$query="UPDATE web_users 

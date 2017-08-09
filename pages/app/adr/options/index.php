@@ -93,7 +93,7 @@
 			             FROM my_adr 
 						WHERE ID='".$_REQUEST['ID']."'";
 			   $result=$db->execute($query);	
-	           $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	           $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	           $adr=$row['adr']; 
 			   
 			   // Rent name modal

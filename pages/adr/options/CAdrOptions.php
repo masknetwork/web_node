@@ -13,7 +13,7 @@ class CAdrOptions
 		          FROM my_adr 
 				 WHERE ID='".$adrID."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $adr=$row['adr'];
 	    
 		
@@ -77,7 +77,7 @@ class CAdrOptions
 						     $query="SELECT * FROM profiles WHERE adr='".$adr."'";
 							 $result=$this->kern->execute($query);	
 	                         
-							 if (mysql_num_rows($result)==0)
+							 if (mysqli_num_rows($result)==0)
 							 {
 						  ?>
                           
@@ -89,7 +89,7 @@ class CAdrOptions
 							 }
 							 else
 							 {
-								 $row = mysql_fetch_array($result, MYSQL_ASSOC);
+								 $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 								 
 								 ?>
                                  
@@ -147,7 +147,7 @@ class CAdrOptions
 									    AND attr='ID_RES_REC'"; 
 							 $result=$this->kern->execute($query);	
 	                         
-							 if (mysql_num_rows($result)==0) 
+							 if (mysqli_num_rows($result)==0) 
 							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal(); \" class=\"btn btn-primary\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Restrict</a>";
 						     else
 							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_seal').modal();\" class=\"btn btn-warning\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Renew</a>";
@@ -190,8 +190,8 @@ Note that this option can not be canceled once it has been activated and will ex
 									  WHERE adr='".$adr."'";
 							 $result=$this->kern->execute($query);	
 	                         
-							 $row = mysql_fetch_array($result, MYSQL_ASSOC);
-							 if (mysql_num_rows($result)==0) 
+							 $row = mysqli_fetch_array($result, MYSQL_ASSOC);
+							 if (mysqli_num_rows($result)==0) 
 							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_web_ipn').modal(); \" class=\"btn btn-primary\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>&nbsp;&nbsp;Setup</a>";
 						     else
 							    print "<a href=\"javascript:void(0)\" onclick=\"javascript:$('#modal_web_ipn').modal(); $('#txt_ipn_web_adr').val('".$row['web_link']."'); $('#txt_ipn_pass').val('".$row['web_pass']."');\" class=\"btn btn-warning\" style=\"width:100px\"><span class=\"glyphicon glyphicon-cog\" ></span>Manage</a>";

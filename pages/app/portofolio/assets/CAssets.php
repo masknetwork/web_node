@@ -25,7 +25,7 @@ class CAssets
           <table width="95%" border="0" cellspacing="0" cellpadding="0">
                       
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                       
@@ -74,7 +74,7 @@ class CAssets
           <table width="95%" border="0" cellspacing="0" cellpadding="0">
                       
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                       

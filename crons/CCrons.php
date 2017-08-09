@@ -56,7 +56,7 @@ class CCrons
 				    AND votes.type='ID_UP' 
 				    AND votes.block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$this->upvotes_total_posts=$row['total'];
 		   
 		// Total upvotes power for comments
@@ -67,7 +67,7 @@ class CCrons
 				    AND votes.type='ID_UP' 
 				    AND votes.block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$this->upvotes_total_com=$row['total'];
 		   
 		// Total upvotes power for feeds
@@ -78,7 +78,7 @@ class CCrons
 				    AND votes.type='ID_UP' 
 				    AND votes.block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$this->upvotes_total_feeds=$row['total'];
 		   
 		// Total upvotes power for assets
@@ -89,7 +89,7 @@ class CCrons
 				    AND votes.type='ID_UP' 
 				    AND votes.block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$this->upvotes_total_assets=$row['total'];
 		   
 		// Total upvotes power for bets
@@ -100,7 +100,7 @@ class CCrons
 				    AND votes.type='ID_UP' 
 				    AND votes.block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$this->upvotes_total_bets=$row['total'];
 		   
 		// Total upvotes power for markets
@@ -111,7 +111,7 @@ class CCrons
 				    AND votes.type='ID_UP' 
 				    AND votes.block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$this->upvotes_total_mkts=$row['total'];
 	}
 	
@@ -157,7 +157,7 @@ class CCrons
 	{
 		$query="SELECT * FROM out_emails WHERE status='ID_PENDING'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    mail($row['dest'], base64_decode($row['subj']), base64_decode($row['mes']));
 	}
 	
@@ -185,7 +185,7 @@ class CCrons
 		}
 		
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		return $row['block'];
 	}
 	
@@ -198,7 +198,7 @@ class CCrons
 				   AND target_type='".$target_type."' 
 				   AND targetID='".$targetID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$vote_block=$row['block'];
 		
 		// Count votes
@@ -207,7 +207,7 @@ class CCrons
 				 WHERE adr='".$adr."' 
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$no=$row['total'];
 		
 		// Return power
@@ -244,7 +244,7 @@ class CCrons
 		$query="SELECT * FROM votes";
 		$result=$this->kern->execute($query);	
 	    
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 		   // Power
 		   $power=$this->getVotePower($row['adr'], 
@@ -270,7 +270,7 @@ class CCrons
 	   		       AND targetID='".$targetID."' 
 	    		   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$upvotes_24=$row['total']; 
 		if ($upvotes_24=="") $upvotes_24=0;
 		
@@ -284,7 +284,7 @@ class CCrons
 	   		       AND votes.targetID='".$targetID."' 
 	    		   AND votes.block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$upvotes_power_24=$row['total'];
 		
 		// Downvotes 24 count
@@ -295,7 +295,7 @@ class CCrons
 	   		       AND targetID='".$targetID."' 
 	    		   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$downvotes_24=$row['total']; 
 		if ($downvotes_24=="") $downvotes_24=0;
 		
@@ -309,7 +309,7 @@ class CCrons
 	   		       AND votes.targetID='".$targetID."' 
 	    		   AND votes.block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$downvotes_power_24=$row['total'];
 		
 		// Net
@@ -381,7 +381,7 @@ class CCrons
 				       AND targetID='".$targetID."'";
 		    $res=$this->kern->execute($query);	
 		
-		    if (mysql_num_rows($res)==0)
+		    if (mysqli_num_rows($res)==0)
 		         $query="INSERT INTO votes_stats 
 		                         SET target_type='".$target_type."', 
 						             targetID='".$targetID."', 
@@ -420,7 +420,7 @@ class CCrons
 		          FROM votes"; 
 		$result=$this->kern->execute($query);
 			
-	    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		  $this->updateContent($row['target_type'], $row['targetID']);
 	}
 	
@@ -435,7 +435,7 @@ class CCrons
 						votes.target_type='ID_BETS')"; 
 		$result=$this->kern->execute($query);
 		
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 		    $query2="SELECT * 
 			          FROM votes_stats 
@@ -443,7 +443,7 @@ class CCrons
 					   AND targetID='".$row['targetID']."'";	
 					   
 		    $result2=$this->kern->execute($query2);	
-	        $row2 = mysql_fetch_array($result2, MYSQL_ASSOC);
+	        $row2 = mysqli_fetch_array($result2, MYSQL_ASSOC);
 		    $upvotes_power=$row2['upvotes_power_24']; 
 		  
 		    // Find percent

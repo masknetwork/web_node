@@ -32,13 +32,13 @@ class CFeeds
              <table width="90%" border="0" cellspacing="0" cellpadding="0">
                     
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 						   $query="SELECT COUNT(*) AS branches 
 						                     FROM feeds_branches 
 											WHERE feed_symbol='".$row['symbol']."'";
 						   $res=$this->kern->execute($query);	
-	                       $r = mysql_fetch_array($res, MYSQL_ASSOC);
+	                       $r = mysqli_fetch_array($res, MYSQL_ASSOC);
 						   $branches=$r['branches'];
 					?>
                      

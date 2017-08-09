@@ -39,21 +39,21 @@ class CSpecMkts
 				    AND status<>'ID_CLOSED'";
 		 $result=$this->kern->execute($query);	
 	     
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid position ID");
 			 return false;
 		 }
 		 
 		 // Load data
-		 $pos_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $pos_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 
 		 // Load market data
 		 $query="SELECT * 
 		           FROM feeds_spec_mkts 
 				  WHERE mktID='".$pos_row['mktID']."'";
 	     $result=$this->kern->execute($query);	
-		 $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 
 		 // My position
 		 if ($this->kern->isMine($pos_row['adr'])==false)
@@ -186,14 +186,14 @@ class CSpecMkts
 		 $result=$this->kern->execute($query);	
 	     
 		 // Market exist ?
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			  $this->template->showErr("Invalid market ID");
 			  return false;
 		 }
 		 
 		 // Market data
-		 $mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 
 		 // Open
 		 if ($ex_type=="ID_MARKET")
@@ -282,7 +282,7 @@ class CSpecMkts
 				  WHERE fsm.adr='".$mkt_row['adr']."' 
 				    AND fsmp.status='ID_MARKET'"; 
 		 $result=$this->kern->execute($query);	
-	     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	     
 		 
 		 // Address balance
@@ -409,7 +409,7 @@ class CSpecMkts
 				 WHERE feed_symbol='".$feed."'
 				   AND symbol='".$branch."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Feed fee
 		$feed_fee=$row['fee']*$days;
@@ -492,7 +492,7 @@ class CSpecMkts
 				    AND cur<>'".$cur."'";
 		 $result=$this->kern->execute($query);	
 		 
-		 if (mysql_num_rows($result)>0)
+		 if (mysqli_num_rows($result)>0)
 		 {
 			  $this->template->showErr("Another market using another currency is attached to this address.");
 			  return false;
@@ -617,7 +617,7 @@ class CSpecMkts
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -665,14 +665,14 @@ class CSpecMkts
 				 WHERE mktID='".$mktID."'"; 
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Market not found");
 			return false;
 		}
 		
 		// Load data
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -744,13 +744,13 @@ class CSpecMkts
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Market not found");
 			return false;
 		}
 		
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		?>
             
@@ -791,7 +791,7 @@ class CSpecMkts
 				                                    AND feed.symbol=fsm.branch)
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		?>
         
@@ -849,7 +849,7 @@ class CSpecMkts
 		          FROM feeds_spec_mkts 
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Modal
 		$this->template->showModalHeader("trade_modal", "New Trade", "act", "new_trade", "mktID", $mktID);
@@ -1227,7 +1227,7 @@ class CSpecMkts
 		
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		   print "<br><div class='font_14' style='color:#990000'>No positions found</div>";
 		   return false;
@@ -1251,7 +1251,7 @@ class CSpecMkts
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 				  $data=$data.",'".$row['posID']."'";
 		   ?>
@@ -1436,7 +1436,7 @@ class CSpecMkts
 				   AND block<".$end_block; 
 				   
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$total=$row['total'];
 		
 		$query="SELECT AVG(val) AS val
@@ -1463,7 +1463,7 @@ class CSpecMkts
          data.addRows([
 		 <?
 		    $a=0;
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			{
 			  $a++;
 			  if ($a==1 && $open!=0) 
@@ -1519,7 +1519,7 @@ class CSpecMkts
 				  JOIN feeds_branches AS fb ON (fb.feed_symbol=fsm.feed AND fb.symbol=fsm.branch)
 				 WHERE fsmp.posID='".$tradeID."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -1680,7 +1680,7 @@ class CSpecMkts
 		          FROM feeds_spec_mkts 
 				 WHERE mktID='".$mktID."'"; 
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		$this->showChart($row['feed'], 
 		                 $row['branch'], 

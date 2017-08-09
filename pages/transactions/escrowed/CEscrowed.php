@@ -15,14 +15,14 @@
 				 WHERE ID='".$transID."'";
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Load transaction data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		// Signer
 		$signer="";
@@ -95,7 +95,7 @@
 			  
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			print "<span class='font_12' style='color:#990000'>No escrowed transactions found</span>";
 			return false;
@@ -106,7 +106,7 @@
            <table width="90%" border="0" cellspacing="0" cellpadding="0">
              
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                         

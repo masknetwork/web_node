@@ -35,7 +35,7 @@ class CWrite
 				   AND compiler='SURfT0s='";
 	    $result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		    $this->template->showErr("Invalid app ID");
 			return false;
@@ -222,14 +222,14 @@ class CWrite
 				   AND compiler='SURfT0s='";
 	    $result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		    $this->template->showErr("Invalid app ID");
 			return false;
 		}
 		
 		// App row
-		$app_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$app_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Already a sealed contract on this address ?
 		$query="SELECT * 
@@ -238,7 +238,7 @@ class CWrite
 				   AND sealed>0";
 		$result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
 			$this->template->showErr("There is already a sealed contract attached to this address");
 			return false;
@@ -348,7 +348,7 @@ class CWrite
 				   AND userID='".$_REQUEST['ud']['ID']."'";
 	    $result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		    $this->template->showErr("Invalid app ID");
 			return false;
@@ -453,7 +453,7 @@ class CWrite
 				   AND userID='".$_REQUEST['ud']['ID']."'";
 	    $result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		    $this->template->showErr("Invalid app ID");
 			return false;
@@ -683,7 +683,7 @@ class CWrite
            <table class="tbale-responsive" width="90%">
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -958,7 +958,7 @@ class CWrite
 		          FROM agents_mine 
 				 WHERE ID='".$appID."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -1023,7 +1023,7 @@ class CWrite
 		          FROM agents_mine 
 				 WHERE ID='".$appID."'"; 
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	   
 		?>
         
@@ -1062,7 +1062,7 @@ class CWrite
 		          FROM agents_mine 
 				 WHERE ID='".$appID."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -1140,7 +1140,7 @@ class CWrite
 		          FROM agents_mine 
 				 WHERE ID='".$appID."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -1172,7 +1172,7 @@ class CWrite
 		          FROM agents_mine 
 				 WHERE ID='".$appID."'"; 
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Get status
 		if ($target=="code") $status=$row['compiler']; 		

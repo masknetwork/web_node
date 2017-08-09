@@ -15,7 +15,7 @@ class CUsers
 				  JOIN adr ON adr.adr=ma.adr 
 				 WHERE ma.userID='".$userID."'"; 
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		return $row['total'];
 	}
 	
@@ -39,7 +39,7 @@ class CUsers
         <tbody>
         
         <?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   {
 		?>
         

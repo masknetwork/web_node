@@ -19,7 +19,7 @@ class CPackets
              <table width="90%" border="0" cellspacing="0" cellpadding="0">
                       
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                       
@@ -109,13 +109,13 @@ class CPackets
 		$result=$this->kern->execute($query);	
 		
 		// No packet found
-		if (mysql_num_rows($result)==0) 
+		if (mysqli_num_rows($result)==0) 
 		{
 			print "<span class='font_14' style='color:#990000'>No records found</span>";
 		    return false;
 		}
 		
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
            

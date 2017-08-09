@@ -37,14 +37,14 @@ class CIssued
 		$result=$this->kern->execute($query);
 		
 		// No results
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid entry data");
 			return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Address
 		$adr=$row['adr'];
@@ -66,7 +66,7 @@ class CIssued
 				   AND (status='ID_MARKET' || status='ID_PENDING')";
 				   
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Max allowed
 		$used_margin=$row['total'];
@@ -149,7 +149,7 @@ class CIssued
 				   AND ID='".$_REQUEST['ud']['ID']."'"; 
 		$result=$this->kern->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid password");
 			return false;
@@ -165,14 +165,14 @@ class CIssued
 		$result=$this->kern->execute($query);
 		
 		// No results
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid market ID");
 			return false;
 		}
 		
 		// Load mkt data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Market address
 		$adr=$row['adr'];
@@ -413,7 +413,7 @@ class CIssued
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -452,7 +452,7 @@ class CIssued
 			                   	    WHERE mktID='".$mktID."' 
 				                      AND (status='ID_MARKET' || status='ID_PENDING')";
 		                   $result2=$this->kern->execute($query);
-		                   $row2 = mysql_fetch_array($result2, MYSQL_ASSOC);
+		                   $row2 = mysqli_fetch_array($result2, MYSQL_ASSOC);
 		
 		                   // Max allowed
 						    $max=($row['mkt_adr_balance']-$row2['total'])/2; 
@@ -502,7 +502,7 @@ class CIssued
 		          FROM feeds_spec_mkts 
 				 WHERE mktID='".$mktID."'";
 		$result=$this->kern->execute($query);	
-		$mkt_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$mkt_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Market positions
 		$query="SELECT COUNT(*) AS total 
@@ -511,7 +511,7 @@ class CIssued
 				   AND mktID='".$mktID."'
 				   AND block_start>".($_REQUEST['sd']['last_block']-$interval*60);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$market_pos=$row['total'];
 		
 		// Closed positions
@@ -521,7 +521,7 @@ class CIssued
 				   AND mktID='".$mktID."'
 				   AND block_start>".($_REQUEST['sd']['last_block']-$interval*60);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$closed_pos=$row['total'];
 		
 		// Pending positions
@@ -531,7 +531,7 @@ class CIssued
 				   AND mktID='".$mktID."'
 				   AND block_start>".($_REQUEST['sd']['last_block']-$interval*60);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$pending_pos=$row['total'];
 		
 		// Total positions
@@ -545,7 +545,7 @@ class CIssued
 				   AND status='ID_CLOSED'
 				   AND block_start>".($_REQUEST['sd']['last_block']-$interval*60); 
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$losses=round(abs($row['total']), 2);
 		
 		// Profit
@@ -556,7 +556,7 @@ class CIssued
 				   AND status='ID_CLOSED'
 				   AND block_start>".($_REQUEST['sd']['last_block']-$interval*60); 
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$profit=round(abs($row['total']), 2);
 		
 		
@@ -690,7 +690,7 @@ class CIssued
           <table width="95%" border="0" cellspacing="0" cellpadding="0">
                       
                       <?
-					     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 						 {
 					  ?>
                       

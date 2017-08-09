@@ -37,14 +37,14 @@
 				    AND status<>'ID_CLOSED'";
 		 $result=$this->kern->execute($query);	
 	     
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid position ID");
 			 return false;
 		 }
 		 
 		 // Load data
-		 $pos_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $pos_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	     
 		 // My position
 		 if ($this->kern->isMine($pos_row['adr'])==false)
@@ -340,7 +340,7 @@
 		
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 		   print "<br><div class='font_14' style='color:#990000'>No positions found</div>";
 		   return false;
@@ -364,7 +364,7 @@
            <td width="0%"></tr>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 				  $data=$data.",'".$row['posID']."'";
 		   ?>

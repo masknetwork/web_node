@@ -18,10 +18,10 @@ class CUserData
 		              FROM web_users 
 				     WHERE api_key='".hash("sha256", $_REQUEST['key'])."'"; 
 			$result=$this->kern->execute($query);
-			if (mysql_num_rows($result)==0) die("{\"result\" : \"error\", \"reason\" : \"Invalid API key\"}");
+			if (mysqli_num_rows($result)==0) die("{\"result\" : \"error\", \"reason\" : \"Invalid API key\"}");
 		}
 		
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		$_REQUEST['ud']['ID']=$row['ID'];
 		$_REQUEST['ud']['user']=$row['user'];
@@ -39,7 +39,7 @@ class CUserData
 				  JOIN adr ON adr.adr=my_adr.adr 
 				 WHERE my_adr.userID='".$_REQUEST['ud']['ID']."'"; 
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$balance=round($row['total'], 8);
 		
 		// Pending
@@ -49,7 +49,7 @@ class CUserData
 				 WHERE my_adr.userID='".$_REQUEST['ud']['ID']."' 
 				   AND cur='MSK'"; 
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$balance_pending=round(abs($row['total']), 8);
 		
 		// Balance
@@ -62,7 +62,7 @@ class CUserData
 					   OR rec_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."') 
 					   OR escrower IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$unread_esc=$row['total']; 
 		  
 		// Unread messages
@@ -72,7 +72,7 @@ class CUserData
 					       to_adr IN (SELECT adr FROM my_adr WHERE userID='".$_REQUEST['ud']['ID']."')) 
 					  AND status=0";
 		$result=$this->kern->execute($query);
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$unread_mes=$row['total'];
 		   
 		 

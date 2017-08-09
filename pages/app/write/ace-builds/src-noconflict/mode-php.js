@@ -1425,11 +1425,11 @@ var PhpLangHighlightRules = function() {
         'mssql_free_result|mssql_free_statement|mssql_get_last_message|mssql_guid_string|mssql_init|mssql_min_error_severity|' +
         'mssql_min_message_severity|mssql_next_result|mssql_num_fields|mssql_num_rows|mssql_pconnect|mssql_query|mssql_result|mssql_rows_affected|' +
         'mssql_select_db|mt_getrandmax|mt_rand|mt_srand|multipleiterator|mysql_affected_rows|mysql_client_encoding|mysql_close|mysql_connect|' +
-        'mysql_create_db|mysql_data_seek|mysql_db_name|mysql_db_query|mysql_drop_db|mysql_errno|mysql_error|mysql_escape_string|mysql_fetch_array|' +
+        'mysql_create_db|mysql_data_seek|mysql_db_name|mysql_db_query|mysql_drop_db|mysql_errno|mysql_error|mysql_escape_string|mysqli_fetch_array|' +
         'mysql_fetch_assoc|mysql_fetch_field|mysql_fetch_lengths|mysql_fetch_object|mysql_fetch_row|mysql_field_flags|mysql_field_len|' +
         'mysql_field_name|mysql_field_seek|mysql_field_table|mysql_field_type|mysql_free_result|mysql_get_client_info|mysql_get_host_info|' +
         'mysql_get_proto_info|mysql_get_server_info|mysql_info|mysql_insert_id|mysql_list_dbs|mysql_list_fields|mysql_list_processes|' +
-        'mysql_list_tables|mysql_num_fields|mysql_num_rows|mysql_pconnect|mysql_ping|mysql_query|mysql_real_escape_string|mysql_result|' +
+        'mysql_list_tables|mysql_num_fields|mysqli_num_rows|mysql_pconnect|mysql_ping|mysql_query|mysql_real_escape_string|mysql_result|' +
         'mysql_select_db|mysql_set_charset|mysql_stat|mysql_tablename|mysql_thread_id|mysql_unbuffered_query|mysqli|mysqli_bind_param|' +
         'mysqli_bind_result|mysqli_client_encoding|mysqli_connect|mysqli_disable_reads_from_master|mysqli_disable_rpl_parse|mysqli_driver|' +
         'mysqli_enable_reads_from_master|mysqli_enable_rpl_parse|mysqli_escape_string|mysqli_execute|mysqli_fetch|mysqli_get_metadata|' +
@@ -6946,8 +6946,8 @@ var functionMap = {
         "string mysql_escape_string(string to_be_escaped)",
         "Escape string for mysql query"
     ],
-    "mysql_fetch_array": [
-        "array mysql_fetch_array(resource result [, int result_type])",
+    "mysqli_fetch_array": [
+        "array mysqli_fetch_array(resource result [, int result_type])",
         "Fetch a result row as an array (associative, numeric or both)"
     ],
     "mysql_fetch_assoc": [
@@ -7042,8 +7042,8 @@ var functionMap = {
         "int mysql_num_fields(resource result)",
         "Gets number of fields in a result"
     ],
-    "mysql_num_rows": [
-        "int mysql_num_rows(resource result)",
+    "mysqli_num_rows": [
+        "int mysqli_num_rows(resource result)",
         "Gets number of rows in a result"
     ],
     "mysql_pconnect": [

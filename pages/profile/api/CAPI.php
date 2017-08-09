@@ -131,7 +131,7 @@ class CAPI
 				   AND pass='".hash("sha256", $_REQUEST['txt_pass'])."'";
 		$result=$this->kern->execute($query);
 			
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		   return false;
 		else
 		   return true;

@@ -54,14 +54,14 @@ class CHome
 				   AND status='ID_PENDING'"; 
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Load comment data
-		$com_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$com_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Load tweet data
 		$query="SELECT * 
@@ -69,14 +69,14 @@ class CHome
 				 WHERE tweetID='".$com_row['tweetID']."'";
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid entry data", 550);
 			return false;
 		}
 		
 		// Load tweet data
-		$tweet_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$tweet_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// My comment ?
 		if ($this->kern->isMine($tweet_row['adr'])==false)
@@ -142,7 +142,7 @@ class CHome
 		
 		// Table
 		print "<table width='95%' border='0' cellspacing='0' cellpadding='0'>";
-	    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 			?>
            

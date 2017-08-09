@@ -89,7 +89,7 @@
 			<?
 			    $query="SELECT * FROM my_adr WHERE ID='".$_REQUEST['adrID']."'"; 
 				$result=$db->execute($query);	
-	            $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	            $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	            $adr=$row['adr'];
 				
 				switch ($_REQUEST['act'])

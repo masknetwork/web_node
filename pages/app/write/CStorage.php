@@ -21,8 +21,8 @@ class CStorage
 		{
 			$query="SELECT DISTINCT(tab) FROM ".$tab;
 			$result=$this->kern->execute($query);
-			if (mysql_num_rows($result)==0) die ("Storage is empty");
-			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			if (mysqli_num_rows($result)==0) die ("Storage is empty");
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			$this->table=$row['tab']; 
 		}
 		
@@ -62,7 +62,7 @@ class CStorage
          <tbody>
          
          <?
-		    while  ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while  ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			{
 		 ?>
          
@@ -119,7 +119,7 @@ class CStorage
         <table style="width:100%">
         
         <?
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			{
 		?>
         

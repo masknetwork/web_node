@@ -48,14 +48,14 @@ class COptions
 		 $result=$this->kern->execute($query);	
 		 
 		 // Bet exist ?
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid entry data");
 		     return false;
 		 }
 		 
 		 // Load data
-	     $bet_row = mysql_fetch_array($result, MYSQL_ASSOC);
+	     $bet_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	     
 		 // Currency balance
 		 if ($this->kern->getBalance($bet_adr, $bet_row['cur'])<$invest)
@@ -211,7 +211,7 @@ class COptions
 					WHERE feed_symbol='".$feed."' 
 					  AND symbol='".$feed_branch."'";
 		    $result=$this->kern->execute($query);	
-	        $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	        $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			
 			if ($row['val']<$lev_1) 
 			   $type=$type."_UP";
@@ -240,7 +240,7 @@ class COptions
 			$query="SELECT * FROM assets WHERE symbol='".$symbol."'";
 			$result=$this->kern->execute($query);	
 	        
-			if (mysql_num_rows($result)==0)
+			if (mysqli_num_rows($result)==0)
 			{
 				$this->template->showErr("Invalid currency");
 			    return false;
@@ -588,7 +588,7 @@ class COptions
 	{
 		$query="SELECT * FROM feeds_bets WHERE betID='".$betID."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $cur=$row['cur']; 
 		 
 		$this->template->showModalHeader("modal_buy_bet", "Invest", "act", "buy_bet", "betID", $betID);
@@ -681,7 +681,7 @@ class COptions
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -754,7 +754,7 @@ class COptions
            </thead>
            
            <?
-		      while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		      while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  {
 		   ?>
            
@@ -851,7 +851,7 @@ class COptions
 		          FROM feeds_bets AS fb 
 				 WHERE betID='".$betID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -1021,7 +1021,7 @@ class COptions
 	{
 		$query="SELECT * FROM feeds_bets WHERE betID='".$betID."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		// Expired option ?
 		if ($row['accept_block']>$_REQUEST['sd']['last_block']) 
@@ -1061,7 +1061,7 @@ class COptions
         </thead>
 		
 		<?
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 		?>
            
@@ -1095,7 +1095,7 @@ class COptions
 		          FROM feeds_bets 
 				 WHERE betID='".$ID."'";
 		$result=$this->kern->execute($query);	
-		$bet_row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$bet_row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $end_block=$row['end_block'];
 		
 		// Min, max, count
@@ -1107,7 +1107,7 @@ class COptions
 				   AND block>=".$bet_row['block']." 
 				   AND block<=".$bet_row['end_block']; 
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		?>
             
             <br>
@@ -1147,7 +1147,7 @@ class COptions
 		          FROM feeds_bets 
 				 WHERE betID='".$betID."'"; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$feed=$row['feed'];
 		$branch=$row['branch'];
 		$start_block=$row['block'];
@@ -1161,7 +1161,7 @@ class COptions
 				    AND block>=".$start_block." 
 				    AND block<=".$end_block; 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$total=$row['no'];
 		
 	   $query="SELECT AVG(val) AS val
@@ -1188,7 +1188,7 @@ class COptions
 		 
          data.addRows([
 		 <?
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			  print "['', ".$row['val']."],";
 		 ?>
 		 ]);

@@ -12,7 +12,7 @@ class CStorage
 		          FROM agents
 				 WHERE aID='".$appID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Storage
 		$storage=base64_decode($row['storage']);

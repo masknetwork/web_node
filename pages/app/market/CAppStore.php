@@ -19,14 +19,14 @@
 	      $result=$this->kern->execute($query);
 		
 		  // No results
-		  if (mysql_num_rows($result)==0)
+		  if (mysqli_num_rows($result)==0)
 		  {
 		    $this->template->showErr("Invalid app ID");
 			return false;
 		  }
 		
 		  // Agent data
-		  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		  $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		  // Net fee adr
 		  if ($this->kern->adrExist($net_fee_adr)==false || 
@@ -79,7 +79,7 @@
 		  $query="SELECT * FROM agents WHERE adr='".$adr."'";
 		  $result=$this->kern->execute($query);
 		  
-		  if (mysql_num_rows($result)>0)
+		  if (mysqli_num_rows($result)>0)
 		  {
 			  $this->template->showErr("An application is already installed on this address");
 			  return false;
@@ -148,7 +148,7 @@
 				  JOIN adr ON adr.adr=ag.adr
 				 WHERE ag.aID='".$appID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -257,7 +257,7 @@
 	    
 		print "<table width=\"95%\">";
         
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		{
 		   if ($row['categID']!="ID_ALL") print "<tr><td colspan='2'><hr></td></tr>";
 		   
@@ -326,14 +326,14 @@
 		$result=$this->kern->execute($query);	
 	    
 		// No results
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			print "<br><p class='font_14' style='color:#990000'>No results found</p><br><br>";
 			return false;
 		}
 		
 		// App no
-		$no=mysql_num_rows($result);
+		$no=mysqli_num_rows($result);
 		
 		// Lines
 		$lines=floor($no/3)+1;
@@ -355,7 +355,7 @@
 				  // Display
 				  if ($a<=$no)
 				  { 
-				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				     print "<td width='33%' align=center'>";
 					 $this->showAppPanel($row['aID'], 
 					                    $row['name'], 
@@ -378,7 +378,7 @@
 				  // Display
 				   if ($a<=$no)
 				   { 
-				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				     print "<td width='33%' align=center'>";
 					 $this->showAppPanel($row['aID'], 
 					                     $row['name'], 
@@ -401,7 +401,7 @@
 				  // Display
 				   if ($a<=$no)
 				   { 
-				     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+				     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				     print "<td width='33%' align=center'>";
 					 $this->showAppPanel($row['aID'], $row['name'], $row['description'], $row['pic'], $row['price']);
 					 print "</td>";
@@ -488,14 +488,14 @@
 				 WHERE aID='".$appID."'"; 
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			print "<br><p class='font_14' style='color:#990000'>No transactions found</p><br><br>";
 			return false;
 		}
 		
 		// Load data
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Address
 		$owner=$row['adr'];
@@ -508,7 +508,7 @@
 			     LIMIT 0,20"; 
 	    $result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			print "<br><p class='font_14' style='color:#990000'>No installs found</p><br><br>";
 			return false;
@@ -520,7 +520,7 @@
                    <table width="90%" class="table-responsive">
                     
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                     
@@ -559,7 +559,7 @@
 		          FROM agents 
 				 WHERE aID='".$appID."'";
 	    $result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$owner=$row['adr']; 
 		
 		// Total sum
@@ -568,7 +568,7 @@
 				  JOIN adr ON adr.adr=agents.adr 
 				 WHERE agents.owner<>agents.adr";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$total=$row['total']; 
 		
 		// Balance on installed addresses
@@ -578,7 +578,7 @@
 				 WHERE agents.owner='".$owner."' 
 				   AND agents.owner<>agents.adr";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$used=$row['total'];
 		
 		// Percent
@@ -593,7 +593,7 @@
 				 WHERE owner<>adr 
 				   AND owner='".$owner."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$no=$row['total'];
 		
 		?>

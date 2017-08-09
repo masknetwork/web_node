@@ -58,7 +58,7 @@
 				   AND attr='".$attr."'"; 
 		$result=$this->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		else
 		   return false;
@@ -73,7 +73,7 @@
 				   AND userID='".$_REQUEST['ud']['ID']."'";
 	   $result=$this->execute($query);
 	   
-	   if (mysql_num_rows($result)==0)
+	   if (mysqli_num_rows($result)==0)
 	      return false;
    	   else 
 	      return true;
@@ -90,7 +90,7 @@
 				 WHERE domain='".$domain."'";
 		$result=$this->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		else
 		   return false;
@@ -120,7 +120,7 @@
 		   $query="SELECT * FROM adr WHERE adr='".$adr."'";
 		   $result=$this->execute($query);	
 		
-		   if (mysql_num_rows($result)>0)
+		   if (mysqli_num_rows($result)>0)
 		      return true;
 		   else
 		      return false;
@@ -525,7 +525,7 @@ $('#back').css("cursor", "pointer");
 	             FROM assets_markets 
 				WHERE mkt_adr='".$adr."'";
 	   $result=$this->execute($query);	
-	   if (mysql_num_rows($result)>0)
+	   if (mysqli_num_rows($result)>0)
 	     return true;
 	  
 	   // Feeds markets
@@ -533,7 +533,7 @@ $('#back').css("cursor", "pointer");
 	             FROM feeds_markets 
 				WHERE adr='".$adr."'";
 	   $result=$this->execute($query);	
-	   if (mysql_num_rows($result)>0)
+	   if (mysqli_num_rows($result)>0)
 	     return true;
 	   
 	   // Bets ?
@@ -541,7 +541,7 @@ $('#back').css("cursor", "pointer");
 	             FROM feeds_bets 
 				WHERE adr='".$adr."'";
 	   $result=$this->execute($query);	
-	   if (mysql_num_rows($result)>0)
+	   if (mysqli_num_rows($result)>0)
 	     return true;
 	  
 	   // Return
@@ -555,7 +555,7 @@ $('#back').css("cursor", "pointer");
 	             FROM assets_markets 
 				WHERE mkt_symbol='".$symbol."'";
 	   $result=$this->execute($query);	
-	   if (mysql_num_rows($result)>0)
+	   if (mysqli_num_rows($result)>0)
 	     return true;
 	  
 	   // Feeds markets
@@ -563,7 +563,7 @@ $('#back').css("cursor", "pointer");
 	             FROM feeds_markets 
 				WHERE mkt_symbol='".$symbol."'";
 	   $result=$this->execute($query);	
-	   if (mysql_num_rows($result)>0)
+	   if (mysqli_num_rows($result)>0)
 	     return true;
 	   
 	   // Bets ?
@@ -571,7 +571,7 @@ $('#back').css("cursor", "pointer");
 	             FROM feeds_bets 
 				WHERE bet_symbol='".$symbol."'";
 	   $result=$this->execute($query);	
-	   if (mysql_num_rows($result)>0)
+	   if (mysqli_num_rows($result)>0)
 	     return true;
 	  
 	   // Return
@@ -586,7 +586,7 @@ $('#back').css("cursor", "pointer");
 				   AND adr='".$adr."'"; 
 		$result=$this->execute($query);
 		
-		 if (mysql_num_rows($result)>0)
+		 if (mysqli_num_rows($result)>0)
 	        return true;
 		 else
 		    return false;
@@ -602,9 +602,9 @@ $('#back').css("cursor", "pointer");
 				    WHERE adr='".$adr."'"; 
 		   $result=$this->execute($query);	
 		
-	       if (mysql_num_rows($result)>0) 
+	       if (mysqli_num_rows($result)>0) 
 		   {
-			  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			  $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			  $balance=$row['balance'];
 		   }
 		   else
@@ -618,9 +618,9 @@ $('#back').css("cursor", "pointer");
 				   AND symbol='".$asset."'"; 
 		   $result=$this->execute($query);	
 		
-	      if (mysql_num_rows($result)>0) 
+	      if (mysqli_num_rows($result)>0) 
 		   {
-			  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			  $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			  $balance=$row['qty'];
 		   }
 		   else
@@ -634,10 +634,10 @@ $('#back').css("cursor", "pointer");
 				   AND cur='".$asset."'"; 
 		$result=$this->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		{
 			// Load data
-			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			
 			// New balance
 			$balance=$balance-abs($row['total']);
@@ -657,7 +657,7 @@ $('#back').css("cursor", "pointer");
 		          FROM my_adr 
 				 WHERE userID='".$_REQUEST['ud']['ID']."'";
 		 $result=$this->execute($query);	
-	     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		    $adr_list=$adr_list.", '".$row['adr']."'";
 	     
 		 // Format list
@@ -670,8 +670,8 @@ $('#back').css("cursor", "pointer");
 				    WHERE adr IN (".$adr_list.")";
 		   $result=$this->execute($query);	
 		
-	       if (mysql_num_rows($result)>0) 
-		     while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	       if (mysqli_num_rows($result)>0) 
+		     while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			     $balance=$balance+$row['balance'];
 		   else
 		      return 0;
@@ -684,8 +684,8 @@ $('#back').css("cursor", "pointer");
 				       AND owner IN (".$adr_list.")"; 
 		   $result=$this->execute($query);	
 		
-	      if (mysql_num_rows($result)>0) 
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+	      if (mysqli_num_rows($result)>0) 
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			     $balance=$balance+$row['qty'];
 		   else
 		      return 0;
@@ -714,7 +714,7 @@ $('#back').css("cursor", "pointer");
 			ORDER BY balance DESC"; 
 			
 		 $result=$this->execute($query);	
-		 $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 return $row['adr'];
 	}
 	
@@ -725,7 +725,7 @@ $('#back').css("cursor", "pointer");
 				 WHERE symbol='".$feed."'";
 		$result=$this->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		 else 
 		   return false; 
@@ -739,7 +739,7 @@ $('#back').css("cursor", "pointer");
 				   AND symbol='".$branch."'"; 
 		$result=$this->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		 else 
 		   return false; 
@@ -758,7 +758,7 @@ $('#back').css("cursor", "pointer");
 		             FROM domains 
 				    WHERE domain='".$domain."'"; 
 		   $result=$this->execute($query);
-		   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		   return $row['adr'];
 		}
 		else return "";
@@ -769,13 +769,13 @@ $('#back').css("cursor", "pointer");
 		$query="SELECT * FROM domains WHERE adr='".$adr."'";
 		$result=$this->execute($query);
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{ 
 		   return $adr;
 		}
 		else
 		{
-		  $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		  $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		  return $row['domain'];
 		}
 	}
@@ -796,7 +796,7 @@ $('#back').css("cursor", "pointer");
 				 WHERE symbol='".$asset."'";
 		$result=$this->execute($query);
 			
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		  return true;
 		else
 		  return false;
@@ -827,7 +827,7 @@ $('#back').css("cursor", "pointer");
 				 WHERE feed_symbol='".$feed."' 
 				   AND symbol='".$branch."'";
 		$result=$this->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    return $row['val'];
 	}
 	
@@ -978,7 +978,7 @@ $('#back').css("cursor", "pointer");
 				   
 	    $result=$this->execute($query);	
 		
-	    if (mysql_num_rows($result)>0) 
+	    if (mysqli_num_rows($result)>0) 
 		   return true;
 		else
 		   return false;
@@ -1024,7 +1024,7 @@ $('#back').css("cursor", "pointer");
 		// Load default balance
 		$query="SELECT * FROM adr WHERE adr='default'";
 		$result=$this->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    
 		// Per day
 		$daily=($row['balance']/20)/365;  
@@ -1055,7 +1055,7 @@ $('#back').css("cursor", "pointer");
 				 WHERE delegate='".$adr."'";
 	    $result=$this->execute($query);	
 	    
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		else
 		   return false;   
@@ -1093,7 +1093,7 @@ $('#back').css("cursor", "pointer");
 				 WHERE adr='".$adr."'"; 
 		$result=$this->execute($query);	
 		
-		if (mysql_num_rows($result)>0)
+		if (mysqli_num_rows($result)>0)
 		   return true;
 		else 
 		   return false;

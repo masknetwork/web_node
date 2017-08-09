@@ -37,14 +37,14 @@
 				  AND sale_price>0";
 	   $result=$this->kern->execute($query);	
 	   
-	   if (mysql_num_rows($result)==0)
+	   if (mysqli_num_rows($result)==0)
 	   {
 		   $this->template->showErr("Invalid domain");
 		   return false;
 	   }
 	   
 	   // Load data
-	   $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	   $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	   
 	   // Funds
 	   if ($this->kern->getBalance($net_fee_adr)<$row['sale_price'])
@@ -111,7 +111,7 @@
             <table width="90%" border="0" cellspacing="0" cellpadding="0">
                     
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                     

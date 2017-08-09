@@ -14,7 +14,7 @@ class CVoters
 				 WHERE target_type='".$target_type."' 
 				   AND targetID='".$targetID."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -157,7 +157,7 @@ class CVoters
    		          FROM votes 
 				 WHERE block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$total_power=$row['total'];
 		
 		$query="SELECT * 
@@ -170,7 +170,7 @@ class CVoters
 	    $result=$this->kern->execute($query);	
 	   
 		
-		if (mysql_num_rows($result)==0) 
+		if (mysqli_num_rows($result)==0) 
 		{
 			print "<div class='font_14' style='color:#990000'><br>No results found</div>";
 	        return false;
@@ -191,7 +191,7 @@ class CVoters
         
         <?
 		    $a=0;
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			{
 				
 		?>
@@ -243,7 +243,7 @@ class CVoters
         </thead>
         
         <?
-		    while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 			{
 		?>
         

@@ -177,7 +177,7 @@ class CDelegates
         </td></tr>
         
 		<?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   {
 		?>
         
@@ -226,7 +226,7 @@ class CDelegates
         </thead>
         
         <?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   {
 		?>
         
@@ -318,7 +318,7 @@ class CDelegates
 				 WHERE ID='".$ID."'"; 
 		$result=$this->kern->execute($query);	
 		
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			// Search in delegates log
 			$query="SELECT * 
@@ -327,18 +327,18 @@ class CDelegates
 		    $result=$this->kern->execute($query);	
 		    
 			// No records
-			if (mysql_num_rows($result)==0)
+			if (mysqli_num_rows($result)==0)
 		    {
 		       print "<span class='font_14' style='color:#990000'>No records found</span>";
 		       return false;
 			}
 			else
 			{
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				$ID=$row['ID'];
 			}
 		}
-		else $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		else $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		
 		// Address
 		$delegate=$row['delegate'];
@@ -353,7 +353,7 @@ class CDelegates
 				 WHERE type='ID_UP' 
 				   AND delegate='".$delegate."'"; 
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$upvotes_no=$row['total_no'];
 		$upvotes=$row['total_power'];
 		
@@ -364,7 +364,7 @@ class CDelegates
 				 WHERE type='ID_DOWN' 
 				   AND delegate='".$delegate."'";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$downvotes_no=$row['total_no'];
 		$downvotes=$row['total_power'];
 		
@@ -378,7 +378,7 @@ class CDelegates
 				 WHERE signer='".$delegate."' 
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 	    $result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$blocks_no=$row['blocks_no'];
 		$reward=$row['reward'];
 		
@@ -391,7 +391,7 @@ class CDelegates
 		// Network dif
 		$query="SELECT * FROM net_stat";
 		$result=$this->kern->execute($query);	
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$net_dif=$row['net_dif'];
 		
 		?>

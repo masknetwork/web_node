@@ -16,7 +16,7 @@ class CSettings
 				   AND pass='".hash("sha256", $old_pass)."'"; 
 		$result=$this->kern->execute($query);	
 	    
-		if (mysql_num_rows($result)==0)
+		if (mysqli_num_rows($result)==0)
 		{
 			$this->template->showErr("Invalid old password");
 			return false;

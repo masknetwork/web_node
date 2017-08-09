@@ -128,7 +128,7 @@
             <td width="300" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			  ?>
               
@@ -139,7 +139,7 @@
             <td width="332" align="center">
             
 			<?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
             
@@ -148,7 +148,7 @@
             <td width="336" align="center">
             
             <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
               
@@ -158,7 +158,7 @@
             <td align="center">
             
             <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
             
@@ -167,7 +167,7 @@
             <td align="center">
             
             <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
             
@@ -176,7 +176,7 @@
             <td align="center">
             
             <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
             
@@ -190,7 +190,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 		   	  ?>
               
@@ -199,7 +199,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			  ?>
               
@@ -208,7 +208,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			   ?>
               
@@ -217,7 +217,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
               
@@ -228,7 +228,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 		   	  ?>
               
@@ -237,7 +237,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			  ?>
               
@@ -246,7 +246,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			   ?>
               
@@ -255,7 +255,7 @@
               <td width="230" align="center">
               
               <?
-			     $row = mysql_fetch_array($result, MYSQL_ASSOC);
+			     $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 				 $this->showBigPanel($row);
 			?>
               

@@ -53,7 +53,7 @@ class CPrices
 		
 		$res="{\"response\":[";
 		
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		  $res=$res."{\"symbol\" : \"".$row['symbol']."\", \"price\" : \"".$row['price']."\", \"status\":\"ID_OPEN\"},"; 
 		
 		$res=$res."]}";

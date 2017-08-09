@@ -57,14 +57,14 @@ class CFeed
 								 WHERE userID='".$_REQUEST['ud']['ID']."')";  
 		 $result=$this->kern->execute($query);
 		 
-		 if (mysql_num_rows($result)==0)
+		 if (mysqli_num_rows($result)==0)
 		 {
 			 $this->template->showErr("Invalid feed symbol");
 		     return false;
 		 }
 		 
 		 // Load address
-		 $row = mysql_fetch_array($result, MYSQL_ASSOC);
+		 $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		 $adr=$row['adr'];
 		 
 	     // Name
@@ -106,7 +106,7 @@ class CFeed
 				  WHERE feed_symbol='".$feed_symbol."' 
 				    AND symbol='".$symbol."'";
 		 $result=$this->kern->execute($query);	
-	     if (mysql_num_rows($result)>0)
+	     if (mysqli_num_rows($result)>0)
 		 {
 			 $this->template->showErr("Symbol already exist");
 			 return false;
@@ -168,7 +168,7 @@ class CFeed
 	{
 		$query="SELECT * FROM feeds WHERE symbol='".$symbol."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	  
 		?>
         
@@ -327,7 +327,7 @@ class CFeed
               <th class="font_14" height="35px" align="center" colspan="2">&nbsp;</th>
              </thead>       
                     <?
-					   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+					   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 					   {
 					?>
                      
@@ -367,7 +367,7 @@ class CFeed
 				                FROM my_adr 
 							   WHERE userID='".$_REQUEST['ud']['ID']."')"; 
 	   $result=$this->kern->execute($query);	
-	   if (mysql_num_rows($result)==0) return false;
+	   if (mysqli_num_rows($result)==0) return false;
 	  	
 		?>
          

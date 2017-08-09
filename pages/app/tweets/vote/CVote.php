@@ -56,7 +56,7 @@ class CVote
         <tbody>
         
         <?
-		   while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
+		   while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
 		   {
 			   $p=$row['power']*100/$total_votes;
 			   $pay_MSK=round($p/100*$reward, 4);
@@ -125,7 +125,7 @@ class CVote
 				   AND adr='".$adr."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440); 
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $votes_com=$row['total'];
 		if ($votes_com=="") $votes_com=0;
 		
@@ -142,7 +142,7 @@ class CVote
 				   AND adr='".$adr."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $votes_posts=$row['total']; 
 		if ($votes_posts=="") $votes_posts=0;
 		
@@ -160,7 +160,7 @@ class CVote
 				   AND adr='".$adr."'
 				   AND block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    $votes_other=$row['total']; 
 		if ($votes_other=="") $votes_other=0;
 		
@@ -294,7 +294,7 @@ class CVote
      		      FROM votes 
 				 WHERE block>".($_REQUEST['sd']['last_block']-1440);
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$total_votes=$row['total'];
 		
 		return $total_votes;
@@ -308,7 +308,7 @@ class CVote
 				 WHERE block>".($_REQUEST['sd']['last_block']-1440)." 
 				   AND adr='".$adr."'";
 		$result=$this->kern->execute($query);	
-	    $row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 		$adr_votes=$row['total'];
 		return $adr_votes;
 	}
